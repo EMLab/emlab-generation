@@ -1,10 +1,14 @@
 #!/bin/bash
-agentspringhome=~/AgentSpring
+if [ -f emlabConfig.cfg ];then
+        . emlabConfig.cfg
+else
+    echo "Define emlabConfig.cfg, by changing the template. Exiting sc\                                                                    
+ript."
+    exit
+fi
+
 
 #compile and install agentspring
-cd $agentspringhome/agentspring-facade/
+cd $agentSpringHome
 mvn clean install $1
-cd $agentspringhome/agentspring-face/
-mvn clean install $1
-cd $agentspringhome/agentspring-engine/
-mvn clean install $1
+
