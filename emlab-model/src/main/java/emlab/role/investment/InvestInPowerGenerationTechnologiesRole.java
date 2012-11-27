@@ -32,6 +32,7 @@ import emlab.domain.agent.PowerPlantManufacturer;
 import emlab.domain.contract.CashFlow;
 import emlab.domain.contract.Loan;
 import emlab.domain.gis.Zone;
+import emlab.domain.market.ClearingPoint;
 import emlab.domain.market.electricity.ElectricitySpotMarket;
 import emlab.domain.market.electricity.Segment;
 import emlab.domain.market.electricity.SegmentLoad;
@@ -42,6 +43,7 @@ import emlab.domain.technology.Substance;
 import emlab.domain.technology.SubstanceShareInFuelMix;
 import emlab.repository.Reps;
 import emlab.role.AbstractEnergyProducerRole;
+import emlab.util.GeometricTrendRegression;
 import emlab.util.MapValueComparator;
 
 /**
@@ -73,12 +75,14 @@ public class InvestInPowerGenerationTechnologiesRole extends AbstractEnergyProdu
         // Fuel Prices
         Map<Substance, Double> expectedFuelPrices = new HashMap<Substance, Double>();
         for (Substance substance : reps.genericRepository.findAll(Substance.class)) {
-            // use last price
-            expectedFuelPrices.put(substance, findLastKnownPriceForSubstance(substance));// TODO
-                                                                                         // use
-                                                                                         // expected
-                                                                                         // fuel
-                                                                                         // price
+        	//Find Clearing Points for the last 5 years (counting current year as one of the last 5 years).
+        	Iterable<ClearingPoint> cps = reps.clearingPointRepository.findAllClearingPointsForSubstanceAndTimeRange(substance, getCurrentTick()-4, getCurrentTick());
+        	//Create regression object
+        	GeometricTrendRegression gtr = new GeometricTrendRegression();
+    		for (ClearingPoint clearingPoint : cps) {
+    			gtr.addData(clearingPoint.getTime(), clearingPoint.getPrice());
+    		}
+        	expectedFuelPrices.put(substance, gtr.predict(futureTimePoint));
         }
 
         // CO2
