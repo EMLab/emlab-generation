@@ -8,7 +8,7 @@ ript."
 fi
 
 #install software
-sudo apt-get install subversion maven2 git
+sudo apt-get install maven2 git
 
 #download agentspring if it is not there
 git clone https://github.com/alfredas/AgentSpring.git $agentSpringHome
@@ -18,9 +18,6 @@ cd $agentSpringHome
 git pull
 
 #compile and install agentspring
-cd $agentSpringHome/agentspring-facade/
+cd $agentSpringHome/
 mvn clean install $1
-cd $agentSpringHome/agentspring-face/
-mvn clean install $1
-cd $agentSpringHome/agentspring-engine/
-mvn clean install $1
+
