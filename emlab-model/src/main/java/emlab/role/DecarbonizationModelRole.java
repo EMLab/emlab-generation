@@ -33,6 +33,7 @@ import emlab.role.investment.DismantlePowerPlantPastTechnicalLifetimeRole;
 import emlab.role.investment.InvestInPowerGenerationTechnologiesRole;
 import emlab.role.market.ClearCommodityMarketRole;
 import emlab.role.market.ClearIterativeCO2AndElectricitySpotMarketTwoCountryRole;
+import emlab.role.market.DetermineResidualLoadCurvesForTwoCountriesRole;
 import emlab.role.market.ProcessAcceptedBidsRole;
 import emlab.role.market.ProcessAcceptedPowerPlantDispatchRole;
 import emlab.role.market.ReassignPowerPlantsToLongTermElectricityContractsRole;
@@ -93,6 +94,8 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
     private PayForLoansRole payForLoansRole;
     @Autowired
     private PayOperatingAndMaintainanceCostsRole payOperatingAndMaintainanceCostsRole;
+    @Autowired
+    private DetermineResidualLoadCurvesForTwoCountriesRole determineResidualLoadCurve;
 
     @Autowired
     Reps reps;
@@ -120,6 +123,13 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
 //            producer.act(payForLoansRole);
         }
 
+        /*
+         * Testing residual load curve
+         */
+        if (model.isRealRenewableDataImplemented()) {
+            logger.warn("  0a. Residual load curve");
+            model.act(determineResidualLoadCurve);
+        }
         /*
          * Determine fuel mix of power plants
          */

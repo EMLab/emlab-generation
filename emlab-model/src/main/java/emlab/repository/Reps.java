@@ -60,6 +60,9 @@ public class Reps {
     public NationalGovernmentRepository nationalGovernmentRepository;
 
     @Autowired
+    public IntermittentResourceProfileRepository intermittentResourceProfileRepository;
+
+    @Autowired
     public PowerGeneratingTechnologyRepository powerGeneratingTechnologyRepository;
 
     @Autowired
