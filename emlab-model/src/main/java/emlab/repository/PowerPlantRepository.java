@@ -224,4 +224,7 @@ public interface PowerPlantRepository extends GraphRepository<PowerPlant> {
     public double calculateCapacityOfPowerPlantsByTechnologyInPipeline(
             @Param("tech") PowerGeneratingTechnology technology, @Param("tick") long tick);
 
+    @Query(value = "g.V.filter{it.__type__=='emlab.domain.technology.PowerPlantEnipedia'}", type = QueryType.Gremlin)
+    Iterable<PowerPlantEnipedia> findAllPowerPlantsEnipedia();
+
 }
