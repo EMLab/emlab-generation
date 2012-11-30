@@ -92,10 +92,24 @@ public class InvestInPowerGenerationTechnologiesRole extends AbstractEnergyProdu
                                                                                                                    // co2
                                                                                                                    // price
 
+        
+        //Demand
+        Map<ElectricitySpotMarket, Double> expectedDemand = new HashMap<ElectricitySpotMarket, Double>();
+        for(ElectricitySpotMarket elm : reps.template.findAll(ElectricitySpotMarket.class)){
+        	GeometricTrendRegression gtr = new GeometricTrendRegression();
+        	for(long time = getCurrentTick(); time>getCurrentTick()-5 && time>=0; time=time-1){
+        		gtr.addData(time, elm.getDemandGrowthTrend().getValue(time));
+        	}
+        	expectedDemand.put(elm, gtr.predict(futureTimePoint));
+        	logger.warn("Expected demand in {} is {}", elm, expectedDemand.get(elm));
+        }
+        
+        
+        
         // Investment decision
         for (ElectricitySpotMarket market : reps.genericRepository.findAllAtRandom(ElectricitySpotMarket.class)) {
 
-            MarketInformation marketInformation = new MarketInformation(market, expectedFuelPrices, expectedCO2Price.get(market)
+            MarketInformation marketInformation = new MarketInformation(market, expectedDemand, expectedFuelPrices, expectedCO2Price.get(market)
                     .doubleValue(), futureTimePoint);
             /*
              * if (marketInfoMap.containsKey(market) && marketInfoMap.get(market).time == futureTimePoint) { marketInformation = marketInfoMap.get(market); } else { marketInformation = new
@@ -139,9 +153,6 @@ public class InvestInPowerGenerationTechnologiesRole extends AbstractEnergyProdu
                     // " will not invest in {} technology because there's too much capacity planned by him",
                     // technology);
                 } else if ((capacityOfTechnologyInPipeline > operationalCapacityOfTechnology) && capacityOfTechnologyInPipeline > 3000) { // TODO:
-                    // Dirty
-                    // hack,
-                    // but
                     // reflects
                     // that
                     // you
@@ -399,7 +410,7 @@ public class InvestInPowerGenerationTechnologiesRole extends AbstractEnergyProdu
         Map<PowerPlant, Double> meritOrder;
         double capacitySum;
 
-        MarketInformation(ElectricitySpotMarket market, Map<Substance, Double> fuelPrices, double co2price, long time) {
+        MarketInformation(ElectricitySpotMarket market, Map<ElectricitySpotMarket, Double> expectedDemand, Map<Substance, Double> fuelPrices, double co2price, long time) {
             // determine expected power prices
             expectedElectricityPricesPerSegment = new HashMap<Segment, Double>();
             Map<PowerPlant, Double> marginalCostMap = new HashMap<PowerPlant, Double>();
@@ -419,7 +430,7 @@ public class InvestInPowerGenerationTechnologiesRole extends AbstractEnergyProdu
 
             long numberOfSegments = reps.segmentRepository.count();
 
-            double demandFactor = market.getDemandGrowthTrend().getValue(time);
+            double demandFactor = expectedDemand.get(market).doubleValue();
 
             // find expected prices per segment given merit order
             for (SegmentLoad segmentLoad : market.getLoadDurationCurve()) {
