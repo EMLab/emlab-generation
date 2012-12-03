@@ -76,7 +76,7 @@ public class InvestInPowerGenerationTechnologiesRole extends AbstractEnergyProdu
         Map<Substance, Double> expectedFuelPrices = new HashMap<Substance, Double>();
         for (Substance substance : reps.genericRepository.findAll(Substance.class)) {
         	//Find Clearing Points for the last 5 years (counting current year as one of the last 5 years).
-        	Iterable<ClearingPoint> cps = reps.clearingPointRepository.findAllClearingPointsForSubstanceAndTimeRange(substance, getCurrentTick()-4, getCurrentTick());
+        	Iterable<ClearingPoint> cps = reps.clearingPointRepository.findAllClearingPointsForSubstanceAndTimeRange(substance, getCurrentTick()-(agent.getNumberOfYearsBacklookingForForecasting()-1), getCurrentTick());
         	//Create regression object
         	GeometricTrendRegression gtr = new GeometricTrendRegression();
     		for (ClearingPoint clearingPoint : cps) {
@@ -86,7 +86,7 @@ public class InvestInPowerGenerationTechnologiesRole extends AbstractEnergyProdu
         }
 
         // CO2
-        Map<ElectricitySpotMarket, Double> expectedCO2Price = determineExpectedCO2PriceInclTax(futureTimePoint, 3);// TODO
+        Map<ElectricitySpotMarket, Double> expectedCO2Price = determineExpectedCO2PriceInclTax(futureTimePoint, agent.getNumberOfYearsBacklookingForForecasting());// TODO
                                                                                                                    // use
                                                                                                                    // expected
                                                                                                                    // co2
@@ -97,11 +97,10 @@ public class InvestInPowerGenerationTechnologiesRole extends AbstractEnergyProdu
         Map<ElectricitySpotMarket, Double> expectedDemand = new HashMap<ElectricitySpotMarket, Double>();
         for(ElectricitySpotMarket elm : reps.template.findAll(ElectricitySpotMarket.class)){
         	GeometricTrendRegression gtr = new GeometricTrendRegression();
-        	for(long time = getCurrentTick(); time>getCurrentTick()-5 && time>=0; time=time-1){
+        	for(long time = getCurrentTick(); time>getCurrentTick()-agent.getNumberOfYearsBacklookingForForecasting() && time>=0; time=time-1){
         		gtr.addData(time, elm.getDemandGrowthTrend().getValue(time));
         	}
         	expectedDemand.put(elm, gtr.predict(futureTimePoint));
-        	logger.warn("Expected demand in {} is {}", elm, expectedDemand.get(elm));
         }
         
         

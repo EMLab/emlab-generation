@@ -514,7 +514,7 @@ public abstract class AbstractEnergyProducerRole extends AbstractRole<EnergyProd
      * @param yearsLookingBackForRegression How many years are used as input for the regression, incl. the current tick.
      * @return
      */
-    protected HashMap<ElectricitySpotMarket, Double> determineExpectedCO2PriceInclTax(long futureTimePoint, int yearsLookingBackForRegression) {
+    protected HashMap<ElectricitySpotMarket, Double> determineExpectedCO2PriceInclTax(long futureTimePoint, long yearsLookingBackForRegression) {
         HashMap<ElectricitySpotMarket, Double> co2Prices = new HashMap<ElectricitySpotMarket, Double>();
         CO2Auction co2Auction = reps.marketRepository.findCO2Auction();
       //Find Clearing Points for the last 5 years (counting current year as one of the last 5 years).
