@@ -69,11 +69,12 @@ public class Reps {
     public SegmentClearingPointRepository segmentClearingPointRepository;
     
     @Autowired
-    public SubstanceRepository substanceRepository;
+    public RenewableTargetInvestorRepository renewableTargetInvestorRepository;
+    
+    @Autowired
+    public PowerGenerationTechnologyTargetRepository powerGenerationTechnologyTargetRepository;
 
     @Autowired
     public Neo4jTemplate template;
-    
-
 
 }

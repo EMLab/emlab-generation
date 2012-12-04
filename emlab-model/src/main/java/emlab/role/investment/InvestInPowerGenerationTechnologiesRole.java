@@ -31,6 +31,7 @@ import emlab.domain.agent.BigBank;
 import emlab.domain.agent.DecarbonizationAgent;
 import emlab.domain.agent.EnergyProducer;
 import emlab.domain.agent.PowerPlantManufacturer;
+import emlab.domain.agent.RenewableTargetInvestor;
 import emlab.domain.contract.CashFlow;
 import emlab.domain.contract.Loan;
 import emlab.domain.gis.Zone;
@@ -38,6 +39,7 @@ import emlab.domain.market.ClearingPoint;
 import emlab.domain.market.electricity.ElectricitySpotMarket;
 import emlab.domain.market.electricity.Segment;
 import emlab.domain.market.electricity.SegmentLoad;
+import emlab.domain.policy.PowerGenerationTechnologyTarget;
 import emlab.domain.technology.PowerGeneratingTechnology;
 import emlab.domain.technology.PowerGridNode;
 import emlab.domain.technology.PowerPlant;
@@ -120,6 +122,11 @@ public class InvestInPowerGenerationTechnologiesRole extends AbstractEnergyProdu
                 // limited to the 5 years)
                 double expectedInstalledCapacityOfTechnology = reps.powerPlantRepository
                         .calculateCapacityOfExpectedOperationalPowerPlantsInMarketAndTechnology(market, technology, futureTimePoint);
+                PowerGenerationTechnologyTarget technologyTarget = reps.powerGenerationTechnologyTargetRepository.findOneByTechnologyAndMarket(technology, market);
+                if(technologyTarget!=null){
+                	double technologyTargetCapacity = technologyTarget.getTrend().getValue(futureTimePoint);
+                	expectedInstalledCapacityOfTechnology =  (technologyTargetCapacity > expectedInstalledCapacityOfTechnology) ? technologyTargetCapacity : expectedInstalledCapacityOfTechnology;
+                }
                 double expectedOwnedTotalCapacityInMarket = reps.powerPlantRepository
                         .calculateCapacityOfExpectedOperationalPowerPlantsInMarketByOwner(market, futureTimePoint, agent);
                 double expectedOwnedCapacityInMarketOfThisTechnology = reps.powerPlantRepository

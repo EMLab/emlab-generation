@@ -463,7 +463,7 @@ public class PowerPlant {
     public void specifyAndPersist(long time, EnergyProducer energyProducer, PowerGridNode location,
             PowerGeneratingTechnology technology) {
         specifyNotPersist(time, energyProducer, location, technology);
-
+        this.persist();
     }
 
     public void specifyNotPersist(long time, EnergyProducer energyProducer, PowerGridNode location,

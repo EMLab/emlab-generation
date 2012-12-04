@@ -20,15 +20,18 @@ import org.springframework.data.neo4j.annotation.QueryType;
 import org.springframework.data.neo4j.repository.GraphRepository;
 import org.springframework.data.repository.query.Param;
 
-import emlab.domain.gis.Zone;
 import emlab.domain.market.electricity.ElectricitySpotMarket;
-import emlab.domain.technology.PowerGridNode;
+import emlab.domain.policy.PowerGenerationTechnologyTarget;
+import emlab.domain.technology.PowerGeneratingTechnology;
 
-public interface PowerGridNodeRepository extends GraphRepository<PowerGridNode> {
-
-	@Query("START zone=node({zone}) match (zone)<-[:REGION]-(powergridnode) WHERE powergridnode.__type__ = 'emlab.domain.technology.PowerGridNode' RETURN powergridnode")
-	Iterable<PowerGridNode> findAllPowerGridNodesByZone(@Param("zone") Zone zone);
+/**
+ * @author JCRichstein
+ *
+ */
+public interface PowerGenerationTechnologyTargetRepository extends
+		GraphRepository<PowerGenerationTechnologyTarget> {
 	
-	@Query(value="g.v(market).out('ZONE').in('REGION').next()", type=QueryType.Gremlin)
-	PowerGridNode findFirstPowerGridNodeByElectricitySpotMarket(@Param("market") ElectricitySpotMarket esm);
+	@Query(value="result = g.v(market).in('INVESTOR_MARKET').out('INVESTOR_TARGET').as('x').out('TARGET_TECHNOLOGY').idFilter(tech, FilterPipe.Filter.EQUAL).back('x'); ; if(!result.hasNext()){return null;} else{return result.next();}", type=QueryType.Gremlin)
+	PowerGenerationTechnologyTarget findOneByTechnologyAndMarket(@Param("tech") PowerGeneratingTechnology tech, @Param("market") ElectricitySpotMarket market);
+
 }
