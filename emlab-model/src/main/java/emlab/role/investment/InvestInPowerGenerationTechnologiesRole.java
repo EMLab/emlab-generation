@@ -22,6 +22,7 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.neo4j.support.Neo4jTemplate;
 import org.springframework.transaction.annotation.Transactional;
 
 import agentspring.role.Role;
@@ -58,6 +59,9 @@ public class InvestInPowerGenerationTechnologiesRole extends AbstractEnergyProdu
 
     @Autowired
     Reps reps;
+    
+    @Autowired
+    Neo4jTemplate template;
 
     public Reps getReps() {
         return reps;
@@ -76,11 +80,7 @@ public class InvestInPowerGenerationTechnologiesRole extends AbstractEnergyProdu
         Map<Substance, Double> expectedFuelPrices = predictFuelPrices(agent, futureTimePoint);
 
         // CO2
-        Map<ElectricitySpotMarket, Double> expectedCO2Price = determineExpectedCO2PriceInclTax(futureTimePoint, agent.getNumberOfYearsBacklookingForForecasting());// TODO
-                                                                                                                   // use
-                                                                                                                   // expected
-                                                                                                                   // co2
-                                                                                                                   // price
+        Map<ElectricitySpotMarket, Double> expectedCO2Price = determineExpectedCO2PriceInclTax(futureTimePoint, agent.getNumberOfYearsBacklookingForForecasting());
 
         
         //Demand
@@ -341,18 +341,28 @@ public class InvestInPowerGenerationTechnologiesRole extends AbstractEnergyProdu
         agent.setWillingToInvest(false);
     }
     
-    private Map<Substance, Double> predictFuelPrices(EnergyProducer agent, long futureTimePoint){
+    /**
+     * Predicts fuel prices for {@link futureTimePoint} using a geometric trend regression forecast. Only predicts fuels that are
+     * traded on a commodity market.
+     * @param agent
+     * @param futureTimePoint
+     * @return Map<Substance, Double> of predicted prices.
+     */
+    public Map<Substance, Double> predictFuelPrices(EnergyProducer agent, long futureTimePoint){
         // Fuel Prices
         Map<Substance, Double> expectedFuelPrices = new HashMap<Substance, Double>();
-        for (Substance substance : reps.genericRepository.findAll(Substance.class)) {
+        for (Substance substance : reps.substanceRepository.findAllSubstancesTradedOnCommodityMarkets()) {
         	//Find Clearing Points for the last 5 years (counting current year as one of the last 5 years).
-        	Iterable<ClearingPoint> cps = reps.clearingPointRepository.findAllClearingPointsForSubstanceAndTimeRange(substance, getCurrentTick()-(agent.getNumberOfYearsBacklookingForForecasting()-1), getCurrentTick());
+        	Iterable<ClearingPoint> cps = reps.clearingPointRepository.findAllClearingPointsForSubstanceTradedOnCommodityMarkesAndTimeRange(substance, (long) getCurrentTick()-(agent.getNumberOfYearsBacklookingForForecasting()-1), (long) getCurrentTick());
+        	//logger.warn("{}, {}", getCurrentTick()-(agent.getNumberOfYearsBacklookingForForecasting()-1), getCurrentTick());
         	//Create regression object
         	GeometricTrendRegression gtr = new GeometricTrendRegression();
     		for (ClearingPoint clearingPoint : cps) {
+    			//logger.warn("CP {}: {} , in" + clearingPoint.getTime(), substance.getName(), clearingPoint.getPrice());
     			gtr.addData(clearingPoint.getTime(), clearingPoint.getPrice());
     		}
         	expectedFuelPrices.put(substance, gtr.predict(futureTimePoint));
+        	//logger.warn("Forecast {}: {}, in Step " +  futureTimePoint, substance, expectedFuelPrices.get(substance));
         }
         return expectedFuelPrices;
     }

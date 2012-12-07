@@ -67,8 +67,13 @@ public class Reps {
 
     @Autowired
     public SegmentClearingPointRepository segmentClearingPointRepository;
+    
+    @Autowired
+    public SubstanceRepository substanceRepository;
 
     @Autowired
     public Neo4jTemplate template;
+    
+
 
 }
