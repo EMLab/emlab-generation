@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import agentspring.role.Role;
 import agentspring.role.RoleComponent;
 import emlab.domain.agent.BigBank;
+import emlab.domain.agent.DecarbonizationAgent;
 import emlab.domain.agent.EnergyProducer;
 import emlab.domain.agent.PowerPlantManufacturer;
 import emlab.domain.contract.CashFlow;
@@ -72,18 +73,7 @@ public class InvestInPowerGenerationTechnologiesRole extends AbstractEnergyProdu
 
         // ==== Expectations ===
 
-        // Fuel Prices
-        Map<Substance, Double> expectedFuelPrices = new HashMap<Substance, Double>();
-        for (Substance substance : reps.genericRepository.findAll(Substance.class)) {
-        	//Find Clearing Points for the last 5 years (counting current year as one of the last 5 years).
-        	Iterable<ClearingPoint> cps = reps.clearingPointRepository.findAllClearingPointsForSubstanceAndTimeRange(substance, getCurrentTick()-(agent.getNumberOfYearsBacklookingForForecasting()-1), getCurrentTick());
-        	//Create regression object
-        	GeometricTrendRegression gtr = new GeometricTrendRegression();
-    		for (ClearingPoint clearingPoint : cps) {
-    			gtr.addData(clearingPoint.getTime(), clearingPoint.getPrice());
-    		}
-        	expectedFuelPrices.put(substance, gtr.predict(futureTimePoint));
-        }
+        Map<Substance, Double> expectedFuelPrices = predictFuelPrices(agent, futureTimePoint);
 
         // CO2
         Map<ElectricitySpotMarket, Double> expectedCO2Price = determineExpectedCO2PriceInclTax(futureTimePoint, agent.getNumberOfYearsBacklookingForForecasting());// TODO
@@ -349,6 +339,22 @@ public class InvestInPowerGenerationTechnologiesRole extends AbstractEnergyProdu
     @Transactional
     private void setNotWillingToInvest(EnergyProducer agent) {
         agent.setWillingToInvest(false);
+    }
+    
+    private Map<Substance, Double> predictFuelPrices(EnergyProducer agent, long futureTimePoint){
+        // Fuel Prices
+        Map<Substance, Double> expectedFuelPrices = new HashMap<Substance, Double>();
+        for (Substance substance : reps.genericRepository.findAll(Substance.class)) {
+        	//Find Clearing Points for the last 5 years (counting current year as one of the last 5 years).
+        	Iterable<ClearingPoint> cps = reps.clearingPointRepository.findAllClearingPointsForSubstanceAndTimeRange(substance, getCurrentTick()-(agent.getNumberOfYearsBacklookingForForecasting()-1), getCurrentTick());
+        	//Create regression object
+        	GeometricTrendRegression gtr = new GeometricTrendRegression();
+    		for (ClearingPoint clearingPoint : cps) {
+    			gtr.addData(clearingPoint.getTime(), clearingPoint.getPrice());
+    		}
+        	expectedFuelPrices.put(substance, gtr.predict(futureTimePoint));
+        }
+        return expectedFuelPrices;
     }
 
     // Create a powerplant investment and operation cash-flow in the form of a
