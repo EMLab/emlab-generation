@@ -21,6 +21,7 @@ import org.springframework.data.neo4j.annotation.RelatedTo;
 
 import emlab.domain.technology.PowerGeneratingTechnology;
 import emlab.trend.StepTrend;
+import agentspring.trend.Trend;
 
 
 /**

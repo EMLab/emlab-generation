@@ -18,6 +18,7 @@ package emlab.domain;
 import static org.junit.Assert.*;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -30,11 +31,12 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import emlab.domain.agent.EnergyProducer;
 import emlab.domain.agent.RenewableTargetInvestor;
 import emlab.domain.policy.PowerGenerationTechnologyTarget;
 import emlab.domain.technology.PowerGeneratingTechnology;
+import emlab.repository.EnergyProducerRepository;
 import emlab.trend.StepTrend;
-import emlab.util.GeometricTrendRegressionTest;
 
 /**
  * @author JCRichstein
@@ -48,6 +50,7 @@ public class RenewableTargetInvestorTest {
 	Logger logger = Logger.getLogger(RenewableTargetInvestorTest.class);
 	
 	@Autowired Neo4jOperations template;
+	@Autowired EnergyProducerRepository energyProducerRepository;
 	
     @Before
     @Transactional
@@ -112,6 +115,36 @@ public class RenewableTargetInvestorTest {
 		assertTrue(!targetsFromDb.equals(testSet));
 		testSet.add(pvTarget);
 		assertTrue(targetsFromDb.equals(testSet));
+		
+	}
+	
+	@Test
+	public void testEnergyProducerAndRenewableTargetInvestorQueries(){
+		
+		RenewableTargetInvestor rti = new RenewableTargetInvestor();
+		rti.setName("R");
+		rti.persist();
+		
+		EnergyProducer energyProducerA = new EnergyProducer();
+		energyProducerA.setName("A");
+		energyProducerA.persist();
+		
+		EnergyProducer energyProducerB = new EnergyProducer();
+		energyProducerB.setName("B");
+		energyProducerB.persist();
+		
+
+		int numberProducers = 0;
+		List<EnergyProducer> energyProducers = energyProducerRepository.findAllEnergyProducersExceptForRenewableTargetInvestorsAtRandom();
+		for(EnergyProducer energyProducer : energyProducers){
+			assertTrue(!(energyProducer instanceof RenewableTargetInvestor));
+			numberProducers++;
+		}
+		for(EnergyProducer energyProducer : energyProducers){
+			assertTrue(!(energyProducer instanceof RenewableTargetInvestor));
+			numberProducers++;
+		}
+		assertEquals("Check number of producers", 4, numberProducers);
 		
 	}
 

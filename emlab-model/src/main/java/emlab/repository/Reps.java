@@ -73,8 +73,14 @@ public class Reps {
     
     @Autowired
     public PowerGenerationTechnologyTargetRepository powerGenerationTechnologyTargetRepository;
+    
+    @Autowired
+    public EnergyProducerRepository energyProducerRepository;
 
     @Autowired
     public Neo4jTemplate template;
+    
+    @Autowired
+	public SubstanceRepository substanceRepository;
 
 }

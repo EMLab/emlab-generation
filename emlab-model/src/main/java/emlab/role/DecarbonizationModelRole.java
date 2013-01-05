@@ -16,6 +16,7 @@
 package emlab.role;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.neo4j.support.Neo4jTemplate;
 import org.springframework.transaction.annotation.Transactional;
 
 import agentspring.role.AbstractRole;
@@ -26,11 +27,13 @@ import emlab.domain.agent.CommoditySupplier;
 import emlab.domain.agent.DecarbonizationModel;
 import emlab.domain.agent.EnergyConsumer;
 import emlab.domain.agent.EnergyProducer;
+import emlab.domain.agent.RenewableTargetInvestor;
 import emlab.domain.market.CommodityMarket;
 import emlab.domain.market.electricity.ElectricitySpotMarket;
 import emlab.repository.Reps;
 import emlab.role.investment.DismantlePowerPlantPastTechnicalLifetimeRole;
 import emlab.role.investment.InvestInPowerGenerationTechnologiesRole;
+import emlab.role.investment.RenewableTargetInvestmentRole;
 import emlab.role.market.ClearCommodityMarketRole;
 import emlab.role.market.ClearIterativeCO2AndElectricitySpotMarketTwoCountryRole;
 import emlab.role.market.ProcessAcceptedBidsRole;
@@ -93,9 +96,13 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
     private PayForLoansRole payForLoansRole;
     @Autowired
     private PayOperatingAndMaintainanceCostsRole payOperatingAndMaintainanceCostsRole;
+    @Autowired
+    private RenewableTargetInvestmentRole renewableTargetInvestmentRole;
 
     @Autowired
     Reps reps;
+    
+    @Autowired Neo4jTemplate template;
 
     /**
      * Main model script. Executes other roles in the right sequence.
@@ -241,9 +248,9 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
             boolean someOneStillWillingToInvest = true;
             while (someOneStillWillingToInvest) {
                 someOneStillWillingToInvest = false;
-                for (EnergyProducer producer : reps.genericRepository.findAllAtRandom(EnergyProducer.class)) {
+                for (EnergyProducer producer : reps.energyProducerRepository.findAllEnergyProducersExceptForRenewableTargetInvestorsAtRandom()){
                     // invest in new plants
-                    if (producer.isWillingToInvest()) {
+                	if (producer.isWillingToInvest()) {
                     	investInPowerGenerationTechnologiesRole.act(producer);
 //                        producer.act(investInPowerGenerationTechnologiesRole);
                         someOneStillWillingToInvest = true;
@@ -251,6 +258,9 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
                 }
             }
             resetWillingnessToInvest();
+        }
+        for(RenewableTargetInvestor renewableTargetInvestor : template.findAll(RenewableTargetInvestor.class)){
+        	renewableTargetInvestmentRole.act(renewableTargetInvestor);
         }
         timerInvest.stop();
         logger.warn("        took: {} seconds.", timerInvest.seconds());
