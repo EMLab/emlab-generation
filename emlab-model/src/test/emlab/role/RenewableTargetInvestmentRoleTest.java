@@ -18,7 +18,9 @@ package emlab.role;
 import static org.junit.Assert.*;
 import static org.junit.Assert.fail;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.junit.Before;
@@ -29,6 +31,9 @@ import org.springframework.data.neo4j.support.Neo4jTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.tinkerpop.pipes.util.Table;
+import com.tinkerpop.pipes.util.Table.Row;
 
 import emlab.domain.agent.EnergyProducer;
 import emlab.domain.agent.RenewableTargetInvestor;
@@ -76,6 +81,8 @@ public class RenewableTargetInvestmentRoleTest {
 		wind.setIntermittent(true);
 		wind.setInvestmentCostModifierExogenous(0.97);
 		wind.setExpectedLifetime(20);
+		wind.setPeakSegmentDependentAvailability(0.4);
+		wind.setBaseSegmentDependentAvailability(0.1);
 		wind.setName("Wind");
 		wind.persist();
 		PowerGeneratingTechnology pv = new PowerGeneratingTechnology();
@@ -87,6 +94,8 @@ public class RenewableTargetInvestmentRoleTest {
 		pv.setExpectedPermittime(0);
 		pv.setIntermittent(true);
 		pv.setExpectedLifetime(15);
+		pv.setPeakSegmentDependentAvailability(0.5);
+		pv.setBaseSegmentDependentAvailability(0.1);
 		pv.persist();
 		StepTrend windTrend = new StepTrend();
 		windTrend.setStart(400);
@@ -198,11 +207,11 @@ public class RenewableTargetInvestmentRoleTest {
 		
 		assertEquals("Test wind capacity after investment in year 3", 400, powerPlantRepository.calculateCapacityOfExpectedOperationalPowerPlantsInMarketAndTechnology(marketA, wind, 2), 0.1);
 		//Expected value: (Start + ExpectedTimeForWind*Increment: 400 + 3 * 100 = 700, but 800 because of plant size.
-		assertEquals("Test wind capacity after investment in year 3", 800, powerPlantRepository.calculateCapacityOfExpectedOperationalPowerPlantsInMarketAndTechnology(marketA, wind, 3), 0.1);
+		assertEquals("Test wind capacity after investment in year 3", 700, powerPlantRepository.calculateCapacityOfExpectedOperationalPowerPlantsInMarketAndTechnology(marketA, wind, 3), 0.1);
 
 		assertEquals("Test wind capacity after investment in year 0", 300, powerPlantRepository.calculateCapacityOfExpectedOperationalPowerPlantsInMarketAndTechnology(marketA, pv, 0), 0.1);
 		//450 is closer to the target of 500 than 600.
-		assertEquals("Test wind capacity after investment in year 0", 450, powerPlantRepository.calculateCapacityOfExpectedOperationalPowerPlantsInMarketAndTechnology(marketA, pv, 1), 0.1);
+		assertEquals("Test wind capacity after investment in year 0", 500, powerPlantRepository.calculateCapacityOfExpectedOperationalPowerPlantsInMarketAndTechnology(marketA, pv, 1), 0.1);
 	}
 	
 	@Test
@@ -247,6 +256,13 @@ public class RenewableTargetInvestmentRoleTest {
         	expectedInstalledCapacityOfTechnology =  (technologyTargetCapacity > expectedInstalledCapacityOfTechnology) ? technologyTargetCapacity : expectedInstalledCapacityOfTechnology;
         }
         assertEquals("Testing if expectedInstalledCapacityOfTechnology is adjusted",300 , expectedInstalledCapacityOfTechnology, 0.01);
+	
+	
+        double peakPowerPlantCapacityinMarketA = powerPlantRepository.calculatePeakCapacityOfOperationalPowerPlantsInMarket(marketA, 0);
+        assertEquals("Test if peakCapacity queries work: ", 310, peakPowerPlantCapacityinMarketA, 0.1);
+        double peakPowerPlantCapacity = powerPlantRepository.calculatePeakCapacityOfOperationalPowerPlants(0);
+        assertEquals("Test if peakCapacity queries work: ", 620, peakPowerPlantCapacity, 0.1);
 	}
+	
 
 }

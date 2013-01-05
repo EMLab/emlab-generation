@@ -52,28 +52,26 @@ public class RenewableTargetInvestmentRole extends AbstractRole<RenewableTargetI
 			double installedCapacityDeviation = target.getTrend().getValue(futureTimePoint)-expectedInstalledCapacity;
 			if(installedCapacityDeviation>0){
 				
-				int numberOfPlants = (int) (installedCapacityDeviation/pgt.getCapacity() + 0.5);
+				double powerPlantCapacityRatio = installedCapacityDeviation/pgt.getCapacity();
 				
-				for(int i = 0; i<numberOfPlants; i++){
-					PowerPlant plant = new PowerPlant();
-	                plant.specifyNotPersist(getCurrentTick(), targetInvestor, reps.powerGridNodeRepository.findFirstPowerGridNodeByElectricitySpotMarket(targetInvestor.getInvestorMarket()), pgt);
-	                PowerPlantManufacturer manufacturer = reps.genericRepository.findFirst(PowerPlantManufacturer.class);
-	                BigBank bigbank = reps.genericRepository.findFirst(BigBank.class);
+				PowerPlant plant = new PowerPlant();
+                plant.specifyNotPersist(getCurrentTick(), targetInvestor, reps.powerGridNodeRepository.findFirstPowerGridNodeByElectricitySpotMarket(targetInvestor.getInvestorMarket()), pgt);
+                plant.setActualNominalCapacity(pgt.getCapacity()*powerPlantCapacityRatio);
+                PowerPlantManufacturer manufacturer = reps.genericRepository.findFirst(PowerPlantManufacturer.class);
+                BigBank bigbank = reps.genericRepository.findFirst(BigBank.class);
 
-	                double investmentCostPayedByEquity = plant.getActualInvestedCapital() * (1 - targetInvestor.getDebtRatioOfInvestments());
-	                double investmentCostPayedByDebt = plant.getActualInvestedCapital() * targetInvestor.getDebtRatioOfInvestments();
-	                double downPayment = investmentCostPayedByEquity;
-	                createSpreadOutDownPayments(targetInvestor, manufacturer, downPayment, plant);
+                double investmentCostPayedByEquity = plant.getActualInvestedCapital() * (1 - targetInvestor.getDebtRatioOfInvestments())*powerPlantCapacityRatio;
+                double investmentCostPayedByDebt = plant.getActualInvestedCapital() * targetInvestor.getDebtRatioOfInvestments()*powerPlantCapacityRatio;
+                double downPayment = investmentCostPayedByEquity*powerPlantCapacityRatio;
+                createSpreadOutDownPayments(targetInvestor, manufacturer, downPayment, plant);
 
-	                double amount = determineLoanAnnuities(investmentCostPayedByDebt, plant.getTechnology().getDepreciationTime(),
-	                		targetInvestor.getLoanInterestRate());
-	                // logger.warn("Loan amount is: " + amount);
-	                Loan loan = reps.loanRepository.createLoan(targetInvestor, bigbank, amount, plant.getTechnology().getDepreciationTime(),
-	                        getCurrentTick(), plant);
-	                // Create the loan
-	                plant.createOrUpdateLoan(loan);
-				}
-				
+                double amount = determineLoanAnnuities(investmentCostPayedByDebt, plant.getTechnology().getDepreciationTime(),
+                		targetInvestor.getLoanInterestRate());
+                // logger.warn("Loan amount is: " + amount);
+                Loan loan = reps.loanRepository.createLoan(targetInvestor, bigbank, amount, plant.getTechnology().getDepreciationTime(),
+                        getCurrentTick(), plant);
+                // Create the loan
+                plant.createOrUpdateLoan(loan);
 				
 			}
 		}
