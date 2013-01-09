@@ -20,17 +20,17 @@ import org.springframework.data.neo4j.annotation.QueryType;
 import org.springframework.data.neo4j.repository.GraphRepository;
 import org.springframework.data.repository.query.Param;
 
-import emlab.domain.agent.RenewableTargetInvestor;
+import emlab.domain.agent.TargetInvestor;
 import emlab.domain.market.electricity.ElectricitySpotMarket;
 
 /**
  * @author JCRichstein
  *
  */
-public interface RenewableTargetInvestorRepository extends
-		GraphRepository<RenewableTargetInvestor> {
+public interface TargetInvestorRepository extends
+		GraphRepository<TargetInvestor> {
 	
 	@Query(value="result = g.v(market).in('INVESTOR_MARKET').next(); ; if(!result.hasNext()){return null;} else{return result.next();}", type=QueryType.Gremlin)
-	RenewableTargetInvestor findOneByMarket(@Param("market") ElectricitySpotMarket electricitySpotMarket);
+	TargetInvestor findOneByMarket(@Param("market") ElectricitySpotMarket electricitySpotMarket);
 
 }

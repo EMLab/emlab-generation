@@ -36,10 +36,10 @@ import com.tinkerpop.pipes.util.Table;
 import com.tinkerpop.pipes.util.Table.Row;
 
 import emlab.domain.agent.EnergyProducer;
-import emlab.domain.agent.RenewableTargetInvestor;
+import emlab.domain.agent.TargetInvestor;
 import emlab.domain.gis.Zone;
 import emlab.domain.market.electricity.ElectricitySpotMarket;
-import emlab.domain.policy.PowerGenerationTechnologyTarget;
+import emlab.domain.policy.PowerGeneratingTechnologyTarget;
 import emlab.domain.technology.PowerGeneratingTechnology;
 import emlab.domain.technology.PowerGridNode;
 import emlab.domain.technology.PowerPlant;
@@ -109,11 +109,11 @@ public class RenewableTargetInvestmentRoleTest {
 		pvTrend.setIncrement(100);
 		pvTrend.setMinValue(300);
 		pvTrend.persist();
-		PowerGenerationTechnologyTarget windTarget = new PowerGenerationTechnologyTarget();
+		PowerGeneratingTechnologyTarget windTarget = new PowerGeneratingTechnologyTarget();
 		windTarget.setPowerGeneratingTechnology(wind);
 		windTarget.setTrend(windTrend);
 		windTarget.persist();
-		PowerGenerationTechnologyTarget pvTarget = new PowerGenerationTechnologyTarget();
+		PowerGeneratingTechnologyTarget pvTarget = new PowerGeneratingTechnologyTarget();
 		pvTarget.setPowerGeneratingTechnology(pv);
 		pvTarget.setTrend(pvTrend);
 		pvTarget.persist();
@@ -170,7 +170,7 @@ public class RenewableTargetInvestmentRoleTest {
 		PowerPlant pvB2 = new PowerPlant();
 		pvB2.specifyAndPersist(-10, energyProducer2, powerGridNodeB, pv);
 		
-		RenewableTargetInvestor rti = new RenewableTargetInvestor();
+		TargetInvestor rti = new TargetInvestor();
 		rti.getPowerGenerationTechnologyTargets().add(windTarget);
 		rti.getPowerGenerationTechnologyTargets().add(pvTarget);
 		rti.setInvestorMarket(marketA);
@@ -182,7 +182,7 @@ public class RenewableTargetInvestmentRoleTest {
 	@Test
 	public void testActMethod() {
 		
-		RenewableTargetInvestor rti =  template.findAll(RenewableTargetInvestor.class).iterator().next();
+		TargetInvestor rti =  template.findAll(TargetInvestor.class).iterator().next();
 		ElectricitySpotMarket marketA = null;
 		for(ElectricitySpotMarket market : marketRepository.findAllElectricitySpotMarkets()){
 			if(market.getName().equals("marketA"))
@@ -232,13 +232,13 @@ public class RenewableTargetInvestmentRoleTest {
 		}
 		
 		
-		PowerGenerationTechnologyTarget pgttWindFromDB = powerGenerationTechnologyTargetRepository.findOneByTechnologyAndMarket(wind, marketA);
+		PowerGeneratingTechnologyTarget pgttWindFromDB = powerGenerationTechnologyTargetRepository.findOneByTechnologyAndMarket(wind, marketA);
 		assertEquals("Testing targetRepository", 400, pgttWindFromDB.getTrend().getStart(), 0.01);
 		
 		//Testing if new construct in for private investor works:
         double expectedInstalledCapacityOfTechnology = powerPlantRepository
                 .calculateCapacityOfExpectedOperationalPowerPlantsInMarketAndTechnology(marketA, pv, 1);
-        PowerGenerationTechnologyTarget technologyTarget = powerGenerationTechnologyTargetRepository.findOneByTechnologyAndMarket(pv, marketA);
+        PowerGeneratingTechnologyTarget technologyTarget = powerGenerationTechnologyTargetRepository.findOneByTechnologyAndMarket(pv, marketA);
         if(technologyTarget!=null){
         	double technologyTargetCapacity = technologyTarget.getTrend().getValue(1);
         	expectedInstalledCapacityOfTechnology =  (technologyTargetCapacity > expectedInstalledCapacityOfTechnology) ? technologyTargetCapacity : expectedInstalledCapacityOfTechnology;

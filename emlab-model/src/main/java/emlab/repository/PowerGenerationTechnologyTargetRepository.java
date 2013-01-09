@@ -21,7 +21,7 @@ import org.springframework.data.neo4j.repository.GraphRepository;
 import org.springframework.data.repository.query.Param;
 
 import emlab.domain.market.electricity.ElectricitySpotMarket;
-import emlab.domain.policy.PowerGenerationTechnologyTarget;
+import emlab.domain.policy.PowerGeneratingTechnologyTarget;
 import emlab.domain.technology.PowerGeneratingTechnology;
 
 /**
@@ -29,11 +29,11 @@ import emlab.domain.technology.PowerGeneratingTechnology;
  *
  */
 public interface PowerGenerationTechnologyTargetRepository extends
-		GraphRepository<PowerGenerationTechnologyTarget> {
+		GraphRepository<PowerGeneratingTechnologyTarget> {
 	
 	@Query(value="result = g.v(market).in('INVESTOR_MARKET').out('INVESTOR_TARGET').as('x').out('TARGET_TECHNOLOGY').idFilter(tech, FilterPipe.Filter.EQUAL).back('x'); ; if(!result.hasNext()){return null;} else{return result.next();}", type=QueryType.Gremlin)
-	PowerGenerationTechnologyTarget findOneByTechnologyAndMarket(@Param("tech") PowerGeneratingTechnology tech, @Param("market") ElectricitySpotMarket market);
+	PowerGeneratingTechnologyTarget findOneByTechnologyAndMarket(@Param("tech") PowerGeneratingTechnology tech, @Param("market") ElectricitySpotMarket market);
 
 	@Query(value="result = g.v(market).in('INVESTOR_MARKET').out('INVESTOR_TARGET')", type=QueryType.Gremlin)
-	Iterable<PowerGenerationTechnologyTarget> findAllByMarket(@Param("market") ElectricitySpotMarket market);
+	Iterable<PowerGeneratingTechnologyTarget> findAllByMarket(@Param("market") ElectricitySpotMarket market);
 }

@@ -32,8 +32,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import emlab.domain.agent.EnergyProducer;
-import emlab.domain.agent.RenewableTargetInvestor;
-import emlab.domain.policy.PowerGenerationTechnologyTarget;
+import emlab.domain.agent.TargetInvestor;
+import emlab.domain.policy.PowerGeneratingTechnologyTarget;
 import emlab.domain.technology.PowerGeneratingTechnology;
 import emlab.repository.EnergyProducerRepository;
 import emlab.trend.StepTrend;
@@ -87,30 +87,30 @@ public class RenewableTargetInvestorTest {
 		st2.setIncrement(100);
 		st2.setMinValue(300);
 		st2.persist();
-		PowerGenerationTechnologyTarget windTarget = new PowerGenerationTechnologyTarget();
+		PowerGeneratingTechnologyTarget windTarget = new PowerGeneratingTechnologyTarget();
 		windTarget.setPowerGeneratingTechnology(wind);
 		windTarget.setTrend(st1);
 		windTarget.persist();
-		PowerGenerationTechnologyTarget pvTarget = new PowerGenerationTechnologyTarget();
+		PowerGeneratingTechnologyTarget pvTarget = new PowerGeneratingTechnologyTarget();
 		pvTarget.setPowerGeneratingTechnology(pv);
 		pvTarget.setTrend(st2);
 		pvTarget.persist();
 		
-		HashSet<PowerGenerationTechnologyTarget> testSet = new HashSet<PowerGenerationTechnologyTarget>();
+		HashSet<PowerGeneratingTechnologyTarget> testSet = new HashSet<PowerGeneratingTechnologyTarget>();
 		testSet.add(windTarget);
 		
-		RenewableTargetInvestor rti = new RenewableTargetInvestor();
+		TargetInvestor rti = new TargetInvestor();
 		rti.getPowerGenerationTechnologyTargets().add(windTarget);
 		rti.setName("RenTarInv");
 		template.save(rti);
 		
-		Set<PowerGenerationTechnologyTarget> targetsFromDb= template.findAll(RenewableTargetInvestor.class).iterator().next().getPowerGenerationTechnologyTargets();
+		Set<PowerGeneratingTechnologyTarget> targetsFromDb= template.findAll(TargetInvestor.class).iterator().next().getPowerGenerationTechnologyTargets();
 		assertTrue(targetsFromDb.equals(testSet));
 		
 		rti.getPowerGenerationTechnologyTargets().add(pvTarget);
 		assertTrue(targetsFromDb.equals(testSet));
 		
-		targetsFromDb= template.findAll(RenewableTargetInvestor.class).iterator().next().getPowerGenerationTechnologyTargets();
+		targetsFromDb= template.findAll(TargetInvestor.class).iterator().next().getPowerGenerationTechnologyTargets();
 		
 		assertTrue(!targetsFromDb.equals(testSet));
 		testSet.add(pvTarget);
@@ -121,7 +121,7 @@ public class RenewableTargetInvestorTest {
 	@Test
 	public void testEnergyProducerAndRenewableTargetInvestorQueries(){
 		
-		RenewableTargetInvestor rti = new RenewableTargetInvestor();
+		TargetInvestor rti = new TargetInvestor();
 		rti.setName("R");
 		rti.persist();
 		
@@ -137,11 +137,11 @@ public class RenewableTargetInvestorTest {
 		int numberProducers = 0;
 		List<EnergyProducer> energyProducers = energyProducerRepository.findAllEnergyProducersExceptForRenewableTargetInvestorsAtRandom();
 		for(EnergyProducer energyProducer : energyProducers){
-			assertTrue(!(energyProducer instanceof RenewableTargetInvestor));
+			assertTrue(!(energyProducer instanceof TargetInvestor));
 			numberProducers++;
 		}
 		for(EnergyProducer energyProducer : energyProducers){
-			assertTrue(!(energyProducer instanceof RenewableTargetInvestor));
+			assertTrue(!(energyProducer instanceof TargetInvestor));
 			numberProducers++;
 		}
 		assertEquals("Check number of producers", 4, numberProducers);

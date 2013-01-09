@@ -27,7 +27,7 @@ import emlab.domain.agent.CommoditySupplier;
 import emlab.domain.agent.DecarbonizationModel;
 import emlab.domain.agent.EnergyConsumer;
 import emlab.domain.agent.EnergyProducer;
-import emlab.domain.agent.RenewableTargetInvestor;
+import emlab.domain.agent.TargetInvestor;
 import emlab.domain.market.CommodityMarket;
 import emlab.domain.market.electricity.ElectricitySpotMarket;
 import emlab.repository.Reps;
@@ -259,8 +259,8 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
             }
             resetWillingnessToInvest();
         }
-        for(RenewableTargetInvestor renewableTargetInvestor : template.findAll(RenewableTargetInvestor.class)){
-        	renewableTargetInvestmentRole.act(renewableTargetInvestor);
+        for(TargetInvestor targetInvestor : template.findAll(TargetInvestor.class)){
+        	renewableTargetInvestmentRole.act(targetInvestor);
         }
         timerInvest.stop();
         logger.warn("        took: {} seconds.", timerInvest.seconds());

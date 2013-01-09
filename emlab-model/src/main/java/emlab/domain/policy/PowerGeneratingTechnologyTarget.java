@@ -29,7 +29,7 @@ import agentspring.trend.Trend;
  *
  */
 @NodeEntity
-public class PowerGenerationTechnologyTarget {
+public class PowerGeneratingTechnologyTarget {
 	
 	/**
 	 * {@link powerGeneratingTechnology} defines the technology that the target applies to

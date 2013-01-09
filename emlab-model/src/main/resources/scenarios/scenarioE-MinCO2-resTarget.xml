@@ -880,7 +880,7 @@
 		p:dismantlingProlongingYearsAfterTechnicalLifetime="0"
 		p:dismantlingRequiredOperatingProfit="0" p:downpaymentFractionOfCash="0.5"
 		p:willingToInvest="true" p:priceMarkUp="${priceMarkUp}"  p:numberOfYearsBacklookingForForecasting="${numberOfYearsBacklookingForForecasting}"/>
-	<bean id="renewableTargetInvestorCountryA" class="emlab.domain.agent.RenewableTargetInvestor"
+	<bean id="renewableTargetInvestorCountryA" class="emlab.domain.agent.TargetInvestor"
 	p:name="Renewable Target Investor Country A" p:cash="${startCash}"
 	p:priceMarkUp="1.0"
 	p:investorMarket-ref="beneluxElectricitySpotMarket"
@@ -893,7 +893,7 @@
 	</property>
 	</bean>
 	
-	<bean id="windTargetCountryA" class="emlab.domain.policy.PowerGenerationTechnologyTarget"
+	<bean id="windTargetCountryA" class="emlab.domain.policy.PowerGeneratingTechnologyTarget"
 	p:trend-ref="windTrendCountryA" p:powerGeneratingTechnology-ref="windPGT"/>
 	
 	<bean id="windTrendCountryA" class="emlab.trend.StepTrend"

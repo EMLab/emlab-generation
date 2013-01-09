@@ -69,7 +69,7 @@ public class Reps {
     public SegmentClearingPointRepository segmentClearingPointRepository;
     
     @Autowired
-    public RenewableTargetInvestorRepository renewableTargetInvestorRepository;
+    public TargetInvestorRepository targetInvestorRepository;
     
     @Autowired
     public PowerGenerationTechnologyTargetRepository powerGenerationTechnologyTargetRepository;

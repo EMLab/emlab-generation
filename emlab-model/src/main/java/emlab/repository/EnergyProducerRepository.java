@@ -30,7 +30,7 @@ import emlab.domain.agent.EnergyProducer;
 public interface EnergyProducerRepository extends
 		GraphRepository<EnergyProducer> {
 	
-	@Query(value="result = g.idx('__types__')[[className:'emlab.domain.agent.EnergyProducer']].propertyFilter('__type__', FilterPipe.Filter.NOT_EQUAL, 'emlab.domain.agent.RenewableTargetInvestor').toList();" +
+	@Query(value="result = g.idx('__types__')[[className:'emlab.domain.agent.EnergyProducer']].propertyFilter('__type__', FilterPipe.Filter.NOT_EQUAL, 'emlab.domain.agent.TargetInvestor').toList();" +
 			"if(result == null){return null;} else {Collections.shuffle(result); return result;}", type=QueryType.Gremlin)
 	List<EnergyProducer> findAllEnergyProducersExceptForRenewableTargetInvestorsAtRandom();
 	

@@ -31,11 +31,11 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import emlab.domain.agent.RenewableTargetInvestor;
+import emlab.domain.agent.TargetInvestor;
 import emlab.domain.market.ClearingPoint;
 import emlab.domain.market.CommodityMarket;
 import emlab.domain.market.electricity.ElectricitySpotMarket;
-import emlab.domain.policy.PowerGenerationTechnologyTarget;
+import emlab.domain.policy.PowerGeneratingTechnologyTarget;
 import emlab.domain.technology.PowerGeneratingTechnology;
 import emlab.domain.technology.Substance;
 
@@ -120,24 +120,24 @@ public class RepositoryTesting {
 		marketB.persist();
 		
 		
-		PowerGenerationTechnologyTarget pgttWindA = new PowerGenerationTechnologyTarget();
+		PowerGeneratingTechnologyTarget pgttWindA = new PowerGeneratingTechnologyTarget();
 		pgttWindA.setPowerGeneratingTechnology(wind);
 		pgttWindA.persist();
 		
-		PowerGenerationTechnologyTarget pggtWindB = new PowerGenerationTechnologyTarget();
+		PowerGeneratingTechnologyTarget pggtWindB = new PowerGeneratingTechnologyTarget();
 		pggtWindB.setPowerGeneratingTechnology(wind);
 		pggtWindB.persist();
 		
-		RenewableTargetInvestor rtiA = new RenewableTargetInvestor();
+		TargetInvestor rtiA = new TargetInvestor();
 		rtiA.setInvestorMarket(marketA);
-		Set<PowerGenerationTechnologyTarget> powerGenerationTechnologyTargetsA = new HashSet<PowerGenerationTechnologyTarget>();
+		Set<PowerGeneratingTechnologyTarget> powerGenerationTechnologyTargetsA = new HashSet<PowerGeneratingTechnologyTarget>();
 		powerGenerationTechnologyTargetsA.add(pgttWindA);
 		rtiA.setPowerGenerationTechnologyTargets(powerGenerationTechnologyTargetsA);
 		rtiA.persist();
 		
-		RenewableTargetInvestor rtiB = new RenewableTargetInvestor();
+		TargetInvestor rtiB = new TargetInvestor();
 		rtiB.setInvestorMarket(marketB);
-		Set<PowerGenerationTechnologyTarget> powerGenerationTechnologyTargetsB = new HashSet<PowerGenerationTechnologyTarget>();
+		Set<PowerGeneratingTechnologyTarget> powerGenerationTechnologyTargetsB = new HashSet<PowerGeneratingTechnologyTarget>();
 		powerGenerationTechnologyTargetsB.add(pggtWindB);
 		rtiB.setPowerGenerationTechnologyTargets(powerGenerationTechnologyTargetsB);
 		rtiB.persist();

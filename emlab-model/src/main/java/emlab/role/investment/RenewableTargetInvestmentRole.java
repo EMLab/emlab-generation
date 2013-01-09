@@ -21,10 +21,10 @@ import org.springframework.transaction.annotation.Transactional;
 import emlab.domain.agent.BigBank;
 import emlab.domain.agent.EnergyProducer;
 import emlab.domain.agent.PowerPlantManufacturer;
-import emlab.domain.agent.RenewableTargetInvestor;
+import emlab.domain.agent.TargetInvestor;
 import emlab.domain.contract.CashFlow;
 import emlab.domain.contract.Loan;
-import emlab.domain.policy.PowerGenerationTechnologyTarget;
+import emlab.domain.policy.PowerGeneratingTechnologyTarget;
 import emlab.domain.technology.PowerGeneratingTechnology;
 import emlab.domain.technology.PowerPlant;
 import emlab.repository.Reps;
@@ -37,15 +37,15 @@ import agentspring.role.RoleComponent;
  *
  */
 @RoleComponent
-public class RenewableTargetInvestmentRole extends AbstractRole<RenewableTargetInvestor> implements Role<RenewableTargetInvestor> {
+public class RenewableTargetInvestmentRole extends AbstractRole<TargetInvestor> implements Role<TargetInvestor> {
 
 	@Autowired Reps reps;
 	
 	@Override
 	@Transactional
-	public void act(RenewableTargetInvestor targetInvestor) {
+	public void act(TargetInvestor targetInvestor) {
 		
-		for(PowerGenerationTechnologyTarget target : targetInvestor.getPowerGenerationTechnologyTargets()){
+		for(PowerGeneratingTechnologyTarget target : targetInvestor.getPowerGenerationTechnologyTargets()){
 			PowerGeneratingTechnology pgt = target.getPowerGeneratingTechnology();
 			long futureTimePoint = getCurrentTick()+pgt.getExpectedLeadtime()+pgt.getExpectedPermittime();
 			double expectedInstalledCapacity = reps.powerPlantRepository.calculateCapacityOfExpectedOperationalPowerPlantsInMarketAndTechnology(targetInvestor.getInvestorMarket(), pgt, futureTimePoint);

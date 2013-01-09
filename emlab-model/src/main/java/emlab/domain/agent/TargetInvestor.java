@@ -24,24 +24,24 @@ import org.springframework.data.neo4j.annotation.RelatedTo;
 import agentspring.agent.Agent;
 import emlab.domain.gis.Zone;
 import emlab.domain.market.electricity.ElectricitySpotMarket;
-import emlab.domain.policy.PowerGenerationTechnologyTarget;
+import emlab.domain.policy.PowerGeneratingTechnologyTarget;
 
 @NodeEntity
-public class RenewableTargetInvestor extends EnergyProducer implements Agent {
+public class TargetInvestor extends EnergyProducer implements Agent {
 	
-	@RelatedTo(type="INVESTOR_TARGET",elementClass=PowerGenerationTechnologyTarget.class, direction=Direction.OUTGOING)
-	private Set<PowerGenerationTechnologyTarget> powerGenerationTechnologyTargets;
+	@RelatedTo(type="INVESTOR_TARGET",elementClass=PowerGeneratingTechnologyTarget.class, direction=Direction.OUTGOING)
+	private Set<PowerGeneratingTechnologyTarget> powerGeneratingTechnologyTargets;
 	
 	@RelatedTo(type="INVESTOR_MARKET", elementClass=ElectricitySpotMarket.class, direction=Direction.OUTGOING)
 	private ElectricitySpotMarket investorMarket;
 
-	public Set<PowerGenerationTechnologyTarget> getPowerGenerationTechnologyTargets() {
-		return powerGenerationTechnologyTargets;
+	public Set<PowerGeneratingTechnologyTarget> getPowerGenerationTechnologyTargets() {
+		return powerGeneratingTechnologyTargets;
 	}
 
 	public void setPowerGenerationTechnologyTargets(
-			Set<PowerGenerationTechnologyTarget> powerGenerationTechnologyTargets) {
-		this.powerGenerationTechnologyTargets = powerGenerationTechnologyTargets;
+			Set<PowerGeneratingTechnologyTarget> powerGeneratingTechnologyTargets) {
+		this.powerGeneratingTechnologyTargets = powerGeneratingTechnologyTargets;
 	}
 
 
