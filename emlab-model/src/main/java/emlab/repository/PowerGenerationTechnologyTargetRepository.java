@@ -34,4 +34,6 @@ public interface PowerGenerationTechnologyTargetRepository extends
 	@Query(value="result = g.v(market).in('INVESTOR_MARKET').out('INVESTOR_TARGET').as('x').out('TARGET_TECHNOLOGY').idFilter(tech, FilterPipe.Filter.EQUAL).back('x'); ; if(!result.hasNext()){return null;} else{return result.next();}", type=QueryType.Gremlin)
 	PowerGenerationTechnologyTarget findOneByTechnologyAndMarket(@Param("tech") PowerGeneratingTechnology tech, @Param("market") ElectricitySpotMarket market);
 
+	@Query(value="result = g.v(market).in('INVESTOR_MARKET').out('INVESTOR_TARGET')", type=QueryType.Gremlin)
+	Iterable<PowerGenerationTechnologyTarget> findAllByMarket(@Param("market") ElectricitySpotMarket market);
 }

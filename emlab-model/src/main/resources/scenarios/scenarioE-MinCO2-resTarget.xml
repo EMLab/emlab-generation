@@ -883,7 +883,9 @@
 	<bean id="renewableTargetInvestorCountryA" class="emlab.domain.agent.RenewableTargetInvestor"
 	p:name="Renewable Target Investor Country A" p:cash="${startCash}"
 	p:priceMarkUp="1.0"
-	p:investorMarket-ref="beneluxElectricitySpotMarket">
+	p:investorMarket-ref="beneluxElectricitySpotMarket"
+	p:equityInterestRate="0.12" p:loanInterestRate="0.09"
+	p:debtRatioOfInvestments="0.7">
 	<property name="powerGenerationTechnologyTargets">
 		<set>
 			<ref bean="windTargetCountryA"/>

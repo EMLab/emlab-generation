@@ -445,6 +445,20 @@ public class InvestInPowerGenerationTechnologiesRole extends AbstractEnergyProdu
                 marginalCostMap.put(plant, plantMarginalCost);
                 capacitySum += plant.getTechnology().getCapacity();
             }
+            
+            //get difference between technology target and expected operational capacity
+            for(PowerGenerationTechnologyTarget pggt : reps.powerGenerationTechnologyTargetRepository.findAllByMarket(market)){
+            	double expectedTechnologyCapacity = reps.powerPlantRepository.calculateCapacityOfExpectedOperationalPowerPlantsInMarketAndTechnology(market, pggt.getPowerGeneratingTechnology(), time);
+            	double targetDifference = pggt.getTrend().getValue(time) - expectedTechnologyCapacity;
+            	if(targetDifference > 0){
+            		PowerPlant plant = new PowerPlant();
+                    plant.specifyNotPersist(getCurrentTick(), new EnergyProducer(), reps.powerGridNodeRepository.findFirstPowerGridNodeByElectricitySpotMarket(market), pggt.getPowerGeneratingTechnology());
+                    plant.setActualNominalCapacity(targetDifference);
+                    double plantMarginalCost = determineExpectedMarginalCost(plant, fuelPrices, co2price);
+                    marginalCostMap.put(plant, plantMarginalCost);
+                    capacitySum += targetDifference;
+            	}
+            }
 
             MapValueComparator comp = new MapValueComparator(marginalCostMap);
             meritOrder = new TreeMap<PowerPlant, Double>(comp);
