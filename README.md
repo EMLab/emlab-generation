@@ -8,6 +8,6 @@ Research developed by *TU Delft, faculty Technology Policy and Management, Energ
 Please contact Emile Chappin, e.j.l.chappin@tudelft.nl to get involved in this project.
 
 Supported by:
-* Energy Delta Gas Research program, project A1 – Understanding gas sector intra-market and inter-market interactions
+* Energy Delta Gas Research program, project A1 – Understanding gas sector intra-market and inter-market interactions (see http://www.edgar-program.com/nl/projects/A1)
 * Knowledge for Climate program, project INCAH – Infrastructure Climate Adaptation in Hotspots.
 
