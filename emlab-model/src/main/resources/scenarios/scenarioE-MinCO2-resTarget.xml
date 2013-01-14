@@ -1238,11 +1238,11 @@
 		</property>
 	</bean>
 	<bean id="windPGT" class="emlab.domain.technology.PowerGeneratingTechnology"
-		p:name="Wind" p:capacity="150" p:efficiency="1"
+		p:name="Wind" p:capacity="600" p:efficiency="1"
 		p:efficiencyModifierExogenous="0.000" p:co2CaptureEffciency="0" 
-		p:baseInvestmentCost="191392500" p:investmentCostModifierExogenous="-0.0016906644"
-		p:downPayment="57417750" p:depreciationTime="15"
-		p:minimumRunningHours="0" p:fixedOperatingCost="2831250"
+		p:baseInvestmentCost="765570000" p:investmentCostModifierExogenous="-0.0016906644"
+		p:downPayment="229671000" p:depreciationTime="15"
+		p:minimumRunningHours="0" p:fixedOperatingCost="11325000"
 		p:fixedOperatingCostModifierAfterLifetime=".05" p:expectedLifetime="25"
 		p:expectedLeadtime="2" p:expectedPermittime="1" p:minimumFuelQuality="1"
 		p:maximumInstalledCapacityFractionInCountry="1"
@@ -1252,11 +1252,11 @@
 		p:applicableForLongTermContract="true">
 	</bean>
 	<bean id="windOffshorePGT" class="emlab.domain.technology.PowerGeneratingTechnology"
-		p:name="WindOffshore" p:capacity="150" p:efficiency="1"
+		p:name="WindOffshore" p:capacity="600" p:efficiency="1"
 		p:efficiencyModifierExogenous="0.000" p:co2CaptureEffciency="0" 
-		p:baseInvestmentCost="386182500" p:investmentCostModifierExogenous="-0.0231228102"
-		p:downPayment="115854750" p:depreciationTime="15"
-		p:minimumRunningHours="0" p:fixedOperatingCost="6455250"
+		p:baseInvestmentCost="1544730000" p:investmentCostModifierExogenous="-0.0231228102"
+		p:downPayment="463419000" p:depreciationTime="15"
+		p:minimumRunningHours="0" p:fixedOperatingCost="25821000"
 		p:fixedOperatingCostModifierAfterLifetime=".05" p:expectedLifetime="25"
 		p:expectedLeadtime="2" p:expectedPermittime="1" p:minimumFuelQuality="1"
 		p:maximumInstalledCapacityFractionInCountry="1"
@@ -1266,11 +1266,11 @@
 		p:applicableForLongTermContract="true">
 	</bean>
 	<bean id="photovoltaicPGT" class="emlab.domain.technology.PowerGeneratingTechnology"
-		p:name="Photovoltaic" p:capacity="100" p:efficiency="1"
+		p:name="Photovoltaic" p:capacity="500" p:efficiency="1"
 		p:efficiencyModifierExogenous="0.000" p:co2CaptureEffciency="0" 
-		p:baseInvestmentCost="292940000" p:investmentCostModifierExogenous="-0.0253875886"
-		p:downPayment="87882000" p:depreciationTime="15"
-		p:minimumRunningHours="0" p:fixedOperatingCost="2944500"
+		p:baseInvestmentCost="1464700000" p:investmentCostModifierExogenous="-0.0253875886"
+		p:downPayment="439410000" p:depreciationTime="15"
+		p:minimumRunningHours="0" p:fixedOperatingCost="14722500"
 		p:fixedOperatingCostModifierAfterLifetime=".05" p:expectedLifetime="25"
 		p:expectedLeadtime="2" p:expectedPermittime="1" p:minimumFuelQuality="1"
 		p:maximumInstalledCapacityFractionInCountry="1"
