@@ -9,5 +9,5 @@ Please contact Emile Chappin, e.j.l.chappin@tudelft.nl to get involved in this p
 
 Supported by:
 * Energy Delta Gas Research program, project A1 – Understanding gas sector intra-market and inter-market interactions (see http://www.edgar-program.com/nl/projects/A1)
-* Knowledge for Climate program, project INCAH – Infrastructure Climate Adaptation in Hotspots.
+* Knowledge for Climate program, project INCAH – Infrastructure Climate Adaptation in Hotspots (see http://knowledgeforclimate.climateresearchnetherlands.nl/infrastructurenetworks)
 
