@@ -5,7 +5,7 @@ EMLab is an suite of Agent-Based Models dealing with policy questions on the lon
 Code developed by and (C)copyright of TU Delft. 
 Research developed by *TU Delft, faculty Technology Policy and Management, Energy & Industry Section*
 
-Please contact e.j.l.chappin@tudelft.nl to get involved in this project.
+Please contact Emile Chappin, e.j.l.chappin@tudelft.nl to get involved in this project.
 
 Supported by:
 * Energy Delta Gas Research program, project A1 – Understanding gas sector intra-market and inter-market interactions
