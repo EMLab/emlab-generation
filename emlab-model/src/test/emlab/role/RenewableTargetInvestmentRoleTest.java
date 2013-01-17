@@ -46,7 +46,7 @@ import emlab.domain.technology.PowerPlant;
 import emlab.repository.MarketRepository;
 import emlab.repository.PowerGenerationTechnologyTargetRepository;
 import emlab.repository.PowerPlantRepository;
-import emlab.role.investment.RenewableTargetInvestmentRole;
+import emlab.role.investment.TargetInvestmentRole;
 import emlab.trend.StepTrend;
 
 /**
@@ -65,7 +65,7 @@ public class RenewableTargetInvestmentRoleTest {
 	
 	@Autowired Neo4jTemplate template;
 	
-	@Autowired RenewableTargetInvestmentRole renewableTargetInvestmentRole;
+	@Autowired TargetInvestmentRole targetInvestmentRole;
 	
 	@Autowired PowerGenerationTechnologyTargetRepository powerGenerationTechnologyTargetRepository;
 	
@@ -203,7 +203,7 @@ public class RenewableTargetInvestmentRoleTest {
 		assertEquals("Test original wind capacity in market A: ", 400, windCapacity, 0.01);
 		assertEquals("Test wind capacity after investment in year 0", 300, powerPlantRepository.calculateCapacityOfExpectedOperationalPowerPlantsInMarketAndTechnology(marketA, pv, 0), 0.1);
 		
-		rti.act(renewableTargetInvestmentRole);
+		rti.act(targetInvestmentRole);
 		
 		assertEquals("Test wind capacity after investment in year 3", 400, powerPlantRepository.calculateCapacityOfExpectedOperationalPowerPlantsInMarketAndTechnology(marketA, wind, 2), 0.1);
 		//Expected value: (Start + ExpectedTimeForWind*Increment: 400 + 3 * 100 = 700, but 800 because of plant size.

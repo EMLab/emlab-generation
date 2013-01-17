@@ -33,7 +33,7 @@ import emlab.domain.market.electricity.ElectricitySpotMarket;
 import emlab.repository.Reps;
 import emlab.role.investment.DismantlePowerPlantPastTechnicalLifetimeRole;
 import emlab.role.investment.InvestInPowerGenerationTechnologiesRole;
-import emlab.role.investment.RenewableTargetInvestmentRole;
+import emlab.role.investment.TargetInvestmentRole;
 import emlab.role.market.ClearCommodityMarketRole;
 import emlab.role.market.ClearIterativeCO2AndElectricitySpotMarketTwoCountryRole;
 import emlab.role.market.ProcessAcceptedBidsRole;
@@ -97,7 +97,7 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
     @Autowired
     private PayOperatingAndMaintainanceCostsRole payOperatingAndMaintainanceCostsRole;
     @Autowired
-    private RenewableTargetInvestmentRole renewableTargetInvestmentRole;
+    private TargetInvestmentRole targetInvestmentRole;
 
     @Autowired
     Reps reps;
@@ -111,8 +111,8 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
 
         if (getCurrentTick() > model.getSimulationLength()) {
             logger.warn("Simulation is terminating!!!");
-            agentspring.simulation.Schedule.getSchedule().stop();
-            //System.exit(0);
+            //agentspring.simulation.Schedule.getSchedule().stop();
+            System.exit(0);
         }
 
         logger.warn("***** STARTING TICK {} *****", getCurrentTick());
@@ -260,7 +260,7 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
             resetWillingnessToInvest();
         }
         for(TargetInvestor targetInvestor : template.findAll(TargetInvestor.class)){
-        	renewableTargetInvestmentRole.act(targetInvestor);
+        	targetInvestmentRole.act(targetInvestor);
         }
         timerInvest.stop();
         logger.warn("        took: {} seconds.", timerInvest.seconds());

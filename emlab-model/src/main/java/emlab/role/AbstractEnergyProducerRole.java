@@ -506,19 +506,29 @@ public abstract class AbstractEnergyProducerRole extends AbstractRole<EnergyProd
     }
 
 
-
     /**
      * Calculates expected CO2 price based on a geometric trend estimation, of the past years
+     * @param futureTimePoint
+     * @param yearsLookingBackForRegression
+     * @return
+     */
+    protected HashMap<ElectricitySpotMarket, Double> determineExpectedCO2PriceInclTax(long futureTimePoint, long yearsLookingBackForRegression){
+    	return determineExpectedCO2PriceInclTax(futureTimePoint, yearsLookingBackForRegression, 0);
+    }
+
+    /**
+     * Calculates expected CO2 price based on a geometric trend estimation, of the past years. The adjustmentForDetermineFuelMix needs to be set to 1, if this is used in the determine
+     * fuel mix role.
      * 
      * @param futureTimePoint Year the prediction is made for
      * @param yearsLookingBackForRegression How many years are used as input for the regression, incl. the current tick.
      * @return
      */
-    protected HashMap<ElectricitySpotMarket, Double> determineExpectedCO2PriceInclTax(long futureTimePoint, long yearsLookingBackForRegression) {
+    protected HashMap<ElectricitySpotMarket, Double> determineExpectedCO2PriceInclTax(long futureTimePoint, long yearsLookingBackForRegression, int adjustmentForDetermineFuelMix) {
         HashMap<ElectricitySpotMarket, Double> co2Prices = new HashMap<ElectricitySpotMarket, Double>();
         CO2Auction co2Auction = reps.marketRepository.findCO2Auction();
       //Find Clearing Points for the last 5 years (counting current year as one of the last 5 years).
-    	Iterable<ClearingPoint> cps = reps.clearingPointRepository.findAllClearingPointsForMarketAndTimeRange(co2Auction, getCurrentTick()-yearsLookingBackForRegression+1, getCurrentTick());
+    	Iterable<ClearingPoint> cps = reps.clearingPointRepository.findAllClearingPointsForMarketAndTimeRange(co2Auction, getCurrentTick()-yearsLookingBackForRegression+1-adjustmentForDetermineFuelMix, getCurrentTick()-adjustmentForDetermineFuelMix);
     	//Create regression object
     	GeometricTrendRegression gtr = new GeometricTrendRegression();
 		for (ClearingPoint clearingPoint : cps) {

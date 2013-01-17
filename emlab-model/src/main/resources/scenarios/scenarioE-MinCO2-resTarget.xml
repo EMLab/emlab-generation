@@ -880,6 +880,9 @@
 		p:dismantlingProlongingYearsAfterTechnicalLifetime="0"
 		p:dismantlingRequiredOperatingProfit="0" p:downpaymentFractionOfCash="0.5"
 		p:willingToInvest="true" p:priceMarkUp="${priceMarkUp}"  p:numberOfYearsBacklookingForForecasting="${numberOfYearsBacklookingForForecasting}"/>
+	
+	<!-- Renewable Targets Country A -->
+	
 	<bean id="renewableTargetInvestorCountryA" class="emlab.domain.agent.TargetInvestor"
 	p:name="Renewable Target Investor Country A" p:cash="${startCash}"
 	p:priceMarkUp="1.0"
@@ -889,15 +892,81 @@
 	<property name="powerGenerationTechnologyTargets">
 		<set>
 			<ref bean="windTargetCountryA"/>
+			<ref bean="windOffshoreTargetCountryA" />
+			<ref bean="biomassTargetCountryA" />
+			<ref bean="pvTargetCountryA" />
 		</set>
 	</property>
 	</bean>
 	
+	
 	<bean id="windTargetCountryA" class="emlab.domain.policy.PowerGeneratingTechnologyTarget"
-	p:trend-ref="windTrendCountryA" p:powerGeneratingTechnology-ref="windPGT"/>
+	p:trend-ref="windTrendCountryA" p:powerGeneratingTechnology-ref="windPGT" />
 	
 	<bean id="windTrendCountryA" class="emlab.trend.StepTrend"
-	p:duration="1" p:minValue="1000" p:increment="1000" p:start="4000" />
+	p:duration="1" p:minValue="1995" p:increment="445" p:start="1995" />
+	
+	<bean id="windOffshoreTargetCountryA" class="emlab.domain.policy.PowerGeneratingTechnologyTarget"
+	p:trend-ref="windOffshoreTrendCountryA" p:powerGeneratingTechnology-ref="windPGT"/>
+	
+	<bean id="windOffshoreTrendCountryA" class="emlab.trend.StepTrend"
+	p:duration="1" p:minValue="228" p:increment="550" p:start="228" /> 
+	
+	<bean id="biomassTargetCountryA" class="emlab.domain.policy.PowerGeneratingTechnologyTarget"
+	p:trend-ref="biomassTrendCountryA" p:powerGeneratingTechnology-ref="biomassPGT"/>
+	
+	<bean id="biomassTrendCountryA" class="emlab.trend.StepTrend"
+	p:duration="1" p:minValue="1543" p:increment="149.8888888889" p:start="1543	" /> 
+	
+	<bean id="pvTargetCountryA" class="emlab.domain.policy.PowerGeneratingTechnologyTarget"
+	p:trend-ref="pvTrendCountryA" p:powerGeneratingTechnology-ref="photovoltaicPGT"/>
+	
+	<bean id="pvTrendCountryA" class="emlab.trend.StepTrend"
+	p:duration="1" p:minValue="149" p:increment="63.6666666667" p:start="149" />
+	
+	<!-- Renewable Targets Country B -->
+	
+	<bean id="renewableTargetInvestorCountryB" class="emlab.domain.agent.TargetInvestor"
+	p:name="Renewable Target Investor Country B" p:cash="${startCash}"
+	p:priceMarkUp="1.0"
+	p:investorMarket-ref="germanElectricitySpotMarket"
+	p:equityInterestRate="0.12" p:loanInterestRate="0.09"
+	p:debtRatioOfInvestments="0.7">
+	<property name="powerGenerationTechnologyTargets">
+		<set>
+			<ref bean="windTargetCountryB"/>
+			<ref bean="pvTargetCountryB" />
+			<ref bean="windOffshoreTargetCountryB"/>
+			<ref bean="biomassTargetCountryB"/>
+		</set>
+	</property>
+	</bean>
+	
+	<bean id="windTargetCountryB" class="emlab.domain.policy.PowerGeneratingTechnologyTarget"
+	p:trend-ref="windTrendCountryB" p:powerGeneratingTechnology-ref="windPGT"/>
+	
+	<bean id="windTrendCountryB" class="emlab.trend.StepTrend"
+	p:duration="1" p:minValue="29175" p:increment="822.4" p:start="29175" /> 
+	
+	<bean id="windOffshoreTargetCountryB" class="emlab.domain.policy.PowerGeneratingTechnologyTarget"
+	p:trend-ref="windOffshoreTrendCountryB" p:powerGeneratingTechnology-ref="windPGT"/>
+	
+	<bean id="windOffshoreTrendCountryB" class="emlab.trend.StepTrend"
+	p:duration="1" p:minValue="432" p:increment="822.4" p:start="432" /> 
+	
+	<bean id="biomassTargetCountryB" class="emlab.domain.policy.PowerGeneratingTechnologyTarget"
+	p:trend-ref="biomassTrendCountryB" p:powerGeneratingTechnology-ref="biomassPGT"/>
+	
+	<bean id="biomassTrendCountryB" class="emlab.trend.StepTrend"
+	p:duration="1" p:minValue="6620" p:increment="251.3" p:start="6620" /> 
+	
+	<bean id="pvTargetCountryB" class="emlab.domain.policy.PowerGeneratingTechnologyTarget"
+	p:trend-ref="pvTrendCountryB" p:powerGeneratingTechnology-ref="photovoltaicPGT"/>
+	
+	<bean id="pvTrendCountryB" class="emlab.trend.StepTrend"
+	p:duration="1" p:minValue="20284" p:increment="3596.9" p:start="20284" />
+	
+	<!-- Initial portfolios -->
 
 	<bean id="powerPlantManufacturer" class="emlab.domain.agent.PowerPlantManufacturer"
 		p:name="Power Plant Manufacturer" />
@@ -964,44 +1033,50 @@
 	</bean>
 
 	<bean id="germanPowerPortfolio" class="emlab.domain.factory.ElectricityProducerFactory">
-		<property name="capacityMargin" value="0.25" />
+		<property name="capacityMargin" value="0.97" />
 		<property name="portfolioShares">
 			<map>
 				<entry>
 					<key>
 						<ref bean="coalPulverizedSuperCritical" />
 					</key>
-					<value>0.45</value>
+					<value>0.352</value>
 				</entry>
 				<entry>
 					<key>
 						<ref bean="CCGT" />
 					</key>
-					<value>0.15</value>
+					<value>0.1071</value>
 				</entry>
 				<entry>
 					<key>
 						<ref bean="OCGT" />
 					</key>
-					<value>0.05</value>
+					<value>0.0851</value>
 				</entry>
 				<entry>
 					<key>
 						<ref bean="biomassPGT" />
 					</key>
-					<value>0.05</value>
+					<value>0.0341</value>
 				</entry>
 				<entry>
 					<key>
 						<ref bean="nuclearPGT" />
 					</key>
-					<value>0.20</value>
+					<value>0.0731</value>
 				</entry>
 				<entry>
 					<key>
 						<ref bean="windPGT" />
 					</key>
-					<value>0.10</value>
+					<value>0.1851</value>
+				</entry>
+				<entry>
+					<key>
+						<ref bean="photovoltaicPGT" />
+					</key>
+					<value>0.1591</value>
 				</entry>
 			</map>
 		</property>
@@ -1155,7 +1230,7 @@
 		</property>
 	</bean>
 	<bean id="CCGT" class="emlab.domain.technology.PowerGeneratingTechnology"
-		p:name="CCGT" p:capacity="776" p:efficiency=".56"
+		p:name="CCGT" p:capacity="776" p:efficiency=".59"
 		p:efficiencyModifierExogenous="0.0019858468" p:co2CaptureEffciency="0"
 		p:baseInvestmentCost="527292000"
 		p:investmentCostModifierExogenous="0" p:downPayment="158187600"
@@ -1275,8 +1350,8 @@
 		p:expectedLeadtime="2" p:expectedPermittime="1" p:minimumFuelQuality="1"
 		p:maximumInstalledCapacityFractionInCountry="1"
 		p:maximumInstalledCapacityFractionPerAgent="1"
-		p:baseSegmentDependentAvailability="0.08"
-		p:peakSegmentDependentAvailability="0.16"
+		p:baseSegmentDependentAvailability="0.16"
+		p:peakSegmentDependentAvailability="0.08"
 		p:applicableForLongTermContract="true">
 	</bean>
 	<bean id="nuclearPGT" class="emlab.domain.technology.PowerGeneratingTechnology"
@@ -1303,7 +1378,7 @@
 	<!-- Parameter file -->
 	<bean id="projectPropertyConfigurer"
 		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-		<property name="location" value="classpath:scenarios/parametersC-MinCO2.properties" />
+		<property name="location" value="classpath:scenarios/parametersE-MinCO2-resTarget.properties" />
 	</bean>
 
 </beans>

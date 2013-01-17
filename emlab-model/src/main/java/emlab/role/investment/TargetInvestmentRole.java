@@ -37,7 +37,7 @@ import agentspring.role.RoleComponent;
  *
  */
 @RoleComponent
-public class RenewableTargetInvestmentRole extends AbstractRole<TargetInvestor> implements Role<TargetInvestor> {
+public class TargetInvestmentRole extends AbstractRole<TargetInvestor> implements Role<TargetInvestor> {
 
 	@Autowired Reps reps;
 	
