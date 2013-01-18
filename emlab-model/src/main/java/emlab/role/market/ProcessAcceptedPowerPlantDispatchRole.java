@@ -44,6 +44,8 @@ public class ProcessAcceptedPowerPlantDispatchRole extends AbstractMarketRole<El
 
                 reps.nonTransactionalCreateRepository.createCashFlow(esm, plan.getBidder(), plan.getAcceptedAmount() * scp.getPrice()
                         * segment.getLengthInHours(), CashFlow.ELECTRICITY_SPOT, getCurrentTick(), plan.getPowerPlant());
+                
+                
             }
 
         }

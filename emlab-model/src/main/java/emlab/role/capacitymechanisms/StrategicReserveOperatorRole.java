@@ -1,27 +1,25 @@
 package emlab.role.capacitymechanisms;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-
-import org.omg.CORBA.ORB;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import agentspring.role.AbstractRole;
 import agentspring.role.Role;
-import emlab.domain.agent.EnergyConsumer;
+
 import emlab.domain.agent.StrategicReserveOperator;
-import emlab.domain.contract.LongTermContract;
+import emlab.domain.contract.CashFlow;
+
 import emlab.domain.market.Bid;
 import emlab.domain.market.electricity.ElectricitySpotMarket;
+import emlab.domain.market.electricity.PowerPlantDispatchPlan;
 import emlab.domain.market.electricity.Segment;
-import emlab.domain.market.electricity.SegmentLoad;
+
 import emlab.repository.BidRepository;
 import emlab.repository.MarketRepository;
+import emlab.repository.PowerPlantDispatchPlanRepository;
 import emlab.repository.Reps;
 import emlab.repository.SegmentLoadRepository;
-import emlab.repository.StrategicReserveOperatorRepository;
+
 /**
  * 
  * @author pbhagwat
@@ -42,6 +40,9 @@ public abstract class StrategicReserveOperatorRole extends AbstractRole<Strategi
 	@Autowired
 	BidRepository bidRepository;
 
+	@Autowired 
+	PowerPlantDispatchPlanRepository plantDispatchPlanRepository;
+
 	@Transactional
 	public void act(StrategicReserveOperator strategicReserveOperator) {
 
@@ -51,7 +52,7 @@ public abstract class StrategicReserveOperatorRole extends AbstractRole<Strategi
 		for (ElectricitySpotMarket currentMarket: market){
 
 			double peakLoadforMarket = segmentLoadRepository.calculatePeakLoadbyMarketandTime(currentMarket, getCurrentTick());
-
+			double segmentCounter=0;
 			// Calculates volume to be contracted
 
 			strategicReserveOperator.setReserveVolume(peakLoadforMarket*strategicReserveOperator.getReserveVolumePercent());
@@ -62,45 +63,68 @@ public abstract class StrategicReserveOperatorRole extends AbstractRole<Strategi
 
 			// Contract Powers Power Plants
 
-			Iterable<Bid> sortedListofBidPairs = bidRepository.findOffersDescendingForMarketForTime(currentMarket, getCurrentTick());
-			boolean isORMarketCleared = false;
-			double sumofContractedBids=0;
-			double volumetobeContracted = strategicReserveOperator.getReserveVolume();
-			double clearingEpsilon = 0.001;
-			double dispatchPrice = strategicReserveOperator.getReservePrice();
+			// Iterable<Bid> sortedListofBidPairs = bidRepository.findOffersDescendingForMarketForTime(currentMarket, getCurrentTick());
 
-			for (Bid currentBid: sortedListofBidPairs){
+			//finds List of all segments
+			//List<Segment> segments = Utils.asList(reps.segmentRepository.findAll());
+			//for(Segment currentSegment: reps.segmentRepository.findAll()){
+			//segmentCounter += 1;
+			//}
+			
+			segmentCounter = reps.segmentRepository.count();
 
-				if (isORMarketCleared == false){
+			for(Segment currentSegment: reps.segmentRepository.findAll()){
 
-					if (volumetobeContracted-(sumofContractedBids + currentBid.getAmount()) >= clearingEpsilon){
-						currentBid.setORstatus(Bid.CONTRACTED);
-						sumofContractedBids += currentBid.getAmount();
-						currentBid.setPrice(dispatchPrice);
+
+				Iterable<PowerPlantDispatchPlan> sortedListofPPDP = plantDispatchPlanRepository.findDescendingSortedPowerPlantDispatchPlansForSegmentForTime(currentSegment, getCurrentTick());
+
+				boolean isORMarketCleared = false;
+				double sumofContractedBids=0;
+				double volumetobeContracted = strategicReserveOperator.getReserveVolume();
+				double clearingEpsilon = 0.001;
+				double dispatchPrice = strategicReserveOperator.getReservePrice();
+
+				for (PowerPlantDispatchPlan currentPPDP: sortedListofPPDP){
+
+					if (isORMarketCleared == false){
+
+						if (volumetobeContracted-(sumofContractedBids + currentPPDP.getAmount()) >= clearingEpsilon){
+							currentPPDP.setORstatus(Bid.CONTRACTED);
+							sumofContractedBids += currentPPDP.getAmount();
+							currentPPDP.setOldPrice(currentPPDP.getPrice());
+							currentPPDP.setPrice(dispatchPrice);
+							// Pays O&M costs to the generated for the contracted capacity
+							double money = ((currentPPDP.getPowerPlant().getTechnology().getFixedOperatingCost())*currentPPDP.getAmount())/segmentCounter;
+							reps.nonTransactionalCreateRepository.createCashFlow(strategicReserveOperator, currentPPDP.getPowerPlant().getOwner(), money, CashFlow.STRRESPAYMENT, getCurrentTick(), currentPPDP.getPowerPlant());
+
+						}
+
+						else if (volumetobeContracted-(sumofContractedBids + currentPPDP.getAmount()) < clearingEpsilon){
+							currentPPDP.setORstatus(Bid.PARTLY_CONTRACTED);
+							sumofContractedBids += currentPPDP.getAmount();
+							currentPPDP.setOldPrice(currentPPDP.getPrice());
+							currentPPDP.setPrice(dispatchPrice);
+							isORMarketCleared = true;
+							// Pays O&M costs to the generated for the contracted capacity
+							double money = ((currentPPDP.getPowerPlant().getTechnology().getFixedOperatingCost())*currentPPDP.getAmount())/segmentCounter;
+							reps.nonTransactionalCreateRepository.createCashFlow(strategicReserveOperator, currentPPDP.getPowerPlant().getOwner(), money, CashFlow.STRRESPAYMENT, getCurrentTick(), currentPPDP.getPowerPlant());
+						}
+
 					}
-					
-					else if (volumetobeContracted-(sumofContractedBids + currentBid.getAmount()) < clearingEpsilon){
-						currentBid.setORstatus(Bid.PARTLY_CONTRACTED);
-						sumofContractedBids += currentBid.getAmount();
-						currentBid.setPrice(dispatchPrice);
+					else {
+						currentPPDP.setORstatus(Bid.NOT_CONTRACTED);
+					}
+
+					if (volumetobeContracted-sumofContractedBids < clearingEpsilon){
 						isORMarketCleared = true;
 					}
-						
-				}
-				else {
-					currentBid.setORstatus(Bid.NOT_CONTRACTED);
-				}
-				
-				if (volumetobeContracted-sumofContractedBids < clearingEpsilon){
-					isORMarketCleared = true;
 				}
 			}
-
 
 		}
 
 		// Update cashflows
-		// Pays O&M costs to the generated for the contracted capacity
+		
 		// Receives revenue if capacity is deployed
 
 
