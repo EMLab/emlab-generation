@@ -70,6 +70,9 @@ public class Reps {
     
     @Autowired
     public SubstanceRepository substanceRepository;
+    
+    @Autowired
+    public StrategicReserveOperatorRepository strategicReserveOperatorRepository;
 
     @Autowired
     public Neo4jTemplate template;
