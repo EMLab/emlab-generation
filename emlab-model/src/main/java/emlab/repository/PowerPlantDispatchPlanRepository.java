@@ -106,6 +106,8 @@ public interface PowerPlantDispatchPlanRepository extends GraphRepository<PowerP
     @Query(value="g.v(market).in('BIDDINGMARKET').propertyFilter('time', FilterPipe.Filter.EQUAL, time).out('SEGMENT_DISPATCHPLAN').idFilter(segment, FilterPipe.Filter.EQUAL).back('x').sort{-it.price}", type = QueryType.Gremlin)
     public Iterable<PowerPlantDispatchPlan> DescendingListAllPowerPlantDispatchPlansbyMarketTimeSegment(@Param("market") ElectricitySpotMarket esm, @Param("segment") Segment segment, @Param("time") long time);
 
+    @Query(value="g.v(segment).in('SEGMENT_DISPATCHPLAN').filter{it.time==tick}.sort{-it.price}", type = QueryType.Gremlin)
+    public Iterable<PowerPlantDispatchPlan> findallPowerPlantDispatchPlantsinDescendingbyMarketandTime(@Param("segment") Segment segment, @Param("time") long time);
     //sort by Market time segmentID in decending order of price
     
     /*@(value="g.v(market).in("BIDDINGMARKET").filter{it.time==tick}.out("SEGMENT_DISPATCHPLAN").filter{it.segmentID==segID}.sort{it.price}.reverse()_()", type = QueryType.Gremlin)

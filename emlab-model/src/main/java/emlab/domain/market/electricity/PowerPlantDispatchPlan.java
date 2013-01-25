@@ -51,14 +51,14 @@ public class PowerPlantDispatchPlan extends Bid {
     private final boolean supplyBid = true;
 
     private double capacityLongTermContract;
-    /**
+/*    *//**
      * IMPORTANT: Amount (capacity in MW) that is bid on to the SPOT MARKET, without long term contracts.
-     */
+     *//*
     private double amount;
-    /**
+    *//**
      * In the case of the power plant dispatch plan: Marginal cost excluding CO2.
-     */
-    private double price;
+     *//*
+    private double price;*/
     private double bidWithoutCO2;
 
     private long time;

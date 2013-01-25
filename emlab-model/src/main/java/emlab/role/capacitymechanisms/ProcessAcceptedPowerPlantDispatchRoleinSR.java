@@ -5,6 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import agentspring.role.AbstractRole;
 import agentspring.role.Role;
+import agentspring.role.RoleComponent;
 import emlab.domain.agent.StrategicReserveOperator;
 import emlab.domain.contract.CashFlow;
 import emlab.domain.market.electricity.ElectricitySpotMarket;
@@ -19,7 +20,7 @@ import emlab.repository.Reps;
  * @author pbhagwat
  *
  */
-
+@RoleComponent
 public abstract class ProcessAcceptedPowerPlantDispatchRoleinSR extends AbstractRole<StrategicReserveOperator> implements Role<StrategicReserveOperator>{
 
 	@Autowired
