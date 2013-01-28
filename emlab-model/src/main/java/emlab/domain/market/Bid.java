@@ -47,7 +47,7 @@ public class Bid {
     @Indexed(indexName = "bidTime")
     private long time;
     private int status;
-    private int ORstatus;
+    private int SRstatus;
     private boolean supplyBid;
     private double oldPrice;
 
@@ -122,12 +122,12 @@ public class Bid {
         this.status = status;
     }
 
-    public int getORstatus() {
-		return ORstatus;
+	public int getSRstatus() {
+		return SRstatus;
 	}
 
-	public void setORstatus(int oRstatus) {
-		ORstatus = oRstatus;
+	public void setSRstatus(int sRstatus) {
+		SRstatus = sRstatus;
 	}
 
 	public double getOldPrice() {

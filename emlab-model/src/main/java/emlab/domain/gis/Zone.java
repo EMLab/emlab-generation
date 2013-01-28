@@ -21,6 +21,9 @@ import org.springframework.data.neo4j.annotation.NodeEntity;
 public class Zone {
 
     private String name;
+    private boolean isStrategicReserveOperatorDeployed;
+    private double reserveVolumePercentSR;
+    private double reservePriceSR;
 
     public String getName() {
         return name;
@@ -33,5 +36,30 @@ public class Zone {
     public String toString() {
         return "Zone " + name;
     }
+
+	public boolean isStrategicReserveOperatorDeployed() {
+		return isStrategicReserveOperatorDeployed;
+	}
+
+	public void setStrategicReserveOperatorDeployed(
+			boolean isStrategicReserveOperatorDeployed) {
+		this.isStrategicReserveOperatorDeployed = isStrategicReserveOperatorDeployed;
+	}
+
+	public double getReserveVolumePercentSR() {
+		return reserveVolumePercentSR;
+	}
+
+	public void setReserveVolumePercentSR(double reserveVolumePercent) {
+		this.reserveVolumePercentSR = reserveVolumePercent;
+	}
+
+	public double getReservePriceSR() {
+		return reservePriceSR;
+	}
+
+	public void setReservePriceSR(double reservePriceSR) {
+		this.reservePriceSR = reservePriceSR;
+	}
 
 }

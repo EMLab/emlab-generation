@@ -172,7 +172,7 @@ public class RepositoryTesting {
 		}
 		//Iterable<PowerPlantDispatchPlan> ppdp = planRepository.findSortedPowerPlantDispatchPlansForSegmentForTime(S11, 0);
 
-		for (PowerPlantDispatchPlan currDispatchPlan: planRepository.DescendingListAllPowerPlantDispatchPlansbyMarketTimeSegment(market, S11, 0)){
+		for (PowerPlantDispatchPlan currDispatchPlan: planRepository.findAllDescendingListAllPowerPlantDispatchPlansbyMarketTimeSegment(market, S11, 0)){
 			logger.warn(currDispatchPlan.getPrice());
 			//sum += currDispatchPlan.getPrice();
 		}

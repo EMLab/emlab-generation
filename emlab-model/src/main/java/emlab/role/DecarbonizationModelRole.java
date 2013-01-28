@@ -26,9 +26,14 @@ import emlab.domain.agent.CommoditySupplier;
 import emlab.domain.agent.DecarbonizationModel;
 import emlab.domain.agent.EnergyConsumer;
 import emlab.domain.agent.EnergyProducer;
+import emlab.domain.agent.StrategicReserveOperator;
+import emlab.domain.gis.Zone;
 import emlab.domain.market.CommodityMarket;
 import emlab.domain.market.electricity.ElectricitySpotMarket;
 import emlab.repository.Reps;
+import emlab.repository.ZoneRepository;
+import emlab.role.capacitymechanisms.ProcessAcceptedPowerPlantDispatchRoleinSR;
+import emlab.role.capacitymechanisms.StrategicReserveOperatorRole;
 import emlab.role.investment.DismantlePowerPlantPastTechnicalLifetimeRole;
 import emlab.role.investment.InvestInPowerGenerationTechnologiesRole;
 import emlab.role.market.ClearCommodityMarketRole;
@@ -57,245 +62,268 @@ import emlab.role.operating.PayOperatingAndMaintainanceCostsRole;
 @ScriptComponent
 public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel> implements Role<DecarbonizationModel> {
 
-    @Autowired
-    private PayCO2TaxRole payCO2TaxRole;
-    @Autowired
-    private PayCO2AuctionRole payCO2AuctionRole;
-    @Autowired
-    private InvestInPowerGenerationTechnologiesRole investInPowerGenerationTechnologiesRole;
-    @Autowired
-    private SubmitOffersToElectricitySpotMarketRole submitOffersToElectricitySpotMarketRole;
-    @Autowired
-    private ClearCommodityMarketRole clearCommodityMarketRole;
-    @Autowired
-    private SubmitBidsToCommodityMarketRole submitBidsToCommodityMarketRole;
-    @Autowired
-    private SubmitOffersToCommodityMarketRole submitOffersToCommodityMarketRole;
-    @Autowired
-    private SubmitLongTermElectricityContractsRole submitLongTermElectricityContractsRole;
-    @Autowired
-    private SelectLongTermElectricityContractsRole selectLongTermElectricityContractsRole;
-    @Autowired
-    private DismantlePowerPlantPastTechnicalLifetimeRole dismantlePowerPlantRole;
-    @Autowired
-    private ReassignPowerPlantsToLongTermElectricityContractsRole reassignPowerPlantsToLongTermElectricityContractsRole;
-    @Autowired
-    private ClearIterativeCO2AndElectricitySpotMarketTwoCountryRole clearIterativeCO2AndElectricitySpotMarketTwoCountryRole;
-    @Autowired
-    private DetermineFuelMixRole determineFuelMixRole;
-    @Autowired
-    private ReceiveLongTermContractPowerRevenuesRole receiveLongTermContractPowerRevenuesRole;
-    @Autowired
-    private ProcessAcceptedPowerPlantDispatchRole processAcceptedPowerPlantDispatchRole;
-    @Autowired
-    private ProcessAcceptedBidsRole processAcceptedBidsRole;
-    @Autowired
-    private PayForLoansRole payForLoansRole;
-    @Autowired
-    private PayOperatingAndMaintainanceCostsRole payOperatingAndMaintainanceCostsRole;
+	@Autowired
+	private PayCO2TaxRole payCO2TaxRole;
+	@Autowired
+	private PayCO2AuctionRole payCO2AuctionRole;
+	@Autowired
+	private InvestInPowerGenerationTechnologiesRole investInPowerGenerationTechnologiesRole;
+	@Autowired
+	private SubmitOffersToElectricitySpotMarketRole submitOffersToElectricitySpotMarketRole;
+	@Autowired
+	private ClearCommodityMarketRole clearCommodityMarketRole;
+	@Autowired
+	private SubmitBidsToCommodityMarketRole submitBidsToCommodityMarketRole;
+	@Autowired
+	private SubmitOffersToCommodityMarketRole submitOffersToCommodityMarketRole;
+	@Autowired
+	private SubmitLongTermElectricityContractsRole submitLongTermElectricityContractsRole;
+	@Autowired
+	private SelectLongTermElectricityContractsRole selectLongTermElectricityContractsRole;
+	@Autowired
+	private DismantlePowerPlantPastTechnicalLifetimeRole dismantlePowerPlantRole;
+	@Autowired
+	private ReassignPowerPlantsToLongTermElectricityContractsRole reassignPowerPlantsToLongTermElectricityContractsRole;
+	@Autowired
+	private ClearIterativeCO2AndElectricitySpotMarketTwoCountryRole clearIterativeCO2AndElectricitySpotMarketTwoCountryRole;
+	@Autowired
+	private DetermineFuelMixRole determineFuelMixRole;
+	@Autowired
+	private ReceiveLongTermContractPowerRevenuesRole receiveLongTermContractPowerRevenuesRole;
+	@Autowired
+	private ProcessAcceptedPowerPlantDispatchRole processAcceptedPowerPlantDispatchRole;
+	@Autowired
+	private ProcessAcceptedBidsRole processAcceptedBidsRole;
+	@Autowired
+	private PayForLoansRole payForLoansRole;
+	@Autowired
+	private PayOperatingAndMaintainanceCostsRole payOperatingAndMaintainanceCostsRole;
+	@Autowired
+	private StrategicReserveOperatorRole strategicReserveOperatorRole;
+	@Autowired
+	private ProcessAcceptedPowerPlantDispatchRoleinSR acceptedPowerPlantDispatchRoleinSR;
 
-    @Autowired
-    Reps reps;
+	@Autowired
+	Reps reps;
 
-    /**
-     * Main model script. Executes other roles in the right sequence.
-     */
-    public void act(DecarbonizationModel model) {
+	/**
+	 * Main model script. Executes other roles in the right sequence.
+	 */
+	public void act(DecarbonizationModel model) {
 
-        if (getCurrentTick() > model.getSimulationLength()) {
-            logger.warn("Simulation is terminating!!!");
-            agentspring.simulation.Schedule.getSchedule().stop();
-            //System.exit(0);
-        }
+		if (getCurrentTick() > model.getSimulationLength()) {
+			logger.warn("Simulation is terminating!!!");
+			agentspring.simulation.Schedule.getSchedule().stop();
+			//System.exit(0);
+		}
 
-        logger.warn("***** STARTING TICK {} *****", getCurrentTick());
-        Timer timer = new Timer();
-        timer.start();
+		logger.warn("***** STARTING TICK {} *****", getCurrentTick());
+		Timer timer = new Timer();
+		timer.start();
 
-        logger.warn("  0. Dismantling & paying loans");
-        for (EnergyProducer producer : reps.genericRepository.findAllAtRandom(EnergyProducer.class)) {
-        	dismantlePowerPlantRole.act(producer);
-        	payForLoansRole.act(producer);
-//            producer.act(dismantlePowerPlantRole);
-//            producer.act(payForLoansRole);
-        }
+		logger.warn("  0. Dismantling & paying loans");
+		for (EnergyProducer producer : reps.genericRepository.findAllAtRandom(EnergyProducer.class)) {
+			dismantlePowerPlantRole.act(producer);
+			payForLoansRole.act(producer);
+			//            producer.act(dismantlePowerPlantRole);
+			//            producer.act(payForLoansRole);
+		}
 
-        /*
-         * Determine fuel mix of power plants
-         */
-        Timer timerMarket = new Timer();
-        timerMarket.start();
-        logger.warn("  1. Determining fuel mix");
-        for (EnergyProducer producer : reps.genericRepository.findAllAtRandom(EnergyProducer.class)) {
-        	determineFuelMixRole.act(producer);
-//            producer.act(determineFuelMixRole);
-        }
-        timerMarket.stop();
-        logger.warn("        took: {} seconds.", timerMarket.seconds());
+		/*
+		 * Determine fuel mix of power plants
+		 */
+		Timer timerMarket = new Timer();
+		timerMarket.start();
+		logger.warn("  1. Determining fuel mix");
+		for (EnergyProducer producer : reps.genericRepository.findAllAtRandom(EnergyProducer.class)) {
+			determineFuelMixRole.act(producer);
+			//            producer.act(determineFuelMixRole);
+		}
+		timerMarket.stop();
+		logger.warn("        took: {} seconds.", timerMarket.seconds());
 
-        /*
-         * Submit and select long-term electricity contracts
-         */
+		/*
+		 * Submit and select long-term electricity contracts
+		 */
 
-        if (model.isLongTermContractsImplemented()) {
-            timerMarket.reset();
-            timerMarket.start();
-            logger.warn("  2. Submit and select long-term electricity contracts");
-            for (EnergyProducer producer : reps.genericRepository.findAllAtRandom(EnergyProducer.class)) {
-            	submitLongTermElectricityContractsRole.act(producer);
-//                producer.act(submitLongTermElectricityContractsRole);
-            }
+		if (model.isLongTermContractsImplemented()) {
+			timerMarket.reset();
+			timerMarket.start();
+			logger.warn("  2. Submit and select long-term electricity contracts");
+			for (EnergyProducer producer : reps.genericRepository.findAllAtRandom(EnergyProducer.class)) {
+				submitLongTermElectricityContractsRole.act(producer);
+				//                producer.act(submitLongTermElectricityContractsRole);
+			}
 
-            for (EnergyConsumer consumer : reps.genericRepository.findAllAtRandom(EnergyConsumer.class)) {
-            	selectLongTermElectricityContractsRole.act(consumer);
-//                consumer.act(selectLongTermElectricityContractsRole);
-            }
-            timerMarket.stop();
-            logger.warn("        took: {} seconds.", timerMarket.seconds());
-        }
+			for (EnergyConsumer consumer : reps.genericRepository.findAllAtRandom(EnergyConsumer.class)) {
+				selectLongTermElectricityContractsRole.act(consumer);
+				//                consumer.act(selectLongTermElectricityContractsRole);
+			}
+			timerMarket.stop();
+			logger.warn("        took: {} seconds.", timerMarket.seconds());
+		}
+		/*
+		 * Contract strategic reserve volume and set strategic reserve dispatch price
+		 */
+		timerMarket.reset();
+		timerMarket.start();
+		logger.warn(" 3. Contracting Strategic Reserve ");
+		for (StrategicReserveOperator strategicReserveOperator:reps.strategicReserveOperatorRepository.findAll()){
+			strategicReserveOperatorRole.act(strategicReserveOperator);
+		}
+		/*
+		 * Clear electricity spot and CO2 markets and determine also the commitment of powerplants.
+		 */
+		timerMarket.reset();
+		timerMarket.start();
+		logger.warn("  3. Clearing electricity spot and CO2 markets");
+		for (EnergyProducer producer : reps.genericRepository.findAllAtRandom(EnergyProducer.class)) {
+			submitOffersToElectricitySpotMarketRole.act(producer);
+			//            producer.act(submitOffersToElectricitySpotMarketRole);
+		}
 
-        /*
-         * Clear electricity spot and CO2 markets and determine also the commitment of powerplants.
-         */
-        timerMarket.reset();
-        timerMarket.start();
-        logger.warn("  3. Clearing electricity spot and CO2 markets");
-        for (EnergyProducer producer : reps.genericRepository.findAllAtRandom(EnergyProducer.class)) {
-        	submitOffersToElectricitySpotMarketRole.act(producer);
-//            producer.act(submitOffersToElectricitySpotMarketRole);
-        }
+		clearIterativeCO2AndElectricitySpotMarketTwoCountryRole.act(model);
+		//        model.act(clearIterativeCO2AndElectricitySpotMarketTwoCountryRole);
+		timerMarket.stop();
+		logger.warn("        took: {} seconds.", timerMarket.seconds());
 
-        clearIterativeCO2AndElectricitySpotMarketTwoCountryRole.act(model);
-//        model.act(clearIterativeCO2AndElectricitySpotMarketTwoCountryRole);
-        timerMarket.stop();
-        logger.warn("        took: {} seconds.", timerMarket.seconds());
+		timerMarket.reset();
+		timerMarket.start();
+		for (EnergyProducer producer : reps.genericRepository.findAll(EnergyProducer.class)) {
+			receiveLongTermContractPowerRevenuesRole.act(producer);
+			//            producer.act(receiveLongTermContractPowerRevenuesRole);
+		}
+		for (ElectricitySpotMarket electricitySpotMarket : reps.marketRepository.findAllElectricitySpotMarkets()) {
+			processAcceptedPowerPlantDispatchRole.act(electricitySpotMarket);
+			//            electricitySpotMarket.act(processAcceptedPowerPlantDispatchRole);
+		}
+		timerMarket.stop();
+		logger.warn("        paying took: {} seconds.", timerMarket.seconds());
+		/*
+		 * Process strategic reserve
+		 * 
+		 */
+		
+		logger.warn(" Processing Strategic Reserve Payment ");
+		for (StrategicReserveOperator strategicReserveOperator:reps.strategicReserveOperatorRepository.findAll()){
+			acceptedPowerPlantDispatchRoleinSR.act(strategicReserveOperator);
+		}
+		
+		
+		/*
+		 * Maintenance and CO2
+		 */
+		logger.warn("  4. Paying for maintenance & co2");
+		timerMarket.reset();
+		timerMarket.start();
+		for (EnergyProducer producer : reps.genericRepository.findAllAtRandom(EnergyProducer.class)) {
+			// do accounting
+			payOperatingAndMaintainanceCostsRole.act(producer);
+			//            producer.act(payOperatingAndMaintainanceCostsRole);
+			// pay tax
+			payCO2TaxRole.act(producer);
+			//            producer.act(payCO2TaxRole);
+			// pay for CO2 auction only if CO2 trading
+			if (model.isCo2TradingImplemented()) {
+				payCO2AuctionRole.act(producer);
+				//                producer.act(payCO2AuctionRole);
+			}
+		}
+		timerMarket.stop();
+		logger.warn("        took: {} seconds.", timerMarket.seconds());
 
-        timerMarket.reset();
-        timerMarket.start();
-        for (EnergyProducer producer : reps.genericRepository.findAll(EnergyProducer.class)) {
-        	receiveLongTermContractPowerRevenuesRole.act(producer);
-        	//            producer.act(receiveLongTermContractPowerRevenuesRole);
-        }
-        for (ElectricitySpotMarket electricitySpotMarket : reps.marketRepository.findAllElectricitySpotMarkets()) {
-        	processAcceptedPowerPlantDispatchRole.act(electricitySpotMarket);
-//            electricitySpotMarket.act(processAcceptedPowerPlantDispatchRole);
-        }
-        timerMarket.stop();
-        logger.warn("        paying took: {} seconds.", timerMarket.seconds());
-        /*
-         * Maintenance and CO2
-         */
-        logger.warn("  4. Paying for maintenance & co2");
-        timerMarket.reset();
-        timerMarket.start();
-        for (EnergyProducer producer : reps.genericRepository.findAllAtRandom(EnergyProducer.class)) {
-            // do accounting
-        	payOperatingAndMaintainanceCostsRole.act(producer);
-//            producer.act(payOperatingAndMaintainanceCostsRole);
-            // pay tax
-        	payCO2TaxRole.act(producer);
-//            producer.act(payCO2TaxRole);
-            // pay for CO2 auction only if CO2 trading
-            if (model.isCo2TradingImplemented()) {
-            	payCO2AuctionRole.act(producer);
-//                producer.act(payCO2AuctionRole);
-            }
-        }
-        timerMarket.stop();
-        logger.warn("        took: {} seconds.", timerMarket.seconds());
+		/*
+		 * COMMODITY MARKETS
+		 */
+		logger.warn("  5. Purchasing commodities");
+		timerMarket.reset();
+		timerMarket.start();
 
-        /*
-         * COMMODITY MARKETS
-         */
-        logger.warn("  5. Purchasing commodities");
-        timerMarket.reset();
-        timerMarket.start();
+		// SUPPLIER (supply for commodity markets)
+		for (CommoditySupplier supplier : reps.genericRepository.findAllAtRandom(CommoditySupplier.class)) {
+			// 1) first submit the offers
+			submitOffersToCommodityMarketRole.act(supplier);
+			//            supplier.act(submitOffersToCommodityMarketRole);
+		}
 
-        // SUPPLIER (supply for commodity markets)
-        for (CommoditySupplier supplier : reps.genericRepository.findAllAtRandom(CommoditySupplier.class)) {
-            // 1) first submit the offers
-        	submitOffersToCommodityMarketRole.act(supplier);
-//            supplier.act(submitOffersToCommodityMarketRole);
-        }
+		// PRODUCER (demand for commodity markets)
+		for (EnergyProducer producer : reps.genericRepository.findAllAtRandom(EnergyProducer.class)) {
+			// 2) submit bids
+			submitBidsToCommodityMarketRole.act(producer);
+			//            producer.act(submitBidsToCommodityMarketRole);
+		}
 
-        // PRODUCER (demand for commodity markets)
-        for (EnergyProducer producer : reps.genericRepository.findAllAtRandom(EnergyProducer.class)) {
-            // 2) submit bids
-        	submitBidsToCommodityMarketRole.act(producer);
-//            producer.act(submitBidsToCommodityMarketRole);
-        }
+		for (CommodityMarket market : reps.genericRepository.findAllAtRandom(CommodityMarket.class)) {
+			clearCommodityMarketRole.act(market);
+			processAcceptedBidsRole.act(market);
+			//            market.act(clearCommodityMarketRole);
+			//            market.act(processAcceptedBidsRole);
+		}
+		timerMarket.stop();
+		logger.warn("        took: {} seconds.", timerMarket.seconds());
 
-        for (CommodityMarket market : reps.genericRepository.findAllAtRandom(CommodityMarket.class)) {
-        	clearCommodityMarketRole.act(market);
-        	processAcceptedBidsRole.act(market);
-//            market.act(clearCommodityMarketRole);
-//            market.act(processAcceptedBidsRole);
-        }
-        timerMarket.stop();
-        logger.warn("        took: {} seconds.", timerMarket.seconds());
+		logger.warn("  6. Investing");
+		Timer timerInvest = new Timer();
+		timerInvest.start();
+		if (getCurrentTick() > 1) {
+			boolean someOneStillWillingToInvest = true;
+			while (someOneStillWillingToInvest) {
+				someOneStillWillingToInvest = false;
+				for (EnergyProducer producer : reps.genericRepository.findAllAtRandom(EnergyProducer.class)) {
+					// invest in new plants
+					if (producer.isWillingToInvest()) {
+						investInPowerGenerationTechnologiesRole.act(producer);
+						//                        producer.act(investInPowerGenerationTechnologiesRole);
+						someOneStillWillingToInvest = true;
+					}
+				}
+			}
+			resetWillingnessToInvest();
+		}
+		timerInvest.stop();
+		logger.warn("        took: {} seconds.", timerInvest.seconds());
 
-        logger.warn("  6. Investing");
-        Timer timerInvest = new Timer();
-        timerInvest.start();
-        if (getCurrentTick() > 1) {
-            boolean someOneStillWillingToInvest = true;
-            while (someOneStillWillingToInvest) {
-                someOneStillWillingToInvest = false;
-                for (EnergyProducer producer : reps.genericRepository.findAllAtRandom(EnergyProducer.class)) {
-                    // invest in new plants
-                    if (producer.isWillingToInvest()) {
-                    	investInPowerGenerationTechnologiesRole.act(producer);
-//                        producer.act(investInPowerGenerationTechnologiesRole);
-                        someOneStillWillingToInvest = true;
-                    }
-                }
-            }
-            resetWillingnessToInvest();
-        }
-        timerInvest.stop();
-        logger.warn("        took: {} seconds.", timerInvest.seconds());
+		if (model.isLongTermContractsImplemented()) {
+			logger.warn("  7. Reassign LTCs");
+			timerMarket.reset();
+			timerMarket.start();
+			for (EnergyProducer producer : reps.genericRepository.findAllAtRandom(EnergyProducer.class)) {
+				reassignPowerPlantsToLongTermElectricityContractsRole.act(producer);
+				//                producer.act(reassignPowerPlantsToLongTermElectricityContractsRole);
+			}
+			timerMarket.stop();
+			logger.warn("        took: {} seconds.", timerMarket.seconds());
+		}
 
-        if (model.isLongTermContractsImplemented()) {
-            logger.warn("  7. Reassign LTCs");
-            timerMarket.reset();
-            timerMarket.start();
-            for (EnergyProducer producer : reps.genericRepository.findAllAtRandom(EnergyProducer.class)) {
-            	reassignPowerPlantsToLongTermElectricityContractsRole.act(producer);
-//                producer.act(reassignPowerPlantsToLongTermElectricityContractsRole);
-            }
-            timerMarket.stop();
-            logger.warn("        took: {} seconds.", timerMarket.seconds());
-        }
+		/*
+		 * Deletion of old nodes
+		 */
 
-        /*
-         * Deletion of old nodes
-         */
+		if (model.isDeletionOldPPDPBidsAndCashFlowsEnabled() && (getCurrentTick() - model.getDeletionAge() >= 0)) {
+			timerMarket.reset();
+			timerMarket.start();
+			logger.warn("  8. Delete old nodes in year {}.", (getCurrentTick() - model.getDeletionAge()));
+			reps.bidRepository.delete(reps.bidRepository.findAllBidsForForTime(getCurrentTick() - model.getDeletionAge()));
+			reps.cashFlowRepository.delete(reps.cashFlowRepository.findAllCashFlowsForForTime(getCurrentTick() - model.getDeletionAge()));
+			reps.powerPlantRepository.delete(reps.powerPlantRepository.findAllPowerPlantsDismantledBeforeTick(getCurrentTick()
+					- model.getDeletionAge()));
+			timerMarket.stop();
+			logger.warn("        took: {} seconds.", timerMarket.seconds());
+		}
 
-        if (model.isDeletionOldPPDPBidsAndCashFlowsEnabled() && (getCurrentTick() - model.getDeletionAge() >= 0)) {
-            timerMarket.reset();
-            timerMarket.start();
-            logger.warn("  8. Delete old nodes in year {}.", (getCurrentTick() - model.getDeletionAge()));
-            reps.bidRepository.delete(reps.bidRepository.findAllBidsForForTime(getCurrentTick() - model.getDeletionAge()));
-            reps.cashFlowRepository.delete(reps.cashFlowRepository.findAllCashFlowsForForTime(getCurrentTick() - model.getDeletionAge()));
-            reps.powerPlantRepository.delete(reps.powerPlantRepository.findAllPowerPlantsDismantledBeforeTick(getCurrentTick()
-                    - model.getDeletionAge()));
-            timerMarket.stop();
-            logger.warn("        took: {} seconds.", timerMarket.seconds());
-        }
+		timer.stop();
+		logger.warn("Tick {} took {} seconds.", getCurrentTick(), timer.seconds());
 
-        timer.stop();
-        logger.warn("Tick {} took {} seconds.", getCurrentTick(), timer.seconds());
+		// if (getCurrentTick() >= model.getSimulationLength()) {
+		// agentspring.simulation.Schedule.getSchedule().stop();
+		// }
 
-        // if (getCurrentTick() >= model.getSimulationLength()) {
-        // agentspring.simulation.Schedule.getSchedule().stop();
-        // }
+	}
 
-    }
-
-    @Transactional
-    private void resetWillingnessToInvest() {
-        for (EnergyProducer producer : reps.genericRepository.findAllAtRandom(EnergyProducer.class)) {
-            producer.setWillingToInvest(true);
-        }
-    }
+	@Transactional
+	private void resetWillingnessToInvest() {
+		for (EnergyProducer producer : reps.genericRepository.findAllAtRandom(EnergyProducer.class)) {
+			producer.setWillingToInvest(true);
+		}
+	}
 }

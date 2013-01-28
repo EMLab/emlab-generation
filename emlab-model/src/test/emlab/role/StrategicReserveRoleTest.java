@@ -18,6 +18,7 @@ import emlab.domain.gis.Zone;
 import emlab.domain.market.electricity.ElectricitySpotMarket;
 import emlab.domain.market.electricity.PowerPlantDispatchPlan;
 import emlab.domain.market.electricity.Segment;
+import emlab.domain.market.electricity.SegmentClearingPoint;
 import emlab.domain.market.electricity.SegmentLoad;
 import emlab.domain.technology.PowerGeneratingTechnology;
 import emlab.domain.technology.PowerPlant;
@@ -28,6 +29,7 @@ import emlab.repository.RepositoryTesting;
 import emlab.repository.Reps;
 import emlab.repository.SegmentLoadRepository;
 import emlab.repository.ZoneRepository;
+import emlab.role.capacitymechanisms.ProcessAcceptedPowerPlantDispatchRoleinSR;
 import emlab.role.capacitymechanisms.StrategicReserveOperatorRole;
 import emlab.trend.TriangularTrend;
 import groovy.mock.interceptor.Demand;
@@ -58,6 +60,9 @@ public class StrategicReserveRoleTest {
 	@Autowired
 	StrategicReserveOperatorRole strategicReserveOperatorRole;
 	
+	@Autowired
+	ProcessAcceptedPowerPlantDispatchRoleinSR acceptedPowerPlantDispatchRoleinSR;
+	
 	Logger logger = Logger.getLogger(StrategicReserveRoleTest.class);
 
 	@Test
@@ -66,29 +71,40 @@ public class StrategicReserveRoleTest {
 		Zone zone1 = new Zone();
 		Zone zone2 = new Zone();
 		zone1.setName("Zone 1");
+		zone1.setStrategicReserveOperatorDeployed(true);
+		zone1.setReserveVolumePercentSR(0.3);
+		zone1.setReservePriceSR(25);
 		zone2.setName("Zone2");
+		zone2.setStrategicReserveOperatorDeployed(true);
 		zone1.persist();
+		zone2.setReserveVolumePercentSR(0.3);
+		zone2.setReservePriceSR(30);
 		zone2.persist();
 
 		
 		Segment S1 = new Segment();
+		S1.setLengthInHours(20);
 		S1.persist();
 		
+		Segment S2 = new Segment();
+		S2.setLengthInHours(30);
+		S2 .persist();
+		
 		SegmentLoad SG1 = new SegmentLoad();
-		SG1.setSegment(S1);
-		SG1.setBaseLoad(1500);
+		SG1.setSegment(S2);
+		SG1.setBaseLoad(2500);
 				
 		SegmentLoad SG2 = new SegmentLoad();
-		SG2.setSegment(S1);
-		SG2.setBaseLoad(1000);
+		SG2.setSegment(S2);
+		SG2.setBaseLoad(2000);
 				
 		SegmentLoad SG3 = new SegmentLoad();
 		SG3.setSegment(S1);
-		SG3.setBaseLoad(2000);
+		SG3.setBaseLoad(3700);
 		
 		SegmentLoad SG4 = new SegmentLoad();
 		SG4.setSegment(S1);
-		SG4.setBaseLoad(500);
+		SG4.setBaseLoad(4000);
 		
 		SG1.persist();
 		SG2.persist();
@@ -127,18 +143,18 @@ public class StrategicReserveRoleTest {
 		market2.persist();
 		
 		PowerGeneratingTechnology coal1 = new PowerGeneratingTechnology();
-		coal1.setFixedOperatingCost(990);
+		coal1.setFixedOperatingCost(99000);
 		coal1.setFixedOperatingCostModifierAfterLifetime(1);
 		
 		
 		PowerGeneratingTechnology coal2 = new PowerGeneratingTechnology();
-		coal2.setFixedOperatingCost(1110);
+		coal2.setFixedOperatingCost(111000);
 		
 		PowerGeneratingTechnology gas1 = new PowerGeneratingTechnology();
-		gas1.setFixedOperatingCost(560);
+		gas1.setFixedOperatingCost(56000);
 		
 		PowerGeneratingTechnology gas2 = new PowerGeneratingTechnology();
-		gas2.setFixedOperatingCost(650);
+		gas2.setFixedOperatingCost(65000);
 		
 		coal1.persist();
 		coal2.persist();
@@ -146,13 +162,19 @@ public class StrategicReserveRoleTest {
 		gas2.persist();
 		
 		EnergyProducer e1 = new EnergyProducer();
+		e1.setName("E1");
 		e1.setCash(0);
+		e1.setPriceMarkUp(1);
 		
 		EnergyProducer e2 = new EnergyProducer();
 		e2.setCash(0);
+		e2.setPriceMarkUp(1);
+		e2.setName("E2");
 		
 		EnergyProducer e3 = new EnergyProducer();
 		e3.setCash(0);
+		e3.setPriceMarkUp(1);
+		e3.setName("E3");
 		
 		e1.persist();
 		e2.persist();
@@ -162,10 +184,12 @@ public class StrategicReserveRoleTest {
 		PowerPlant  pp1 = new PowerPlant();
 		pp1.setTechnology(coal1);
 		pp1.setOwner(e1);
+		//pp1.setName("PP1");
 		
 		PowerPlant  pp2 = new PowerPlant();
 		pp2.setTechnology(coal2);
 		pp2.setOwner(e2);
+		//pp2.setName("PP2");
 		
 		PowerPlant  pp3 = new PowerPlant();
 		pp3.setTechnology(gas1);
@@ -190,7 +214,7 @@ public class StrategicReserveRoleTest {
 		pp5.persist();
 		pp6.persist();
 		
-
+// for Zone 1 Segment 1
 		PowerPlantDispatchPlan p1 = new PowerPlantDispatchPlan();
 		p1.setAmount(1500.0d);
 		p1.setSegment(S1);
@@ -198,6 +222,9 @@ public class StrategicReserveRoleTest {
 		p1.setTime(0l);
 		p1.setBiddingMarket(market1);
 		p1.setPowerPlant(pp1);
+		p1.setBidder(e1);
+		p1.setStatus(3);
+		p1.setAcceptedAmount(1500);
 		p1.persist();
 		
 
@@ -208,6 +235,9 @@ public class StrategicReserveRoleTest {
 		p11.setTime(0l);
 		p11.setBiddingMarket(market1);
 		p11.setPowerPlant(pp2);
+		p11.setBidder(e2);
+		p11.setStatus(3);
+		p11.setAcceptedAmount(1000);
 		p11.persist();
 
 		PowerPlantDispatchPlan p111 = new PowerPlantDispatchPlan();
@@ -217,9 +247,50 @@ public class StrategicReserveRoleTest {
 		p111.setTime(0l);
 		p111.setBiddingMarket(market1);
 		p111.setPowerPlant(pp3);
+		p111.setBidder(e3);
+		p111.setStatus(3);
+		p111.setAcceptedAmount(1200);
 		p111.persist();
+		
+		//For Zone 1 segment 2
+		PowerPlantDispatchPlan p1111 = new PowerPlantDispatchPlan();
+		p1111.setAmount(1500.0d);
+		p1111.setSegment(S2);
+		p1111.setPrice(5.0d);
+		p1111.setTime(0l);
+		p1111.setBiddingMarket(market1);
+		p1111.setPowerPlant(pp1);
+		p1111.setBidder(e1);
+		p1111.setStatus(3);
+		p1111.setAcceptedAmount(1500);
+		p1111.persist();
+		
 
-		// for Zone 2
+		PowerPlantDispatchPlan p11111 = new PowerPlantDispatchPlan();
+		p11111.setAmount(1000.0d);
+		p11111.setSegment(S2);
+		p11111.setPrice(15.0d);
+		p11111.setTime(0l);
+		p11111.setBiddingMarket(market1);
+		p11111.setPowerPlant(pp2);
+		p11111.setBidder(e2);
+		p11111.setStatus(-1);
+		p11111.setAcceptedAmount(0);
+		p11111.persist();
+
+		PowerPlantDispatchPlan p111111 = new PowerPlantDispatchPlan();
+		p111111.setAmount(1200.0d);
+		p111111.setSegment(S2);
+		p111111.setPrice(7.0d);
+		p111111.setTime(0l);
+		p111111.setBiddingMarket(market1);
+		p111111.setPowerPlant(pp3);
+		p111111.setBidder(e3);
+		p111111.setStatus(2);
+		p111111.setAcceptedAmount(1000);
+		p111111.persist();
+
+		// for Zone 2 Segment 1
 
 		PowerPlantDispatchPlan p2 = new PowerPlantDispatchPlan();
 		p2.setAmount(1700.0d);
@@ -228,6 +299,9 @@ public class StrategicReserveRoleTest {
 		p2.setTime(0l);
 		p2.setBiddingMarket(market2);
 		p2.setPowerPlant(pp4);
+		p2.setBidder(e3);
+		p2.setStatus(3);
+		p2.setAcceptedAmount(1700);
 		p2.persist();
 
 		PowerPlantDispatchPlan p22 = new PowerPlantDispatchPlan();
@@ -237,6 +311,9 @@ public class StrategicReserveRoleTest {
 		p22.setTime(0l);
 		p22.setBiddingMarket(market2);
 		p22.setPowerPlant(pp5);
+		p22.setBidder(e2);
+		p22.setStatus(3);
+		p22.setAcceptedAmount(2000);
 		p22.persist();
 
 		PowerPlantDispatchPlan p222 = new PowerPlantDispatchPlan();
@@ -246,20 +323,108 @@ public class StrategicReserveRoleTest {
 		p222.setTime(0l);
 		p222.setBiddingMarket(market2);
 		p222.setPowerPlant(pp6);
+		p222.setBidder(e1);
+		p222.setStatus(3);
+		p222.setAcceptedAmount(300);
 		p222.persist();
 		
+		// Zone 2 segment 2
+		
+		PowerPlantDispatchPlan p21 = new PowerPlantDispatchPlan();
+		p21.setAmount(1700.0d);
+		p21.setSegment(S2);
+		p21.setPrice(5.0d);
+		p21.setTime(0l);
+		p21.setBiddingMarket(market2);
+		p21.setPowerPlant(pp4);
+		p21.setBidder(e3);
+		p21.setStatus(3);
+		p21.setAcceptedAmount(1700);
+		p21.persist();
+
+		PowerPlantDispatchPlan p221 = new PowerPlantDispatchPlan();
+		p221.setAmount(2000.0d);
+		p221.setSegment(S2);
+		p221.setPrice(15.0d);
+		p221.setTime(0l);
+		p221.setBiddingMarket(market2);
+		p221.setPowerPlant(pp5);
+		p221.setBidder(e2);
+		p221.setStatus(-1);
+		p221.setAcceptedAmount(0);
+		p221.persist();
+
+		PowerPlantDispatchPlan p2221 = new PowerPlantDispatchPlan();
+		p2221.setAmount(300.0d);
+		p2221.setSegment(S2);
+		p2221.setPrice(7.0d);
+		p2221.setTime(0l);
+		p2221.setBiddingMarket(market2);
+		p2221.setPowerPlant(pp6);
+		p2221.setBidder(e1);
+		p2221.setStatus(3);
+		p2221.setAcceptedAmount(300);
+		p2221.persist();
+		
+		SegmentClearingPoint clearingPoint1 = new SegmentClearingPoint();
+		clearingPoint1.setSegment(S1);
+		clearingPoint1.setAbstractMarket(market1);
+		clearingPoint1.setPrice(25);
+		clearingPoint1.setTime(0l);
+		
+		SegmentClearingPoint clearingPoint11 = new SegmentClearingPoint();
+		clearingPoint11.setSegment(S1);
+		clearingPoint11.setAbstractMarket(market2);
+		clearingPoint11.setPrice(30);
+		clearingPoint11.setTime(0l);
+		
+		SegmentClearingPoint clearingPoint111 = new SegmentClearingPoint();
+		clearingPoint111.setSegment(S2);
+		clearingPoint111.setAbstractMarket(market1);
+		clearingPoint111.setPrice(7);
+		clearingPoint111.setTime(0l);
+		
+		SegmentClearingPoint clearingPoint1111 = new SegmentClearingPoint();
+		clearingPoint1111.setSegment(S2);
+		clearingPoint1111.setAbstractMarket(market2);
+		clearingPoint1111.setPrice(7);
+		clearingPoint1111.setTime(0l);
+		
+		clearingPoint1.persist();
+		clearingPoint1111.persist();
+		clearingPoint111.persist();
+		clearingPoint11.persist();
+		
 		StrategicReserveOperator strategicReserveOperator = new StrategicReserveOperator();
-		strategicReserveOperator.setReservePrice(25);
-		strategicReserveOperator.setReserveVolumePercent(0.6);
+		//strategicReserveOperator.setReservePrice(25);
+		//strategicReserveOperator.setReserveVolumePercent(0.6);
 		strategicReserveOperator.setCash(0);
 		strategicReserveOperator.setName("SRO");
 		strategicReserveOperator.persist();
+		
+		//logger.warn("P1 owner is + " +p1.getPowerPlant().getOwner().getName());
 
 		/*for (PowerPlantDispatchPlan currDispatchPlan : plantDispatchPlanRepository.findAll()){
 			logger.warn("Test1 Volume: " + currDispatchPlan.getAmount());
 			logger.warn("Test1 Price: " + currDispatchPlan.getPrice());
 		}*/
 		strategicReserveOperatorRole.act(strategicReserveOperator);
+		
+		acceptedPowerPlantDispatchRoleinSR.act(strategicReserveOperator);
+		
+		
+/*		logger.warn("New Bidding Prices P1 " +p1.getPrice());
+		logger.warn("New Bidding Prices P11 " +p11.getPrice());
+		logger.warn("New Bidding Prices P111 " +p111.getPrice());
+		
+		logger.warn("New Bidding Prices P2 " +p2.getPrice());
+		logger.warn("New Bidding Prices P22 " +p22.getPrice());
+		logger.warn("New Bidding Prices P222 " +p222.getPrice());*/
+	/*logger.warn("Cash of E1 " + e1.getCash());
+	logger.warn("Cash of E2 " + e2.getCash());
+	logger.warn("Cash of E3 " + e3.getCash());
+	logger.warn("Cash of SRO "+ strategicReserveOperator.getCash());*/
+		
 		
 			//logger.warn(strategicReserveOperator.getReserveVolumePercent());
 		

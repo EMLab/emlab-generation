@@ -72,6 +72,9 @@ public class Reps {
     public SubstanceRepository substanceRepository;
     
     @Autowired
+    public ZoneRepository zoneRepository;
+    
+    @Autowired
     public StrategicReserveOperatorRepository strategicReserveOperatorRepository;
 
     @Autowired
