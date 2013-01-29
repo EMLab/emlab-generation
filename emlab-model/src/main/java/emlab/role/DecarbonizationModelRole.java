@@ -56,7 +56,7 @@ import emlab.role.operating.PayOperatingAndMaintainanceCostsRole;
 /**
  * Main model role.
  * 
- * @author alfredas, ejlchappin, jcrichstein
+ * @author alfredas, ejlchappin, jcrichstein pcbhagwat
  * 
  */
 @ScriptComponent
@@ -162,15 +162,7 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
 			timerMarket.stop();
 			logger.warn("        took: {} seconds.", timerMarket.seconds());
 		}
-		/*
-		 * Contract strategic reserve volume and set strategic reserve dispatch price
-		 */
-		timerMarket.reset();
-		timerMarket.start();
-		logger.warn(" 3. Contracting Strategic Reserve ");
-		for (StrategicReserveOperator strategicReserveOperator:reps.strategicReserveOperatorRepository.findAll()){
-			strategicReserveOperatorRole.act(strategicReserveOperator);
-		}
+		
 		/*
 		 * Clear electricity spot and CO2 markets and determine also the commitment of powerplants.
 		 */
@@ -182,6 +174,17 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
 			//            producer.act(submitOffersToElectricitySpotMarketRole);
 		}
 
+		/*
+		 * Contract strategic reserve volume and set strategic reserve dispatch price
+		 */
+		timerMarket.reset();
+		timerMarket.start();
+		logger.warn("  4. Contracting Strategic Reserve ");
+		for (StrategicReserveOperator strategicReserveOperator:reps.strategicReserveOperatorRepository.findAll()){
+			strategicReserveOperatorRole.act(strategicReserveOperator);
+		}
+		
+		
 		clearIterativeCO2AndElectricitySpotMarketTwoCountryRole.act(model);
 		//        model.act(clearIterativeCO2AndElectricitySpotMarketTwoCountryRole);
 		timerMarket.stop();
@@ -197,23 +200,30 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
 			processAcceptedPowerPlantDispatchRole.act(electricitySpotMarket);
 			//            electricitySpotMarket.act(processAcceptedPowerPlantDispatchRole);
 		}
+		for (StrategicReserveOperator strategicReserveOperator:reps.strategicReserveOperatorRepository.findAll()){
+			acceptedPowerPlantDispatchRoleinSR.act(strategicReserveOperator);
+		}
+		//logger.warn(" 4. Processing Strategic Reserve Payment ");
 		timerMarket.stop();
 		logger.warn("        paying took: {} seconds.", timerMarket.seconds());
+		
+		
 		/*
 		 * Process strategic reserve
 		 * 
 		 */
 		
-		logger.warn(" Processing Strategic Reserve Payment ");
-		for (StrategicReserveOperator strategicReserveOperator:reps.strategicReserveOperatorRepository.findAll()){
-			acceptedPowerPlantDispatchRoleinSR.act(strategicReserveOperator);
-		}
 		
+	/*	timerMarket.reset();
+		timerMarket.start();
+		
+		timerMarket.stop();
+		logger.warn("        took: {} seconds.", timerMarket.seconds());*/
 		
 		/*
 		 * Maintenance and CO2
 		 */
-		logger.warn("  4. Paying for maintenance & co2");
+		logger.warn("  5. Paying for maintenance & co2");
 		timerMarket.reset();
 		timerMarket.start();
 		for (EnergyProducer producer : reps.genericRepository.findAllAtRandom(EnergyProducer.class)) {
@@ -235,7 +245,7 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
 		/*
 		 * COMMODITY MARKETS
 		 */
-		logger.warn("  5. Purchasing commodities");
+		logger.warn("  6. Purchasing commodities");
 		timerMarket.reset();
 		timerMarket.start();
 
@@ -262,7 +272,7 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
 		timerMarket.stop();
 		logger.warn("        took: {} seconds.", timerMarket.seconds());
 
-		logger.warn("  6. Investing");
+		logger.warn("  7. Investing");
 		Timer timerInvest = new Timer();
 		timerInvest.start();
 		if (getCurrentTick() > 1) {
@@ -284,7 +294,7 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
 		logger.warn("        took: {} seconds.", timerInvest.seconds());
 
 		if (model.isLongTermContractsImplemented()) {
-			logger.warn("  7. Reassign LTCs");
+			logger.warn("  8. Reassign LTCs");
 			timerMarket.reset();
 			timerMarket.start();
 			for (EnergyProducer producer : reps.genericRepository.findAllAtRandom(EnergyProducer.class)) {
@@ -302,7 +312,7 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
 		if (model.isDeletionOldPPDPBidsAndCashFlowsEnabled() && (getCurrentTick() - model.getDeletionAge() >= 0)) {
 			timerMarket.reset();
 			timerMarket.start();
-			logger.warn("  8. Delete old nodes in year {}.", (getCurrentTick() - model.getDeletionAge()));
+			logger.warn("  9. Delete old nodes in year {}.", (getCurrentTick() - model.getDeletionAge()));
 			reps.bidRepository.delete(reps.bidRepository.findAllBidsForForTime(getCurrentTick() - model.getDeletionAge()));
 			reps.cashFlowRepository.delete(reps.cashFlowRepository.findAllCashFlowsForForTime(getCurrentTick() - model.getDeletionAge()));
 			reps.powerPlantRepository.delete(reps.powerPlantRepository.findAllPowerPlantsDismantledBeforeTick(getCurrentTick()

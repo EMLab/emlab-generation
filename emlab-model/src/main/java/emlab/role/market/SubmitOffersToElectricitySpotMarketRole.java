@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.neo4j.kernel.impl.traversal.OldTraverserWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -63,6 +64,8 @@ public class SubmitOffersToElectricitySpotMarketRole extends AbstractEnergyProdu
             // get market for the plant by zone
             ElectricitySpotMarket market = reps.marketRepository.findElectricitySpotMarketForZone(plant.getLocation().getZone());
 
+            
+            
             double mc = calculateMarginalCostExclCO2MarketCost(plant);
             double price = mc * producer.getPriceMarkUp();
 
@@ -77,6 +80,8 @@ public class SubmitOffersToElectricitySpotMarketRole extends AbstractEnergyProdu
 
                 PowerPlantDispatchPlan plan = reps.powerPlantDispatchPlanRepository
                         .findOnePowerPlantDispatchPlanForPowerPlantForSegmentForTime(plant, segment, getCurrentTick());
+                
+          
                 // TODO: handle exception
 
                 // plan =
@@ -91,7 +96,7 @@ public class SubmitOffersToElectricitySpotMarketRole extends AbstractEnergyProdu
                 if (plan == null) {
                     plan = new PowerPlantDispatchPlan().persist();
                     // plan.specifyNotPersist(plant, producer, market, segment, time, price, bidWithoutCO2, spotMarketCapacity, longTermContractCapacity, status);
-                    plan.specifyNotPersist(plant, producer, market, segment, getCurrentTick(), price, price, capacity, 0, Bid.SUBMITTED);
+                    plan.specifyNotPersist(plant, producer, market, segment, getCurrentTick(), price, price, capacity, 0, Bid.SUBMITTED, plan.getSRstatus());
                 } else {
                     // plan = plans.iterator().next();
                     plan.setBidder(producer);
@@ -101,6 +106,9 @@ public class SubmitOffersToElectricitySpotMarketRole extends AbstractEnergyProdu
                     plan.setAmount(capacity);
                     plan.setCapacityLongTermContract(0d);
                     plan.setStatus(Bid.SUBMITTED);
+                    plan.setSRstatus(plan.getSRstatus());
+                    
+                    
                 }
 
                 logger.info("Submitted {} for iteration {} to electricity spot market", plan);

@@ -126,7 +126,7 @@ public class PowerPlantDispatchPlan extends Bid {
     }
 
     public void specifyNotPersist(PowerPlant plant, EnergyProducer producer, ElectricitySpotMarket market, Segment segment, long time,
-            double price, double bidWithoutCO2, double spotMarketCapacity, double longTermContractCapacity, int status) {
+            double price, double bidWithoutCO2, double spotMarketCapacity, double longTermContractCapacity, int status, int sRstatus) {
         this.setPowerPlant(plant);
         this.setSegment(segment);
         this.setTime(time);
@@ -137,15 +137,17 @@ public class PowerPlantDispatchPlan extends Bid {
         this.setAmount(spotMarketCapacity);
         this.setCapacityLongTermContract(longTermContractCapacity);
         this.setStatus(status);
+        this.setSRstatus(sRstatus);
+        
     }
 
     // All transactional methods below are signified by starting with update
     @Transactional
     public void specifyAndPersist(PowerPlant plant, EnergyProducer producer, ElectricitySpotMarket market, Segment segment, long time,
-            double price, double bidWithoutCO2, double spotMarketCapacity, double longTermContractCapacity, int status) {
+            double price, double bidWithoutCO2, double spotMarketCapacity, double longTermContractCapacity, int status, int sRstatus) {
         this.persist();
         this.specifyNotPersist(plant, producer, market, segment, time, price, bidWithoutCO2, spotMarketCapacity, longTermContractCapacity,
-                status);
+                status, sRstatus);
 
     }
 

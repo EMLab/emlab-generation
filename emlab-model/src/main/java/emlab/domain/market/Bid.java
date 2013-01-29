@@ -93,7 +93,7 @@ public class Bid {
     public double getPrice() {
         return price;
     }
-
+    @Transactional
     public void setPrice(double price) {
         this.price = price;
     }
@@ -125,7 +125,8 @@ public class Bid {
 	public int getSRstatus() {
 		return SRstatus;
 	}
-
+	
+	@Transactional
 	public void setSRstatus(int sRstatus) {
 		SRstatus = sRstatus;
 	}
@@ -133,7 +134,8 @@ public class Bid {
 	public double getOldPrice() {
 		return oldPrice;
 	}
-
+	
+	@Transactional
 	public void setOldPrice(double oldPrice) {
 		this.oldPrice = oldPrice;
 	}
