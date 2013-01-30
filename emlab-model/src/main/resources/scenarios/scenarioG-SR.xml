@@ -744,7 +744,7 @@
 
 	<!-- CO2 Auction -->
 	<bean id="co2Auction" class="emlab.domain.market.CO2Auction"
-		p:auction="false" p:referencePrice="0" p:name="CO2 auction"
+		p:auction="true" p:referencePrice="0" p:name="CO2 auction"
 		p:substance-ref="co2" />
 
 	<!-- Fuel Prices -->
@@ -882,6 +882,9 @@
 		p:numberOfYearsBacklookingForForecasting="${numberOfYearsBacklookingForForecasting}" />
 
 
+
+	<!-- Initial portfolios -->
+
 	<bean id="powerPlantManufacturer" class="emlab.domain.agent.PowerPlantManufacturer"
 		p:name="Power Plant Manufacturer" />
 	<bean id="bigBank" class="emlab.domain.agent.BigBank" p:name="Big Bank" />
@@ -947,44 +950,50 @@
 	</bean>
 
 	<bean id="germanPowerPortfolio" class="emlab.domain.factory.ElectricityProducerFactory">
-		<property name="capacityMargin" value="0.25" />
+		<property name="capacityMargin" value="0.97" />
 		<property name="portfolioShares">
 			<map>
 				<entry>
 					<key>
 						<ref bean="coalPulverizedSuperCritical" />
 					</key>
-					<value>0.45</value>
+					<value>0.352</value>
 				</entry>
 				<entry>
 					<key>
 						<ref bean="CCGT" />
 					</key>
-					<value>0.15</value>
+					<value>0.1071</value>
 				</entry>
 				<entry>
 					<key>
 						<ref bean="OCGT" />
 					</key>
-					<value>0.05</value>
+					<value>0.0851</value>
 				</entry>
 				<entry>
 					<key>
 						<ref bean="biomassPGT" />
 					</key>
-					<value>0.05</value>
+					<value>0.0341</value>
 				</entry>
 				<entry>
 					<key>
 						<ref bean="nuclearPGT" />
 					</key>
-					<value>0.20</value>
+					<value>0.0731</value>
 				</entry>
 				<entry>
 					<key>
 						<ref bean="windPGT" />
 					</key>
-					<value>0.10</value>
+					<value>0.1851</value>
+				</entry>
+				<entry>
+					<key>
+						<ref bean="photovoltaicPGT" />
+					</key>
+					<value>0.1591</value>
 				</entry>
 			</map>
 		</property>
@@ -1048,8 +1057,6 @@
 		<property name="governedZone" ref="de" />
 	</bean>
 
-	<!-- Strategic Reserve -->
-
 	<bean id="strategicReserveOperator1" class="emlab.domain.agent.StrategicReserveOperator"
 		p:name="StrategicReserveOperatorNL" p:cash="0" p:reservePriceSR="200"
 		p:reserveVolumePercentSR="0.1">
@@ -1065,12 +1072,12 @@
 	<!-- Power Genration Technologies -->
 	<bean id="coalPulverizedSuperCritical" class="emlab.domain.technology.PowerGeneratingTechnology"
 		p:name="CoalPulverizedSuperCritical" p:capacity="758" p:efficiency=".44"
-		p:efficiencyModifierExogenous="0.000" p:co2CaptureEffciency="0"
-		p:baseInvestmentCost="1087351000" p:investmentCostModifierExogenous="0.000"
-		p:downPayment="326205300" p:depreciationTime="20"
-		p:minimumRunningHours="5000" p:fixedOperatingCost="32620530"
+		p:efficiencyModifierExogenous="0.0032724641" p:co2CaptureEffciency="0"
+		p:baseInvestmentCost="1201809000" p:investmentCostModifierExogenous="0.000"
+		p:downPayment="360542700" p:depreciationTime="20"
+		p:minimumRunningHours="5000" p:fixedOperatingCost="36054270"
 		p:fixedOperatingCostModifierAfterLifetime=".05" p:expectedLifetime="40"
-		p:expectedLeadtime="4" p:expectedPermittime="1" p:minimumFuelQuality=".9"
+		p:expectedLeadtime="4" p:expectedPermittime="1" p:minimumFuelQuality=".95"
 		p:maximumInstalledCapacityFractionInCountry="1"
 		p:maximumInstalledCapacityFractionPerAgent="1"
 		p:baseSegmentDependentAvailability="1"
@@ -1144,7 +1151,7 @@
 		</property>
 	</bean>
 	<bean id="CCGT" class="emlab.domain.technology.PowerGeneratingTechnology"
-		p:name="CCGT" p:capacity="776" p:efficiency=".56"
+		p:name="CCGT" p:capacity="776" p:efficiency=".59"
 		p:efficiencyModifierExogenous="0.0019858468" p:co2CaptureEffciency="0"
 		p:baseInvestmentCost="527292000" p:investmentCostModifierExogenous="0"
 		p:downPayment="158187600" p:depreciationTime="15"
@@ -1220,11 +1227,11 @@
 		</property>
 	</bean>
 	<bean id="windPGT" class="emlab.domain.technology.PowerGeneratingTechnology"
-		p:name="Wind" p:capacity="150" p:efficiency="1"
+		p:name="Wind" p:capacity="600" p:efficiency="1"
 		p:efficiencyModifierExogenous="0.000" p:co2CaptureEffciency="0"
-		p:baseInvestmentCost="191392500" p:investmentCostModifierExogenous="-0.0016906644"
-		p:downPayment="57417750" p:depreciationTime="15"
-		p:minimumRunningHours="0" p:fixedOperatingCost="2831250"
+		p:baseInvestmentCost="765570000" p:investmentCostModifierExogenous="-0.0016906644"
+		p:downPayment="229671000" p:depreciationTime="15"
+		p:minimumRunningHours="0" p:fixedOperatingCost="11325000"
 		p:fixedOperatingCostModifierAfterLifetime=".05" p:expectedLifetime="25"
 		p:expectedLeadtime="2" p:expectedPermittime="1" p:minimumFuelQuality="1"
 		p:maximumInstalledCapacityFractionInCountry="1"
@@ -1234,11 +1241,11 @@
 		p:applicableForLongTermContract="true">
 	</bean>
 	<bean id="windOffshorePGT" class="emlab.domain.technology.PowerGeneratingTechnology"
-		p:name="WindOffshore" p:capacity="150" p:efficiency="1"
+		p:name="WindOffshore" p:capacity="600" p:efficiency="1"
 		p:efficiencyModifierExogenous="0.000" p:co2CaptureEffciency="0"
-		p:baseInvestmentCost="386182500" p:investmentCostModifierExogenous="-0.0231228102"
-		p:downPayment="115854750" p:depreciationTime="15"
-		p:minimumRunningHours="0" p:fixedOperatingCost="6455250"
+		p:baseInvestmentCost="1544730000" p:investmentCostModifierExogenous="-0.0231228102"
+		p:downPayment="463419000" p:depreciationTime="15"
+		p:minimumRunningHours="0" p:fixedOperatingCost="25821000"
 		p:fixedOperatingCostModifierAfterLifetime=".05" p:expectedLifetime="25"
 		p:expectedLeadtime="2" p:expectedPermittime="1" p:minimumFuelQuality="1"
 		p:maximumInstalledCapacityFractionInCountry="1"
@@ -1248,17 +1255,17 @@
 		p:applicableForLongTermContract="true">
 	</bean>
 	<bean id="photovoltaicPGT" class="emlab.domain.technology.PowerGeneratingTechnology"
-		p:name="Photovoltaic" p:capacity="100" p:efficiency="1"
+		p:name="Photovoltaic" p:capacity="500" p:efficiency="1"
 		p:efficiencyModifierExogenous="0.000" p:co2CaptureEffciency="0"
-		p:baseInvestmentCost="292940000" p:investmentCostModifierExogenous="-0.0253875886"
-		p:downPayment="87882000" p:depreciationTime="15"
-		p:minimumRunningHours="0" p:fixedOperatingCost="2944500"
+		p:baseInvestmentCost="1464700000" p:investmentCostModifierExogenous="-0.0253875886"
+		p:downPayment="439410000" p:depreciationTime="15"
+		p:minimumRunningHours="0" p:fixedOperatingCost="14722500"
 		p:fixedOperatingCostModifierAfterLifetime=".05" p:expectedLifetime="25"
 		p:expectedLeadtime="2" p:expectedPermittime="1" p:minimumFuelQuality="1"
 		p:maximumInstalledCapacityFractionInCountry="1"
 		p:maximumInstalledCapacityFractionPerAgent="1"
-		p:baseSegmentDependentAvailability="0.08"
-		p:peakSegmentDependentAvailability="0.16"
+		p:baseSegmentDependentAvailability="0.16"
+		p:peakSegmentDependentAvailability="0.08"
 		p:applicableForLongTermContract="true">
 	</bean>
 	<bean id="nuclearPGT" class="emlab.domain.technology.PowerGeneratingTechnology"
