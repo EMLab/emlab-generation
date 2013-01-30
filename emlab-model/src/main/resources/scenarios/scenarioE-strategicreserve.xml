@@ -16,9 +16,10 @@
 	<!-- Decarbonization Model -->
 	<bean id="decarbonizationModel" class="emlab.domain.agent.DecarbonizationModel"
 		p:name="Decarbonization Model" p:simulationLength="${simulationLength}"
-		p:co2TradingImplemented="${co2TradingImplemented}"
+		p:co2TradingImplemented="false"
 		p:realRenewableDataImplemented="false" p:iterationSpeedFactor="3"
-		p:iterationSpeedCriterion="0.005" p:capDeviationCriterion="0.005">
+		p:iterationSpeedCriterion="0.005" p:capDeviationCriterion="0.005" p:deletionOldPPDPBidsAndCashFlowsEnabled="true"
+		p:deletionAge="2">
 	</bean>
 
 	<bean class="emlab.trend.TriangularTrend" id="demandGrowthTrendNL"
@@ -544,8 +545,8 @@
 	</bean>
 
 	<bean id="strategicReserveOperator2" class="emlab.domain.agent.StrategicReserveOperator"
-		p:name="StrategicReserveOperatorDE" p:cash="1000" p:reservePriceSR="110"
-		p:reserveVolumePercentSR="0.35">
+		p:name="StrategicReserveOperatorDE" p:cash="1000" p:reservePriceSR="100"
+		p:reserveVolumePercentSR="0.3">
 		<property name="zone" ref="de" />
 	</bean>
 
