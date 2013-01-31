@@ -1058,14 +1058,14 @@
 	</bean>
 
 	<bean id="strategicReserveOperator1" class="emlab.domain.agent.StrategicReserveOperator"
-		p:name="StrategicReserveOperatorNL" p:cash="0" p:reservePriceSR="200"
-		p:reserveVolumePercentSR="0.1">
+		p:name="StrategicReserveOperatorNL" p:cash="${sReserveCashNL}" p:reservePriceSR="${reserveVolumeNL}"
+		p:reserveVolumePercentSR="${reservePriceNL}">
 		<property name="zone" ref="nl" />
 	</bean>
 
 	<bean id="strategicReserveOperator2" class="emlab.domain.agent.StrategicReserveOperator"
-		p:name="StrategicReserveOperatorDE" p:cash="0" p:reservePriceSR="200"
-		p:reserveVolumePercentSR="0.1">
+		p:name="StrategicReserveOperatorDE" p:cash="${sReserveCashDE}" p:reservePriceSR="${reserveVolumeDE}"
+		p:reserveVolumePercentSR="${reservePriceDE}">
 		<property name="zone" ref="de" />
 	</bean>
 
