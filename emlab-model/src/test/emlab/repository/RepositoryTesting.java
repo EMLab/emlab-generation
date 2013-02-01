@@ -31,8 +31,12 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import emlab.domain.agent.TargetInvestor;
 import emlab.domain.market.ClearingPoint;
 import emlab.domain.market.CommodityMarket;
+import emlab.domain.market.electricity.ElectricitySpotMarket;
+import emlab.domain.policy.PowerGeneratingTechnologyTarget;
+import emlab.domain.technology.PowerGeneratingTechnology;
 import emlab.domain.technology.Substance;
 
 /**
@@ -101,6 +105,45 @@ public class RepositoryTesting {
 			assertTrue(substance.getName().equals("Coal"));
 		}
 		assertTrue(count == 1);
+	}
+	
+	//PowerGenerationTechnologyTargetRepository
+	@Autowired PowerGenerationTechnologyTargetRepository powerGenerationTechnologyTargetRepository;
+	
+	@Test
+	public void testfindAllPowerGenerationTechnologyTargetsByMarket(){
+		PowerGeneratingTechnology wind = new PowerGeneratingTechnology();
+		wind.persist();
+		ElectricitySpotMarket marketA = new ElectricitySpotMarket();
+		marketA.persist();
+		ElectricitySpotMarket marketB = new ElectricitySpotMarket();
+		marketB.persist();
+		
+		
+		PowerGeneratingTechnologyTarget pgttWindA = new PowerGeneratingTechnologyTarget();
+		pgttWindA.setPowerGeneratingTechnology(wind);
+		pgttWindA.persist();
+		
+		PowerGeneratingTechnologyTarget pggtWindB = new PowerGeneratingTechnologyTarget();
+		pggtWindB.setPowerGeneratingTechnology(wind);
+		pggtWindB.persist();
+		
+		TargetInvestor rtiA = new TargetInvestor();
+		rtiA.setInvestorMarket(marketA);
+		Set<PowerGeneratingTechnologyTarget> powerGenerationTechnologyTargetsA = new HashSet<PowerGeneratingTechnologyTarget>();
+		powerGenerationTechnologyTargetsA.add(pgttWindA);
+		rtiA.setPowerGenerationTechnologyTargets(powerGenerationTechnologyTargetsA);
+		rtiA.persist();
+		
+		TargetInvestor rtiB = new TargetInvestor();
+		rtiB.setInvestorMarket(marketB);
+		Set<PowerGeneratingTechnologyTarget> powerGenerationTechnologyTargetsB = new HashSet<PowerGeneratingTechnologyTarget>();
+		powerGenerationTechnologyTargetsB.add(pggtWindB);
+		rtiB.setPowerGenerationTechnologyTargets(powerGenerationTechnologyTargetsB);
+		rtiB.persist();
+		
+		assertTrue(pgttWindA.getNodeId()==powerGenerationTechnologyTargetRepository.findAllByMarket(marketA).iterator().next().getNodeId());
+		
 	}
 	
 	

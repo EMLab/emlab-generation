@@ -15,20 +15,23 @@
  ******************************************************************************/
 package emlab.repository;
 
+import java.util.List;
+
 import org.springframework.data.neo4j.annotation.Query;
 import org.springframework.data.neo4j.annotation.QueryType;
 import org.springframework.data.neo4j.repository.GraphRepository;
-import org.springframework.data.repository.query.Param;
 
-import emlab.domain.gis.Zone;
-import emlab.domain.market.electricity.ElectricitySpotMarket;
-import emlab.domain.technology.PowerGridNode;
+import emlab.domain.agent.EnergyProducer;
 
-public interface PowerGridNodeRepository extends GraphRepository<PowerGridNode> {
-
-	@Query("START zone=node({zone}) match (zone)<-[:REGION]-(powergridnode) WHERE powergridnode.__type__ = 'emlab.domain.technology.PowerGridNode' RETURN powergridnode")
-	Iterable<PowerGridNode> findAllPowerGridNodesByZone(@Param("zone") Zone zone);
+/**
+ * @author JCRichstein
+ *
+ */
+public interface EnergyProducerRepository extends
+		GraphRepository<EnergyProducer> {
 	
-	@Query(value="g.v(market).out('ZONE').in('REGION').next()", type=QueryType.Gremlin)
-	PowerGridNode findFirstPowerGridNodeByElectricitySpotMarket(@Param("market") ElectricitySpotMarket esm);
+	@Query(value="result = g.idx('__types__')[[className:'emlab.domain.agent.EnergyProducer']].propertyFilter('__type__', FilterPipe.Filter.NOT_EQUAL, 'emlab.domain.agent.TargetInvestor').toList();" +
+			"if(result == null){return null;} else {Collections.shuffle(result); return result;}", type=QueryType.Gremlin)
+	List<EnergyProducer> findAllEnergyProducersExceptForRenewableTargetInvestorsAtRandom();
+	
 }

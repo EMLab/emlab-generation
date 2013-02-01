@@ -73,11 +73,11 @@ public class PowerPlant {
     private long actualLeadtime;
     private long actualPermittime;
     private long actualLifetime;
-    private double biomassCoCombiostionRate;
     private String label;
     private double actualInvestedCapital;
     private double actualEfficiency;
     private double expectedEndOfLife;
+    private double actualNominalCapacity;
 
     public boolean isOperational(long currentTick) {
 
@@ -165,7 +165,7 @@ public class PowerPlant {
                     factor = getTechnology().getPeakSegmentDependentAvailability();
                 }
             }
-            return getTechnology().getCapacity() * factor;
+            return getActualNominalCapacity() * factor;
         } else {
             return 0;
         }
@@ -188,7 +188,7 @@ public class PowerPlant {
 
                 factor = max - segmentPortion * range;
             }
-            return getTechnology().getCapacity() * factor;
+            return getActualNominalCapacity() * factor;
         } else {
             return 0;
         }
@@ -196,7 +196,7 @@ public class PowerPlant {
 
     public double getAvailableCapacity(long currentTick) {
         if (isOperational(currentTick)) {
-            return getTechnology().getCapacity();
+            return getActualNominalCapacity();
         } else {
             return 0;
         }
@@ -463,7 +463,7 @@ public class PowerPlant {
     public void specifyAndPersist(long time, EnergyProducer energyProducer, PowerGridNode location,
             PowerGeneratingTechnology technology) {
         specifyNotPersist(time, energyProducer, location, technology);
-
+        this.persist();
     }
 
     public void specifyNotPersist(long time, EnergyProducer energyProducer, PowerGridNode location,
@@ -477,6 +477,7 @@ public class PowerPlant {
         this.setActualLeadtime(this.technology.getExpectedLeadtime());
         this.setActualPermittime(this.technology.getExpectedPermittime());
         this.calculateAndSetActualEfficiency(time);
+        this.setActualNominalCapacity(this.getTechnology().getCapacity());
         assert(this.getActualEfficiency()<=1);
         this.setDismantleTime(1000);
         this.calculateAndSetActualInvestedCapital(time);
@@ -501,5 +502,19 @@ public class PowerPlant {
     public void updateFuelMix(Set<SubstanceShareInFuelMix> fuelMix) {
         this.setFuelMix(fuelMix);
     }
+
+	/**
+	 * @return the actualNominalCapacity
+	 */
+	public double getActualNominalCapacity() {
+		return actualNominalCapacity;
+	}
+
+	/**
+	 * @param actualNominalCapacity the actualNominalCapacity to set
+	 */
+	public void setActualNominalCapacity(double actualNominalCapacity) {
+		this.actualNominalCapacity = actualNominalCapacity;
+	}
 
 }

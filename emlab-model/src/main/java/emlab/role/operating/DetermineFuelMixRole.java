@@ -72,7 +72,7 @@ public class DetermineFuelMixRole extends AbstractEnergyProducerRole implements 
         // get the co2 tax and market prices
         // CO2Auction market = reps.genericRepository.findFirst(CO2Auction.class);
         // double co2AuctionPrice = findLastKnownPriceOnMarket(market);
-        HashMap<ElectricitySpotMarket, Double> expectedCO2Prices = determineExpectedCO2PriceInclTax(getCurrentTick(), 1);
+        HashMap<ElectricitySpotMarket, Double> expectedCO2Prices = determineExpectedCO2PriceInclTax(getCurrentTick()-1, 1, 1);
         Government government = reps.genericRepository.findFirst(Government.class);
         // double co2TaxLevel = government.getCO2Tax(getCurrentTick());
         // logger.warn("Expected CO2 price: " + expectedCO2Prices.toString());

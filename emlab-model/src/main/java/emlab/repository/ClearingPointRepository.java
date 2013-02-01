@@ -43,7 +43,7 @@ public interface ClearingPointRepository extends GraphRepository<ClearingPoint> 
     Iterable<ClearingPoint> findAllClearingPointsForSubstanceAndTimeRange(@Param("substance") Substance substance,
             @Param("timeFrom") long timeFrom, @Param("timeTo") long timeTo);
 
-    @Query(value = "g.v(market).in('MARKET_POINT').propertyFilter('time', FilterPipe.Filter.GREATER_THAN_EQUAL, timeFrom).propertyFilter('time', FilterPipe.Filter.LESS_THAN_EQUAL, timeFrom)", type=QueryType.Gremlin)
+    @Query(value = "g.v(market).in('MARKET_POINT').propertyFilter('time', FilterPipe.Filter.GREATER_THAN_EQUAL, timeFrom).propertyFilter('time', FilterPipe.Filter.LESS_THAN_EQUAL, timeTo)", type=QueryType.Gremlin)
     Iterable<ClearingPoint> findAllClearingPointsForMarketAndTimeRange(@Param("market") DecarbonizationMarket market, @Param("timeFrom") long timeFrom, @Param("timeTo") long timeTo);
 
     

@@ -137,8 +137,9 @@ public class ClearIterativeCO2AndElectricitySpotMarketTwoCountryRole extends Abs
 
                 // Clear the electricity markets with the expected co2Price
 
-                updatePowerPlanDispatchPlansWithNewCO2Prices(co2SecantSearch.co2Price, nationalMinCo2Prices);
-
+                //updatePowerPlanDispatchPlansWithNewCO2Prices(co2SecantSearch.co2Price, nationalMinCo2Prices);
+                submitOffersToElectricitySpotMarketRole.updateMarginalCostInclCO2AfterFuelMixChange(co2SecantSearch.co2Price, nationalMinCo2Prices);
+                
                 if (model.isLongTermContractsImplemented())
                     determineCommitmentOfPowerPlantsOnTheBasisOfLongTermContracts(segments);
 
