@@ -170,7 +170,7 @@
 	<bean id="ppCoalA1" class="emlab.gen.domain.technology.PowerPlant" p:label="Coal Power Plant A1"
 	p:constructionStartTime="-15" p:actualLeadtime="4" p:actualEfficiency=".44"
 	p:actualPermittime="1" p:expectedEndOfLife="30" p:actualInvestedCapital="717250000"
-	p:dismantleTime="1000" >
+	p:dismantleTime="1000" p:actualNominalCapacity="500">
 		<property name ="technology" ref="coalPulverizedSuperCritical"/>
 		<property name="owner" ref="energyProducerA"/>
 		<property name="location" ref="beneluxNode"/>
@@ -180,7 +180,7 @@
 	<bean id="ppCoalA2" class="emlab.gen.domain.technology.PowerPlant" p:label="Coal Power Plant A2"
 	p:constructionStartTime="-10" p:actualLeadtime="4" p:actualEfficiency=".44"
 	p:actualPermittime="1" p:expectedEndOfLife="35" p:actualInvestedCapital="717250000"
-	p:dismantleTime="1000" >
+	p:dismantleTime="1000" p:actualNominalCapacity="500">
 		<property name ="technology" ref="coalPulverizedSuperCritical"/>
 		<property name="owner" ref="energyProducerA"/>
 		<property name="location" ref="beneluxNode"/>
@@ -190,7 +190,7 @@
 	<bean id="ppCoalB1" class="emlab.gen.domain.technology.PowerPlant" p:label="Coal Power Plant B1"
 	p:constructionStartTime="-20" p:actualLeadtime="4" p:actualEfficiency=".44"
 	p:actualPermittime="1" p:expectedEndOfLife="25" p:actualInvestedCapital="717250000"
-	p:dismantleTime="1000" >
+	p:dismantleTime="1000" p:actualNominalCapacity="500">
 		<property name ="technology" ref="coalPulverizedSuperCritical"/>
 		<property name="owner" ref="energyProducerB"/>
 		<property name="location" ref="beneluxNode"/>
@@ -200,7 +200,7 @@
 	<bean id="ppCoalB2" class="emlab.gen.domain.technology.PowerPlant" p:label="Coal Power Plant B2"
 	p:constructionStartTime="-1" p:actualLeadtime="4" p:actualEfficiency=".44"
 	p:actualPermittime="1" p:expectedEndOfLife="44" p:actualInvestedCapital="717250000"
-	p:dismantleTime="1000" >
+	p:dismantleTime="1000" p:actualNominalCapacity="500">
 		<property name ="technology" ref="coalPulverizedSuperCritical"/>
 		<property name="owner" ref="energyProducerB"/>
 		<property name="location" ref="beneluxNode"/>
@@ -210,7 +210,7 @@
 	<bean id="ppCCGTA1" class="emlab.gen.domain.technology.PowerPlant" p:label="CCGT Plant A1"
 	p:constructionStartTime="-12" p:actualLeadtime="2" p:actualEfficiency=".56"
 	p:actualPermittime="1" p:expectedEndOfLife="21" p:actualInvestedCapital="339750000"
-	p:dismantleTime="1000" >
+	p:dismantleTime="1000" p:actualNominalCapacity="500">
 		<property name ="technology" ref="CCGT"/>
 		<property name="owner" ref="energyProducerA"/>
 		<property name="location" ref="beneluxNode"/>
@@ -220,7 +220,7 @@
 	<bean id="ppCCGTB1" class="emlab.gen.domain.technology.PowerPlant" p:label="CCGT Plant B1"
 	p:constructionStartTime="-5" p:actualLeadtime="2" p:actualEfficiency=".56"
 	p:actualPermittime="1" p:expectedEndOfLife="28" p:actualInvestedCapital="339750000"
-	p:dismantleTime="1000" >
+	p:dismantleTime="1000" p:actualNominalCapacity="500">
 		<property name ="technology" ref="CCGT"/>
 		<property name="owner" ref="energyProducerB"/>
 		<property name="location" ref="beneluxNode"/>
@@ -230,7 +230,7 @@
 	<bean id="ppOCGTA1" class="emlab.gen.domain.technology.PowerPlant" p:label="OCGT Plant A1"
 	p:constructionStartTime="-5" p:actualLeadtime="2" p:actualEfficiency="0.38"
 	p:actualPermittime="1" p:expectedEndOfLife="27" p:actualInvestedCapital="37750000"
-	p:dismantleTime="1000" >
+	p:dismantleTime="1000" p:actualNominalCapacity="150">
 		<property name ="technology" ref="OCGT"/>
 		<property name="owner" ref="energyProducerA"/>
 		<property name="location" ref="beneluxNode"/>
@@ -240,7 +240,7 @@
 	<bean id="ppOCGTA2" class="emlab.gen.domain.technology.PowerPlant" p:label="OCGT Plant A2"
 	p:constructionStartTime="-7" p:actualLeadtime="2" p:actualEfficiency="0.38"
 	p:actualPermittime="1" p:expectedEndOfLife="25" p:actualInvestedCapital="37750000"
-	p:dismantleTime="1000" >
+	p:dismantleTime="1000" p:actualNominalCapacity="150">
 		<property name ="technology" ref="OCGT"/>
 		<property name="owner" ref="energyProducerA"/>
 		<property name="location" ref="beneluxNode"/>
@@ -250,7 +250,7 @@
 	<bean id="ppOCGTB1" class="emlab.gen.domain.technology.PowerPlant" p:label="OCGT Plant B1"
 	p:constructionStartTime="-22" p:actualLeadtime="2" p:actualEfficiency="0.38"
 	p:actualPermittime="1" p:expectedEndOfLife="10" p:actualInvestedCapital="37750000"
-	p:dismantleTime="1000" >
+	p:dismantleTime="1000" p:actualNominalCapacity="150">
 		<property name ="technology" ref="OCGT"/>
 		<property name="owner" ref="energyProducerB"/>
 		<property name="location" ref="beneluxNode"/>
@@ -260,7 +260,7 @@
 	<bean id="ppOCGTB2" class="emlab.gen.domain.technology.PowerPlant" p:label="OCGT Plant B2"
 	p:constructionStartTime="-1" p:actualLeadtime="2" p:actualEfficiency="0.38"
 	p:actualPermittime="1" p:expectedEndOfLife="31" p:actualInvestedCapital="37750000"
-	p:dismantleTime="1000" >
+	p:dismantleTime="1000" p:actualNominalCapacity="150">
 		<property name ="technology" ref="OCGT"/>
 		<property name="owner" ref="energyProducerB"/>
 		<property name="location" ref="beneluxNode"/>
