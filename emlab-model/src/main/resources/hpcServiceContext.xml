@@ -25,12 +25,12 @@
   
   <!-- ===== Domain Repositories ========= -->
   <!-- Edit the value to match the package name of your repositories -->
-  <neo4j:repositories base-package="emlab.repository"/>
+  <neo4j:repositories base-package="emlab.gen.repository"/>
   
   <!-- ===== Domain Behaviors ========= -->
   <!-- Edit the value to match the package name of your roles -->
-  <context:component-scan base-package="emlab.role"/>
-  <context:component-scan base-package="emlab.repository"/>
+  <context:component-scan base-package="emlab.gen.role"/>
+  <context:component-scan base-package="emlab.gen.repository"/>
 
 	<bean id="engineService" class="agentspring.service.EngineServiceImpl"/>
 	<bean id="dbService" class="agentspring.service.DbServiceImpl">
@@ -38,16 +38,16 @@
 	</bean>
 	  <!-- Edit the value to point to the database folder -->
   <bean id="dbPath" class="java.lang.String">
-    <constructor-arg type="java.lang.String" value="/tmp/ramdisk/emlab-db/${run.id}/" />
+    <constructor-arg type="java.lang.String" value="/tmp/ramdisk/emlab.gen-db/${run.id}/" />
   </bean>
   
   <bean class="agentspring.graphdb.NodeEntityHelper">
-    <property name="prefix" value="emlab"/>
+    <property name="prefix" value="emlab.gen"/>
   </bean>
 
 
   <!-- Edit to point to the database filters implementation default=agentspring.graphdb.DefaultFiltersImpl-->
-  <bean id="dbFilters" class="emlab.util.FiltersImpl"/>
+  <bean id="dbFilters" class="emlab.gen.util.FiltersImpl"/>
 
 	<bean id="projectPropertyConfigurer"
 		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>

@@ -18,10 +18,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>nl.tudelft.tbm.energy</groupId>
-    <artifactId>emlab</artifactId>
+    <artifactId>emlab-generation</artifactId>
     <version>1.0.0-SNAPSHOT</version>
 
-    <name>emlab</name>
+    <name>emlab-generation</name>
     <url>http://www.eeni.tbm.tudelft.nl</url>
 
     <properties>
