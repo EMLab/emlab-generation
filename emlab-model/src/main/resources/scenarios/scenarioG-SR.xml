@@ -830,16 +830,6 @@
 		p:dismantlingRequiredOperatingProfit="0" p:downpaymentFractionOfCash="0.5"
 		p:willingToInvest="true" p:priceMarkUp="${priceMarkUp}"
 		p:numberOfYearsBacklookingForForecasting="${numberOfYearsBacklookingForForecasting}" />
-	<bean id="energyProducerE" class="emlab.domain.agent.EnergyProducer"
-		p:name="Energy Producer E" p:cash="${startCash}"
-		p:longTermContractMargin="0.1" p:longTermContractPastTimeHorizon="3"
-		p:investmentFutureTimeHorizon="${investmentFutureTimeHorizon}"
-		p:pastTimeHorizon="5" p:equityInterestRate="0.12" p:loanInterestRate="0.09"
-		p:debtRatioOfInvestments="0.7"
-		p:dismantlingProlongingYearsAfterTechnicalLifetime="0"
-		p:dismantlingRequiredOperatingProfit="0" p:downpaymentFractionOfCash="0.5"
-		p:willingToInvest="true" p:priceMarkUp="${priceMarkUp}"
-		p:numberOfYearsBacklookingForForecasting="${numberOfYearsBacklookingForForecasting}" />
 	<bean id="energyProducerF" class="emlab.domain.agent.EnergyProducer"
 		p:name="Energy Producer F" p:cash="${startCash}"
 		p:longTermContractMargin="0.1" p:longTermContractPastTimeHorizon="3"
@@ -880,8 +870,6 @@
 		p:dismantlingRequiredOperatingProfit="0" p:downpaymentFractionOfCash="0.5"
 		p:willingToInvest="true" p:priceMarkUp="${priceMarkUp}"
 		p:numberOfYearsBacklookingForForecasting="${numberOfYearsBacklookingForForecasting}" />
-
-
 
 	<!-- Initial portfolios -->
 
@@ -950,50 +938,44 @@
 	</bean>
 
 	<bean id="germanPowerPortfolio" class="emlab.domain.factory.ElectricityProducerFactory">
-		<property name="capacityMargin" value="0.97" />
+		<property name="capacityMargin" value="0.25" />
 		<property name="portfolioShares">
 			<map>
 				<entry>
 					<key>
 						<ref bean="coalPulverizedSuperCritical" />
 					</key>
-					<value>0.352</value>
+					<value>0.33</value>
 				</entry>
 				<entry>
 					<key>
 						<ref bean="CCGT" />
 					</key>
-					<value>0.1071</value>
+					<value>0.40</value>
 				</entry>
 				<entry>
 					<key>
 						<ref bean="OCGT" />
 					</key>
-					<value>0.0851</value>
+					<value>0.16</value>
 				</entry>
 				<entry>
 					<key>
 						<ref bean="biomassPGT" />
 					</key>
-					<value>0.0341</value>
+					<value>0.01</value>
 				</entry>
 				<entry>
 					<key>
 						<ref bean="nuclearPGT" />
 					</key>
-					<value>0.0731</value>
+					<value>0.03</value>
 				</entry>
 				<entry>
 					<key>
 						<ref bean="windPGT" />
 					</key>
-					<value>0.1851</value>
-				</entry>
-				<entry>
-					<key>
-						<ref bean="photovoltaicPGT" />
-					</key>
-					<value>0.1591</value>
+					<value>0.07</value>
 				</entry>
 			</map>
 		</property>
@@ -1009,7 +991,7 @@
 				<ref bean="energyProducerB" />
 				<ref bean="energyProducerC" />
 				<ref bean="energyProducerD" />
-				<ref bean="energyProducerE" />
+
 			</list>
 		</property>
 	</bean>
@@ -1057,15 +1039,17 @@
 		<property name="governedZone" ref="de" />
 	</bean>
 
+	<!-- Strategic Reserve -->
+
 	<bean id="strategicReserveOperator1" class="emlab.domain.agent.StrategicReserveOperator"
-		p:name="StrategicReserveOperatorNL" p:cash="${sReserveCashNL}" p:reservePriceSR="${reserveVolumeNL}"
-		p:reserveVolumePercentSR="${reservePriceNL}">
+		p:name="StrategicReserveOperatorNL" p:cash="0" p:reservePriceSR="1500"
+		p:reserveVolumePercentSR="0.1">
 		<property name="zone" ref="nl" />
 	</bean>
 
 	<bean id="strategicReserveOperator2" class="emlab.domain.agent.StrategicReserveOperator"
-		p:name="StrategicReserveOperatorDE" p:cash="${sReserveCashDE}" p:reservePriceSR="${reserveVolumeDE}"
-		p:reserveVolumePercentSR="${reservePriceDE}">
+		p:name="StrategicReserveOperatorDE" p:cash="0" p:reservePriceSR="1500"
+		p:reserveVolumePercentSR="0.1">
 		<property name="zone" ref="de" />
 	</bean>
 
@@ -1292,7 +1276,7 @@
 	<bean id="projectPropertyConfigurer"
 		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="location"
-			value="classpath:scenarios/parametersC-CO2Tax.properties" />
+			value="classpath:scenarios/parametersC-MinCO2.properties" />
 	</bean>
 
 </beans>

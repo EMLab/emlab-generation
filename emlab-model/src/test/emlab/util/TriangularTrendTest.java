@@ -15,9 +15,9 @@
  ******************************************************************************/
 package emlab.util;
 
-import static org.junit.Assert.*;
 
-import org.apache.log4j.Logger;
+
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +33,7 @@ import emlab.trend.TriangularTrend;
 @Transactional
 public class TriangularTrendTest {
 	
-	Logger logger = Logger.getLogger(GeometricTrendRegressionTest.class);
+
 	
 	@Autowired Neo4jOperations template;
 

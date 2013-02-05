@@ -16,7 +16,7 @@
 package emlab.repository;
 
 import static org.junit.Assert.*;
-import static org.junit.Assert.fail;
+
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.hamcrest.core.IsEqual;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +32,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import scala.annotation.target.setter;
+
 
 import emlab.domain.gis.Zone;
 import emlab.domain.market.ClearingPoint;
@@ -42,8 +42,7 @@ import emlab.domain.market.electricity.PowerPlantDispatchPlan;
 import emlab.domain.market.electricity.Segment;
 import emlab.domain.market.electricity.SegmentLoad;
 import emlab.domain.technology.Substance;
-import emlab.util.TrendEstimator;
-import groovy.mock.interceptor.Demand;
+
 
 /**
  * @author JCRichstein

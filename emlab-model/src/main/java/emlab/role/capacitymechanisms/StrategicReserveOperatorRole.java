@@ -1,6 +1,6 @@
 package emlab.role.capacitymechanisms;
 
-import org.apache.log4j.Logger;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -71,7 +71,7 @@ public class StrategicReserveOperatorRole extends AbstractRole<StrategicReserveO
 
 
 		//multiply by whatever factor
-		double segmentCounter=0;
+		long segmentCounter=0;
 		// Set volume to be contracted
 
 		strategicReserveOperator.setReserveVolume(peakLoadforMarket*strategicReserveOperator.getReserveVolumePercentSR());
@@ -98,8 +98,8 @@ public class StrategicReserveOperatorRole extends AbstractRole<StrategicReserveO
 		for(Segment currentSegment: reps.segmentRepository.findAll()){
 			//logger.warn("Current segment is" + currentSegment);
 			//find query for specific market
-			
-				
+
+
 			boolean isORMarketCleared = false;
 			double sumofContractedBids=0;
 			double volumetobeContracted = strategicReserveOperator.getReserveVolume();
@@ -109,7 +109,7 @@ public class StrategicReserveOperatorRole extends AbstractRole<StrategicReserveO
 			//logger.warn("dispatchPrice " + dispatchPrice);
 
 			Iterable<PowerPlantDispatchPlan> sortedListofPPDP = plantDispatchPlanRepository.findDescendingSortedPowerPlantDispatchPlansForSegmentForTime(currentSegment, getCurrentTick());
-			
+
 			for (PowerPlantDispatchPlan currentPPDP: sortedListofPPDP){
 
 				//logger.warn("Bidding Market " + currentPPDP.getBiddingMarket().getNodeId().intValue());
@@ -128,7 +128,9 @@ public class StrategicReserveOperatorRole extends AbstractRole<StrategicReserveO
 							//logger.warn("SRSTATUS " +currentPPDP.getSRstatus());
 							sumofContractedBids += currentPPDP.getAmount();
 							currentPPDP.setOldPrice(currentPPDP.getPrice());
+							//logger.warn("Old Price" + currentPPDP.getOldPrice());
 							currentPPDP.setPrice(dispatchPrice);
+							
 							//logger.warn("New Price" + currentPPDP.getPrice());
 							// Pays O&M costs to the generated for the contracted capacity
 
@@ -136,10 +138,10 @@ public class StrategicReserveOperatorRole extends AbstractRole<StrategicReserveO
 							//logger.warn("Annual FOC "+ currentPPDP.getPowerPlant().getTechnology().getFixedOperatingCost());
 							//logger.warn("No of Segments " +segmentCounter);
 							//logger.warn("Money Paid " +money);
-							
+
 							//logger.warn("SRO "+ strategicReserveOperator.getName() +" CASH Before" +strategicReserveOperator.getCash());
 							//logger.warn("Owner " + currentPPDP.getBidder().getName() + "money Before" +currentPPDP.getBidder().getCash());
-							
+
 
 							reps.nonTransactionalCreateRepository.createCashFlow(strategicReserveOperator, currentPPDP.getBidder(), money, CashFlow.STRRESPAYMENT, getCurrentTick(), currentPPDP.getPowerPlant());
 
@@ -152,19 +154,22 @@ public class StrategicReserveOperatorRole extends AbstractRole<StrategicReserveO
 							//logger.warn("SRSTATUS " +currentPPDP.getSRstatus());
 							sumofContractedBids += currentPPDP.getAmount();
 							currentPPDP.setOldPrice(currentPPDP.getPrice());
+							//logger.warn("Old Price" + currentPPDP.getOldPrice());
 							currentPPDP.setPrice(dispatchPrice);
+							
+							//logger.warn("New Price" + currentPPDP.getPrice());
 							isORMarketCleared = true;
 							// Pays O&M costs to the generated for the contracted capacity
 							double money = ((currentPPDP.getPowerPlant().getTechnology().getFixedOperatingCost()))/segmentCounter;
 							//logger.warn("Annual FOC "+ currentPPDP.getPowerPlant().getTechnology().getFixedOperatingCost());
 							//logger.warn("No of Segments " +segmentCounter);
 							//logger.warn("Money Paid " +money);
-							
+
 							//logger.warn("SRO "+ strategicReserveOperator.getName() +" CASH Before" +strategicReserveOperator.getCash());
 							//logger.warn("Owner " + currentPPDP.getBidder().getName() + "money Before" +currentPPDP.getBidder().getCash());
-							
+
 							reps.nonTransactionalCreateRepository.createCashFlow(strategicReserveOperator, currentPPDP.getBidder(), money, CashFlow.STRRESPAYMENT, getCurrentTick(), currentPPDP.getPowerPlant());
-							
+
 							//logger.warn("SRO's CASH After" +strategicReserveOperator.getCash());
 							//logger.warn("Owner " + currentPPDP.getBidder().getName() + " money After" +currentPPDP.getBidder().getCash());
 						}
@@ -172,6 +177,7 @@ public class StrategicReserveOperatorRole extends AbstractRole<StrategicReserveO
 					}
 					else {
 						currentPPDP.setSRstatus(Bid.NOT_CONTRACTED);
+						
 					}
 					//logger.warn(volumetobeContracted-sumofContractedBids);
 					if (volumetobeContracted-sumofContractedBids < clearingEpsilon){
@@ -179,6 +185,8 @@ public class StrategicReserveOperatorRole extends AbstractRole<StrategicReserveO
 						isORMarketCleared = true;
 					}
 					//logger.warn(" iS OR CLEARED "+isORMarketCleared);
+					//logger.warn("Price is "+currentPPDP.getPrice());
+					currentPPDP.persist();
 				}
 			}
 		}

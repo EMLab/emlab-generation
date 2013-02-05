@@ -1,0 +1,59 @@
+K 25
+svn:wc:ra_dav:version-url
+V 27
+/d13n/!svn/ver/862/rscripts
+END
+TimeSeriesSummariser.R
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/d13n/!svn/ver/776/rscripts/TimeSeriesSummariser.R
+END
+report-pdf.R
+K 25
+svn:wc:ra_dav:version-url
+V 40
+/d13n/!svn/ver/744/rscripts/report-pdf.R
+END
+simulation.R
+K 25
+svn:wc:ra_dav:version-url
+V 40
+/d13n/!svn/ver/725/rscripts/simulation.R
+END
+report-pdf.Rnw
+K 25
+svn:wc:ra_dav:version-url
+V 42
+/d13n/!svn/ver/763/rscripts/report-pdf.Rnw
+END
+json.r
+K 25
+svn:wc:ra_dav:version-url
+V 34
+/d13n/!svn/ver/428/rscripts/json.r
+END
+d13nHPCQueryReader.R
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/d13n/!svn/ver/832/rscripts/d13nHPCQueryReader.R
+END
+scenarioE-Figures.R
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/d13n/!svn/ver/862/rscripts/scenarioE-Figures.R
+END
+report.R
+K 25
+svn:wc:ra_dav:version-url
+V 36
+/d13n/!svn/ver/741/rscripts/report.R
+END
+AgentSpringHPCReader.R
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/d13n/!svn/ver/806/rscripts/AgentSpringHPCReader.R
+END

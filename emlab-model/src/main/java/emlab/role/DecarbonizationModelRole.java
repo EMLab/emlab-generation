@@ -27,11 +27,11 @@ import emlab.domain.agent.DecarbonizationModel;
 import emlab.domain.agent.EnergyConsumer;
 import emlab.domain.agent.EnergyProducer;
 import emlab.domain.agent.StrategicReserveOperator;
-import emlab.domain.gis.Zone;
+
 import emlab.domain.market.CommodityMarket;
 import emlab.domain.market.electricity.ElectricitySpotMarket;
 import emlab.repository.Reps;
-import emlab.repository.ZoneRepository;
+
 import emlab.role.capacitymechanisms.ProcessAcceptedPowerPlantDispatchRoleinSR;
 import emlab.role.capacitymechanisms.StrategicReserveOperatorRole;
 import emlab.role.investment.DismantlePowerPlantPastTechnicalLifetimeRole;
@@ -183,8 +183,7 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
 		for (StrategicReserveOperator strategicReserveOperator:reps.strategicReserveOperatorRepository.findAll()){
 			strategicReserveOperatorRole.act(strategicReserveOperator);
 		}
-		
-		
+				
 		clearIterativeCO2AndElectricitySpotMarketTwoCountryRole.act(model);
 		//        model.act(clearIterativeCO2AndElectricitySpotMarketTwoCountryRole);
 		timerMarket.stop();

@@ -15,10 +15,10 @@
  ******************************************************************************/
 package emlab.util;
 
-import static org.junit.Assert.*;
+
 
 import org.apache.commons.math.stat.regression.SimpleRegression;
-import org.apache.log4j.Logger;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,7 +39,7 @@ import emlab.util.GeometricTrendRegression;
 @Transactional
 public class GeometricTrendRegressionTest {
 	
-	Logger logger = Logger.getLogger(GeometricTrendRegressionTest.class);
+
 	
 	@Autowired Neo4jOperations template;
 

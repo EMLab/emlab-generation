@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 39
+/d13n/!svn/ver/429/rscripts/sample-data
+END
+auction
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/d13n/!svn/ver/429/rscripts/sample-data/auction
+END
+prices
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/d13n/!svn/ver/429/rscripts/sample-data/prices
+END
+power
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/d13n/!svn/ver/429/rscripts/sample-data/power
+END
+capacity
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/d13n/!svn/ver/429/rscripts/sample-data/capacity
+END

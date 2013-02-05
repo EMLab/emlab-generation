@@ -1,0 +1,22 @@
+#setwd("/home/joern/d13n/rscripts")
+#install.packages(pkgs=c('rjson','sqldf', 'ggplot2'))
+setwd("/Users/Joern/Documents/d13n/rscripts")
+source("AgentSpringHPCReader.R")
+source("TimeSeriesSummariser.R")
+require(ggplot2)
+#setwd("/home/joern/Desktop/outputD13n/d13nE4/")
+setwd("/Users/Joern/Desktop/outputD13n/d13nE5/")
+#Set name and maximum number of HPC run
+#jobname<-"d13nTE2"
+#NUMBER<-4
+#rundIds<-paste0(jobname,"-",c(1:100))
+runIds<-runIdsFromWorkingDirectory()
+jobname<-jobNameFromRunIds(runIds)
+#Checks if file was already read in, else reads it in and saves it.
+if(file.exists(paste0(jobname,".csv"))){
+  df<-read.table(paste0(jobname,".csv"))
+} else{
+  headers<-headersFromRunIds(runIds)
+  df<-bigDataFrameForSeveralRunIdsAndQueries(runIds, headers)
+  write.table(df,file=paste0(jobname,".csv"))
+}

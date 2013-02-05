@@ -41,7 +41,7 @@ import emlab.domain.market.CO2Auction;
 import emlab.domain.market.ClearingPoint;
 import emlab.domain.market.DecarbonizationMarket;
 import emlab.domain.market.electricity.ElectricitySpotMarket;
-import emlab.domain.market.electricity.PowerPlantDispatchPlan;
+
 import emlab.domain.technology.PowerGeneratingTechnology;
 import emlab.domain.technology.PowerPlant;
 import emlab.domain.technology.Substance;

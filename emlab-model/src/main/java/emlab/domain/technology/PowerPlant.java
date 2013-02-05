@@ -31,7 +31,7 @@ import emlab.domain.contract.Loan;
 import emlab.domain.market.electricity.PowerPlantDispatchPlan;
 import emlab.domain.market.electricity.Segment;
 import emlab.repository.PowerPlantDispatchPlanRepository;
-import emlab.repository.Reps;
+
 
 /**
  * Representation of a power plant
@@ -67,17 +67,23 @@ public class PowerPlant {
     /**
      * dismantleTime is set to 1000 as a signifier, that the powerplant is not
      * yet dismantled.
+     * 
      */
+    
+    public static int IN_RESERVE = -21;
+    public static int NOT_IN_RESERVE = -20;
+    
     private long dismantleTime;
     private long constructionStartTime;
     private long actualLeadtime;
     private long actualPermittime;
     private long actualLifetime;
-    private double biomassCoCombiostionRate;
+
     private String label;
     private double actualInvestedCapital;
     private double actualEfficiency;
     private double expectedEndOfLife;
+    private int powerPlantStatus;
 
     public boolean isOperational(long currentTick) {
 

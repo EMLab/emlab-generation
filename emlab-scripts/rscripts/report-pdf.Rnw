@@ -1,0 +1,82 @@
+% ----------------------------------
+\documentclass{article} %
+\usepackage{Sweave}
+\usepackage{subfig}
+\usepackage{graphicx}
+\usepackage[margin=0.2in, paperwidth=11in, paperheight=17in]{geometry}
+\SweaveOpts{echo=FALSE}
+
+<<echo=false,results=hide>>=
+#setwd("/home/ejlchappin/Documents/d13n/rscripts")
+setwd("/home/joern/d13n/rscripts")
+source("report-pdf.R")
+@
+
+\newcommand\report[1]{
+
+%  \begin{figure}
+%    \subfloat[Natural Gas]{\label{fig:gas}\includegraphics[width=2in]{reports/drawSupplyDemandForMarketBySubstanceNatural_Gas_#1.pdf}}
+%    \subfloat[Coal]{\label{fig:coal}\includegraphics[width=2in]{reports/drawSupplyDemandForMarketBySubstanceCoal_#1.pdf}}
+%    \subfloat[Biomass]{\label{fig:bio}\includegraphics[width=2in]{reports/drawSupplyDemandForMarketBySubstanceBiomass_#1.pdf}}
+%    \subfloat[CO2]{\label{fig:co2}\includegraphics[width=2in]{reports/drawSupplyDemandForMarketCO2Auction_#1.pdf}}
+%    \caption{Markets}
+%  \end{figure}
+%  
+%  \begin{figure}
+%    \subfloat[Segment 1]{\label{fig:esm1}\includegraphics[width=2in]{reports/drawSupplyDemandForMarketSegment1_#1.pdf}}
+%    \subfloat[Segment 2]{\label{fig:esm2}\includegraphics[width=2in]{reports/drawSupplyDemandForMarketSegment2_#1.pdf}}
+%    \subfloat[Segment 3]{\label{fig:esm3}\includegraphics[width=2in]{reports/drawSupplyDemandForMarketSegment3_#1.pdf}}
+%    \subfloat[Segment 4]{\label{fig:esm4}\includegraphics[width=2in]{reports/drawSupplyDemandForMarketSegment4_#1.pdf}}
+%    \subfloat[Segment 5]{\label{fig:esm5}\includegraphics[width=2in]{reports/drawSupplyDemandForMarketSegment5_#1.pdf}}
+%    \caption{Electricity Spot Market}
+%  \end{figure}
+  
+  \begin{figure}
+    \subfloat[Capacities by Technology]{\label{fig:cap}\includegraphics[width=3in]{reports/drawCapacities_#1.pdf}}
+%    \subfloat[Generation by Technology]{\label{fig:gen}\includegraphics[width=3in]{reports/drawGeneration_#1.pdf}}
+%    \subfloat[Bid Prices by Technology]{\label{fig:bidp}\includegraphics[width=3in]{reports/drawBidPrices_#1.pdf}}
+    \caption{Capacity and Generation}
+  \end{figure}  
+  
+%  \begin{figure}
+%    \subfloat[Costs]{\label{fig:costs}\includegraphics[width=3in]{reports/drawProducerCosts_#1.pdf}}
+%    \subfloat[Profits]{\label{fig:profit}\includegraphics[width=3in]{reports/drawProducerProfit_#1.pdf}}
+%    \subfloat[Revenue]{\label{fig:revenue}\includegraphics[width=3in]{reports/drawProducerRevenue_#1.pdf}}
+%    \caption{Cash Flows and Profits}
+%  \end{figure}
+%  
+%  \begin{figure}
+%    \subfloat[Costs]{\label{fig:costs}\includegraphics[width=3in]{reports/drawPlantCosts_#1.pdf}}
+%    \subfloat[Profits]{\label{fig:profit}\includegraphics[width=3in]{reports/drawPlantProfit_#1.pdf}}
+%    \subfloat[Revenue]{\label{fig:revenue}\includegraphics[width=3in]{reports/drawPlantRevenue_#1.pdf}}
+%    \caption{Cash Flows and Profits per Plant}
+%  \end{figure}
+  \clearpage 
+}
+
+\begin{document}
+
+<<results=tex>>=
+createReportPdf <- function(tick) {
+#   for (segment in 1:5) {
+#     drawSupplyDemandForMarketSegment("ElectricitySpotMarket",segment,tick)
+#   }
+#   drawSupplyDemandForMarketBySubstance("CommodityMarket","Natural Gas",tick)
+#   drawSupplyDemandForMarketBySubstance("CommodityMarket","Coal",tick)
+#   drawSupplyDemandForMarketBySubstance("CommodityMarket","Biomass",tick)
+#   drawSupplyDemandForMarket("CO2Auction",tick)
+  drawCapacities(tick)
+  drawGeneration(tick)
+#   drawBidPrices(tick)
+#   drawProducerCosts(tick)
+#   drawProducerRevenue(tick)
+#   drawProducerProfit(tick)
+#   drawPlantCosts(tick)
+#   drawPlantRevenue(tick)
+#   drawPlantProfit(tick)
+  cat("\\report{",tick,"}\n",sep="")
+}
+runSimulation(createReportPdf,10)
+@
+
+\end{document}

@@ -39,7 +39,7 @@ import emlab.domain.market.electricity.PowerPlantDispatchPlan;
 import emlab.domain.market.electricity.Segment;
 import emlab.domain.technology.PowerPlant;
 import emlab.domain.technology.Substance;
-import emlab.domain.technology.SubstanceShareInFuelMix;
+
 import emlab.repository.Reps;
 
 /**
@@ -257,7 +257,7 @@ public abstract class AbstractClearElectricitySpotMarketRole<T extends Decarboni
         for (PowerPlantDispatchPlan plan : reps.powerPlantDispatchPlanRepository.findSortedPowerPlantDispatchPlansForSegmentForTime(
                 segment, getCurrentTick())) {
             ElectricitySpotMarket myMarket = (ElectricitySpotMarket) plan.getBiddingMarket();
-
+          
             // Make it produce as long as there is load.
             double plantSupply = determineProductionOnSpotMarket(plan, globalOutcome.globalSupply, globalOutcome.globalLoad);
 

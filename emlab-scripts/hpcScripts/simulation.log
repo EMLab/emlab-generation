@@ -1,0 +1,65 @@
+ WARN Running scenarioA-ToyModel.xml, run.Id example-1
+ WARN ***** STARTING TICK 0 *****
+ WARN   0. Dismantling & paying loans
+ WARN   1. Determining fuel mix
+ WARN         took: 0.711 seconds.
+ WARN   3. Clearing electricity spot and CO2 markets
+ WARN         took: 1.624 seconds.
+ WARN         paying took: 0.464 seconds.
+ WARN   4. Paying for maintenance & co2
+ WARN         took: 0.943 seconds.
+ WARN   5. Purchasing commodities
+ WARN         took: 1.253 seconds.
+ WARN   6. Investing
+ WARN         took: 0.009 seconds.
+ WARN Tick 0 took 6.414 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.lang.NullPointerException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.lang.NullPointerException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ERROR from doPriv: javax.script.ScriptException: java.lang.NullPointerException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.lang.NullPointerException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ WARN ***** STARTING TICK 1 *****
+ WARN   0. Dismantling & paying loans
+ WARN   1. Determining fuel mix
+ WARN         took: 0.163 seconds.
+ WARN   3. Clearing electricity spot and CO2 markets
+ WARN         took: 0.946 seconds.
+ WARN         paying took: 0.162 seconds.
+ WARN   4. Paying for maintenance & co2
+ WARN         took: 1.471 seconds.
+ WARN   5. Purchasing commodities
+ WARN         took: 1.332 seconds.
+ WARN   6. Investing
+ WARN         took: 0.003 seconds.
+ WARN Tick 1 took 4.424 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.lang.NullPointerException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.lang.NullPointerException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ERROR from doPriv: javax.script.ScriptException: java.lang.NullPointerException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.lang.NullPointerException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ WARN ***** STARTING TICK 2 *****
+ WARN   0. Dismantling & paying loans
+ WARN   1. Determining fuel mix
+ WARN         took: 0.243 seconds.
+ WARN   3. Clearing electricity spot and CO2 markets
+ WARN         took: 0.653 seconds.
+ WARN         paying took: 0.184 seconds.
+ WARN   4. Paying for maintenance & co2
+ WARN         took: 1.398 seconds.
+ WARN   5. Purchasing commodities
+ WARN         took: 1.005 seconds.
+ WARN   6. Investing

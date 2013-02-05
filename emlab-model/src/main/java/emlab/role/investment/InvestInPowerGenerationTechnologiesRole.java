@@ -28,7 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 import agentspring.role.Role;
 import agentspring.role.RoleComponent;
 import emlab.domain.agent.BigBank;
-import emlab.domain.agent.DecarbonizationAgent;
+
 import emlab.domain.agent.EnergyProducer;
 import emlab.domain.agent.PowerPlantManufacturer;
 import emlab.domain.contract.CashFlow;

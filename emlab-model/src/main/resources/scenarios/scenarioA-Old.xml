@@ -1,19 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  Copyright 2012 the original author or authors.
-  
-  Licensed under the Apache License, Version 2.0 (the "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-  
-    http://www.apache.org/licenses/LICENSE-2.0
-  
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
--->
+<!-- Copyright 2012 the original author or authors. Licensed under the Apache 
+	License, Version 2.0 (the "License"); you may not use this file except in 
+	compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 
+	Unless required by applicable law or agreed to in writing, software distributed 
+	under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES 
+	OR CONDITIONS OF ANY KIND, either express or implied. See the License for 
+	the specific language governing permissions and limitations under the License. -->
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
@@ -25,9 +17,8 @@
 	<bean id="decarbonizationModel" class="emlab.domain.agent.DecarbonizationModel"
 		p:name="Decarbonization Model" p:simulationLength="${simulationLength}"
 		p:co2TradingImplemented="${co2TradingImplemented}"
-		p:realRenewableDataImplemented="false"
-		p:iterationSpeedFactor="3" p:iterationSpeedCriterion="0.005"
-		p:capDeviationCriterion="0.005">
+		p:realRenewableDataImplemented="false" p:iterationSpeedFactor="3"
+		p:iterationSpeedCriterion="0.005" p:capDeviationCriterion="0.005">
 	</bean>
 
 	<bean class="emlab.trend.TriangularTrend" id="demandGrowthTrendNL"
@@ -43,8 +34,7 @@
 	<bean id="naturalgas" class="emlab.domain.technology.Substance"
 		p:name="Natural Gas" p:quality="1" p:energyDensity="36" p:co2Density="0.00187" />
 	<bean id="biomass" class="emlab.domain.technology.Substance"
-		p:name="Biomass" p:quality="0.5" p:energyDensity="25000"
-		p:co2Density="0" />
+		p:name="Biomass" p:quality="0.5" p:energyDensity="25000" p:co2Density="0" />
 	<bean id="uranium" class="emlab.domain.technology.Substance"
 		p:name="Uranium" p:quality="1" p:energyDensity="3888000000"
 		p:co2Density="0" />
@@ -76,16 +66,16 @@
 	</bean>
 
 	<!-- Segments of load duration curves -->
-	<bean id="segment1" class="emlab.domain.market.electricity.Segment" p:lengthInHours="2000"
-		p:segmentID="5" />
-	<bean id="segment2" class="emlab.domain.market.electricity.Segment" p:lengthInHours="2000"
-		p:segmentID="4" />
-	<bean id="segment3" class="emlab.domain.market.electricity.Segment" p:lengthInHours="2000"
-		p:segmentID="3" />
-	<bean id="segment4" class="emlab.domain.market.electricity.Segment" p:lengthInHours="2000"
-		p:segmentID="2" />
-	<bean id="segment5" class="emlab.domain.market.electricity.Segment" p:lengthInHours="760"
-		p:segmentID="1" />
+	<bean id="segment1" class="emlab.domain.market.electricity.Segment"
+		p:lengthInHours="2000" p:segmentID="5" />
+	<bean id="segment2" class="emlab.domain.market.electricity.Segment"
+		p:lengthInHours="2000" p:segmentID="4" />
+	<bean id="segment3" class="emlab.domain.market.electricity.Segment"
+		p:lengthInHours="2000" p:segmentID="3" />
+	<bean id="segment4" class="emlab.domain.market.electricity.Segment"
+		p:lengthInHours="2000" p:segmentID="2" />
+	<bean id="segment5" class="emlab.domain.market.electricity.Segment"
+		p:lengthInHours="760" p:segmentID="1" />
 
 	<!-- Markets -->
 	<!-- Electricity Spot -->
@@ -254,8 +244,9 @@
 
 	<!-- CO2 Auction -->
 	<bean id="co2Auction" class="emlab.domain.market.CO2Auction"
-		p:auction="true" p:referencePrice="0" p:name="CO2 auction" p:substance-ref="co2"/>
-		
+		p:auction="true" p:referencePrice="0" p:name="CO2 auction"
+		p:substance-ref="co2" />
+
 	<!-- Fuel Prices -->
 	<bean id="coalPrice" class="emlab.trend.TriangularTrend" p:start="${coalPriceStart}"
 		p:min="${coalPriceMin}" p:max="${coalPriceMax}" p:top="${coalPriceTop}" />
@@ -308,7 +299,8 @@
 		p:debtRatioOfInvestments="0.7"
 		p:dismantlingProlongingYearsAfterTechnicalLifetime="0"
 		p:dismantlingRequiredOperatingProfit="0" p:downpaymentFractionOfCash="0.5"
-		p:willingToInvest="true" p:priceMarkUp="${priceMarkUp}"  p:numberOfYearsBacklookingForForecasting="${numberOfYearsBacklookingForForecasting}"/>
+		p:willingToInvest="true" p:priceMarkUp="${priceMarkUp}"
+		p:numberOfYearsBacklookingForForecasting="${numberOfYearsBacklookingForForecasting}" />
 	<bean id="energyProducerB" class="emlab.domain.agent.EnergyProducer"
 		p:name="Energy Producer B" p:cash="${startCash}"
 		p:longTermContractMargin="0.1" p:longTermContractPastTimeHorizon="3"
@@ -317,7 +309,8 @@
 		p:debtRatioOfInvestments="0.7"
 		p:dismantlingProlongingYearsAfterTechnicalLifetime="0"
 		p:dismantlingRequiredOperatingProfit="0" p:downpaymentFractionOfCash="0.5"
-		p:willingToInvest="true" p:priceMarkUp="${priceMarkUp}"  p:numberOfYearsBacklookingForForecasting="${numberOfYearsBacklookingForForecasting}"/>
+		p:willingToInvest="true" p:priceMarkUp="${priceMarkUp}"
+		p:numberOfYearsBacklookingForForecasting="${numberOfYearsBacklookingForForecasting}" />
 	<bean id="energyProducerC" class="emlab.domain.agent.EnergyProducer"
 		p:name="Energy Producer C" p:cash="${startCash}"
 		p:longTermContractMargin="0.1" p:longTermContractPastTimeHorizon="3"
@@ -326,7 +319,8 @@
 		p:debtRatioOfInvestments="0.7"
 		p:dismantlingProlongingYearsAfterTechnicalLifetime="0"
 		p:dismantlingRequiredOperatingProfit="0" p:downpaymentFractionOfCash="0.5"
-		p:willingToInvest="true" p:priceMarkUp="${priceMarkUp}"  p:numberOfYearsBacklookingForForecasting="${numberOfYearsBacklookingForForecasting}"/>
+		p:willingToInvest="true" p:priceMarkUp="${priceMarkUp}"
+		p:numberOfYearsBacklookingForForecasting="${numberOfYearsBacklookingForForecasting}" />
 	<bean id="energyProducerD" class="emlab.domain.agent.EnergyProducer"
 		p:name="Energy Producer D" p:cash="${startCash}"
 		p:longTermContractMargin="0.1" p:longTermContractPastTimeHorizon="3"
@@ -335,7 +329,8 @@
 		p:debtRatioOfInvestments="0.7"
 		p:dismantlingProlongingYearsAfterTechnicalLifetime="0"
 		p:dismantlingRequiredOperatingProfit="0" p:downpaymentFractionOfCash="0.5"
-		p:willingToInvest="true" p:priceMarkUp="${priceMarkUp}"  p:numberOfYearsBacklookingForForecasting="${numberOfYearsBacklookingForForecasting}"/>
+		p:willingToInvest="true" p:priceMarkUp="${priceMarkUp}"
+		p:numberOfYearsBacklookingForForecasting="${numberOfYearsBacklookingForForecasting}" />
 	<bean id="energyProducerE" class="emlab.domain.agent.EnergyProducer"
 		p:name="Energy Producer E" p:cash="${startCash}"
 		p:longTermContractMargin="0.1" p:longTermContractPastTimeHorizon="3"
@@ -344,7 +339,8 @@
 		p:debtRatioOfInvestments="0.7"
 		p:dismantlingProlongingYearsAfterTechnicalLifetime="0"
 		p:dismantlingRequiredOperatingProfit="0" p:downpaymentFractionOfCash="0.5"
-		p:willingToInvest="true" p:priceMarkUp="${priceMarkUp}"  p:numberOfYearsBacklookingForForecasting="${numberOfYearsBacklookingForForecasting}"/>
+		p:willingToInvest="true" p:priceMarkUp="${priceMarkUp}"
+		p:numberOfYearsBacklookingForForecasting="${numberOfYearsBacklookingForForecasting}" />
 	<bean id="energyProducerF" class="emlab.domain.agent.EnergyProducer"
 		p:name="Energy Producer F" p:cash="${startCash}"
 		p:longTermContractMargin="0.1" p:longTermContractPastTimeHorizon="3"
@@ -353,7 +349,8 @@
 		p:debtRatioOfInvestments="0.7"
 		p:dismantlingProlongingYearsAfterTechnicalLifetime="0"
 		p:dismantlingRequiredOperatingProfit="0" p:downpaymentFractionOfCash="0.5"
-		p:willingToInvest="true" p:priceMarkUp="${priceMarkUp}"  p:numberOfYearsBacklookingForForecasting="${numberOfYearsBacklookingForForecasting}"/>
+		p:willingToInvest="true" p:priceMarkUp="${priceMarkUp}"
+		p:numberOfYearsBacklookingForForecasting="${numberOfYearsBacklookingForForecasting}" />
 	<bean id="energyProducerG" class="emlab.domain.agent.EnergyProducer"
 		p:name="Energy Producer G" p:cash="${startCash}"
 		p:longTermContractMargin="0.1" p:longTermContractPastTimeHorizon="3"
@@ -362,7 +359,8 @@
 		p:debtRatioOfInvestments="0.7"
 		p:dismantlingProlongingYearsAfterTechnicalLifetime="0"
 		p:dismantlingRequiredOperatingProfit="0" p:downpaymentFractionOfCash="0.5"
-		p:willingToInvest="true" p:priceMarkUp="${priceMarkUp}"  p:numberOfYearsBacklookingForForecasting="${numberOfYearsBacklookingForForecasting}"/>
+		p:willingToInvest="true" p:priceMarkUp="${priceMarkUp}"
+		p:numberOfYearsBacklookingForForecasting="${numberOfYearsBacklookingForForecasting}" />
 	<bean id="energyProducerH" class="emlab.domain.agent.EnergyProducer"
 		p:name="Energy Producer H" p:cash="${startCash}"
 		p:longTermContractMargin="0.1" p:longTermContractPastTimeHorizon="3"
@@ -371,7 +369,8 @@
 		p:debtRatioOfInvestments="0.7"
 		p:dismantlingProlongingYearsAfterTechnicalLifetime="0"
 		p:dismantlingRequiredOperatingProfit="0" p:downpaymentFractionOfCash="0.5"
-		p:willingToInvest="true" p:priceMarkUp="${priceMarkUp}"  p:numberOfYearsBacklookingForForecasting="${numberOfYearsBacklookingForForecasting}"/>
+		p:willingToInvest="true" p:priceMarkUp="${priceMarkUp}"
+		p:numberOfYearsBacklookingForForecasting="${numberOfYearsBacklookingForForecasting}" />
 	<bean id="energyProducerI" class="emlab.domain.agent.EnergyProducer"
 		p:name="Energy Producer I" p:cash="${startCash}"
 		p:longTermContractMargin="0.1" p:longTermContractPastTimeHorizon="3"
@@ -380,7 +379,8 @@
 		p:debtRatioOfInvestments="0.7"
 		p:dismantlingProlongingYearsAfterTechnicalLifetime="0"
 		p:dismantlingRequiredOperatingProfit="0" p:downpaymentFractionOfCash="0.5"
-		p:willingToInvest="true" p:priceMarkUp="${priceMarkUp}"  p:numberOfYearsBacklookingForForecasting="${numberOfYearsBacklookingForForecasting}"/>
+		p:willingToInvest="true" p:priceMarkUp="${priceMarkUp}"
+		p:numberOfYearsBacklookingForForecasting="${numberOfYearsBacklookingForForecasting}" />
 
 
 	<bean id="powerPlantManufacturer" class="emlab.domain.agent.PowerPlantManufacturer"
@@ -508,14 +508,12 @@
 	<bean id="minCo2PriceTrend" class="emlab.trend.StepTrend" p:start="${minCo2PriceStart}"
 		p:duration="${minCo2PriceDuration}" p:increment="${minCo2PriceIncrement}"
 		p:minValue="0" />
-		
-	<bean id="minCo2PriceTrendNL" class="emlab.trend.StepTrend" p:start="0"
-		p:duration="1" p:increment="0"
-		p:minValue="0" />
-		
-	<bean id="minCo2PriceTrendDE" class="emlab.trend.StepTrend" p:start="0"
-		p:duration="1" p:increment="2"
-		p:minValue="0" />
+
+	<bean id="minCo2PriceTrendNL" class="emlab.trend.StepTrend"
+		p:start="0" p:duration="1" p:increment="0" p:minValue="0" />
+
+	<bean id="minCo2PriceTrendDE" class="emlab.trend.StepTrend"
+		p:start="0" p:duration="1" p:increment="2" p:minValue="0" />
 
 	<!-- Government -->
 	<bean id="government" class="emlab.domain.agent.Government"
@@ -524,17 +522,30 @@
 		<property name="co2CapTrend" ref="co2CapTrend" />
 		<property name="minCo2PriceTrend" ref="minCo2PriceTrend" />
 	</bean>
-	
-		<bean id="governmentNL" class="emlab.domain.agent.NationalGovernment"
+
+	<bean id="governmentNL" class="emlab.domain.agent.NationalGovernment"
 		p:name="Country A Government">
 		<property name="minNationalCo2PriceTrend" ref="minCo2PriceTrendNL" />
 		<property name="governedZone" ref="nl" />
 	</bean>
-	
+
 	<bean id="governmentDE" class="emlab.domain.agent.NationalGovernment"
 		p:name="Country B Government">
 		<property name="minNationalCo2PriceTrend" ref="minCo2PriceTrendDE" />
 		<property name="governedZone" ref="de" />
+	</bean>
+
+		<!-- Strategic Reserve Operator -->
+	<bean id="strategicReserveOperator1" class="emlab.domain.agent.StrategicReserveOperator"
+		p:name="StrategicReserveOperatorNL" p:cash="${operatorCashNL}"
+		p:reservePriceSR="${reservePriceNL}" p:reserveVolumePercentSR="${reserveVolumeNL}">
+		<property name="zone" ref="nl" />
+	</bean>
+
+	<bean id="strategicReserveOperator2" class="emlab.domain.agent.StrategicReserveOperator"
+		p:name="StrategicReserveOperatorDE" p:cash="${operatorCashDE}"
+		p:reservePriceSR="${reservePriceDE}" p:reserveVolumePercentSR="${reserveVolumeDE}">
+		<property name="zone" ref="de" />
 	</bean>
 
 
@@ -542,7 +553,7 @@
 
 	<bean id="coalPulverized" class="emlab.domain.technology.PowerGeneratingTechnology"
 		p:name="CoalPulverized" p:capacity="758" p:efficiency=".44"
-		p:efficiencyModifierExogenous="0.004" p:co2CaptureEffciency="0" 
+		p:efficiencyModifierExogenous="0.004" p:co2CaptureEffciency="0"
 		p:baseInvestmentCost="1144296617.30368"
 		p:investmentCostModifierExogenous="-0.01" p:downPayment="343000000"
 		p:depreciationTime="20" p:minimumRunningHours="5000"
@@ -553,8 +564,7 @@
 		p:maximumInstalledCapacityFractionPerAgent="1"
 		p:baseSegmentDependentAvailability="1"
 		p:peakSegmentDependentAvailability="1"
-		p:applicableForLongTermContract="true"
-		p:intermittent="false">
+		p:applicableForLongTermContract="true" p:intermittent="false">
 		<property name="fuels">
 			<set>
 				<ref bean="coal" />
@@ -564,7 +574,7 @@
 	</bean>
 	<bean id="coalPulverizedCSS" class="emlab.domain.technology.PowerGeneratingTechnology"
 		p:name="CoalPulverizedCSS" p:capacity="676" p:efficiency=".35"
-		p:efficiencyModifierExogenous="0.005" p:co2CaptureEffciency="0" 
+		p:efficiencyModifierExogenous="0.005" p:co2CaptureEffciency="0"
 		p:baseInvestmentCost="1791872856.39575"
 		p:investmentCostModifierExogenous="-0.01" p:downPayment="537561000"
 		p:depreciationTime="20" p:minimumRunningHours="5000"
@@ -575,8 +585,7 @@
 		p:maximumInstalledCapacityFractionPerAgent="1"
 		p:baseSegmentDependentAvailability="1"
 		p:peakSegmentDependentAvailability="1"
-		p:applicableForLongTermContract="true"
-		p:intermittent="false">
+		p:applicableForLongTermContract="true" p:intermittent="false">
 		<property name="fuels">
 			<set>
 				<ref bean="coal" />
@@ -586,7 +595,7 @@
 	</bean>
 	<bean id="gasConventional" class="emlab.domain.technology.PowerGeneratingTechnology"
 		p:name="GasConventional" p:capacity="776" p:efficiency=".56"
-		p:efficiencyModifierExogenous="0.004" p:co2CaptureEffciency="0" 
+		p:efficiencyModifierExogenous="0.004" p:co2CaptureEffciency="0"
 		p:baseInvestmentCost="405687584.447529"
 		p:investmentCostModifierExogenous="-0.01" p:downPayment="121707000"
 		p:depreciationTime="15" p:minimumRunningHours="0"
@@ -597,8 +606,7 @@
 		p:maximumInstalledCapacityFractionPerAgent="1"
 		p:baseSegmentDependentAvailability="1"
 		p:peakSegmentDependentAvailability="1"
-		p:applicableForLongTermContract="true"
-		p:intermittent="false">
+		p:applicableForLongTermContract="true" p:intermittent="false">
 		<property name="fuels">
 			<set>
 				<ref bean="naturalgas" />
@@ -607,7 +615,7 @@
 	</bean>
 	<bean id="biomassPGT" class="emlab.domain.technology.PowerGeneratingTechnology"
 		p:name="Biomass" p:capacity="500" p:efficiency=".35"
-		p:efficiencyModifierExogenous="0.005" p:co2CaptureEffciency="0" 
+		p:efficiencyModifierExogenous="0.005" p:co2CaptureEffciency="0"
 		p:baseInvestmentCost="1250003386.40571"
 		p:investmentCostModifierExogenous="-0.01" p:downPayment="375000000"
 		p:depreciationTime="15" p:minimumRunningHours="0"
@@ -618,8 +626,7 @@
 		p:maximumInstalledCapacityFractionPerAgent="1"
 		p:baseSegmentDependentAvailability="1"
 		p:peakSegmentDependentAvailability="1"
-		p:applicableForLongTermContract="true"
-		p:intermittent="false">
+		p:applicableForLongTermContract="true" p:intermittent="false">
 		<property name="fuels">
 			<set>
 				<ref bean="biomass" />
@@ -628,7 +635,7 @@
 	</bean>
 	<bean id="windPGT" class="emlab.domain.technology.PowerGeneratingTechnology"
 		p:name="Wind" p:capacity="150" p:efficiency="1"
-		p:efficiencyModifierExogenous="0.000" p:co2CaptureEffciency="0" 
+		p:efficiencyModifierExogenous="0.000" p:co2CaptureEffciency="0"
 		p:baseInvestmentCost="1149997030.62965"
 		p:investmentCostModifierExogenous="-0.01" p:downPayment="345000000"
 		p:depreciationTime="15" p:minimumRunningHours="0"
@@ -639,11 +646,10 @@
 		p:maximumInstalledCapacityFractionPerAgent="1"
 		p:baseSegmentDependentAvailability="0.75"
 		p:peakSegmentDependentAvailability="0.05"
-		p:applicableForLongTermContract="false"
-		p:intermittent="false" />
+		p:applicableForLongTermContract="false" p:intermittent="false" />
 	<bean id="nuclearPGT" class="emlab.domain.technology.PowerGeneratingTechnology"
 		p:name="Nuclear" p:capacity="1000" p:efficiency=".3"
-		p:efficiencyModifierExogenous="0.000" p:co2CaptureEffciency="0" 
+		p:efficiencyModifierExogenous="0.000" p:co2CaptureEffciency="0"
 		p:baseInvestmentCost="2996796244.21098"
 		p:investmentCostModifierExogenous="-0.01" p:downPayment="900000000"
 		p:depreciationTime="25" p:minimumRunningHours="5000"
@@ -654,8 +660,7 @@
 		p:maximumInstalledCapacityFractionPerAgent="1"
 		p:baseSegmentDependentAvailability="1"
 		p:peakSegmentDependentAvailability="1"
-		p:applicableForLongTermContract="true"
-		p:intermittent="false">
+		p:applicableForLongTermContract="true" p:intermittent="false">
 		<property name="fuels">
 			<set>
 				<ref bean="uranium" />
@@ -665,7 +670,8 @@
 	<!-- Parameter file -->
 	<bean id="projectPropertyConfigurer"
 		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-		<property name="location" value="classpath:scenarios/parametersA-Old.properties" />
+		<property name="location"
+			value="classpath:scenarios/parametersA-Old.properties" />
 	</bean>
 
 </beans>
