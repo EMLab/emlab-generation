@@ -109,6 +109,7 @@ public class SubmitOffersToElectricitySpotMarketRole extends AbstractEnergyProdu
         }
     }
 
+    @Transactional
     void updateMarginalCostInclCO2AfterFuelMixChange(double co2Price, Map<ElectricitySpotMarket, Double> nationalMinCo2Prices) {
 
         int i = 0;
@@ -152,7 +153,7 @@ public class SubmitOffersToElectricitySpotMarketRole extends AbstractEnergyProdu
 
         }
 
-        logger.warn("Marginal cost of {} of {} plans changed", i, j);
+        //logger.warn("Marginal cost of {} of {} plans changed", i, j);
 
     }
 

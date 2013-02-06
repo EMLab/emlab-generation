@@ -32,6 +32,7 @@ public class EnergyProducer extends DecarbonizationAgent implements Agent {
     @SimulationParameter(label = "Long-term contract horizon", from = 0, to = 10)
     private double longTermContractPastTimeHorizon;
 
+    //Investment
     @SimulationParameter(label = "Investment horizon", from = 0, to = 15)
     private int investmentFutureTimeHorizon;
     @SimulationParameter(label = "Equity Interest Rate", from = 0, to = 1)
@@ -44,6 +45,9 @@ public class EnergyProducer extends DecarbonizationAgent implements Agent {
     // Loan
     @SimulationParameter(label = "Loan Interest Rate", from = 0, to = 1)
     private double loanInterestRate;
+    
+    //Forecasting
+    private int numberOfYearsBacklookingForForecasting;
 
     // Dismantling
     private int dismantlingProlongingYearsAfterTechnicalLifetime;
@@ -82,7 +86,15 @@ public class EnergyProducer extends DecarbonizationAgent implements Agent {
         this.pastTimeHorizon = pastTimeHorizon;
     }
 
-    public int getDismantlingProlongingYearsAfterTechnicalLifetime() {
+    public int getNumberOfYearsBacklookingForForecasting() {
+		return numberOfYearsBacklookingForForecasting;
+	}
+
+	public void setNumberOfYearsBacklookingForForecasting(int numberOfYearsBacklookingForForecasting) {
+		this.numberOfYearsBacklookingForForecasting = numberOfYearsBacklookingForForecasting;
+	}
+
+	public int getDismantlingProlongingYearsAfterTechnicalLifetime() {
         return dismantlingProlongingYearsAfterTechnicalLifetime;
     }
 

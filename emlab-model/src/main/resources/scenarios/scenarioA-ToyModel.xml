@@ -151,7 +151,8 @@
 		p:debtRatioOfInvestments="0.7"
 		p:dismantlingProlongingYearsAfterTechnicalLifetime="0"
 		p:dismantlingRequiredOperatingProfit="0" p:downpaymentFractionOfCash="0.5"
-		p:willingToInvest="true" p:priceMarkUp="1.0" />
+		p:willingToInvest="true" p:priceMarkUp="1.0"
+		p:numberOfYearsBacklookingForForecasting="5" />
 	<bean id="energyProducerB" class="emlab.domain.agent.EnergyProducer"
 		p:name="Energy Producer B" p:cash="3e9" 
 		p:longTermContractMargin="0.1" p:longTermContractPastTimeHorizon="3"
@@ -160,7 +161,8 @@
 		p:debtRatioOfInvestments="0.7"
 		p:dismantlingProlongingYearsAfterTechnicalLifetime="0"
 		p:dismantlingRequiredOperatingProfit="0" p:downpaymentFractionOfCash="0.5"
-		p:willingToInvest="true" p:priceMarkUp="1.0" />
+		p:willingToInvest="true" p:priceMarkUp="1.0"
+		p:numberOfYearsBacklookingForForecasting="5" />
 
 	<bean id="bigBank" class="emlab.domain.agent.BigBank" p:name="Big Bank" />
 	

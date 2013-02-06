@@ -16,6 +16,7 @@
 package emlab.role;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.neo4j.support.Neo4jTemplate;
 import org.springframework.transaction.annotation.Transactional;
 
 import agentspring.role.AbstractRole;
@@ -26,14 +27,15 @@ import emlab.domain.agent.CommoditySupplier;
 import emlab.domain.agent.DecarbonizationModel;
 import emlab.domain.agent.EnergyConsumer;
 import emlab.domain.agent.EnergyProducer;
+import emlab.domain.agent.TargetInvestor;
 import emlab.domain.market.CommodityMarket;
 import emlab.domain.market.electricity.ElectricitySpotMarket;
 import emlab.repository.Reps;
 import emlab.role.investment.DismantlePowerPlantPastTechnicalLifetimeRole;
 import emlab.role.investment.InvestInPowerGenerationTechnologiesRole;
+import emlab.role.investment.TargetInvestmentRole;
 import emlab.role.market.ClearCommodityMarketRole;
 import emlab.role.market.ClearIterativeCO2AndElectricitySpotMarketTwoCountryRole;
-import emlab.role.market.DetermineResidualLoadCurvesForTwoCountriesRole;
 import emlab.role.market.ProcessAcceptedBidsRole;
 import emlab.role.market.ProcessAcceptedPowerPlantDispatchRole;
 import emlab.role.market.ReassignPowerPlantsToLongTermElectricityContractsRole;
@@ -97,8 +99,13 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
     @Autowired
     private DetermineResidualLoadCurvesForTwoCountriesRole determineResidualLoadCurve;
 
+	@Autowired
+    private TargetInvestmentRole targetInvestmentRole;
+
     @Autowired
     Reps reps;
+    
+    @Autowired Neo4jTemplate template;
 
     /**
      * Main model script. Executes other roles in the right sequence.
@@ -107,8 +114,8 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
 
         if (getCurrentTick() > model.getSimulationLength()) {
             logger.warn("Simulation is terminating!!!");
-            agentspring.simulation.Schedule.getSchedule().stop();
-            //System.exit(0);
+            //agentspring.simulation.Schedule.getSchedule().stop();
+            System.exit(0);
         }
 
         logger.warn("***** STARTING TICK {} *****", getCurrentTick());
@@ -123,13 +130,6 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
 //            producer.act(payForLoansRole);
         }
 
-        /*
-         * Testing residual load curve
-         */
-        if (model.isRealRenewableDataImplemented()) {
-            logger.warn("  0a. Residual load curve");
-            model.act(determineResidualLoadCurve);
-        }
         /*
          * Determine fuel mix of power plants
          */
@@ -251,9 +251,9 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
             boolean someOneStillWillingToInvest = true;
             while (someOneStillWillingToInvest) {
                 someOneStillWillingToInvest = false;
-                for (EnergyProducer producer : reps.genericRepository.findAllAtRandom(EnergyProducer.class)) {
+                for (EnergyProducer producer : reps.energyProducerRepository.findAllEnergyProducersExceptForRenewableTargetInvestorsAtRandom()){
                     // invest in new plants
-                    if (producer.isWillingToInvest()) {
+                	if (producer.isWillingToInvest()) {
                     	investInPowerGenerationTechnologiesRole.act(producer);
 //                        producer.act(investInPowerGenerationTechnologiesRole);
                         someOneStillWillingToInvest = true;
@@ -261,6 +261,9 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
                 }
             }
             resetWillingnessToInvest();
+        }
+        for(TargetInvestor targetInvestor : template.findAll(TargetInvestor.class)){
+        	targetInvestmentRole.act(targetInvestor);
         }
         timerInvest.stop();
         logger.warn("        took: {} seconds.", timerInvest.seconds());

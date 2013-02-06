@@ -18,17 +18,16 @@ package emlab.repository;
 import org.springframework.data.neo4j.annotation.Query;
 import org.springframework.data.neo4j.annotation.QueryType;
 import org.springframework.data.neo4j.repository.GraphRepository;
-import org.springframework.data.repository.query.Param;
 
-import emlab.domain.gis.Zone;
-import emlab.domain.market.electricity.ElectricitySpotMarket;
-import emlab.domain.technology.PowerGridNode;
+import emlab.domain.technology.Substance;
 
-public interface PowerGridNodeRepository extends GraphRepository<PowerGridNode> {
-
-	@Query("START zone=node({zone}) match (zone)<-[:REGION]-(powergridnode) WHERE powergridnode.__type__ = 'emlab.domain.technology.PowerGridNode' RETURN powergridnode")
-	Iterable<PowerGridNode> findAllPowerGridNodesByZone(@Param("zone") Zone zone);
+/**
+ * @author JCRichstein
+ *
+ */
+public interface SubstanceRepository extends GraphRepository<Substance> {
 	
-	@Query(value="g.v(market).out('ZONE').in('REGION').next()", type=QueryType.Gremlin)
-	PowerGridNode findFirstPowerGridNodeByElectricitySpotMarket(@Param("market") ElectricitySpotMarket esm);
+	 @Query(value = "g.idx('__types__')[[className:'emlab.domain.market.CommodityMarket']].out('SUBSTANCE_MARKET')", type=QueryType.Gremlin)
+	Iterable<Substance> findAllSubstancesTradedOnCommodityMarkets();
+
 }

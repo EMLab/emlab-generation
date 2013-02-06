@@ -30,6 +30,7 @@ import org.apache.commons.math.optimization.linear.LinearConstraint;
 import org.apache.commons.math.optimization.linear.LinearObjectiveFunction;
 import org.apache.commons.math.optimization.linear.Relationship;
 import org.apache.commons.math.optimization.linear.SimplexSolver;
+import org.apache.commons.math.stat.regression.SimpleRegression;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import agentspring.role.AbstractRole;
@@ -47,6 +48,7 @@ import emlab.domain.technology.PowerPlant;
 import emlab.domain.technology.Substance;
 import emlab.domain.technology.SubstanceShareInFuelMix;
 import emlab.repository.Reps;
+import emlab.util.GeometricTrendRegression;
 
 public abstract class AbstractEnergyProducerRole extends AbstractRole<EnergyProducer> {
 
@@ -505,24 +507,51 @@ public abstract class AbstractEnergyProducerRole extends AbstractRole<EnergyProd
     }
 
 
-
     /**
-     * Calculates expected
-     * 
+     * Calculates expected CO2 price based on a geometric trend estimation, of the past years
      * @param futureTimePoint
+     * @param yearsLookingBackForRegression
      * @return
      */
-    protected HashMap<ElectricitySpotMarket, Double> determineExpectedCO2PriceInclTax(long futureTimePoint, int yearsAveragingOver) {
+    protected HashMap<ElectricitySpotMarket, Double> determineExpectedCO2PriceInclTax(long futureTimePoint, long yearsLookingBackForRegression){
+    	return determineExpectedCO2PriceInclTax(futureTimePoint, yearsLookingBackForRegression, 0);
+    }
+
+    /**
+     * Calculates expected CO2 price based on a geometric trend estimation, of the past years. The adjustmentForDetermineFuelMix needs to be set to 1, if this is used in the determine
+     * fuel mix role.
+     * 
+     * @param futureTimePoint Year the prediction is made for
+     * @param yearsLookingBackForRegression How many years are used as input for the regression, incl. the current tick.
+     * @return
+     */
+    protected HashMap<ElectricitySpotMarket, Double> determineExpectedCO2PriceInclTax(long futureTimePoint, long yearsLookingBackForRegression, int adjustmentForDetermineFuelMix) {
         HashMap<ElectricitySpotMarket, Double> co2Prices = new HashMap<ElectricitySpotMarket, Double>();
         CO2Auction co2Auction = reps.marketRepository.findCO2Auction();
+      //Find Clearing Points for the last 5 years (counting current year as one of the last 5 years).
+    	Iterable<ClearingPoint> cps = reps.clearingPointRepository.findAllClearingPointsForMarketAndTimeRange(co2Auction, getCurrentTick()-yearsLookingBackForRegression+1-adjustmentForDetermineFuelMix, getCurrentTick()-adjustmentForDetermineFuelMix);
+    	//Create regression object
+    	SimpleRegression sr = new SimpleRegression();
+    	double lastPrice = 0;
+    	int i = 0;
+		for (ClearingPoint clearingPoint : cps) {
+			sr.addData(clearingPoint.getTime(), clearingPoint.getPrice());
+			lastPrice = clearingPoint.getPrice();
+			i++;
+		}
+		double expectedCO2Price;
+		if(i>1){
+			expectedCO2Price = sr.predict(futureTimePoint);
+		}else{
+			 expectedCO2Price = lastPrice;
+		}
+
         for (ElectricitySpotMarket esm : reps.marketRepository.findAllElectricitySpotMarkets()) {
-            double averageOfPastPrices = reps.clearingPointRepository.calculateAverageClearingPriceForMarketAndTimeRange(co2Auction,
-                    getCurrentTick() - yearsAveragingOver, (long) (getCurrentTick() - 1));
             double nationalCo2MinPriceinFutureTick = reps.nationalGovernmentRepository.findNationalGovernmentByElectricitySpotMarket(esm)
                     .getMinNationalCo2PriceTrend().getValue(futureTimePoint);
             double co2PriceInCountry = 0d;
-            if (averageOfPastPrices > nationalCo2MinPriceinFutureTick) {
-                co2PriceInCountry = averageOfPastPrices;
+            if (expectedCO2Price > nationalCo2MinPriceinFutureTick) {
+                co2PriceInCountry = expectedCO2Price;
             } else {
                 co2PriceInCountry = nationalCo2MinPriceinFutureTick;
             }
