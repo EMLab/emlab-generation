@@ -7,8 +7,6 @@ ript."
     exit
 fi
 
-modelhome=$emlabHome/emlab-model
-
 #start model
-cd $modelhome
+cd $emlabModelFolder
 mvn clean install $1
