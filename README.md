@@ -8,9 +8,10 @@ Research developed by *TU Delft, faculty Technology Policy and Management, Energ
 Supported by:
 * Energy Delta Gas Research program, project A1 – Understanding gas sector intra-market and inter-market interactions (see http://www.edgar-program.com/nl/projects/A1)
 * Knowledge for Climate program, project INCAH – Infrastructure Climate Adaptation in Hotspots (see http://knowledgeforclimate.climateresearchnetherlands.nl/infrastructurenetworks)
+* [Erasmus Mundus Joint Doctorate in Sustainable Energy Technologies and Strategies Program](http://www.upcomillas.es/estudios/estu_doct_SETS.aspx)
 
 
-Please contact Emile Chappin (e.j.l.chappin@tudelft.nl) or Jörn Richstein (j.c.richstein@tudelft.nl) to get involved in this project.
+Please contact Emile Chappin (e.j.l.chappin@tudelft.nl) or Jörn C. Richstein (j.c.richstein@tudelft.nl) to get involved in this project.
 
 Installation instructions:
 Will follow soon
