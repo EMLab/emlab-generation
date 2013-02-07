@@ -1,4 +1,4 @@
-package emlab.domain.market.electricity;
+package emlab.gen.domain.market.electricity;
 
 import org.neo4j.graphdb.Direction;
 import org.springframework.data.neo4j.annotation.NodeEntity;

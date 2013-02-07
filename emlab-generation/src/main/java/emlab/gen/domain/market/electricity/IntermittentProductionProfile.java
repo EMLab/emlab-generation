@@ -1,4 +1,4 @@
-package emlab.domain.market.electricity;
+package emlab.gen.domain.market.electricity;
 
 import java.util.Set;
 
@@ -7,7 +7,7 @@ import org.springframework.data.neo4j.annotation.NodeEntity;
 import org.springframework.data.neo4j.annotation.RelatedTo;
 import org.springframework.transaction.annotation.Transactional;
 
-import emlab.domain.technology.IntermittentResourceProfile;
+import emlab.gen.domain.technology.IntermittentResourceProfile;
 
 /**
  * Production profile of a intermittent power plant

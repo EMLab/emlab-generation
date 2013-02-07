@@ -1,4 +1,4 @@
-package emlab.role.market;
+package emlab.gen.role.market;
 
 import hep.aida.bin.DynamicBin1D;
 
@@ -17,16 +17,16 @@ import cern.colt.matrix.DoubleMatrix2D;
 import cern.colt.matrix.impl.DenseDoubleMatrix1D;
 import cern.colt.matrix.impl.DenseDoubleMatrix2D;
 import cern.jet.math.Functions;
-import emlab.domain.agent.DecarbonizationModel;
-import emlab.domain.gis.Zone;
-import emlab.domain.market.electricity.IntermittentProductionProfile;
-import emlab.domain.market.electricity.SegmentIntermittentProduction;
-import emlab.domain.technology.Interconnector;
-import emlab.domain.technology.IntermittentResourceProfile;
-import emlab.domain.technology.PowerGeneratingTechnology;
-import emlab.domain.technology.PowerGridNode;
-import emlab.repository.Reps;
-import emlab.util.Utils;
+import emlab.gen.domain.agent.DecarbonizationModel;
+import emlab.gen.domain.gis.Zone;
+import emlab.gen.domain.market.electricity.IntermittentProductionProfile;
+import emlab.gen.domain.market.electricity.SegmentIntermittentProduction;
+import emlab.gen.domain.technology.Interconnector;
+import emlab.gen.domain.technology.IntermittentResourceProfile;
+import emlab.gen.domain.technology.PowerGeneratingTechnology;
+import emlab.gen.domain.technology.PowerGridNode;
+import emlab.gen.repository.Reps;
+import emlab.gen.util.Utils;
 
 /**
  * *

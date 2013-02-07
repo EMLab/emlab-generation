@@ -1,10 +1,10 @@
-package emlab.domain.technology;
+package emlab.gen.domain.technology;
 
 import org.neo4j.graphdb.Direction;
 import org.springframework.data.neo4j.annotation.NodeEntity;
 import org.springframework.data.neo4j.annotation.RelatedTo;
 
-import emlab.trend.HourlyCSVTimeSeries;
+import emlab.gen.trend.HourlyCSVTimeSeries;
 
 @NodeEntity
 public class IntermittentResourceProfile extends HourlyCSVTimeSeries {

@@ -1,13 +1,13 @@
-package emlab.repository;
+package emlab.gen.repository;
 
 import org.springframework.data.neo4j.annotation.Query;
 import org.springframework.data.neo4j.annotation.QueryType;
 import org.springframework.data.neo4j.repository.GraphRepository;
 import org.springframework.data.repository.query.Param;
 
-import emlab.domain.technology.IntermittentResourceProfile;
-import emlab.domain.technology.PowerGeneratingTechnology;
-import emlab.domain.technology.PowerGridNode;
+import emlab.gen.domain.technology.IntermittentResourceProfile;
+import emlab.gen.domain.technology.PowerGeneratingTechnology;
+import emlab.gen.domain.technology.PowerGridNode;
 
 public interface IntermittentResourceProfileRepository extends
         GraphRepository<IntermittentResourceProfile> {
