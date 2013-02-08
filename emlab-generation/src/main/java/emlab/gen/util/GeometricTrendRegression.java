@@ -18,38 +18,37 @@ package emlab.gen.util;
 import org.apache.commons.math.stat.regression.SimpleRegression;
 
 /**
- * Implementation of SimpleRegression for geometric growth trends. Only the methods
- * addData, removeData and predict have been modified with the Exponential function,
- * all other methods must be adjusted manually!!
+ * Implementation of SimpleRegression for geometric growth trends. Only the
+ * methods addData, removeData and predict have been modified with the
+ * Exponential function, all other methods must be adjusted manually!!
  * 
  * @author JCRichstein
- *
+ * 
  */
 public class GeometricTrendRegression extends SimpleRegression {
 
-	public void addData(double x, double y){
+	public void addData(double x, double y) {
 		super.addData(x, Math.log(y));
 	}
-	
-	public void removeData(double x, double y){
+
+	public void removeData(double x, double y) {
 		super.removeData(x, Math.log(y));
 	}
-	
-    public void addData(double[][] data) {
-        for (int i = 0; i < data.length; i++) {
-            addData(data[i][0], Math.log(data[i][1]));
-        }
-    }
-    
-    public void removeData(double[][] data) {
-        for (int i = 0; i < data.length && super.getN() > 0; i++) {
-            removeData(data[i][0], Math.log(data[i][1]));
-        }
-    }
-    
-    public double predict(double x) {
-        return Math.exp(super.predict(x));
-    }
 
-	
+	public void addData(double[][] data) {
+		for (double[] d : data) {
+			addData(d[0], d[1]);
+		}
+	}
+
+	public void removeData(double[][] data) {
+		for (int i = 0; i < data.length && super.getN() > 0; i++) {
+			removeData(data[i][0], Math.log(data[i][1]));
+		}
+	}
+
+	public double predict(double x) {
+		return Math.exp(super.predict(x));
+	}
+
 }
