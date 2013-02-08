@@ -6,10 +6,8 @@ else
 ript."
     exit
 fi
-modelhome=$emlabHome/emlab-model
-
 sh $emlabHome/shellscripts/makeRamdiskMac.sh
 
 #start model
-cd $modelhome
+cd $emlabModelFolder
 mvn exec:java $1
