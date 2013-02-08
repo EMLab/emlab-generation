@@ -15,7 +15,7 @@
  ******************************************************************************/
 package emlab.gen.util;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.apache.commons.math.stat.regression.SimpleRegression;
 import org.apache.log4j.Logger;
@@ -32,53 +32,58 @@ import emlab.gen.domain.market.ClearingPoint;
 import emlab.gen.domain.market.CommodityMarket;
 import emlab.gen.domain.technology.Substance;
 import emlab.gen.repository.ClearingPointRepository;
-import emlab.gen.util.GeometricTrendRegression;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({"/emlab-gen-test-context.xml"})
+@ContextConfiguration({ "/emlab-gen-test-context.xml" })
 @Transactional
 public class GeometricTrendRegressionTest {
-	
+
 	Logger logger = Logger.getLogger(GeometricTrendRegressionTest.class);
-	
-	@Autowired Neo4jOperations template;
+
+	@Autowired
+	Neo4jOperations template;
 
 	@Autowired
 	ClearingPointRepository clearingPointRepository;
-    
-	@Before
-    @Transactional
-    public void setUp() throws Exception {
 
-    }
-	
+	@Before
+	@Transactional
+	public void setUp() throws Exception {
+
+	}
+
 	@Test
-    public void testLinearTrendEstimation(){
-    	double[][] input = {{0,1},{1,1.1},{2,1.2},{3,1.3},{4,1.4}};
-    	double[] predictionYears = {5,6,7,8};
-    	double[] expectedResults = {1.5,1.6	,1.7,1.8};
-    	SimpleRegression sr = new SimpleRegression();
-    	sr.addData(input);
-    	for (int i = 0; i<predictionYears.length; i++){
-    		assert(expectedResults[i]==sr.predict(predictionYears[i]));
-    	}
-    }
+	public void testLinearTrendEstimation() {
+		double[][] input = { { 0, 1 }, { 1, 1.1 }, { 2, 1.2 }, { 3, 1.3 },
+				{ 4, 1.4 } };
+		double[] predictionYears = { 5, 6, 7, 8 };
+		double[] expectedResults = { 1.5, 1.6, 1.7, 1.8 };
+		SimpleRegression sr = new SimpleRegression();
+		sr.addData(input);
+		for (int i = 0; i < predictionYears.length; i++) {
+			assertEquals("Test linear Trend:", expectedResults[i],
+					sr.predict(predictionYears[i]), 0.01);
+		}
+	}
 
 	@Test
 	public void testGeometricTrendEstimation() {
-		double[][] input = {{0,1},{1,1.1},{2,1.21},{3,1.331},{4,1.4641}};
-		double[] predictionYears = {5,6,7,8};
-		double[] expectedResults = {1.61051	,1.771561,1.9487171,2.14358881};
-    	GeometricTrendRegression gtr = new GeometricTrendRegression();
-    	gtr.addData(input);
-    	for (int i = 0; i<predictionYears.length; i++){
-    		assert(expectedResults[i]==gtr.predict(predictionYears[i]));
-    	}
+		double[][] input = { { 0.0, 1.0 }, { 1.0, 1.1 }, { 2.0, 1.21 },
+				{ 3.0, 1.331 }, { 4.0, 1.4641 } };
+		double[] predictionYears = { 5, 6, 7, 8 };
+		double[] expectedResults = { 1.61051, 1.771561, 1.9487171, 2.14358881 };
+		GeometricTrendRegression gtr = new GeometricTrendRegression();
+		gtr.addData(input);
+		for (int i = 0; i < predictionYears.length; i++) {
+			assertEquals(expectedResults[i], gtr.predict(predictionYears[i]),
+					0.01);
+		}
 	}
-	
+
 	@Test
 	public void testGeometricTrendEstimationFromQuery() {
-		double[][] input = {{0,1},{1,1.1},{2,1.21},{3,1.331},{4,1.4641}};
+		double[][] input = { { 0, 1 }, { 1, 1.1 }, { 2, 1.21 }, { 3, 1.331 },
+				{ 4, 1.4641 } };
 		Substance substance = new Substance();
 		substance.persist();
 		CommodityMarket market = new CommodityMarket();
@@ -91,16 +96,18 @@ public class GeometricTrendRegressionTest {
 			cp.setAbstractMarket(market);
 			template.save(cp);
 		}
-		Iterable<ClearingPoint> cps = clearingPointRepository.findAllClearingPointsForSubstanceAndTimeRange(substance, 0, 4);
+		Iterable<ClearingPoint> cps = clearingPointRepository
+				.findAllClearingPointsForSubstanceAndTimeRange(substance, 0, 4);
 		GeometricTrendRegression gtr = new GeometricTrendRegression();
 		for (ClearingPoint clearingPoint : cps) {
 			gtr.addData(clearingPoint.getTime(), clearingPoint.getPrice());
 		}
-		double[] predictionYears = {5,6,7,8};
-		double[] expectedResults = {1.61051	,1.771561,1.9487171,2.14358881};
-    	for (int i = 0; i<predictionYears.length; i++){
-    		assert(expectedResults[i]==gtr.predict(predictionYears[i]));
-    	}
+		double[] predictionYears = { 5, 6, 7, 8 };
+		double[] expectedResults = { 1.61051, 1.771561, 1.9487171, 2.14358881 };
+		for (int i = 0; i < predictionYears.length; i++) {
+			assertEquals(expectedResults[i], gtr.predict(predictionYears[i]),
+					0.01);
+		}
 	}
 
 }
