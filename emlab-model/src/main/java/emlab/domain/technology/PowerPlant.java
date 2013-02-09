@@ -67,12 +67,7 @@ public class PowerPlant {
     /**
      * dismantleTime is set to 1000 as a signifier, that the powerplant is not
      * yet dismantled.
-     * 
      */
-    
-    public static int IN_RESERVE = -21;
-    public static int NOT_IN_RESERVE = -20;
-    
     private long dismantleTime;
     private long constructionStartTime;
     private long actualLeadtime;
@@ -83,7 +78,6 @@ public class PowerPlant {
     private double actualInvestedCapital;
     private double actualEfficiency;
     private double expectedEndOfLife;
-    private int powerPlantStatus;
 
     public boolean isOperational(long currentTick) {
 

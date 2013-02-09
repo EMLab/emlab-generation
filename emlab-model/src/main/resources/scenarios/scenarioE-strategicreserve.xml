@@ -539,14 +539,14 @@
 	<!-- Strategic Reserve -->
 
 	<bean id="strategicReserveOperator1" class="emlab.domain.agent.StrategicReserveOperator"
-		p:name="StrategicReserveOperatorNL" p:cash="1000" p:reservePriceSR="100"
-		p:reserveVolumePercentSR="0.3">
+		p:name="StrategicReserveOperatorNL" p:cash="1000" p:reservePriceSR="1500"
+		p:reserveVolumePercentSR="0.1">
 		<property name="zone" ref="nl" />
 	</bean>
 
 	<bean id="strategicReserveOperator2" class="emlab.domain.agent.StrategicReserveOperator"
-		p:name="StrategicReserveOperatorDE" p:cash="1000" p:reservePriceSR="100"
-		p:reserveVolumePercentSR="0.3">
+		p:name="StrategicReserveOperatorDE" p:cash="1000" p:reservePriceSR="1200"
+		p:reserveVolumePercentSR="0.1">
 		<property name="zone" ref="de" />
 	</bean>
 

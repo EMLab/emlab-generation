@@ -118,8 +118,10 @@ public class StrategicReserveOperatorRole extends AbstractRole<StrategicReserveO
 				// **use querying for market**
 				if (currentPPDP.getBiddingMarket().getNodeId().intValue() == market.getNodeId().intValue()){
 					//logger.warn("isOR market cleared" + isORMarketCleared);
-
-					if (isORMarketCleared == false){
+					if (volumetobeContracted==0){
+						isORMarketCleared=true;
+					}
+					else if (isORMarketCleared == false){
 						//logger.warn("volume of current PPDP " + currentPPDP.getAmount());
 						if (volumetobeContracted-(sumofContractedBids + currentPPDP.getAmount()) >= clearingEpsilon){
 
