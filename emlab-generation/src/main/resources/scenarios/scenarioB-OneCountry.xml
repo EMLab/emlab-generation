@@ -455,11 +455,11 @@
 		p:minValue="0" />
 
 	<!-- Minimum CO2 Price Trends -->
-	<bean id="minCo2PriceTrend" class="emlab.trend.StepTrend" p:start="${minCo2PriceStart}"
+	<bean id="minCo2PriceTrend" class="emlab.gen.trend.StepTrend" p:start="${minCo2PriceStart}"
 		p:duration="${minCo2PriceDuration}" p:increment="${minCo2PriceIncrement}"
 		p:minValue="0" />
 		
-	<bean id="minCo2PriceTrendNL" class="emlab.trend.StepTrend" p:start="0"
+	<bean id="minCo2PriceTrendNL" class="emlab.gen.trend.StepTrend" p:start="0"
 		p:duration="1" p:increment="0"
 		p:minValue="0" />
 		

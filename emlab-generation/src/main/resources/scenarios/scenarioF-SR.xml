@@ -22,11 +22,11 @@
 		p:deletionOldPPDPBidsAndCashFlowsEnabled="true" p:deletionAge="5">
 	</bean>
 
-	<bean class="emlab.trend.TriangularTrend" id="demandGrowthTrendNL"
+	<bean class="emlab.gen.trend.TriangularTrend" id="demandGrowthTrendNL"
 		p:start="${demandGrowthNLStart}" p:min="${demandGrowthNLMin}" p:max="${demandGrowthNLMax}"
 		p:top="${demandGrowthNLTop}" />
 
-	<bean class="emlab.trend.TriangularTrend" id="demandGrowthTrendDE"
+	<bean class="emlab.gen.trend.TriangularTrend" id="demandGrowthTrendDE"
 		p:start="${demandGrowthDEStart}" p:min="${demandGrowthDEMin}" p:max="${demandGrowthDEMax}"
 		p:top="${demandGrowthDETop}" />
 
@@ -371,14 +371,14 @@
 		p:substance-ref="co2" />
 
 	<!-- Fuel Prices -->
-	<bean id="coalPrice" class="emlab.trend.TriangularTrend" p:start="${coalPriceStart}"
+	<bean id="coalPrice" class="emlab.gen.trend.TriangularTrend" p:start="${coalPriceStart}"
 		p:min="${coalPriceMin}" p:max="${coalPriceMax}" p:top="${coalPriceTop}" />
-	<bean id="gasPrice" class="emlab.trend.TriangularTrend" p:start="${gasPriceStart}"
+	<bean id="gasPrice" class="emlab.gen.trend.TriangularTrend" p:start="${gasPriceStart}"
 		p:min="${gasPriceMin}" p:max="${gasPriceMax}" p:top="${gasPriceTop}" />
-	<bean id="biomassPrice" class="emlab.trend.TriangularTrend"
+	<bean id="biomassPrice" class="emlab.gen.trend.TriangularTrend"
 		p:start="${biomassPriceStart}" p:min="${biomassPriceMin}" p:max="${biomassPriceMax}"
 		p:top="${biomassPriceTop}" />
-	<bean id="uraniumPrice" class="emlab.trend.TriangularTrend"
+	<bean id="uraniumPrice" class="emlab.gen.trend.TriangularTrend"
 		p:start="${uraniumPriceStart}" p:min="${uraniumPriceMin}" p:max="${uraniumPriceMax}"
 		p:top="${uraniumPriceTop}" />
 
@@ -640,24 +640,24 @@
 
 
 	<!-- CO2 Tax -->
-	<bean id="co2TaxTrend" class="emlab.trend.StepTrend" p:start="${co2TaxStart}"
+	<bean id="co2TaxTrend" class="emlab.gen.trend.StepTrend" p:start="${co2TaxStart}"
 		p:duration="${co2TaxDuration}" p:increment="${co2TaxIncrement}"
 		p:minValue="0" />
 
 	<!-- CO2 Cap -->
-	<bean id="co2CapTrend" class="emlab.trend.StepTrend" p:start="${co2CapStart}"
+	<bean id="co2CapTrend" class="emlab.gen.trend.StepTrend" p:start="${co2CapStart}"
 		p:duration="${co2CapDuration}" p:increment="${co2CapIncrement}"
 		p:minValue="0" />
 
 	<!-- Minimum CO2 Price Trends -->
-	<bean id="minCo2PriceTrend" class="emlab.trend.StepTrend" p:start="${minCo2EUPriceStart}"
+	<bean id="minCo2PriceTrend" class="emlab.gen.trend.StepTrend" p:start="${minCo2EUPriceStart}"
 		p:duration="${minCo2PriceDuration}" p:increment="${minCo2EUPriceIncrement}"
 		p:minValue="0" />
 
-	<bean id="minCo2PriceTrendNL" class="emlab.trend.StepTrend"
+	<bean id="minCo2PriceTrendNL" class="emlab.gen.trend.StepTrend"
 		p:start="${minCo2NLPriceStart}" p:duration="${minCo2NLPriceDuration}"
 		p:increment="${minCo2NLPriceIncrement}" p:minValue="0" />
-	<bean id="minCo2PriceTrendDE" class="emlab.trend.StepTrend"
+	<bean id="minCo2PriceTrendDE" class="emlab.gen.trend.StepTrend"
 		p:start="${minCo2DEPriceStart}" p:duration="${minCo2DEPriceDuration}"
 		p:increment="${minCo2DEPriceIncrement}" p:minValue="0" />
 
