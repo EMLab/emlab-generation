@@ -551,6 +551,7 @@ public class InvestInPowerGenerationTechnologiesRole extends
 
 				double segmentSupply = 0d;
 				double segmentPrice = 0d;
+				double totalCapacityAvailable = 0d;
 
 				for (Entry<PowerPlant, Double> plantCost : meritOrder
 						.entrySet()) {
@@ -560,6 +561,7 @@ public class InvestInPowerGenerationTechnologiesRole extends
 					// segment
 					plantCapacity = plant.getExpectedAvailableCapacity(time,
 							segmentLoad.getSegment(), numberOfSegments);
+					totalCapacityAvailable +=plantCapacity;
 
 					// logger.warn("Capacity of plant " + plant.toString() +
 					// " is " +
@@ -575,47 +577,35 @@ public class InvestInPowerGenerationTechnologiesRole extends
 				// segmentLoad.getSegment().getSegmentID() + " supply equals " +
 				// segmentSupply + " and segment demand equals " +
 				// expectedSegmentLoad);
-				double reservePrice = 0;
-				double reserveVolume = 0;
-				for (StrategicReserveOperator operator : strategicReserveOperatorRepository
-						.findAll()) {
-					// logger.warn(""+ operator.getReserveVolume());
-					ElectricitySpotMarket market1 = reps.marketRepository
-							.findElectricitySpotMarketForZone(operator
-									.getZone());
-					// logger.warn("enter SROLOOP " +
-					// +market1.getNodeId().intValue());
-					if (market.getNodeId().intValue() == market1.getNodeId()
-							.intValue()) {
-						// logger.warn("Entered market loop "+ market1.getName()
-						// + " == " + market.getName());
-						reservePrice = operator.getReservePriceSR();
-						reserveVolume = operator.getReserveVolume();
+				// Find strategic reserve operator for the market.
+
+
+				double reservePrice=0;
+				double reserveVolume=0;
+				for (StrategicReserveOperator operator: strategicReserveOperatorRepository.findAll()){
+					//logger.warn(""+ operator.getReserveVolume());
+					ElectricitySpotMarket market1 = reps.marketRepository.findElectricitySpotMarketForZone(operator.getZone());
+					//logger.warn("enter SROLOOP " + +market1.getNodeId().intValue());
+					if(market.getNodeId().intValue()== market1.getNodeId().intValue()){
+						//logger.warn("Entered market loop "+ market1.getName() + " == " + market.getName());
+						reservePrice = operator.getReservePriceSR();						
+						reserveVolume=operator.getReserveVolume();						
 					}
 
 				}
-				// logger.warn("segmentSupply "+ segmentSupply
-				// +"expectedSLoad "+ expectedSegmentLoad +
-				// " Difference "+(capacitySum-expectedSegmentLoad) + "SR " +
-				// reserveVolume);
-				// If difference between demand and supply is less than equal to
-				// reserveVolume, set segment electric price = ReservePrice
-				if (segmentSupply >= expectedSegmentLoad
-						&& ((capacitySum - expectedSegmentLoad) <= (reserveVolume))) {
-					expectedElectricityPricesPerSegment.put(
-							segmentLoad.getSegment(), reservePrice);
-					// logger.warn("Price: "+
-					// expectedElectricityPricesPerSegment);
-				} else if (segmentSupply >= expectedSegmentLoad
-						&& ((capacitySum - expectedSegmentLoad) > (reserveVolume))) {
-					expectedElectricityPricesPerSegment.put(
-							segmentLoad.getSegment(), segmentPrice);
-					// logger.warn("Price: "+
-					// expectedElectricityPricesPerSegment);
-				} else {
-					expectedElectricityPricesPerSegment.put(
-							segmentLoad.getSegment(),
-							market.getValueOfLostLoad());
+				//logger.warn("segmentSupply "+ segmentSupply +"expectedSLoad "+ expectedSegmentLoad + " Difference "+(totalCapacityAvailable-expectedSegmentLoad) + "SR " + reserveVolume);
+				//logger.warn("installed Supply " + capacitySum + "Availble supply " + totalCapacityAvailable);
+				// If difference between demand and supply is less than equal to reserveVolume, set segment electric price = ReservePrice
+				if (segmentSupply >= expectedSegmentLoad && ((totalCapacityAvailable-expectedSegmentLoad) <= (reserveVolume))){
+					expectedElectricityPricesPerSegment.put(segmentLoad.getSegment(), reservePrice);
+					//logger.warn("Price: "+ expectedElectricityPricesPerSegment);
+				}
+				else if (segmentSupply >= expectedSegmentLoad && ((totalCapacityAvailable-expectedSegmentLoad) > (reserveVolume))) {
+					expectedElectricityPricesPerSegment.put(segmentLoad.getSegment(), segmentPrice);
+					//logger.warn("Price: "+ expectedElectricityPricesPerSegment);
+				} 
+				else {
+					expectedElectricityPricesPerSegment.put(segmentLoad.getSegment(), market.getValueOfLostLoad());
 				}
 
 			}
