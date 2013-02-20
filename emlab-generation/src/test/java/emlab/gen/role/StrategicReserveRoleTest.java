@@ -414,11 +414,11 @@ public class StrategicReserveRoleTest {
 		acceptedPowerPlantDispatchRoleinSR.act(strategicReserveOperator1);
 		// acceptedPowerPlantDispatchRoleinSR.act(strategicReserveOperator11);
 
-		/*
-		 * logger.warn("New Bidding Prices P1 " +p1.getPrice());
-		 * logger.warn("New Bidding Prices P11 " +p11.getPrice());
-		 * logger.warn("New Bidding Prices P111 " +p111.getPrice());
-		 * 
+		
+//		 System.out.print("New Bidding Prices P1 " +p1.getSRstatus());
+//		 System.out.print("New Bidding Prices P11 " +p11.getSRstatus());
+//		 System.out.print("New Bidding Prices P111 " +p111.getSRstatus());
+		 /*
 		 * logger.warn("New Bidding Prices P2 " +p2.getPrice());
 		 * logger.warn("New Bidding Prices P22 " +p22.getPrice());
 		 * logger.warn("New Bidding Prices P222 " +p222.getPrice());
