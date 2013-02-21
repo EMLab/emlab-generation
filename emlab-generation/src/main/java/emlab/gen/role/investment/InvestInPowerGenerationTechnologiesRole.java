@@ -510,7 +510,7 @@ public class InvestInPowerGenerationTechnologiesRole extends AbstractEnergyProdu
 				// If difference between demand and supply is less than equal to reserveVolume, set segment electric price = ReservePrice
 				if (segmentSupply >= expectedSegmentLoad && ((totalCapacityAvailable-expectedSegmentLoad) <= (reserveVolume))){
 					expectedElectricityPricesPerSegment.put(segmentLoad.getSegment(), reservePrice);
-					//logger.warn("Price: "+ expectedElectricityPricesPerSegment);
+					logger.warn("Price: "+ expectedElectricityPricesPerSegment);
 				}
 				else if (segmentSupply >= expectedSegmentLoad && ((totalCapacityAvailable-expectedSegmentLoad) > (reserveVolume))) {
 					expectedElectricityPricesPerSegment.put(segmentLoad.getSegment(), segmentPrice);

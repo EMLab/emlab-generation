@@ -22,7 +22,7 @@
 		p:deletionOldPPDPBidsAndCashFlowsEnabled="true" p:deletionAge="5">
 	</bean>
 
-	<bean class="emlab.gen.trend.TriangularTrend" id="demandGrowthTrendNL"
+	<bean class="emlaemlab.gen.trend.TriangularTrend" id="demandGrowthTrendNL"
 		p:start="${demandGrowthNLStart}" p:min="${demandGrowthNLMin}" p:max="${demandGrowthNLMax}"
 		p:top="${demandGrowthNLTop}" />
 
@@ -906,7 +906,7 @@
 		p:peakSegmentDependentAvailability="0.16"
 		p:applicableForLongTermContract="true">
 	</bean>
-	<bean id="nuclearPGT" class="emlab.gen.domain.technology.PowerGeneratingTechnology"
+	<bean id="nuclearPGT" class="emlab.domain.technology.PowerGeneratingTechnology"
 		p:name="Nuclear" p:capacity="1000" p:efficiency=".3"
 		p:efficiencyModifierExogenous="0.000" p:co2CaptureEffciency="0"
 		p:baseInvestmentCost="3020000000" p:investmentCostModifierExogenous="-0.01"

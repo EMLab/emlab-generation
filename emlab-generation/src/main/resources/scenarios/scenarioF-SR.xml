@@ -690,8 +690,8 @@
 	</bean>
 
 	<bean id="strategicReserveOperatorB" class="emlab.gen.domain.agent.StrategicReserveOperator"
-		p:name="StrategicReserveOperatorDE" p:cash="0" p:reservePriceSR="1800"
-		p:reserveVolumePercentSR="0.1">
+		p:name="StrategicReserveOperatorDE" p:cash="0" p:reservePriceSR="0"
+		p:reserveVolumePercentSR="0">
 		<property name="zone" ref="de" />
 	</bean>
 
