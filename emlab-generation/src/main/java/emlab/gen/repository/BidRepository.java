@@ -130,7 +130,12 @@ public interface BidRepository extends GraphRepository<Bid> {
     @Query("START market=node({market}) MATCH (market)<-[:BIDDINGMARKET]-(bid) WHERE (bid.time = {time}) and (bid.supplyBid=true) RETURN sum(bid.amount)")
     double calculateTotalSupplyForMarketForTime(@Param("market") DecarbonizationMarket market, @Param("time") long time);
 
-    @Query("START market=node({market}) MATCH (market)<-[:BIDDINGMARKET]-(bid) WHERE (bid.time = {time}) and (bid.supplyBid=true) RETURN max(bid.price)")
-    double calculateTotalSupplyPriceForMarketForTime(@Param("market") DecarbonizationMarket market, @Param("time") long time);
+	@Query("START market=node({market}) MATCH (market)<-[:BIDDINGMARKET]-(bid) WHERE (bid.time = {time}) and (bid.supplyBid=true) RETURN max(bid.price)")
+	double calculateTotalSupplyPriceForMarketForTime(@Param("market") DecarbonizationMarket market,
+			@Param("time") long time);
+
+	@Query("START market=node({market}) MATCH (market)<-[:BIDDINGMARKET]-(bid) WHERE (bid.time = {time}) and (bid.supplyBid=true) RETURN min(bid.price)")
+	double calculateMinimumSupplyPriceForMarketForTime(@Param("market") DecarbonizationMarket market,
+			@Param("time") long time);
 
 }
