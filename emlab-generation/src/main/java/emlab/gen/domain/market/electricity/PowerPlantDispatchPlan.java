@@ -54,14 +54,14 @@ public class PowerPlantDispatchPlan extends Bid {
     /**
      * IMPORTANT: Amount (capacity in MW) that is bid on to the SPOT MARKET, without long term contracts.
      */
-    private double amount;
+	// private double amount;
     /**
      * In the case of the power plant dispatch plan: Marginal cost excluding CO2.
      */
-    private double price;
+	// private double price;
     private double bidWithoutCO2;
 
-    private long time;
+	// private long time;
     
     @Indexed(indexName = "ppdpTime") 
     private int ppdpTime;
@@ -98,14 +98,14 @@ public class PowerPlantDispatchPlan extends Bid {
         this.capacityLongTermContract = capacityLongTermContract;
     }
 
-    public long getTime() {
-        return time;
-    }
-
-    public void setTime(long time) {
-        this.time = time;
-        this.ppdpTime = (int) time;
-    }
+	// public long getTime() {
+	// return time;
+	// }
+	//
+	// public void setTime(long time) {
+	// this.time = time;
+	// this.ppdpTime = (int) time;
+	// }
 
     @Override
     public String toString() {
