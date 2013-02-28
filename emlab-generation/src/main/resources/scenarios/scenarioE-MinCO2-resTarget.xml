@@ -907,7 +907,7 @@
 	p:duration="1" p:minValue="1995" p:increment="445" p:start="1995" />
 	
 	<bean id="windOffshoreTargetCountryA" class="emlab.gen.domain.policy.PowerGeneratingTechnologyTarget"
-	p:trend-ref="windOffshoreTrendCountryA" p:powerGeneratingTechnology-ref="windPGT"/>
+	p:trend-ref="windOffshoreTrendCountryA" p:powerGeneratingTechnology-ref="windOffshorePGT"/>
 	
 	<bean id="windOffshoreTrendCountryA" class="emlab.gen.trend.StepTrend"
 	p:duration="1" p:minValue="228" p:increment="550" p:start="228" /> 
@@ -949,7 +949,7 @@
 	p:duration="1" p:minValue="29175" p:increment="822.4" p:start="29175" /> 
 	
 	<bean id="windOffshoreTargetCountryB" class="emlab.gen.domain.policy.PowerGeneratingTechnologyTarget"
-	p:trend-ref="windOffshoreTrendCountryB" p:powerGeneratingTechnology-ref="windPGT"/>
+	p:trend-ref="windOffshoreTrendCountryB" p:powerGeneratingTechnology-ref="windOffshorePGT"/>
 	
 	<bean id="windOffshoreTrendCountryB" class="emlab.gen.trend.StepTrend"
 	p:duration="1" p:minValue="432" p:increment="822.4" p:start="432" /> 
