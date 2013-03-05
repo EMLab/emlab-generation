@@ -41,12 +41,9 @@ public class PowerGeneratingTechnology {
     @SimulationParameter(label = "CO2 capture efficiency", from = 0, to = 1)
     private double co2CaptureEffciency;
 
-    @SimulationParameter(label = "Total investment cost (EUR)", from = 0, to = 1000000000)
+	@SimulationParameter(label = "Total investment cost (EUR/MW)", from = 0, to = 1000000000)
     private double baseInvestmentCost;
     private double investmentCostModifierExogenous;
-
-    @SimulationParameter(label = "Down payment (30% of investment)", from = 0, to = 1000000000)
-    private double downPayment;
 
     @SimulationParameter(label = "Depreciation time (years)", from = 0, to = 40)
     private int depreciationTime;
@@ -54,9 +51,10 @@ public class PowerGeneratingTechnology {
     @SimulationParameter(label = "Minimum running hours (hours/year)", from = 0, to = 8760)
     private double minimumRunningHours;
 
-    @SimulationParameter(label = "Fixed operating cost (euro/MW)", from = 0, to = 100000)
-    private double fixedOperatingCost;
+	@SimulationParameter(label = "Fixed operating cost (EUR/MW)", from = 0, to = 100000)
+    private double baseFixedOperatingCost;
     private double fixedOperatingCostModifierAfterLifetime;
+	private double fixedOperatingCostModifierExogenous;
 
     @SimulationParameter(label = "Expected lifetime", from = 0, to = 40)
     private int expectedLifetime;
@@ -111,14 +109,6 @@ public class PowerGeneratingTechnology {
 
     public void setMaximumInstalledCapacityFractionPerAgent(double maximumInstalledCapacityFractionPerAgent) {
         this.maximumInstalledCapacityFractionPerAgent = maximumInstalledCapacityFractionPerAgent;
-    }
-
-    public double getDownPayment() {
-        return downPayment;
-    }
-
-    public void setDownPayment(double downPayment) {
-        this.downPayment = downPayment;
     }
 
     public int getDepreciationTime() {
@@ -205,12 +195,12 @@ public class PowerGeneratingTechnology {
         this.investmentCostModifierExogenous = investmentCostModifierExogenous;
     }
 
-    public double getFixedOperatingCost() {
-        return fixedOperatingCost;
+    public double getBaseFixedOperatingCost() {
+        return baseFixedOperatingCost;
     }
 
-    public void setFixedOperatingCost(double fixedOperatingCost) {
-        this.fixedOperatingCost = fixedOperatingCost;
+    public void setBaseFixedOperatingCost(double fixedOperatingCost) {
+        this.baseFixedOperatingCost = fixedOperatingCost;
     }
 
     public double getFixedOperatingCostModifierAfterLifetime() {
@@ -281,7 +271,15 @@ public class PowerGeneratingTechnology {
         this.baseInvestmentCost = baseInvestmentCost;
     }
 
-    public boolean isIntermittent() {
+	public double getFixedOperatingCostModifierExogenous() {
+		return fixedOperatingCostModifierExogenous;
+	}
+
+	public void setFixedOperatingCostModifierExogenous(double fixedOperatingCostModifierExogenous) {
+		this.fixedOperatingCostModifierExogenous = fixedOperatingCostModifierExogenous;
+	}
+
+	public boolean isIntermittent() {
         return intermittent;
     }
 

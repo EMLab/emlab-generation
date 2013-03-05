@@ -53,7 +53,7 @@ public class PayOperatingAndMaintainanceCostsRole extends AbstractEnergyProducer
         int i = 0;
         for (PowerPlant plant : reps.powerPlantRepository.findOperationalPowerPlantsByOwner(producer, getCurrentTick())) {
             i++;
-            double money = plant.getTechnology().getFixedOperatingCost();
+			double money = plant.getActualFixedOperatingCost();
             // TODO calculate actual based on modifier.
             logger.info("Im paying {} for O and M of plant {}", money, plant.getName());
             reps.nonTransactionalCreateRepository.createCashFlow(producer, maintainer, money, CashFlow.FIXEDOMCOST, getCurrentTick(), plant);

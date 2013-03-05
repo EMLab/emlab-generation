@@ -18,6 +18,9 @@ package emlab.gen.role.investment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import agentspring.role.AbstractRole;
+import agentspring.role.Role;
+import agentspring.role.RoleComponent;
 import emlab.gen.domain.agent.BigBank;
 import emlab.gen.domain.agent.EnergyProducer;
 import emlab.gen.domain.agent.PowerPlantManufacturer;
@@ -28,9 +31,6 @@ import emlab.gen.domain.policy.PowerGeneratingTechnologyTarget;
 import emlab.gen.domain.technology.PowerGeneratingTechnology;
 import emlab.gen.domain.technology.PowerPlant;
 import emlab.gen.repository.Reps;
-import agentspring.role.AbstractRole;
-import agentspring.role.Role;
-import agentspring.role.RoleComponent;
 
 /**
  * @author JCRichstein
@@ -80,7 +80,7 @@ public class TargetInvestmentRole extends AbstractRole<TargetInvestor> implement
 	
     private void createSpreadOutDownPayments(EnergyProducer agent, PowerPlantManufacturer manufacturer, double totalDownPayment,
             PowerPlant plant) {
-        int buildingTime = plant.getTechnology().getExpectedLeadtime();
+		int buildingTime = (int) plant.getActualLeadtime();
         for (int i = 0; i < buildingTime; i++) {
             reps.nonTransactionalCreateRepository.createCashFlow(agent, manufacturer, totalDownPayment / buildingTime,
                     CashFlow.DOWNPAYMENT, getCurrentTick() + i, plant);

@@ -16,6 +16,7 @@
 package emlab.gen.domain.technology;
 
 import org.neo4j.graphdb.Direction;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.neo4j.annotation.NodeEntity;
 import org.springframework.data.neo4j.annotation.RelatedTo;
 
@@ -30,6 +31,8 @@ public class PowerGridNode {
 
     @RelatedTo(type = "HOURLYDEMAND", elementClass = HourlyCSVTimeSeries.class, direction = Direction.OUTGOING)
     private HourlyCSVTimeSeries hourlyDemand;
+    
+	private double capacityMultiplicationFactor;
 
     public HourlyCSVTimeSeries getHourlyDemand() {
         return hourlyDemand;
@@ -46,5 +49,14 @@ public class PowerGridNode {
     public Zone getZone() {
         return zone;
     }
+
+	@Value("1.0")
+	public double getCapacityMultiplicationFactor() {
+		return capacityMultiplicationFactor;
+	}
+
+	public void setCapacityMultiplicationFactor(double capacityMultiplicationFactor) {
+		this.capacityMultiplicationFactor = capacityMultiplicationFactor;
+	}
 
 }

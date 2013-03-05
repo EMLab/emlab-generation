@@ -58,10 +58,12 @@
 	<bean id="de" class="emlab.gen.domain.gis.Zone" p:name="Country B" />
 
 	<!-- PowerGrid -->
-	<bean id="beneluxNode" class="emlab.gen.domain.technology.PowerGridNode">
+	<bean id="beneluxNode" class="emlab.gen.domain.technology.PowerGridNode"
+	p:capacityMultiplicationFactor="1.0">
 		<property name="zone" ref="nl" />
 	</bean>
-	<bean id="germanNode" class="emlab.gen.domain.technology.PowerGridNode">
+	<bean id="germanNode" class="emlab.gen.domain.technology.PowerGridNode"
+	p:capacityMultiplicationFactor="1.0">
 		<property name="zone" ref="de" />
 	</bean>
 
@@ -543,10 +545,10 @@
 	<bean id="coalPulverized" class="emlab.gen.domain.technology.PowerGeneratingTechnology"
 		p:name="CoalPulverized" p:capacity="758" p:efficiency=".44"
 		p:efficiencyModifierExogenous="0.004" p:co2CaptureEffciency="0" 
-		p:baseInvestmentCost="1144296617.30368"
-		p:investmentCostModifierExogenous="-0.01" p:downPayment="343000000"
+		p:baseInvestmentCost="1509626.1442"
+		p:investmentCostModifierExogenous="-0.01"
 		p:depreciationTime="20" p:minimumRunningHours="5000"
-		p:fixedOperatingCost="46480560"
+		p:baseFixedOperatingCost="61320"
 		p:fixedOperatingCostModifierAfterLifetime=".05" p:expectedLifetime="40"
 		p:expectedLeadtime="4" p:expectedPermittime="1" p:minimumFuelQuality=".9"
 		p:maximumInstalledCapacityFractionInCountry="1"
@@ -565,10 +567,10 @@
 	<bean id="coalPulverizedCSS" class="emlab.gen.domain.technology.PowerGeneratingTechnology"
 		p:name="CoalPulverizedCSS" p:capacity="676" p:efficiency=".35"
 		p:efficiencyModifierExogenous="0.005" p:co2CaptureEffciency="0" 
-		p:baseInvestmentCost="1791872856.39575"
-		p:investmentCostModifierExogenous="-0.01" p:downPayment="537561000"
+		p:baseInvestmentCost="2650699.492"
+		p:investmentCostModifierExogenous="-0.01"
 		p:depreciationTime="20" p:minimumRunningHours="5000"
-		p:fixedOperatingCost=" 71061120"
+		p:baseFixedOperatingCost="105120"
 		p:fixedOperatingCostModifierAfterLifetime=".05" p:expectedLifetime="40"
 		p:expectedLeadtime="7" p:expectedPermittime="1" p:minimumFuelQuality=".9"
 		p:maximumInstalledCapacityFractionInCountry="1"
@@ -587,10 +589,10 @@
 	<bean id="gasConventional" class="emlab.gen.domain.technology.PowerGeneratingTechnology"
 		p:name="GasConventional" p:capacity="776" p:efficiency=".56"
 		p:efficiencyModifierExogenous="0.004" p:co2CaptureEffciency="0" 
-		p:baseInvestmentCost="405687584.447529"
-		p:investmentCostModifierExogenous="-0.01" p:downPayment="121707000"
+		p:baseInvestmentCost="522793.2789"
+		p:investmentCostModifierExogenous="-0.01"
 		p:depreciationTime="15" p:minimumRunningHours="0"
-		p:fixedOperatingCost=" 13595520"
+		p:baseFixedOperatingCost="17520"
 		p:fixedOperatingCostModifierAfterLifetime=".05" p:expectedLifetime="30"
 		p:expectedLeadtime="2" p:expectedPermittime="1" p:minimumFuelQuality="1"
 		p:maximumInstalledCapacityFractionInCountry="1"
@@ -608,10 +610,10 @@
 	<bean id="biomassPGT" class="emlab.gen.domain.technology.PowerGeneratingTechnology"
 		p:name="Biomass" p:capacity="500" p:efficiency=".35"
 		p:efficiencyModifierExogenous="0.005" p:co2CaptureEffciency="0" 
-		p:baseInvestmentCost="1250003386.40571"
-		p:investmentCostModifierExogenous="-0.01" p:downPayment="375000000"
+		p:baseInvestmentCost="2500006.773"
+		p:investmentCostModifierExogenous="-0.01"
 		p:depreciationTime="15" p:minimumRunningHours="0"
-		p:fixedOperatingCost="17520000"
+		p:baseFixedOperatingCost="35040"
 		p:fixedOperatingCostModifierAfterLifetime=".05" p:expectedLifetime="30"
 		p:expectedLeadtime="3" p:expectedPermittime="1" p:minimumFuelQuality="0.5"
 		p:maximumInstalledCapacityFractionInCountry="1"
@@ -629,10 +631,10 @@
 	<bean id="windPGT" class="emlab.gen.domain.technology.PowerGeneratingTechnology"
 		p:name="Wind" p:capacity="150" p:efficiency="1"
 		p:efficiencyModifierExogenous="0.000" p:co2CaptureEffciency="0" 
-		p:baseInvestmentCost="1149997030.62965"
-		p:investmentCostModifierExogenous="-0.01" p:downPayment="345000000"
+		p:baseInvestmentCost="7666646.871"
+		p:investmentCostModifierExogenous="-0.01"
 		p:depreciationTime="15" p:minimumRunningHours="0"
-		p:fixedOperatingCost="3942000"
+		p:baseFixedOperatingCost="26280"
 		p:fixedOperatingCostModifierAfterLifetime=".05" p:expectedLifetime="25"
 		p:expectedLeadtime="2" p:expectedPermittime="1" p:minimumFuelQuality="1"
 		p:maximumInstalledCapacityFractionInCountry="1"
@@ -644,10 +646,10 @@
 	<bean id="nuclearPGT" class="emlab.gen.domain.technology.PowerGeneratingTechnology"
 		p:name="Nuclear" p:capacity="1000" p:efficiency=".3"
 		p:efficiencyModifierExogenous="0.000" p:co2CaptureEffciency="0" 
-		p:baseInvestmentCost="2996796244.21098"
-		p:investmentCostModifierExogenous="-0.01" p:downPayment="900000000"
+		p:baseInvestmentCost="2996796.244"
+		p:investmentCostModifierExogenous="-0.01"
 		p:depreciationTime="25" p:minimumRunningHours="5000"
-		p:fixedOperatingCost=" 43800000"
+		p:baseFixedOperatingCost="43800"
 		p:fixedOperatingCostModifierAfterLifetime=".05" p:expectedLifetime="40"
 		p:expectedLeadtime="7" p:expectedPermittime="2" p:minimumFuelQuality="1"
 		p:maximumInstalledCapacityFractionInCountry="1"

@@ -78,6 +78,7 @@ public class RenewableTargetInvestmentRoleTest {
 		wind.setExpectedPermittime(1);
 		wind.setIntermittent(true);
 		wind.setInvestmentCostModifierExogenous(0.97);
+		wind.setFixedOperatingCostModifierExogenous(0);
 		wind.setExpectedLifetime(20);
 		wind.setPeakSegmentDependentAvailability(0.4);
 		wind.setBaseSegmentDependentAvailability(0.1);
@@ -88,6 +89,8 @@ public class RenewableTargetInvestmentRoleTest {
 		pv.setCapacity(150);
 		pv.setEfficiency(1);
 		pv.setBaseInvestmentCost(12000);
+		pv.setFixedOperatingCostModifierAfterLifetime(0);
+		pv.setFixedOperatingCostModifierExogenous(0);
 		pv.setExpectedLeadtime(1);
 		pv.setExpectedPermittime(0);
 		pv.setIntermittent(true);
@@ -126,9 +129,11 @@ public class RenewableTargetInvestmentRoleTest {
 
 		PowerGridNode powerGridNodeA = new PowerGridNode();
 		powerGridNodeA.setZone(zoneA);
+		powerGridNodeA.setCapacityMultiplicationFactor(1.0);
 		powerGridNodeA.persist();
 		PowerGridNode powerGridNodeB = new PowerGridNode();
 		powerGridNodeB.setZone(zoneB);
+		powerGridNodeB.setCapacityMultiplicationFactor(1.0);
 		powerGridNodeB.persist();
 
 		ElectricitySpotMarket marketA = new ElectricitySpotMarket();
