@@ -183,6 +183,12 @@ public interface PowerPlantRepository extends GraphRepository<PowerPlant> {
             @Param("market") ElectricitySpotMarket market, @Param("tech") PowerGeneratingTechnology technology,
             @Param("tick") long tick);
 
+	@Query(value = "result = g.v(node).in('LOCATION').filter{it.__type__=='emlab.gen.domain.technology.PowerPlant'}.filter{((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick) && (it.expectedEndOfLife > tick)}.as('x').out('TECHNOLOGY').filter{it.name==g.v(tech).name}.back('x').sum{it.actualNominalCapacity};"
+			+ "if(result == null){return 0} else{return result}", type = QueryType.Gremlin)
+	public double calculateCapacityOfExpectedOperationalPowerPlantsByNodeAndTechnology(
+			@Param("node") PowerGridNode node, @Param("tech") PowerGeneratingTechnology technology,
+			@Param("tick") long tick);
+
     @Query(value = "result = g.v(market).out('ZONE').in('REGION').in('LOCATION').filter{it.__type__=='emlab.gen.domain.technology.PowerPlant'}.out('POWERPLANT_OWNER').filter{it==g.v(owner)}.in('POWERPLANT_OWNER').filter{((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick) && (it.expectedEndOfLife > tick)}.out('TECHNOLOGY').filter{it==g.v(tech)};", type = QueryType.Gremlin)
     public Iterable<PowerPlant> findExpectedOperationalPowerPlantsInMarketByOwnerAndTechnology(
             @Param("market") ElectricitySpotMarket market, @Param("tech") PowerGeneratingTechnology technology,

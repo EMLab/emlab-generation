@@ -86,4 +86,7 @@ public class Reps {
     @Autowired
 	public SubstanceRepository substanceRepository;
 
+	@Autowired
+	public PowerGeneratingTechnologyNodeLimitRepository powerGeneratingTechnologyNodeLimitRepository;
+
 }
