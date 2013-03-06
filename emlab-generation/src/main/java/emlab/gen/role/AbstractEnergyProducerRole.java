@@ -42,13 +42,11 @@ import emlab.gen.domain.market.CO2Auction;
 import emlab.gen.domain.market.ClearingPoint;
 import emlab.gen.domain.market.DecarbonizationMarket;
 import emlab.gen.domain.market.electricity.ElectricitySpotMarket;
-import emlab.gen.domain.market.electricity.PowerPlantDispatchPlan;
 import emlab.gen.domain.technology.PowerGeneratingTechnology;
 import emlab.gen.domain.technology.PowerPlant;
 import emlab.gen.domain.technology.Substance;
 import emlab.gen.domain.technology.SubstanceShareInFuelMix;
 import emlab.gen.repository.Reps;
-import emlab.gen.util.GeometricTrendRegression;
 
 public abstract class AbstractEnergyProducerRole extends AbstractRole<EnergyProducer> {
 
@@ -301,9 +299,10 @@ public abstract class AbstractEnergyProducerRole extends AbstractRole<EnergyProd
         return taxToPay;
     }
 
+	// TODO: needs to be updated and used somewhere
     public double calculateFixedOperatingCost(PowerPlant powerPlant) {
 
-        double norm = powerPlant.getTechnology().getFixedOperatingCost();
+		double norm = powerPlant.getActualFixedOperatingCost();
         long timeConstructed = powerPlant.getConstructionStartTime() + powerPlant.calculateActualLeadtime();
         double mod = powerPlant.getTechnology().getFixedOperatingCostModifierAfterLifetime();
         long lifetime = powerPlant.calculateActualLifetime();

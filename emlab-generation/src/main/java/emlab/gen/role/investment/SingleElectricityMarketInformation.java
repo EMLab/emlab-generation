@@ -53,7 +53,7 @@ public class SingleElectricityMarketInformation {
 
             double plantMarginalCost = determineExpectedMarginalCost(plant, fuelPrices, co2price);
             marginalCostMap.put(plant, plantMarginalCost);
-            capacitySum += plant.getTechnology().getCapacity();
+			capacitySum += plant.getActualNominalCapacity();
         }
 
         MapValueComparator comp = new MapValueComparator(marginalCostMap);

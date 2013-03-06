@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2012 the original author or authors.
+ * Copyright 2013 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,10 +28,8 @@ import org.springframework.transaction.annotation.Transactional;
 import agentspring.role.Role;
 import agentspring.role.RoleComponent;
 import emlab.gen.domain.agent.BigBank;
-import emlab.gen.domain.agent.DecarbonizationAgent;
 import emlab.gen.domain.agent.EnergyProducer;
 import emlab.gen.domain.agent.PowerPlantManufacturer;
-import emlab.gen.domain.agent.TargetInvestor;
 import emlab.gen.domain.contract.CashFlow;
 import emlab.gen.domain.contract.Loan;
 import emlab.gen.domain.gis.Zone;
@@ -41,6 +39,7 @@ import emlab.gen.domain.market.electricity.Segment;
 import emlab.gen.domain.market.electricity.SegmentLoad;
 import emlab.gen.domain.policy.PowerGeneratingTechnologyTarget;
 import emlab.gen.domain.technology.PowerGeneratingTechnology;
+import emlab.gen.domain.technology.PowerGeneratingTechnologyNodeLimit;
 import emlab.gen.domain.technology.PowerGridNode;
 import emlab.gen.domain.technology.PowerPlant;
 import emlab.gen.domain.technology.Substance;
@@ -127,6 +126,15 @@ public class InvestInPowerGenerationTechnologiesRole extends AbstractEnergyProdu
                 	double technologyTargetCapacity = technologyTarget.getTrend().getValue(futureTimePoint);
                 	expectedInstalledCapacityOfTechnology =  (technologyTargetCapacity > expectedInstalledCapacityOfTechnology) ? technologyTargetCapacity : expectedInstalledCapacityOfTechnology;
                 }
+				double pgtNodeLimit = Double.MAX_VALUE;
+				PowerGeneratingTechnologyNodeLimit pgtLimit = reps.powerGeneratingTechnologyNodeLimitRepository
+						.findOneByTechnologyAndNode(technology, plant.getLocation());
+				if (pgtLimit != null) {
+					pgtNodeLimit = pgtLimit.getUpperCapacityLimit(futureTimePoint);
+				}
+				double expectedInstalledCapacityOfTechnologyInNode = reps.powerPlantRepository
+						.calculateCapacityOfExpectedOperationalPowerPlantsByNodeAndTechnology(plant.getLocation(),
+								technology, futureTimePoint);
                 double expectedOwnedTotalCapacityInMarket = reps.powerPlantRepository
                         .calculateCapacityOfExpectedOperationalPowerPlantsInMarketByOwner(market, futureTimePoint, agent);
                 double expectedOwnedCapacityInMarketOfThisTechnology = reps.powerPlantRepository
@@ -137,29 +145,21 @@ public class InvestInPowerGenerationTechnologiesRole extends AbstractEnergyProdu
                 double operationalCapacityOfTechnology = reps.powerPlantRepository.calculateCapacityOfOperationalPowerPlantsByTechnology(
                         technology, getCurrentTick());
 
-                if ((expectedInstalledCapacityOfTechnology + technology.getCapacity())
-                        / (marketInformation.maxExpectedLoad + technology.getCapacity()) > technology
+				if ((expectedInstalledCapacityOfTechnology + plant.getActualNominalCapacity())
+						/ (marketInformation.maxExpectedLoad + plant.getActualNominalCapacity()) > technology
                             .getMaximumInstalledCapacityFractionInCountry()) {
                     // logger.warn(agent +
                     // " will not invest in {} technology because there's too much of this type in the market",
                     // technology);
+				} else if ((expectedInstalledCapacityOfTechnologyInNode + plant.getActualNominalCapacity()) > pgtNodeLimit) {
+
                 } else if (expectedOwnedCapacityInMarketOfThisTechnology > expectedOwnedTotalCapacityInMarket
                         * technology.getMaximumInstalledCapacityFractionPerAgent()) {
                     // logger.warn(agent +
                     // " will not invest in {} technology because there's too much capacity planned by him",
                     // technology);
                 } else if ((capacityOfTechnologyInPipeline > operationalCapacityOfTechnology) && capacityOfTechnologyInPipeline > 3000) { // TODO:
-                    // reflects
-                    // that
-                    // you
-                    // cannot
-                    // expand
-                    // a
-                    // technology
-                    // out
-                    // of
-                    // zero.
-
+					// reflects that you cannot expand a technology out of zero.
                     // logger.warn(agent +
                     // " will not invest in {} technology because there's too much capacity in the pipeline",
                     // technology);
@@ -167,14 +167,7 @@ public class InvestInPowerGenerationTechnologiesRole extends AbstractEnergyProdu
                         .getDownpaymentFractionOfCash() * agent.getCash()) {
                     // logger.warn(agent +
                     // " will not invest in {} technology as he does not have enough money for downpayment",
-                    // technology); // TODO:
-                    // Modifier
-                    // for
-                    // investment
-                    // costs
-                    // is
-                    // missing
-                    // here
+					// technology);
                 } else {
 
                     Map<Substance, Double> myFuelPrices = new HashMap<Substance, Double>();
@@ -189,10 +182,9 @@ public class InvestInPowerGenerationTechnologiesRole extends AbstractEnergyProdu
                     double expectedGrossProfit = 0d;
 
                     // logger.warn("Agent {}  found that the installed capacity in the market {} in future to be "
-                    // + marketInformation.capacitySum +
-                    // "and expectde maximum demand to be " +
-                    // marketInformation.maxExpectedLoad,
-                    // agent, market);
+					// + marketInformation.capacitySum +
+					// "and expectde maximum demand to be " +
+					// marketInformation.maxExpectedLoad, agent, market);
                     long numberOfSegments = reps.segmentRepository.count();
 
                     // TODO somehow the prices of long-term contracts could also
@@ -220,20 +212,9 @@ public class InvestInPowerGenerationTechnologiesRole extends AbstractEnergyProdu
                     } else {
 
                         double fixedOMCost = calculateFixedOperatingCost(plant);// /
-                                                                                // plant.getTechnology().getCapacity();
+																				// plant.getActualNominalCapacity();
 
-                        double operatingProfit = expectedGrossProfit - fixedOMCost; // TODO
-                                                                                    // should
-                                                                                    // we
-                                                                                    // not
-                                                                                    // exclude
-                                                                                    // fixed
-                                                                                    // cost,
-                                                                                    // or
-                                                                                    // name
-                                                                                    // that
-                                                                                    // NET
-                                                                                    // profit?
+						double operatingProfit = expectedGrossProfit - fixedOMCost;
 
                         // TODO Alter discount rate on the basis of the amount
                         // in long-term contracts?
@@ -249,15 +230,16 @@ public class InvestInPowerGenerationTechnologiesRole extends AbstractEnergyProdu
                         // Creation of out cash-flow during power plant building
                         // phase (note that the cash-flow is negative!)
                         TreeMap<Integer, Double> discountedProjectCapitalOutflow = calculateSimplePowerPlantInvestmentCashFlow(
-                                technology.getDepreciationTime(), technology.getExpectedLeadtime(), plant.getActualInvestedCapital(), 0);
+								technology.getDepreciationTime(), (int) plant.getActualLeadtime(),
+								plant.getActualInvestedCapital(), 0);
                         // Creation of in cashflow during operation
                         TreeMap<Integer, Double> discountedProjectCashInflow = calculateSimplePowerPlantInvestmentCashFlow(
-                                technology.getDepreciationTime(), technology.getExpectedLeadtime(), 0, operatingProfit);
+								technology.getDepreciationTime(), (int) plant.getActualLeadtime(), 0, operatingProfit);
 
                         double discountedCapitalCosts = npv(discountedProjectCapitalOutflow, wacc);// are
                                                                                                    // defined
                                                                                                    // negative!!
-                        // technology.getCapacity();
+						// plant.getActualNominalCapacity();
 
                         // logger.warn("Agent {}  found that the discounted capital for technology {} to be "
                         // + discountedCapitalCosts, agent,
@@ -277,12 +259,12 @@ public class InvestInPowerGenerationTechnologiesRole extends AbstractEnergyProdu
                         // logger.warn(
                         // "Agent {}  found the project value for technology {} to be "
                         // + Math.round(projectValue /
-                        // plant.getTechnology().getCapacity()) +
+						// plant.getActualNominalCapacity()) +
                         // " EUR/kW (running hours: "
                         // + runningHours + "", agent, technology);
 
                         // double projectTotalValue = projectValuePerMW *
-                        // plant.getTechnology().getCapacity();
+						// plant.getActualNominalCapacity();
 
                         // double projectReturnOnInvestment = discountedOpProfit
                         // / (-discountedCapitalCosts);
@@ -291,8 +273,8 @@ public class InvestInPowerGenerationTechnologiesRole extends AbstractEnergyProdu
                          * Divide by capacity, in order not to favour large power plants (which have the single largest NPV
                          */
 
-                        if (projectValue > 0 && projectValue / plant.getTechnology().getCapacity() > highestValue) {
-                            highestValue = projectValue / plant.getTechnology().getCapacity();
+						if (projectValue > 0 && projectValue / plant.getActualNominalCapacity() > highestValue) {
+							highestValue = projectValue / plant.getActualNominalCapacity();
                             bestTechnology = plant.getTechnology();
                         }
                     }
@@ -336,7 +318,7 @@ public class InvestInPowerGenerationTechnologiesRole extends AbstractEnergyProdu
     @Transactional
     private void createSpreadOutDownPayments(EnergyProducer agent, PowerPlantManufacturer manufacturer, double totalDownPayment,
             PowerPlant plant) {
-        int buildingTime = plant.getTechnology().getExpectedLeadtime();
+		int buildingTime = (int) plant.getActualLeadtime();
         for (int i = 0; i < buildingTime; i++) {
             reps.nonTransactionalCreateRepository.createCashFlow(agent, manufacturer, totalDownPayment / buildingTime,
                     CashFlow.DOWNPAYMENT, getCurrentTick() + i, plant);
@@ -443,7 +425,7 @@ public class InvestInPowerGenerationTechnologiesRole extends AbstractEnergyProdu
 
                 double plantMarginalCost = determineExpectedMarginalCost(plant, fuelPrices, co2price);
                 marginalCostMap.put(plant, plantMarginalCost);
-                capacitySum += plant.getTechnology().getCapacity();
+				capacitySum += plant.getActualNominalCapacity();
             }
             
             //get difference between technology target and expected operational capacity
@@ -489,7 +471,7 @@ public class InvestInPowerGenerationTechnologiesRole extends AbstractEnergyProdu
 
                     // logger.warn("Capacity of plant " + plant.toString() +
                     // " is " +
-                    // plantCapacity/plant.getTechnology().getCapacity());
+					// plantCapacity/plant.getActualNominalCapacity());
                     if (segmentSupply < expectedSegmentLoad) {
                         segmentSupply += plantCapacity;
                         segmentPrice = plantCost.getValue();
