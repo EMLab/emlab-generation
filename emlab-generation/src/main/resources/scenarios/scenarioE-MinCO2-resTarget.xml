@@ -981,6 +981,15 @@
 	<bean id="pvTrendCountryB" class="emlab.gen.trend.StepTrend"
 	p:duration="1" p:minValue="20284" p:increment="3596.9" p:start="20284" />
 	
+	<!-- PowerGenerationTechnology Node Limits -->
+	
+	<bean id="ligniteNodeLimitNl" class="emlab.gen.domain.technology.PowerGeneratingTechnologyNodeLimit"
+	p:permanentUpperCapacityLimit="0">
+		<property name="powerGeneratingTechnology" ref="lignitePGT" />
+		<property name="powerGridNode" ref="beneluxNode" />
+	</bean>
+	
+	
 	<!-- Initial portfolios -->
 
 	<bean id="powerPlantManufacturer" class="emlab.gen.domain.agent.PowerPlantManufacturer"

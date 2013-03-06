@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2012 the original author or authors.
+ * Copyright 2013 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,6 +39,7 @@ import emlab.gen.domain.market.electricity.Segment;
 import emlab.gen.domain.market.electricity.SegmentLoad;
 import emlab.gen.domain.policy.PowerGeneratingTechnologyTarget;
 import emlab.gen.domain.technology.PowerGeneratingTechnology;
+import emlab.gen.domain.technology.PowerGeneratingTechnologyNodeLimit;
 import emlab.gen.domain.technology.PowerGridNode;
 import emlab.gen.domain.technology.PowerPlant;
 import emlab.gen.domain.technology.Substance;
@@ -125,6 +126,15 @@ public class InvestInPowerGenerationTechnologiesRole extends AbstractEnergyProdu
                 	double technologyTargetCapacity = technologyTarget.getTrend().getValue(futureTimePoint);
                 	expectedInstalledCapacityOfTechnology =  (technologyTargetCapacity > expectedInstalledCapacityOfTechnology) ? technologyTargetCapacity : expectedInstalledCapacityOfTechnology;
                 }
+				double pgtNodeLimit = Double.MAX_VALUE;
+				PowerGeneratingTechnologyNodeLimit pgtLimit = reps.powerGeneratingTechnologyNodeLimitRepository
+						.findOneByTechnologyAndNode(technology, plant.getLocation());
+				if (pgtLimit != null) {
+					pgtNodeLimit = pgtLimit.getUpperCapacityLimit(futureTimePoint);
+				}
+				double expectedInstalledCapacityOfTechnologyInNode = reps.powerPlantRepository
+						.calculateCapacityOfExpectedOperationalPowerPlantsByNodeAndTechnology(plant.getLocation(),
+								technology, futureTimePoint);
                 double expectedOwnedTotalCapacityInMarket = reps.powerPlantRepository
                         .calculateCapacityOfExpectedOperationalPowerPlantsInMarketByOwner(market, futureTimePoint, agent);
                 double expectedOwnedCapacityInMarketOfThisTechnology = reps.powerPlantRepository
@@ -141,23 +151,15 @@ public class InvestInPowerGenerationTechnologiesRole extends AbstractEnergyProdu
                     // logger.warn(agent +
                     // " will not invest in {} technology because there's too much of this type in the market",
                     // technology);
+				} else if ((expectedInstalledCapacityOfTechnologyInNode + plant.getActualNominalCapacity()) > pgtNodeLimit) {
+
                 } else if (expectedOwnedCapacityInMarketOfThisTechnology > expectedOwnedTotalCapacityInMarket
                         * technology.getMaximumInstalledCapacityFractionPerAgent()) {
                     // logger.warn(agent +
                     // " will not invest in {} technology because there's too much capacity planned by him",
                     // technology);
                 } else if ((capacityOfTechnologyInPipeline > operationalCapacityOfTechnology) && capacityOfTechnologyInPipeline > 3000) { // TODO:
-                    // reflects
-                    // that
-                    // you
-                    // cannot
-                    // expand
-                    // a
-                    // technology
-                    // out
-                    // of
-                    // zero.
-
+					// reflects that you cannot expand a technology out of zero.
                     // logger.warn(agent +
                     // " will not invest in {} technology because there's too much capacity in the pipeline",
                     // technology);
@@ -165,14 +167,7 @@ public class InvestInPowerGenerationTechnologiesRole extends AbstractEnergyProdu
                         .getDownpaymentFractionOfCash() * agent.getCash()) {
                     // logger.warn(agent +
                     // " will not invest in {} technology as he does not have enough money for downpayment",
-                    // technology); // TODO:
-                    // Modifier
-                    // for
-                    // investment
-                    // costs
-                    // is
-                    // missing
-                    // here
+					// technology);
                 } else {
 
                     Map<Substance, Double> myFuelPrices = new HashMap<Substance, Double>();
@@ -187,10 +182,9 @@ public class InvestInPowerGenerationTechnologiesRole extends AbstractEnergyProdu
                     double expectedGrossProfit = 0d;
 
                     // logger.warn("Agent {}  found that the installed capacity in the market {} in future to be "
-                    // + marketInformation.capacitySum +
-                    // "and expectde maximum demand to be " +
-                    // marketInformation.maxExpectedLoad,
-                    // agent, market);
+					// + marketInformation.capacitySum +
+					// "and expectde maximum demand to be " +
+					// marketInformation.maxExpectedLoad, agent, market);
                     long numberOfSegments = reps.segmentRepository.count();
 
                     // TODO somehow the prices of long-term contracts could also
@@ -220,18 +214,7 @@ public class InvestInPowerGenerationTechnologiesRole extends AbstractEnergyProdu
                         double fixedOMCost = calculateFixedOperatingCost(plant);// /
 																				// plant.getActualNominalCapacity();
 
-                        double operatingProfit = expectedGrossProfit - fixedOMCost; // TODO
-                                                                                    // should
-                                                                                    // we
-                                                                                    // not
-                                                                                    // exclude
-                                                                                    // fixed
-                                                                                    // cost,
-                                                                                    // or
-                                                                                    // name
-                                                                                    // that
-                                                                                    // NET
-                                                                                    // profit?
+						double operatingProfit = expectedGrossProfit - fixedOMCost;
 
                         // TODO Alter discount rate on the basis of the amount
                         // in long-term contracts?

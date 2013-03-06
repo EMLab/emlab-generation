@@ -29,6 +29,7 @@ import emlab.gen.domain.contract.CashFlow;
 import emlab.gen.domain.contract.Loan;
 import emlab.gen.domain.policy.PowerGeneratingTechnologyTarget;
 import emlab.gen.domain.technology.PowerGeneratingTechnology;
+import emlab.gen.domain.technology.PowerGeneratingTechnologyNodeLimit;
 import emlab.gen.domain.technology.PowerPlant;
 import emlab.gen.repository.Reps;
 
@@ -49,7 +50,22 @@ public class TargetInvestmentRole extends AbstractRole<TargetInvestor> implement
 			PowerGeneratingTechnology pgt = target.getPowerGeneratingTechnology();
 			long futureTimePoint = getCurrentTick()+pgt.getExpectedLeadtime()+pgt.getExpectedPermittime();
 			double expectedInstalledCapacity = reps.powerPlantRepository.calculateCapacityOfExpectedOperationalPowerPlantsInMarketAndTechnology(targetInvestor.getInvestorMarket(), pgt, futureTimePoint);
-			double installedCapacityDeviation = target.getTrend().getValue(futureTimePoint)-expectedInstalledCapacity;
+			double pgtNodeLimit = Double.MAX_VALUE;
+			// For simplicity using the market, instead of the node here. Needs
+			// to be changed, if more than one node per market exists.
+			PowerGeneratingTechnologyNodeLimit pgtLimit = reps.powerGeneratingTechnologyNodeLimitRepository
+					.findOneByTechnologyAndMarket(pgt, targetInvestor.getInvestorMarket());
+			if (pgtLimit != null) {
+				pgtNodeLimit = pgtLimit.getUpperCapacityLimit(futureTimePoint);
+			}
+			double targetCapacity = target.getTrend().getValue(futureTimePoint);
+			double installedCapacityDeviation = 0;
+			if (pgtNodeLimit > targetCapacity) {
+				installedCapacityDeviation = targetCapacity - expectedInstalledCapacity;
+			} else {
+				installedCapacityDeviation = pgtNodeLimit - expectedInstalledCapacity;
+			}
+
 			if(installedCapacityDeviation>0){
 				
 				double powerPlantCapacityRatio = installedCapacityDeviation/pgt.getCapacity();
