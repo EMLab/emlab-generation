@@ -272,7 +272,7 @@ public class RenewableTargetInvestmentRoleTest {
 
 		PowerGeneratingTechnologyTarget pgttWindFromDB = powerGenerationTechnologyTargetRepository
 				.findOneByTechnologyAndMarket(wind, marketA);
-		assertEquals("Testing targetRepository", 400, pgttWindFromDB.getTrend()
+		assertEquals("Testing targetRepository", 400, ((StepTrend) pgttWindFromDB.getTrend())
 				.getStart(), 0.01);
 
 		// Testing if new construct in for private investor works:

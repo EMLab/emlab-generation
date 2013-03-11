@@ -26,7 +26,7 @@ import cern.jet.random.Distributions;
 import cern.jet.random.engine.RandomEngine;
 
 @NodeEntity
-public class TriangularTrend implements Trend {
+public class TriangularTrend extends TimeSeriesImpl implements Trend {
 
     static final Logger logger = LoggerFactory.getLogger(TriangularTrend.class);
 
@@ -42,6 +42,7 @@ public class TriangularTrend implements Trend {
     private String previousValues;
     private double start;
 
+	@Override
     @Transactional
     public double getValue(long time) {
 

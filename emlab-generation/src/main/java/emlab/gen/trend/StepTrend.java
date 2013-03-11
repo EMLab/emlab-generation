@@ -21,7 +21,7 @@ import agentspring.simulation.SimulationParameter;
 import agentspring.trend.Trend;
 
 @NodeEntity
-public class StepTrend implements Trend {
+public class StepTrend extends TimeSeriesImpl implements Trend {
 
     @SimulationParameter(label = "Time steps per step", from = 0, to = 50)
     private double duration;
@@ -58,6 +58,7 @@ public class StepTrend implements Trend {
         this.increment = increment;
     }
 
+	@Override
     public double getValue(long time) {
         return Math.max(minValue, getStart() + Math.floor(time / duration) * increment);
     }

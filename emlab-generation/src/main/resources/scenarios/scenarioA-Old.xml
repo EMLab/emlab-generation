@@ -259,16 +259,10 @@
 		p:auction="true" p:referencePrice="0" p:name="CO2 auction" p:substance-ref="co2"/>
 		
 	<!-- Fuel Prices -->
-	<bean id="coalPrice" class="emlab.gen.trend.TriangularTrend" p:start="${coalPriceStart}"
-		p:min="${coalPriceMin}" p:max="${coalPriceMax}" p:top="${coalPriceTop}" />
-	<bean id="gasPrice" class="emlab.gen.trend.TriangularTrend" p:start="${gasPriceStart}"
-		p:min="${gasPriceMin}" p:max="${gasPriceMax}" p:top="${gasPriceTop}" />
-	<bean id="biomassPrice" class="emlab.gen.trend.TriangularTrend"
-		p:start="${biomassPriceStart}" p:min="${biomassPriceMin}" p:max="${biomassPriceMax}"
-		p:top="${biomassPriceTop}" />
-	<bean id="uraniumPrice" class="emlab.gen.trend.TriangularTrend"
-		p:start="${uraniumPriceStart}" p:min="${uraniumPriceMin}" p:max="${uraniumPriceMax}"
-		p:top="${uraniumPriceTop}" />
+	<bean id="coalPrice" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/exampleCoalSingleColumn.csv" />
+	<bean id="gasPrice" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/exampleMultipleTimeSeries.csv" p:delimiter="," p:variableName="gasPrice" />
+	<bean id="biomassPrice" class="emlab.gen.trend.TimeSeriesPropReader" p:timeSeriesStr="112.5,113.625,114.76125,115.9088625,117.067951125,118.2386306363,119.4210169426,120.615227112,121.8213793832,123.039593177,124.2699891088,125.5126889998,126.7678158898,128.0354940487,129.3158489892,130.6090074791,131.9150975539,133.2342485295,134.5665910148,135.9122569249,137.2713794941,138.6440932891,140.030534222,141.4308395642,142.8451479598,144.2735994394,145.7163354338,147.1734987882,148.6452337761,150.1316861138,151.633002975,153.1493330047,154.6808263347,156.2276345981,157.7899109441,159.3678100535,160.9614881541,162.5711030356,164.196814066,165.8387822066,167.4971700287,169.172141729,170.8638631463,172.5725017777,174.2982267955,176.0412090634,177.8016211541,179.5796373656,181.3754337393,183.1891880767,185.0210799574,186.871290757,188.7400036646,190.6274037012,192.5336777382,194.4590145156,196.4036046608,198.3676407074,200.3513171145,202.3548302856,204.3783785885" />
+	<bean id="uraniumPrice" class="emlab.gen.trend.TimeSeriesPropReader" p:timeSeriesStr="${uraniumSeries}" />
 
 	<!-- Agents -->
 	<bean id="coalSupplier" class="emlab.gen.domain.agent.CommoditySupplier">

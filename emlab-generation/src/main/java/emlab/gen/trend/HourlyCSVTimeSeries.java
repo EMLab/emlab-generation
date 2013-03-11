@@ -30,7 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 @NodeEntity
 public class HourlyCSVTimeSeries implements HourlyTimeSeries {
 
-    Logger logger = LoggerFactory.getLogger(CSVDataTrend.class);
+	Logger logger = LoggerFactory.getLogger(HourlyCSVTimeSeries.class);
 
     private String filename;
 
