@@ -21,7 +21,7 @@ import org.springframework.data.neo4j.annotation.RelatedTo;
 
 import agentspring.agent.Agent;
 import emlab.gen.domain.technology.Substance;
-import emlab.gen.trend.TriangularTrend;
+import emlab.gen.trend.TimeSeriesImpl;
 
 @NodeEntity
 public class CommoditySupplier extends DecarbonizationAgent implements Agent {
@@ -29,8 +29,8 @@ public class CommoditySupplier extends DecarbonizationAgent implements Agent {
     @RelatedTo(type = "SUBSTANCE", elementClass = Substance.class, direction = Direction.OUTGOING)
     private Substance substance;
 
-    @RelatedTo(type = "TREND", elementClass = TriangularTrend.class, direction = Direction.OUTGOING)
-    private TriangularTrend priceOfCommodity;
+	@RelatedTo(type = "TREND", elementClass = TimeSeriesImpl.class, direction = Direction.OUTGOING)
+	private TimeSeriesImpl priceOfCommodity;
 
     public Substance getSubstance() {
         return substance;
@@ -40,11 +40,11 @@ public class CommoditySupplier extends DecarbonizationAgent implements Agent {
         this.substance = substance;
     }
 
-    public TriangularTrend getPriceOfCommodity() {
+	public TimeSeriesImpl getPriceOfCommodity() {
         return priceOfCommodity;
     }
 
-    public void setPriceOfCommodity(TriangularTrend priceOfCommodity) {
+	public void setPriceOfCommodity(TimeSeriesImpl priceOfCommodity) {
         this.priceOfCommodity = priceOfCommodity;
     }
 
