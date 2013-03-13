@@ -29,13 +29,20 @@ import agentspring.trend.TimeSeries;
 public class TimeSeriesImpl implements TimeSeries {
 
 	/**
-	 * Index of double array corresponds to the tick
+	 * Index of double array corresponds to the tick, unless a
+	 * {@link startingYear} is defined to shift the index.
 	 */
 	private double[] timeSeries;
 
+	/**
+	 * Gives the starting year of the time series (probably a negative number) ,
+	 * is relevant for all implementations with an array.
+	 */
+	private double startingYear;
+
 	@Override
 	public double getValue(long time) {
-		return timeSeries[(int) time];
+		return timeSeries[(int) time - (int) startingYear];
 	}
 
 	public double[] getTimeSeries() {
@@ -44,6 +51,14 @@ public class TimeSeriesImpl implements TimeSeries {
 
 	public void setTimeSeries(double[] timeSeries) {
 		this.timeSeries = timeSeries;
+	}
+
+	public double getStartingYear() {
+		return startingYear;
+	}
+
+	public void setStartingYear(double startingYear) {
+		this.startingYear = startingYear;
 	}
 	
 

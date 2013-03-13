@@ -376,11 +376,12 @@
 
 	<!-- Power Genration Technologies -->
 	<bean id="coalPulverizedSuperCritical" class="emlab.gen.domain.technology.PowerGeneratingTechnology"
-		p:name="CoalPulverizedSuperCritical" p:capacity="500" p:efficiency=".44"
-		p:efficiencyModifierExogenous="0.000" p:co2CaptureEffciency="0" 
-		p:baseInvestmentCost="1434500" p:investmentCostModifierExogenous="0.000" p:depreciationTime="20"
-		p:minimumRunningHours="5000" p:baseFixedOperatingCost="56.77"
-		p:fixedOperatingCostModifierExogenous="0.0"
+		p:name="CoalPulverizedSuperCritical" p:capacity="500"
+		p:investmentCostTimeSeries-ref="coalPulverizedInvestmentCostTimeSeries"
+		p:fixedOperatingCostTimeSeries-ref="coalPulverizedFixedOperatingCostTimeSeries"
+		p:efficiencyTimeSeries-ref="coalPulverizedEfficiencyTimeSeries" 
+		p:depreciationTime="20"
+		p:minimumRunningHours="5000"
 		p:fixedOperatingCostModifierAfterLifetime=".05" p:expectedLifetime="40"
 		p:expectedLeadtime="4" p:expectedPermittime="1" p:minimumFuelQuality=".9"
 		p:maximumInstalledCapacityFractionInCountry="1"
@@ -395,14 +396,18 @@
 			</set>
 		</property>
 	</bean>
+	
+	<bean id="coalPulverizedInvestmentCostTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0" p:start="1434500" />
+	<bean id="coalPulverizedFixedOperatingCostTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0" p:start="56770" />
+	<bean id="coalPulverizedEfficiencyTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0.00" p:start=".44" />
+	
 	<bean id="CCGT" class="emlab.gen.domain.technology.PowerGeneratingTechnology"
-		p:name="CCGT" p:capacity="500" p:efficiency=".56"
-		p:efficiencyModifierExogenous="0.0" p:co2CaptureEffciency="0"
-		p:baseInvestmentCost="679500"
-		p:investmentCostModifierExogenous="0"
+		p:name="CCGT" p:capacity="500"
+		p:investmentCostTimeSeries-ref="cccgtInvestmentCostTimeSeries"
+		p:fixedOperatingCostTimeSeries-ref="ccgtFixedOperatingCostTimeSeries"
+		p:efficiencyTimeSeries-ref="ccgtEfficiencyTimeSeries" 
+		p:co2CaptureEffciency="0"
 		p:depreciationTime="15" p:minimumRunningHours="0"
-		p:baseFixedOperatingCost="22.38"
-		p:fixedOperatingCostModifierExogenous="0.0"
 		p:fixedOperatingCostModifierAfterLifetime=".05" p:expectedLifetime="30"
 		p:expectedLeadtime="2" p:expectedPermittime="1" p:minimumFuelQuality="1"
 		p:maximumInstalledCapacityFractionInCountry="1"
@@ -417,14 +422,18 @@
 			</set>
 		</property>
 	</bean>
+	
+	<bean id="cccgtInvestmentCostTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0.0" p:start="679500" />
+	<bean id="ccgtFixedOperatingCostTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0" p:start="22380" />
+	<bean id="ccgtEfficiencyTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0.00" p:start=".56" />
+	
 	<bean id="OCGT" class="emlab.gen.domain.technology.PowerGeneratingTechnology"
-		p:name="OCGT" p:capacity="150" p:efficiency="0.38"
-		p:efficiencyModifierExogenous="0.0" p:co2CaptureEffciency="0"
-		p:baseInvestmentCost="251666.66"
-		p:investmentCostModifierExogenous="0"
+		p:name="OCGT" p:capacity="150"
+		p:investmentCostTimeSeries-ref="occgtInvestmentCostTimeSeries"
+		p:fixedOperatingCostTimeSeries-ref="ocgtFixedOperatingCostTimeSeries"
+		p:efficiencyTimeSeries-ref="ocgtEfficiencyTimeSeries" 
+		p:co2CaptureEffciency="0"
 		p:depreciationTime="15" p:minimumRunningHours="0"
-		p:baseFixedOperatingCost="67.11"
-		p:fixedOperatingCostModifierExogenous="0.0"
 		p:fixedOperatingCostModifierAfterLifetime=".05" p:expectedLifetime="30"
 		p:expectedLeadtime="1" p:expectedPermittime="1" p:minimumFuelQuality="1"
 		p:maximumInstalledCapacityFractionInCountry="1"
@@ -439,5 +448,10 @@
 			</set>
 		</property>
 	</bean>
+	
+	<bean id="occgtInvestmentCostTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0.0" p:start="251666.66" />
+	<bean id="ocgtFixedOperatingCostTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0" p:start="67110" />
+	<bean id="ocgtEfficiencyTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0.00" p:start="0.38" />
+	
 	<!-- Parameter file -->
 </beans>

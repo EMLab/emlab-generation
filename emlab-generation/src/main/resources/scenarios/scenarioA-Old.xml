@@ -537,12 +537,12 @@
 	<!-- Power Genration Technologies -->
 
 	<bean id="coalPulverized" class="emlab.gen.domain.technology.PowerGeneratingTechnology"
-		p:name="CoalPulverized" p:capacity="758" p:efficiency=".44"
-		p:efficiencyModifierExogenous="0.004" p:co2CaptureEffciency="0" 
-		p:baseInvestmentCost="1509626.1442"
-		p:investmentCostModifierExogenous="-0.01"
+		p:name="CoalPulverized" p:capacity="758"
+		p:co2CaptureEffciency="0"
+		p:investmentCostTimeSeries-ref="coalPulverizedInvestmentCostTimeSeries"
+		p:fixedOperatingCostTimeSeries-ref="coalPulverizedFixedOperatingCostTimeSeries"
+		p:efficiencyTimeSeries-ref="coalPulverizedEfficiencyTimeSeries" 
 		p:depreciationTime="20" p:minimumRunningHours="5000"
-		p:baseFixedOperatingCost="61320"
 		p:fixedOperatingCostModifierAfterLifetime=".05" p:expectedLifetime="40"
 		p:expectedLeadtime="4" p:expectedPermittime="1" p:minimumFuelQuality=".9"
 		p:maximumInstalledCapacityFractionInCountry="1"
@@ -558,13 +558,18 @@
 			</set>
 		</property>
 	</bean>
+	
+	<bean id="coalPulverizedInvestmentCostTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="-0.01" p:start="1509626.1442" />
+	<bean id="coalPulverizedFixedOperatingCostTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0" p:start="61320" />
+	<bean id="coalPulverizedEfficiencyTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0.004" p:start=".44" />
+	
 	<bean id="coalPulverizedCSS" class="emlab.gen.domain.technology.PowerGeneratingTechnology"
-		p:name="CoalPulverizedCSS" p:capacity="676" p:efficiency=".35"
-		p:efficiencyModifierExogenous="0.005" p:co2CaptureEffciency="0" 
-		p:baseInvestmentCost="2650699.492"
-		p:investmentCostModifierExogenous="-0.01"
+		p:name="CoalPulverizedCSS" p:capacity="676"
+		p:co2CaptureEffciency="0" 
+		p:investmentCostTimeSeries-ref="coalPulverizedCSSInvestmentCostTimeSeries"
+		p:fixedOperatingCostTimeSeries-ref="coalPulverizedCSSFixedOperatingCostTimeSeries"
+		p:efficiencyTimeSeries-ref="coalPulverizedCSSEfficiencyTimeSeries" 
 		p:depreciationTime="20" p:minimumRunningHours="5000"
-		p:baseFixedOperatingCost="105120"
 		p:fixedOperatingCostModifierAfterLifetime=".05" p:expectedLifetime="40"
 		p:expectedLeadtime="7" p:expectedPermittime="1" p:minimumFuelQuality=".9"
 		p:maximumInstalledCapacityFractionInCountry="1"
@@ -580,13 +585,18 @@
 			</set>
 		</property>
 	</bean>
+	
+	<bean id="coalPulverizedCSSInvestmentCostTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="-0.01" p:start="2650699.492" />
+	<bean id="coalPulverizedCSSFixedOperatingCostTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0" p:start="105120" />
+	<bean id="coalPulverizedCSSEfficiencyTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0.005" p:start=".35" />
+	
 	<bean id="gasConventional" class="emlab.gen.domain.technology.PowerGeneratingTechnology"
-		p:name="GasConventional" p:capacity="776" p:efficiency=".56"
-		p:efficiencyModifierExogenous="0.004" p:co2CaptureEffciency="0" 
-		p:baseInvestmentCost="522793.2789"
-		p:investmentCostModifierExogenous="-0.01"
+		p:name="GasConventional" p:capacity="776"
+		p:co2CaptureEffciency="0"
+		p:investmentCostTimeSeries-ref="gasConventionalInvestmentCostTimeSeries"
+		p:fixedOperatingCostTimeSeries-ref="gasConventionalFixedOperatingCostTimeSeries"
+		p:efficiencyTimeSeries-ref="gasConventionalEfficiencyTimeSeries" 
 		p:depreciationTime="15" p:minimumRunningHours="0"
-		p:baseFixedOperatingCost="17520"
 		p:fixedOperatingCostModifierAfterLifetime=".05" p:expectedLifetime="30"
 		p:expectedLeadtime="2" p:expectedPermittime="1" p:minimumFuelQuality="1"
 		p:maximumInstalledCapacityFractionInCountry="1"
@@ -601,13 +611,18 @@
 			</set>
 		</property>
 	</bean>
+	
+	<bean id="gasConventionalInvestmentCostTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="-0.01" p:start="522793.2789" />
+	<bean id="gasConventionalFixedOperatingCostTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0" p:start="17520" />
+	<bean id="gasConventionalEfficiencyTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0.004" p:start=".56" />
+	
 	<bean id="biomassPGT" class="emlab.gen.domain.technology.PowerGeneratingTechnology"
-		p:name="Biomass" p:capacity="500" p:efficiency=".35"
-		p:efficiencyModifierExogenous="0.005" p:co2CaptureEffciency="0" 
-		p:baseInvestmentCost="2500006.773"
-		p:investmentCostModifierExogenous="-0.01"
+		p:name="Biomass" p:capacity="500"
+		p:co2CaptureEffciency="0"
+		p:investmentCostTimeSeries-ref="biomassPGTInvestmentCostTimeSeries"
+		p:fixedOperatingCostTimeSeries-ref="biomassPGTFixedOperatingCostTimeSeries"
+		p:efficiencyTimeSeries-ref="biomassPGTEfficiencyTimeSeries" 
 		p:depreciationTime="15" p:minimumRunningHours="0"
-		p:baseFixedOperatingCost="35040"
 		p:fixedOperatingCostModifierAfterLifetime=".05" p:expectedLifetime="30"
 		p:expectedLeadtime="3" p:expectedPermittime="1" p:minimumFuelQuality="0.5"
 		p:maximumInstalledCapacityFractionInCountry="1"
@@ -622,13 +637,18 @@
 			</set>
 		</property>
 	</bean>
+	
+	<bean id="biomassPGTInvestmentCostTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="-0.01" p:start="2500006.773" />
+	<bean id="biomassPGTFixedOperatingCostTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0" p:start="35040" />
+	<bean id="biomassPGTEfficiencyTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0.005" p:start=".35" />
+	
 	<bean id="windPGT" class="emlab.gen.domain.technology.PowerGeneratingTechnology"
-		p:name="Wind" p:capacity="150" p:efficiency="1"
-		p:efficiencyModifierExogenous="0.000" p:co2CaptureEffciency="0" 
-		p:baseInvestmentCost="7666646.871"
-		p:investmentCostModifierExogenous="-0.01"
+		p:name="Wind" p:capacity="150"
+		p:co2CaptureEffciency="0"
+		p:investmentCostTimeSeries-ref="windPGTInvestmentCostTimeSeries"
+		p:fixedOperatingCostTimeSeries-ref="windPGTFixedOperatingCostTimeSeries"
+		p:efficiencyTimeSeries-ref="windPGTEfficiencyTimeSeries" 
 		p:depreciationTime="15" p:minimumRunningHours="0"
-		p:baseFixedOperatingCost="26280"
 		p:fixedOperatingCostModifierAfterLifetime=".05" p:expectedLifetime="25"
 		p:expectedLeadtime="2" p:expectedPermittime="1" p:minimumFuelQuality="1"
 		p:maximumInstalledCapacityFractionInCountry="1"
@@ -637,13 +657,18 @@
 		p:peakSegmentDependentAvailability="0.05"
 		p:applicableForLongTermContract="false"
 		p:intermittent="false" />
+		
+	<bean id="windPGTInvestmentCostTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="-0.01" p:start="7666646.871" />
+	<bean id="windPGTFixedOperatingCostTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0" p:start="26280" />
+	<bean id="windPGTEfficiencyTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0" p:start="1" />
+		
 	<bean id="nuclearPGT" class="emlab.gen.domain.technology.PowerGeneratingTechnology"
-		p:name="Nuclear" p:capacity="1000" p:efficiency=".3"
-		p:efficiencyModifierExogenous="0.000" p:co2CaptureEffciency="0" 
-		p:baseInvestmentCost="2996796.244"
-		p:investmentCostModifierExogenous="-0.01"
+		p:name="Nuclear" p:capacity="1000"
+		p:co2CaptureEffciency="0" 
+		p:investmentCostTimeSeries-ref="nuclearPGTInvestmentCostTimeSeries"
+		p:fixedOperatingCostTimeSeries-ref="nuclearPGTFixedOperatingCostTimeSeries"
+		p:efficiencyTimeSeries-ref="nuclearPGTEfficiencyTimeSeries" 
 		p:depreciationTime="25" p:minimumRunningHours="5000"
-		p:baseFixedOperatingCost="43800"
 		p:fixedOperatingCostModifierAfterLifetime=".05" p:expectedLifetime="40"
 		p:expectedLeadtime="7" p:expectedPermittime="2" p:minimumFuelQuality="1"
 		p:maximumInstalledCapacityFractionInCountry="1"
@@ -658,6 +683,12 @@
 			</set>
 		</property>
 	</bean>
+	
+	<bean id="nuclearPGTInvestmentCostTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="-0.01" p:start="2996796.244" />
+	<bean id="nuclearPGTFixedOperatingCostTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0" p:start="43800" />
+	<bean id="nuclearPGTEfficiencyTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0" p:start=".3" />
+	
+	
 	<!-- Parameter file -->
 	<bean id="projectPropertyConfigurer"
 		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">

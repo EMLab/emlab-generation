@@ -40,6 +40,7 @@ import emlab.gen.repository.MarketRepository;
 import emlab.gen.repository.PowerGenerationTechnologyTargetRepository;
 import emlab.gen.repository.PowerPlantRepository;
 import emlab.gen.role.investment.TargetInvestmentRole;
+import emlab.gen.trend.GeometricTrend;
 import emlab.gen.trend.StepTrend;
 
 /**
@@ -71,14 +72,25 @@ public class RenewableTargetInvestmentRoleTest {
 	@Transactional
 	public void setUp() throws Exception {
 		PowerGeneratingTechnology wind = new PowerGeneratingTechnology();
+		GeometricTrend windInvestmentTrend = new GeometricTrend();
+		GeometricTrend windEfficiencyTrend = new GeometricTrend();
+		windEfficiencyTrend.setStart(1);
+		windEfficiencyTrend.setGrowthRate(0);
+		windEfficiencyTrend.persist();
+		windInvestmentTrend.setStart(10000);
+		windInvestmentTrend.setGrowthRate(0.97);
+		windInvestmentTrend.persist();
+		GeometricTrend windFixedOperatingTrend = new GeometricTrend();
+		windFixedOperatingTrend.setGrowthRate(0);
+		windFixedOperatingTrend.setStart(0);
+		windFixedOperatingTrend.persist();
+		wind.setInvestmentCostTimeSeries(windInvestmentTrend);
+		wind.setEfficiencyTimeSeries(windEfficiencyTrend);
+		wind.setFixedOperatingCostTimeSeries(windFixedOperatingTrend);
 		wind.setCapacity(200);
-		wind.setEfficiency(1);
-		wind.setBaseInvestmentCost(10000);
 		wind.setExpectedLeadtime(2);
 		wind.setExpectedPermittime(1);
 		wind.setIntermittent(true);
-		wind.setInvestmentCostModifierExogenous(0.97);
-		wind.setFixedOperatingCostModifierExogenous(0);
 		wind.setExpectedLifetime(20);
 		wind.setPeakSegmentDependentAvailability(0.4);
 		wind.setBaseSegmentDependentAvailability(0.1);
@@ -86,11 +98,23 @@ public class RenewableTargetInvestmentRoleTest {
 		wind.persist();
 		PowerGeneratingTechnology pv = new PowerGeneratingTechnology();
 		pv.setName("PV");
+		GeometricTrend pvInvestmentTrend = new GeometricTrend();
+		pvInvestmentTrend.setStart(12000);
+		pvInvestmentTrend.setGrowthRate(1);
+		pvInvestmentTrend.persist();
+		GeometricTrend pvEfficiencyTrend = new GeometricTrend();
+		pvEfficiencyTrend.setStart(1);
+		pvEfficiencyTrend.setGrowthRate(0);
+		pvEfficiencyTrend.persist();
+		GeometricTrend pvFixedOperatingTrend = new GeometricTrend();
+		pvFixedOperatingTrend.setStart(0);
+		pvFixedOperatingTrend.setGrowthRate(0);
+		pvFixedOperatingTrend.persist();
 		pv.setCapacity(150);
-		pv.setEfficiency(1);
-		pv.setBaseInvestmentCost(12000);
+		pv.setEfficiencyTimeSeries(pvEfficiencyTrend);
+		pv.setInvestmentCostTimeSeries(pvInvestmentTrend);
+		pv.setFixedOperatingCostTimeSeries(pvFixedOperatingTrend);
 		pv.setFixedOperatingCostModifierAfterLifetime(0);
-		pv.setFixedOperatingCostModifierExogenous(0);
 		pv.setExpectedLeadtime(1);
 		pv.setExpectedPermittime(0);
 		pv.setIntermittent(true);
