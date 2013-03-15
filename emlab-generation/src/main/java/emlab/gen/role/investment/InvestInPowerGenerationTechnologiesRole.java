@@ -22,11 +22,14 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.neo4j.annotation.NodeEntity;
+import org.springframework.data.neo4j.aspects.core.NodeBacked;
 import org.springframework.data.neo4j.support.Neo4jTemplate;
 import org.springframework.transaction.annotation.Transactional;
 
 import agentspring.role.Role;
-import agentspring.role.RoleComponent;
 import emlab.gen.domain.agent.BigBank;
 import emlab.gen.domain.agent.EnergyProducer;
 import emlab.gen.domain.agent.PowerPlantManufacturer;
@@ -45,7 +48,6 @@ import emlab.gen.domain.technology.PowerPlant;
 import emlab.gen.domain.technology.Substance;
 import emlab.gen.domain.technology.SubstanceShareInFuelMix;
 import emlab.gen.repository.Reps;
-import emlab.gen.role.AbstractEnergyProducerRole;
 import emlab.gen.util.GeometricTrendRegression;
 import emlab.gen.util.MapValueComparator;
 
@@ -55,23 +57,27 @@ import emlab.gen.util.MapValueComparator;
  * @author <a href="mailto:E.J.L.Chappin@tudelft.nl">Emile Chappin</a> @author <a href="mailto:A.Chmieliauskas@tudelft.nl">Alfredas Chmieliauskas</a>
  * @author JCRichstein
  */
-@RoleComponent
-public class InvestInPowerGenerationTechnologiesRole extends AbstractEnergyProducerRole implements Role<EnergyProducer> {
+@Configurable
+@NodeEntity
+public class InvestInPowerGenerationTechnologiesRole<T extends EnergyProducer> extends GenericInvestmentRole<T>
+		implements
+		Role<T>,
+		NodeBacked {
 
+	@Transient
     @Autowired
     Reps reps;
     
+	@Transient
     @Autowired
     Neo4jTemplate template;
 
-    public Reps getReps() {
-        return reps;
-    }
-
     // market expectations
+	@Transient
     Map<ElectricitySpotMarket, MarketInformation> marketInfoMap = new HashMap<ElectricitySpotMarket, MarketInformation>();
 
-    public void act(EnergyProducer agent) {
+	@Override
+	public void act(T agent) {
 
         long futureTimePoint = getCurrentTick() + agent.getInvestmentFutureTimeHorizon();
         // logger.warn(agent + " is looking at timepoint " + futureTimePoint);
