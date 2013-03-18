@@ -39,6 +39,7 @@ import emlab.gen.domain.technology.PowerPlant;
 import emlab.gen.repository.MarketRepository;
 import emlab.gen.repository.PowerGenerationTechnologyTargetRepository;
 import emlab.gen.repository.PowerPlantRepository;
+import emlab.gen.role.investment.GenericInvestmentRole;
 import emlab.gen.role.investment.TargetInvestmentRole;
 import emlab.gen.trend.GeometricTrend;
 import emlab.gen.trend.StepTrend;
@@ -63,7 +64,7 @@ public class RenewableTargetInvestmentRoleTest {
 	Neo4jTemplate template;
 
 	@Autowired
-	TargetInvestmentRole targetInvestmentRole;
+	GenericInvestmentRole<EnergyProducer> genericInvestmentRole;
 
 	@Autowired
 	PowerGenerationTechnologyTargetRepository powerGenerationTechnologyTargetRepository;
@@ -200,13 +201,18 @@ public class RenewableTargetInvestmentRoleTest {
 
 		PowerPlant pvB2 = new PowerPlant();
 		pvB2.specifyAndPersist(-10, energyProducer2, powerGridNodeB, pv);
-
+		
+		TargetInvestmentRole targetInvestmentRole = new TargetInvestmentRole();
+		targetInvestmentRole.persist();
+		
 		TargetInvestor rti = new TargetInvestor();
 		rti.getPowerGenerationTechnologyTargets().add(windTarget);
 		rti.getPowerGenerationTechnologyTargets().add(pvTarget);
 		rti.setInvestorMarket(marketA);
+		rti.setInvestmentRole(targetInvestmentRole);
 		rti.setName("RenTarInv");
 		template.save(rti);
+		
 	}
 
 	@Test
@@ -243,7 +249,7 @@ public class RenewableTargetInvestmentRoleTest {
 						.calculateCapacityOfExpectedOperationalPowerPlantsInMarketAndTechnology(
 								marketA, pv, 0), 0.1);
 
-		rti.act(targetInvestmentRole);
+		genericInvestmentRole.act(rti);
 
 		assertEquals(
 				"Test wind capacity after investment in year 3",
