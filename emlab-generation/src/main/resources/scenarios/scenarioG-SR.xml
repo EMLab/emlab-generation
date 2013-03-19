@@ -47,7 +47,7 @@
 
 
 	<!-- Zones -->
-	<bean id="nl" class="emlab.gen.domain.gis.Zone" p:name="Cemlab.gen. A" />
+	<bean id="nl" class="emlab.gen.domain.gis.Zone" p:name="Country A" />
 	<bean id="de" class="emlab.gen.domain.gis.Zone" p:name="Country B" />
 
 	<!-- PowerGrid -->
@@ -900,7 +900,7 @@
 		p:peakSegmentDependentAvailability="0.16"
 		p:applicableForLongTermContract="true">
 	</bean>
-	<bean id="nuclearPGT" class="emlab.domain.technology.PowerGeneratingTechnology"
+	<bean id="nuclearPGT" class="emlab.gen.domain.technology.PowerGeneratingTechnology"
 		p:name="Nuclear" p:capacity="1000" p:efficiency=".3"
 		p:efficiencyModifierExogenous="0.000" p:co2CaptureEffciency="0"
 		p:baseInvestmentCost="3020000000" p:investmentCostModifierExogenous="-0.01"
