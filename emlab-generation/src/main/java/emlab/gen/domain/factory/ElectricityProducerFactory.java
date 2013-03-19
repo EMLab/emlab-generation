@@ -69,10 +69,11 @@ public class ElectricityProducerFactory implements InitializingBean {
         plant.setActualPermittime(plant.getTechnology().getExpectedPermittime());
         plant.setExpectedEndOfLife(plant.getConstructionStartTime() + plant.getActualPermittime() + plant.getActualLeadtime()
                 + plant.getTechnology().getExpectedLifetime());
+		plant.setActualNominalCapacity(technology.getCapacity() * location.getCapacityMultiplicationFactor());
         plant.calculateAndSetActualInvestedCapital(plant.getConstructionStartTime());
         plant.calculateAndSetActualEfficiency(plant.getConstructionStartTime());
-        plant.setActualNominalCapacity(technology.getCapacity());
-        plant.setDismantleTime(1000);
+		plant.calculateAndSetActualFixedOperatingCosts(plant.getConstructionStartTime());
+		plant.setDismantleTime(1000);
         Loan loan = new Loan().persist();
         loan.setFrom(energyProducer);
         loan.setTo(null);

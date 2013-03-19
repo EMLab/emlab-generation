@@ -15,7 +15,8 @@
  ******************************************************************************/
 package emlab.gen.domain;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.HashSet;
 import java.util.List;
@@ -36,6 +37,7 @@ import emlab.gen.domain.agent.TargetInvestor;
 import emlab.gen.domain.policy.PowerGeneratingTechnologyTarget;
 import emlab.gen.domain.technology.PowerGeneratingTechnology;
 import emlab.gen.repository.EnergyProducerRepository;
+import emlab.gen.trend.GeometricTrend;
 import emlab.gen.trend.StepTrend;
 
 /**
@@ -63,13 +65,20 @@ public class RenewableTargetInvestorTest {
 	@Test
 	public void testBasicFunctions() {
 		PowerGeneratingTechnology wind = new PowerGeneratingTechnology();
+		GeometricTrend windInvestmentTrend = new GeometricTrend();
+		GeometricTrend windEfficiencyTrend = new GeometricTrend();
+		windEfficiencyTrend.setStart(100);
+		windEfficiencyTrend.setGrowthRate(1);
+		windEfficiencyTrend.persist();
+		windInvestmentTrend.setStart(10000);
+		windInvestmentTrend.setGrowthRate(0.97);
+		windInvestmentTrend.persist();
+		wind.setInvestmentCostTimeSeries(windInvestmentTrend);
+		wind.setEfficiencyTimeSeries(windEfficiencyTrend);
 		wind.setCapacity(200);
-		wind.setEfficiency(100);
-		wind.setBaseInvestmentCost(10000);
 		wind.setExpectedLeadtime(2);
 		wind.setExpectedPermittime(1);
 		wind.setIntermittent(true);
-		wind.setInvestmentCostModifierExogenous(0.97);
 		wind.setName("Wind");
 		wind.persist();
 		PowerGeneratingTechnology pv = new PowerGeneratingTechnology();

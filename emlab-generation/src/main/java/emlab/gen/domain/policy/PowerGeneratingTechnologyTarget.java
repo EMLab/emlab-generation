@@ -20,8 +20,7 @@ import org.springframework.data.neo4j.annotation.NodeEntity;
 import org.springframework.data.neo4j.annotation.RelatedTo;
 
 import emlab.gen.domain.technology.PowerGeneratingTechnology;
-import emlab.gen.trend.StepTrend;
-import agentspring.trend.Trend;
+import emlab.gen.trend.TimeSeriesImpl;
 
 
 /**
@@ -41,8 +40,8 @@ public class PowerGeneratingTechnologyTarget {
 	 * {@link trend} contains the target installed capacity of the technology
 	 * in MW.
 	 */
-	@RelatedTo(type="TARGET_TREND", elementClass=StepTrend.class, direction=Direction.OUTGOING)
-	StepTrend trend;
+	@RelatedTo(type = "TARGET_TREND", elementClass = TimeSeriesImpl.class, direction = Direction.OUTGOING)
+	TimeSeriesImpl trend;
 	
 	public PowerGeneratingTechnology getPowerGeneratingTechnology() {
 		return powerGeneratingTechnology;
@@ -53,11 +52,11 @@ public class PowerGeneratingTechnologyTarget {
 		this.powerGeneratingTechnology = powerGeneratingTechnology;
 	}
 
-	public StepTrend getTrend() {
+	public TimeSeriesImpl getTrend() {
 		return trend;
 	}
 
-	public void setTrend(StepTrend trend) {
+	public void setTrend(TimeSeriesImpl trend) {
 		this.trend = trend;
 	}
 

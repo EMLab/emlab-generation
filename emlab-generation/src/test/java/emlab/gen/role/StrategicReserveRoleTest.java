@@ -132,17 +132,16 @@ public class StrategicReserveRoleTest {
 		// market2.persist();
 
 		PowerGeneratingTechnology coal1 = new PowerGeneratingTechnology();
-		coal1.setFixedOperatingCost(99000);
-		coal1.setFixedOperatingCostModifierAfterLifetime(1);
+
 
 		PowerGeneratingTechnology coal2 = new PowerGeneratingTechnology();
-		coal2.setFixedOperatingCost(111000);
+
 
 		PowerGeneratingTechnology gas1 = new PowerGeneratingTechnology();
-		gas1.setFixedOperatingCost(56000);
+
 
 		PowerGeneratingTechnology gas2 = new PowerGeneratingTechnology();
-		gas2.setFixedOperatingCost(65000);
+
 
 		coal1.persist();
 		coal2.persist();
@@ -171,28 +170,34 @@ public class StrategicReserveRoleTest {
 		PowerPlant pp1 = new PowerPlant();
 		pp1.setTechnology(coal1);
 		pp1.setOwner(e1);
+		pp1.setActualFixedOperatingCost(99000);
 		// pp1.setName("PP1");
 
 		PowerPlant pp2 = new PowerPlant();
 		pp2.setTechnology(coal2);
 		pp2.setOwner(e2);
+		pp2.setActualFixedOperatingCost(111000);
 		// pp2.setName("PP2");
 
 		PowerPlant pp3 = new PowerPlant();
 		pp3.setTechnology(gas1);
 		pp3.setOwner(e3);
+		pp3.setActualFixedOperatingCost(56000);
 
 		PowerPlant pp4 = new PowerPlant();
 		pp4.setTechnology(gas2);
 		pp4.setOwner(e3);
+		pp4.setActualFixedOperatingCost(65000);
 
 		PowerPlant pp5 = new PowerPlant();
 		pp5.setTechnology(gas1);
 		pp5.setOwner(e2);
+		pp5.setActualFixedOperatingCost(56000);
 
 		PowerPlant pp6 = new PowerPlant();
 		pp6.setTechnology(gas2);
 		pp6.setOwner(e1);
+		pp6.setActualFixedOperatingCost(65000);
 
 		pp1.persist();
 		pp2.persist();
@@ -415,14 +420,14 @@ public class StrategicReserveRoleTest {
 		// acceptedPowerPlantDispatchRoleinSR.act(strategicReserveOperator11);
 
 		
-//		 System.out.print("New Bidding Prices P1 " +p1.getSRstatus());
-//		 System.out.print("New Bidding Prices P11 " +p11.getSRstatus());
-//		 System.out.print("New Bidding Prices P111 " +p111.getSRstatus());
-		 /*
-		 * logger.warn("New Bidding Prices P2 " +p2.getPrice());
-		 * logger.warn("New Bidding Prices P22 " +p22.getPrice());
-		 * logger.warn("New Bidding Prices P222 " +p222.getPrice());
-		 */
+		// System.out.print("New Bidding Prices P1 " + p1.getSRstatus());
+		// System.out.print("New Bidding Prices P11 " + p11.getSRstatus());
+		// System.out.print("New Bidding Prices P111 " + p111.getSRstatus());
+		//
+		// logger.warn("New Bidding Prices P2 " + p2.getPrice());
+		// logger.warn("New Bidding Prices P22 " + p22.getPrice());
+		// logger.warn("New Bidding Prices P222 " + p222.getPrice());
+
 		/*
 		 * logger.warn("Cash of E1 " + e1.getCash()); logger.warn("Cash of E2 "
 		 * + e2.getCash()); logger.warn("Cash of E3 " + e3.getCash());

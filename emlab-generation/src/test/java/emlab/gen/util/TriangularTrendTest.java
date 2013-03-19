@@ -15,7 +15,7 @@
  ******************************************************************************/
 package emlab.gen.util;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.apache.log4j.Logger;
 import org.junit.Test;

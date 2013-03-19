@@ -20,19 +20,19 @@ import org.springframework.data.neo4j.annotation.NodeEntity;
 import org.springframework.data.neo4j.annotation.RelatedTo;
 
 import agentspring.agent.Agent;
-import emlab.gen.trend.StepTrend;
+import emlab.gen.trend.TimeSeriesImpl;
 
 @NodeEntity
 public class Government extends DecarbonizationAgent implements Agent {
 
-    @RelatedTo(type = "CO2TAX_TREND", elementClass = StepTrend.class, direction = Direction.OUTGOING)
-    private StepTrend co2TaxTrend;
+	@RelatedTo(type = "CO2TAX_TREND", elementClass = TimeSeriesImpl.class, direction = Direction.OUTGOING)
+	private TimeSeriesImpl co2TaxTrend;
 
-    @RelatedTo(type = "CO2CAP_TREND", elementClass = StepTrend.class, direction = Direction.OUTGOING)
-    private StepTrend co2CapTrend;
+	@RelatedTo(type = "CO2CAP_TREND", elementClass = TimeSeriesImpl.class, direction = Direction.OUTGOING)
+	private TimeSeriesImpl co2CapTrend;
 
-    @RelatedTo(type = "MINCO2PRICE_TREND", elementClass = StepTrend.class, direction = Direction.OUTGOING)
-    private StepTrend minCo2PriceTrend;
+	@RelatedTo(type = "MINCO2PRICE_TREND", elementClass = TimeSeriesImpl.class, direction = Direction.OUTGOING)
+	private TimeSeriesImpl minCo2PriceTrend;
 
     private double co2Penalty;
 
@@ -48,27 +48,27 @@ public class Government extends DecarbonizationAgent implements Agent {
         return co2CapTrend.getValue(time);
     }
 
-    public StepTrend getCo2TaxTrend() {
+	public TimeSeriesImpl getCo2TaxTrend() {
         return co2TaxTrend;
     }
 
-    public void setCo2TaxTrend(StepTrend co2TaxTrend) {
+	public void setCo2TaxTrend(TimeSeriesImpl co2TaxTrend) {
         this.co2TaxTrend = co2TaxTrend;
     }
 
-    public StepTrend getCo2CapTrend() {
+	public TimeSeriesImpl getCo2CapTrend() {
         return co2CapTrend;
     }
 
-    public void setCo2CapTrend(StepTrend co2CapTrend) {
+	public void setCo2CapTrend(TimeSeriesImpl co2CapTrend) {
         this.co2CapTrend = co2CapTrend;
     }
 
-    public StepTrend getMinCo2PriceTrend() {
+	public TimeSeriesImpl getMinCo2PriceTrend() {
         return minCo2PriceTrend;
     }
 
-    public void setMinCo2PriceTrend(StepTrend minCo2PriceTrend) {
+	public void setMinCo2PriceTrend(TimeSeriesImpl minCo2PriceTrend) {
         this.minCo2PriceTrend = minCo2PriceTrend;
     }
 

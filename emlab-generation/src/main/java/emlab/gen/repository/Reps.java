@@ -101,4 +101,7 @@ public class Reps {
 	@Autowired
 	public Neo4jTemplate template;
 
+	@Autowired
+	public PowerGeneratingTechnologyNodeLimitRepository powerGeneratingTechnologyNodeLimitRepository;
+
 }

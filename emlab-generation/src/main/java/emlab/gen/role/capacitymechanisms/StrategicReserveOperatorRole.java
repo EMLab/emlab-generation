@@ -9,7 +9,6 @@ import agentspring.role.RoleComponent;
 import emlab.gen.domain.agent.StrategicReserveOperator;
 import emlab.gen.domain.contract.CashFlow;
 import emlab.gen.domain.gis.Zone;
-import emlab.gen.domain.market.Bid;
 import emlab.gen.domain.market.electricity.ElectricitySpotMarket;
 import emlab.gen.domain.market.electricity.PowerPlantDispatchPlan;
 import emlab.gen.domain.market.electricity.Segment;
@@ -132,7 +131,8 @@ public class StrategicReserveOperatorRole extends AbstractRole<StrategicReserveO
 							//logger.warn("New Price" + currentPPDP.getPrice());
 							// Pays O&M costs to the generated for the contracted capacity
 
-							double money = ((currentPPDP.getPowerPlant().getTechnology().getFixedOperatingCost()))/segmentCounter;
+							double money = ((currentPPDP.getPowerPlant().getActualFixedOperatingCost()))
+									/ segmentCounter;
 							//logger.warn("Annual FOC "+ currentPPDP.getPowerPlant().getTechnology().getFixedOperatingCost());
 							//logger.warn("No of Segments " +segmentCounter);
 							//logger.warn("Money Paid " +money);
@@ -158,7 +158,8 @@ public class StrategicReserveOperatorRole extends AbstractRole<StrategicReserveO
 							//logger.warn("New Price" + currentPPDP.getPrice());
 							isORMarketCleared = true;
 							// Pays O&M costs to the generated for the contracted capacity
-							double money = ((currentPPDP.getPowerPlant().getTechnology().getFixedOperatingCost()))/segmentCounter;
+							double money = ((currentPPDP.getPowerPlant().getActualFixedOperatingCost()))
+									/ segmentCounter;
 							//logger.warn("Annual FOC "+ currentPPDP.getPowerPlant().getTechnology().getFixedOperatingCost());
 							//logger.warn("No of Segments " +segmentCounter);
 							//logger.warn("Money Paid " +money);

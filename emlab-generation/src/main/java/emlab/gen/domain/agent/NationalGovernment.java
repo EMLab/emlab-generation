@@ -21,7 +21,7 @@ import org.springframework.data.neo4j.annotation.RelatedTo;
 
 import agentspring.agent.Agent;
 import emlab.gen.domain.gis.Zone;
-import emlab.gen.trend.StepTrend;
+import emlab.gen.trend.TimeSeriesImpl;
 
 @NodeEntity
 public class NationalGovernment extends DecarbonizationAgent implements Agent {
@@ -29,14 +29,14 @@ public class NationalGovernment extends DecarbonizationAgent implements Agent {
     @RelatedTo(type = "GOVERNED_ZONE", elementClass = Zone.class, direction = Direction.OUTGOING)
     private Zone governedZone;
 
-    @RelatedTo(type = "MINCO2PRICE_TREND", elementClass = StepTrend.class, direction = Direction.OUTGOING)
-    private StepTrend minNationalCo2PriceTrend;
+	@RelatedTo(type = "MINCO2PRICE_TREND", elementClass = TimeSeriesImpl.class, direction = Direction.OUTGOING)
+	private TimeSeriesImpl minNationalCo2PriceTrend;
 
-    public StepTrend getMinNationalCo2PriceTrend() {
+	public TimeSeriesImpl getMinNationalCo2PriceTrend() {
         return minNationalCo2PriceTrend;
     }
 
-    public void setMinNationalCo2PriceTrend(StepTrend minNationalCo2PriceTrend) {
+	public void setMinNationalCo2PriceTrend(TimeSeriesImpl minNationalCo2PriceTrend) {
         this.minNationalCo2PriceTrend = minNationalCo2PriceTrend;
     }
 
