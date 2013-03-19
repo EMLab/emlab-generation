@@ -32,8 +32,7 @@ import emlab.gen.domain.market.CommodityMarket;
 import emlab.gen.domain.market.electricity.ElectricitySpotMarket;
 import emlab.gen.repository.Reps;
 import emlab.gen.role.investment.DismantlePowerPlantPastTechnicalLifetimeRole;
-import emlab.gen.role.investment.InvestInPowerGenerationTechnologiesRole;
-import emlab.gen.role.investment.TargetInvestmentRole;
+import emlab.gen.role.investment.GenericInvestmentRole;
 import emlab.gen.role.market.ClearCommodityMarketRole;
 import emlab.gen.role.market.ClearIterativeCO2AndElectricitySpotMarketTwoCountryRole;
 import emlab.gen.role.market.DetermineResidualLoadCurvesForTwoCountriesRole;
@@ -66,7 +65,7 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
     @Autowired
     private PayCO2AuctionRole payCO2AuctionRole;
     @Autowired
-    private InvestInPowerGenerationTechnologiesRole investInPowerGenerationTechnologiesRole;
+	private GenericInvestmentRole<EnergyProducer> genericInvestmentRole;
     @Autowired
     private SubmitOffersToElectricitySpotMarketRole submitOffersToElectricitySpotMarketRole;
     @Autowired
@@ -99,9 +98,6 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
     private PayOperatingAndMaintainanceCostsRole payOperatingAndMaintainanceCostsRole;
     @Autowired
     private DetermineResidualLoadCurvesForTwoCountriesRole determineResidualLoadCurve;
-
-	@Autowired
-    private TargetInvestmentRole targetInvestmentRole;
 
     @Autowired
     Reps reps;
@@ -255,7 +251,7 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
                 for (EnergyProducer producer : reps.energyProducerRepository.findAllEnergyProducersExceptForRenewableTargetInvestorsAtRandom()){
                     // invest in new plants
                 	if (producer.isWillingToInvest()) {
-                    	investInPowerGenerationTechnologiesRole.act(producer);
+						genericInvestmentRole.act(producer);
 //                        producer.act(investInPowerGenerationTechnologiesRole);
                         someOneStillWillingToInvest = true;
                     }
@@ -264,7 +260,7 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
             resetWillingnessToInvest();
         }
         for(TargetInvestor targetInvestor : template.findAll(TargetInvestor.class)){
-        	targetInvestmentRole.act(targetInvestor);
+			genericInvestmentRole.act(targetInvestor);
         }
         timerInvest.stop();
         logger.warn("        took: {} seconds.", timerInvest.seconds());

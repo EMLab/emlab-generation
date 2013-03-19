@@ -25,7 +25,6 @@ import org.springframework.data.neo4j.annotation.NodeEntity;
 import org.springframework.data.neo4j.annotation.RelatedTo;
 import org.springframework.transaction.annotation.Transactional;
 
-import agentspring.trend.GeometricTrend;
 import emlab.gen.domain.agent.EnergyProducer;
 import emlab.gen.domain.contract.Loan;
 import emlab.gen.domain.market.electricity.PowerPlantDispatchPlan;
@@ -373,70 +372,28 @@ public class PowerPlant {
 	}
 
 	/**
-	 * Sets the actual capital that is needed to build the power plant. It
-	 * considers the exogenous modifier and automatically adjusts for the actual
-	 * building and permit time.
+	 * Sets the actual capital that is needed to build the power plant. It reads
+	 * the investment cost from the and automatically adjusts for the actual
+	 * building and permit time, as well as power plant size.
 	 * 
 	 * @param timeOfPermitorBuildingStart
 	 */
 	public void calculateAndSetActualInvestedCapital(
 			long timeOfPermitorBuildingStart) {
-		double invNorm = this.getTechnology().getBaseInvestmentCost() * getActualNominalCapacity();
-		double modifierExo = this.getTechnology()
-				.getInvestmentCostModifierExogenous();
-		// Adjust the exogenous modifier to the given time.
-		GeometricTrend trendExo = new GeometricTrend();
-		trendExo.setGrowthRate(modifierExo);
-		trendExo.setStart(1);
-		modifierExo = trendExo.getValue(timeOfPermitorBuildingStart
-				+ getActualLeadtime() + getActualPermittime());
-
-		this.actualInvestedCapital = invNorm * modifierExo;
+		setActualInvestedCapital(this.getTechnology().getInvestmentCost(
+				timeOfPermitorBuildingStart + getActualLeadtime() + getActualPermittime())
+				* getActualNominalCapacity());
 	}
 
 	public void calculateAndSetActualFixedOperatingCosts(long timeOfPermitorBuildingStart) {
-		double norm = getTechnology().getBaseFixedOperatingCost() * getActualNominalCapacity();
-		double modifierExo = this.getTechnology().getFixedOperatingCostModifierExogenous();
-		GeometricTrend trendExo = new GeometricTrend();
-		trendExo.setGrowthRate(modifierExo);
-		trendExo.setStart(1);
-		modifierExo = trendExo.getValue(timeOfPermitorBuildingStart + getActualLeadtime() + getActualPermittime());
-		setActualFixedOperatingCost(norm * modifierExo);
+		setActualFixedOperatingCost(this.getTechnology().getFixedOperatingCost(
+				timeOfPermitorBuildingStart + getActualLeadtime() + getActualPermittime())
+				* getActualNominalCapacity());
 	}
 
 	public void calculateAndSetActualEfficiency(long timeOfPermitorBuildingStart) {
-		double effNorm = this.getTechnology().getEfficiency();
-		// Calculate exogenous modifier
-		double effModExo = this.getTechnology()
-				.getEfficiencyModifierExogenous();
-		GeometricTrend trendExo = new GeometricTrend();
-		trendExo.setGrowthRate(effModExo);
-		trendExo.setStart(1);
-		double trendExoValue = trendExo.getValue(this
-				.getConstructionStartTime());
-		// Calculate endogenous modifier
-		/*
-		 * double effModEndo =
-		 * this.getTechnology().getEfficiencyModifierEndogenous(); double
-		 * startCap = 0d;
-		 * 
-		 * double currentCap =
-		 * calculateMarketCapacityEverInstalledUpToGivenTime(
-		 * this.getTechnology(), timeOfPermitorBuildingStart); int i = 0; while
-		 * (startCap == 0 && i <= getCurrentTick()) { startCap =
-		 * calculateMarketCapacityEverInstalledUpToGivenTime
-		 * (powerPlant.getTechnology(), i); i++; }
-		 * 
-		 * GeometricTrend trendEndo = new GeometricTrend();
-		 * trendEndo.setGrowthRate(effModEndo); trendEndo.setStart(1); // Put in
-		 * -1 here otherwise you'll get a modifier>1 at the start double
-		 * trendEndoValue = trendEndo.getValue((long) (currentCap / startCap) -
-		 * 1);
-		 */
-		double trendEndoValue = 1;
-		double currentEff = effNorm * trendExoValue * trendEndoValue;
-
-		this.setActualEfficiency(currentEff);
+		this.setActualEfficiency(this.getTechnology().getEfficiency(
+				timeOfPermitorBuildingStart + getActualLeadtime() + getActualPermittime()));
 	}
 
 	public double calculateEmissionIntensity() {
