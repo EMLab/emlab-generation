@@ -15,8 +15,8 @@
   limitations under the License.
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
 	<!-- Bean post processor to persist created beans -->
 	<bean class="agentspring.graphdb.PersistingBeanPostProcessor" />
@@ -298,6 +298,7 @@
 
 	<bean id="energyProducerA" class="emlab.gen.domain.agent.EnergyProducer"
 		p:name="Energy Producer A" p:cash="${startCash}"
+		p:investmentRole-ref="standardInvestmentRole"
 		p:longTermContractMargin="0.1" p:longTermContractPastTimeHorizon="3"
 		p:investmentFutureTimeHorizon="10" p:pastTimeHorizon="5"
 		p:equityInterestRate="0.12" p:loanInterestRate="0.09"
@@ -307,6 +308,7 @@
 		p:willingToInvest="true" p:priceMarkUp="${priceMarkUp}"  p:numberOfYearsBacklookingForForecasting="${numberOfYearsBacklookingForForecasting}"/>
 	<bean id="energyProducerB" class="emlab.gen.domain.agent.EnergyProducer"
 		p:name="Energy Producer B" p:cash="${startCash}"
+		p:investmentRole-ref="standardInvestmentRole"
 		p:longTermContractMargin="0.1" p:longTermContractPastTimeHorizon="3"
 		p:investmentFutureTimeHorizon="10" p:pastTimeHorizon="5"
 		p:equityInterestRate="0.12" p:loanInterestRate="0.09"
@@ -315,6 +317,7 @@
 		p:dismantlingRequiredOperatingProfit="0" p:downpaymentFractionOfCash="0.5"
 		p:willingToInvest="true" p:priceMarkUp="${priceMarkUp}"  p:numberOfYearsBacklookingForForecasting="${numberOfYearsBacklookingForForecasting}"/>
 	<bean id="energyProducerC" class="emlab.gen.domain.agent.EnergyProducer"
+		p:investmentRole-ref="standardInvestmentRole"
 		p:name="Energy Producer C" p:cash="${startCash}"
 		p:longTermContractMargin="0.1" p:longTermContractPastTimeHorizon="3"
 		p:investmentFutureTimeHorizon="10" p:pastTimeHorizon="5"
@@ -324,6 +327,7 @@
 		p:dismantlingRequiredOperatingProfit="0" p:downpaymentFractionOfCash="0.5"
 		p:willingToInvest="true" p:priceMarkUp="${priceMarkUp}"  p:numberOfYearsBacklookingForForecasting="${numberOfYearsBacklookingForForecasting}"/>
 	<bean id="energyProducerD" class="emlab.gen.domain.agent.EnergyProducer"
+		p:investmentRole-ref="standardInvestmentRole"
 		p:name="Energy Producer D" p:cash="${startCash}"
 		p:longTermContractMargin="0.1" p:longTermContractPastTimeHorizon="3"
 		p:investmentFutureTimeHorizon="10" p:pastTimeHorizon="5"
@@ -333,6 +337,7 @@
 		p:dismantlingRequiredOperatingProfit="0" p:downpaymentFractionOfCash="0.5"
 		p:willingToInvest="true" p:priceMarkUp="${priceMarkUp}"  p:numberOfYearsBacklookingForForecasting="${numberOfYearsBacklookingForForecasting}"/>
 	<bean id="energyProducerE" class="emlab.gen.domain.agent.EnergyProducer"
+		p:investmentRole-ref="standardInvestmentRole"
 		p:name="Energy Producer E" p:cash="${startCash}"
 		p:longTermContractMargin="0.1" p:longTermContractPastTimeHorizon="3"
 		p:investmentFutureTimeHorizon="10" p:pastTimeHorizon="5"
@@ -343,6 +348,7 @@
 		p:willingToInvest="true" p:priceMarkUp="${priceMarkUp}"  p:numberOfYearsBacklookingForForecasting="${numberOfYearsBacklookingForForecasting}"/>
 	<bean id="energyProducerF" class="emlab.gen.domain.agent.EnergyProducer"
 		p:name="Energy Producer F" p:cash="${startCash}"
+		p:investmentRole-ref="standardInvestmentRole"
 		p:longTermContractMargin="0.1" p:longTermContractPastTimeHorizon="3"
 		p:investmentFutureTimeHorizon="10" p:pastTimeHorizon="5"
 		p:equityInterestRate="0.12" p:loanInterestRate="0.09"
@@ -352,6 +358,7 @@
 		p:willingToInvest="true" p:priceMarkUp="${priceMarkUp}"  p:numberOfYearsBacklookingForForecasting="${numberOfYearsBacklookingForForecasting}"/>
 	<bean id="energyProducerG" class="emlab.gen.domain.agent.EnergyProducer"
 		p:name="Energy Producer G" p:cash="${startCash}"
+		p:investmentRole-ref="standardInvestmentRole"
 		p:longTermContractMargin="0.1" p:longTermContractPastTimeHorizon="3"
 		p:investmentFutureTimeHorizon="10" p:pastTimeHorizon="5"
 		p:equityInterestRate="0.12" p:loanInterestRate="0.09"
@@ -361,6 +368,7 @@
 		p:willingToInvest="true" p:priceMarkUp="${priceMarkUp}"  p:numberOfYearsBacklookingForForecasting="${numberOfYearsBacklookingForForecasting}"/>
 	<bean id="energyProducerH" class="emlab.gen.domain.agent.EnergyProducer"
 		p:name="Energy Producer H" p:cash="${startCash}"
+		p:investmentRole-ref="standardInvestmentRole"
 		p:longTermContractMargin="0.1" p:longTermContractPastTimeHorizon="3"
 		p:investmentFutureTimeHorizon="10" p:pastTimeHorizon="5"
 		p:equityInterestRate="0.12" p:loanInterestRate="0.09"
@@ -370,6 +378,7 @@
 		p:willingToInvest="true" p:priceMarkUp="${priceMarkUp}"  p:numberOfYearsBacklookingForForecasting="${numberOfYearsBacklookingForForecasting}"/>
 	<bean id="energyProducerI" class="emlab.gen.domain.agent.EnergyProducer"
 		p:name="Energy Producer I" p:cash="${startCash}"
+		p:investmentRole-ref="standardInvestmentRole"
 		p:longTermContractMargin="0.1" p:longTermContractPastTimeHorizon="3"
 		p:investmentFutureTimeHorizon="10" p:pastTimeHorizon="5"
 		p:equityInterestRate="0.12" p:loanInterestRate="0.09"
@@ -377,7 +386,8 @@
 		p:dismantlingProlongingYearsAfterTechnicalLifetime="0"
 		p:dismantlingRequiredOperatingProfit="0" p:downpaymentFractionOfCash="0.5"
 		p:willingToInvest="true" p:priceMarkUp="${priceMarkUp}"  p:numberOfYearsBacklookingForForecasting="${numberOfYearsBacklookingForForecasting}"/>
-
+	
+	<bean id="standardInvestmentRole" class="emlab.gen.role.investment.InvestInPowerGenerationTechnologiesRole"/>
 
 	<bean id="powerPlantManufacturer" class="emlab.gen.domain.agent.PowerPlantManufacturer"
 		p:name="Power Plant Manufacturer" />
