@@ -685,26 +685,1176 @@
 		<property name="loan" ref="loanppOCGTA17"/>
 	</bean>
 	
-	<bean id="ppBiomassPGT1" class="emlab.gen.domain.technology.PowerPlant" p:label="Biomass Plant A1"
+	<bean id="ppBiomassAPGT1" class="emlab.gen.domain.technology.PowerPlant" p:label="Biomass Plant A1"
 	p:constructionStartTime="-13" p:actualLeadtime="2" p:actualEfficiency="0.35"
 	p:actualPermittime="1" p:expectedEndOfLife="20" p:actualInvestedCapital="894675000"
 	p:dismantleTime="1000" p:actualNominalCapacity="500">
 		<property name ="technology" ref="biomassPGT"/>
 		<property name="owner" ref="energyProducerA"/>
 		<property name="location" ref="beneluxNode"/>
-		<property name="loan" ref="loanppBiomass1"/>
+		<property name="loan" ref="loanppBiomassA1"/>
 	</bean>
 	
-	<bean id="ppBiomassPGT2" class="emlab.gen.domain.technology.PowerPlant" p:label="Biomass Plant A2"
+	<bean id="ppBiomassAPGT2" class="emlab.gen.domain.technology.PowerPlant" p:label="Biomass Plant A2"
 	p:constructionStartTime="-13" p:actualLeadtime="2" p:actualEfficiency="0.35"
 	p:actualPermittime="1" p:expectedEndOfLife="20" p:actualInvestedCapital="894675000"
 	p:dismantleTime="1000" p:actualNominalCapacity="500">
 		<property name ="technology" ref="biomassPGT"/>
 		<property name="owner" ref="energyProducerA"/>
 		<property name="location" ref="beneluxNode"/>
-		<property name="loan" ref="loanppBiomass2"/>
+		<property name="loan" ref="loanppBiomassA2"/>
 	</bean>
 	
+	<bean id="ppNuclearAPGT1" class="emlab.gen.domain.technology.PowerPlant" p:label="Nuclear Plant A1"
+	p:constructionStartTime="-9" p:actualLeadtime="7" p:actualEfficiency="0.3"
+	p:actualPermittime="2" p:expectedEndOfLife="40" p:actualInvestedCapital="3020000000"
+	p:dismantleTime="1000" p:actualNominalCapacity="1000">
+		<property name ="technology" ref="nuclearPGT"/>
+		<property name="owner" ref="energyProducerA"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppNuclearA1"/>
+	</bean>
+	
+	<bean id="ppNuclearAPGT2" class="emlab.gen.domain.technology.PowerPlant" p:label="Nuclear Plant A2"
+	p:constructionStartTime="-9" p:actualLeadtime="7" p:actualEfficiency="0.3"
+	p:actualPermittime="2" p:expectedEndOfLife="40" p:actualInvestedCapital="3020000000"
+	p:dismantleTime="1000" p:actualNominalCapacity="1000">
+		<property name ="technology" ref="nuclearPGT"/>
+		<property name="owner" ref="energyProducerA"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppNuclearA2"/>
+	</bean>
+	
+	<bean id="ppWindAPGT1" class="emlab.gen.domain.technology.PowerPlant" p:label="Wind Plant A1"
+	p:constructionStartTime="-3" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="25" p:actualInvestedCapital="191392500"
+	p:dismantleTime="1000" p:actualNominalCapacity="150">
+		<property name ="technology" ref="windPGT"/>
+		<property name="owner" ref="energyProducerA"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppWindA1"/>
+	</bean>
+	
+	<bean id="ppWindAPGT2" class="emlab.gen.domain.technology.PowerPlant" p:label="Wind Plant A2"
+	p:constructionStartTime="-3" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="25" p:actualInvestedCapital="191392500"
+	p:dismantleTime="1000" p:actualNominalCapacity="150">
+		<property name ="technology" ref="windPGT"/>
+		<property name="owner" ref="energyProducerA"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppWindA2"/>
+	</bean>
+	
+	<bean id="ppWindAPGT3" class="emlab.gen.domain.technology.PowerPlant" p:label="Wind Plant A3"
+	p:constructionStartTime="-3" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="25" p:actualInvestedCapital="191392500"
+	p:dismantleTime="1000" p:actualNominalCapacity="150">
+		<property name ="technology" ref="windPGT"/>
+		<property name="owner" ref="energyProducerA"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppWindA3"/>
+	</bean>
+	
+	<bean id="ppWindAPGT4" class="emlab.gen.domain.technology.PowerPlant" p:label="Wind Plant A4"
+	p:constructionStartTime="-3" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="25" p:actualInvestedCapital="191392500"
+	p:dismantleTime="1000" p:actualNominalCapacity="150">
+		<property name ="technology" ref="windPGT"/>
+		<property name="owner" ref="energyProducerA"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppWindA4"/>
+	</bean>
+	
+	<bean id="ppWindAPGT5" class="emlab.gen.domain.technology.PowerPlant" p:label="Wind Plant A5"
+	p:constructionStartTime="-3" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="25" p:actualInvestedCapital="191392500"
+	p:dismantleTime="1000" p:actualNominalCapacity="150">
+		<property name ="technology" ref="windPGT"/>
+		<property name="owner" ref="energyProducerA"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppWindA5"/>
+	</bean>
+	
+	<bean id="ppWindAPGT6" class="emlab.gen.domain.technology.PowerPlant" p:label="Wind Plant A6"
+	p:constructionStartTime="-3" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="25" p:actualInvestedCapital="191392500"
+	p:dismantleTime="1000" p:actualNominalCapacity="150">
+		<property name ="technology" ref="windPGT"/>
+		<property name="owner" ref="energyProducerA"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppWindA6"/>
+	</bean>
+	
+	<bean id="ppWindAPGT7" class="emlab.gen.domain.technology.PowerPlant" p:label="Wind Plant A7"
+	p:constructionStartTime="-3" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="25" p:actualInvestedCapital="191392500"
+	p:dismantleTime="1000" p:actualNominalCapacity="150">
+		<property name ="technology" ref="windPGT"/>
+		<property name="owner" ref="energyProducerA"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppWindA7"/>
+	</bean>
+	
+	<bean id="ppWindAPGT8" class="emlab.gen.domain.technology.PowerPlant" p:label="Wind Plant A8"
+	p:constructionStartTime="-3" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="25" p:actualInvestedCapital="191392500"
+	p:dismantleTime="1000" p:actualNominalCapacity="150">
+		<property name ="technology" ref="windPGT"/>
+		<property name="owner" ref="energyProducerA"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppWindA8"/>
+	</bean>
+	
+	<bean id="ppWindAPGT9" class="emlab.gen.domain.technology.PowerPlant" p:label="Wind Plant A9"
+	p:constructionStartTime="-3" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="25" p:actualInvestedCapital="191392500"
+	p:dismantleTime="1000" p:actualNominalCapacity="150">
+		<property name ="technology" ref="windPGT"/>
+		<property name="owner" ref="energyProducerA"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppWindA9"/>
+	</bean>
+	
+	<bean id="ppWindAPGT10" class="emlab.gen.domain.technology.PowerPlant" p:label="Wind Plant A10"
+	p:constructionStartTime="-3" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="25" p:actualInvestedCapital="191392500"
+	p:dismantleTime="1000" p:actualNominalCapacity="150">
+		<property name ="technology" ref="windPGT"/>
+		<property name="owner" ref="energyProducerA"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppWindA10"/>
+	</bean>
+	
+	<bean id="ppWindAPGT11" class="emlab.gen.domain.technology.PowerPlant" p:label="Wind Plant A11"
+	p:constructionStartTime="-3" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="25" p:actualInvestedCapital="191392500"
+	p:dismantleTime="1000" p:actualNominalCapacity="150">
+		<property name ="technology" ref="windPGT"/>
+		<property name="owner" ref="energyProducerA"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppWindA11"/>
+	</bean>
+	
+	<bean id="ppWindAPGT12" class="emlab.gen.domain.technology.PowerPlant" p:label="Wind Plant A12"
+	p:constructionStartTime="-3" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="25" p:actualInvestedCapital="191392500"
+	p:dismantleTime="1000" p:actualNominalCapacity="150">
+		<property name ="technology" ref="windPGT"/>
+		<property name="owner" ref="energyProducerA"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppWindA12"/>
+	</bean>
+	
+	<bean id="ppWindAPGT13" class="emlab.gen.domain.technology.PowerPlant" p:label="Wind Plant A13"
+	p:constructionStartTime="-3" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="25" p:actualInvestedCapital="191392500"
+	p:dismantleTime="1000" p:actualNominalCapacity="150">
+		<property name ="technology" ref="windPGT"/>
+		<property name="owner" ref="energyProducerA"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppWindA13"/>
+	</bean>
+	
+	<bean id="ppWindAPGT14" class="emlab.gen.domain.technology.PowerPlant" p:label="Wind Plant A14"
+	p:constructionStartTime="-3" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="25" p:actualInvestedCapital="191392500"
+	p:dismantleTime="1000" p:actualNominalCapacity="150">
+		<property name ="technology" ref="windPGT"/>
+		<property name="owner" ref="energyProducerA"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppWindA14"/>
+	</bean>
+	
+	<bean id="ppWindAPGT15" class="emlab.gen.domain.technology.PowerPlant" p:label="Wind Plant A15"
+	p:constructionStartTime="-3" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="25" p:actualInvestedCapital="191392500"
+	p:dismantleTime="1000" p:actualNominalCapacity="150">
+		<property name ="technology" ref="windPGT"/>
+		<property name="owner" ref="energyProducerA"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppWindA15"/>
+	</bean>
+	
+	<bean id="ppWindAPGT16" class="emlab.gen.domain.technology.PowerPlant" p:label="Wind Plant A16"
+	p:constructionStartTime="-3" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="25" p:actualInvestedCapital="191392500"
+	p:dismantleTime="1000" p:actualNominalCapacity="150">
+		<property name ="technology" ref="windPGT"/>
+		<property name="owner" ref="energyProducerA"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppWindA16"/>
+	</bean>
+	
+	<bean id="ppWindAPGT17" class="emlab.gen.domain.technology.PowerPlant" p:label="Wind Plant A17"
+	p:constructionStartTime="-3" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="25" p:actualInvestedCapital="191392500"
+	p:dismantleTime="1000" p:actualNominalCapacity="150">
+		<property name ="technology" ref="windPGT"/>
+		<property name="owner" ref="energyProducerA"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppWindA17"/>
+	</bean>
+	
+	<bean id="ppWindAPGT18" class="emlab.gen.domain.technology.PowerPlant" p:label="Wind Plant A18"
+	p:constructionStartTime="-3" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="25" p:actualInvestedCapital="191392500"
+	p:dismantleTime="1000" p:actualNominalCapacity="150">
+		<property name ="technology" ref="windPGT"/>
+		<property name="owner" ref="energyProducerA"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppWindA18"/>
+	</bean>
+	
+	<bean id="ppWindAPGT19" class="emlab.gen.domain.technology.PowerPlant" p:label="Wind Plant A19"
+	p:constructionStartTime="-3" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="25" p:actualInvestedCapital="191392500"
+	p:dismantleTime="1000" p:actualNominalCapacity="150">
+		<property name ="technology" ref="windPGT"/>
+		<property name="owner" ref="energyProducerA"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppWindA19"/>
+	</bean>
+	
+	<bean id="ppWindAPGT20" class="emlab.gen.domain.technology.PowerPlant" p:label="Wind Plant A20"
+	p:constructionStartTime="-3" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="25" p:actualInvestedCapital="191392500"
+	p:dismantleTime="1000" p:actualNominalCapacity="150">
+		<property name ="technology" ref="windPGT"/>
+		<property name="owner" ref="energyProducerA"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppWindA20"/>
+	</bean>
+	
+	<bean id="ppWindAPGT21" class="emlab.gen.domain.technology.PowerPlant" p:label="Wind Plant A21"
+	p:constructionStartTime="-3" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="25" p:actualInvestedCapital="191392500"
+	p:dismantleTime="1000" p:actualNominalCapacity="150">
+		<property name ="technology" ref="windPGT"/>
+		<property name="owner" ref="energyProducerA"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppWindA21"/>
+	</bean>
+	
+	<bean id="ppWindAPGT22" class="emlab.gen.domain.technology.PowerPlant" p:label="Wind Plant A22"
+	p:constructionStartTime="-3" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="25" p:actualInvestedCapital="191392500"
+	p:dismantleTime="1000" p:actualNominalCapacity="150">
+		<property name ="technology" ref="windPGT"/>
+		<property name="owner" ref="energyProducerA"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppWindA22"/>
+	</bean>
+	
+	<bean id="ppWindAPGT23" class="emlab.gen.domain.technology.PowerPlant" p:label="Wind Plant A23"
+	p:constructionStartTime="-3" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="25" p:actualInvestedCapital="191392500"
+	p:dismantleTime="1000" p:actualNominalCapacity="150">
+		<property name ="technology" ref="windPGT"/>
+		<property name="owner" ref="energyProducerA"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppWindA23"/>
+	</bean>
+	
+	<bean id="ppPhotovoltaicAPGT1" class="emlab.gen.domain.technology.PowerPlant" p:label="Photovoltaic Plant A1"
+	p:constructionStartTime="-6" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="22" p:actualInvestedCapital="292940000"
+	p:dismantleTime="1000" p:actualNominalCapacity="100">
+		<property name ="technology" ref="photovoltaicPGT"/>
+		<property name="owner" ref="energyProducerA"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppPhotovoltaicA1"/>
+	</bean>
+	
+	<bean id="ppPhotovoltaicAPGT2" class="emlab.gen.domain.technology.PowerPlant" p:label="Photovoltaic Plant A2"
+	p:constructionStartTime="-6" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="22" p:actualInvestedCapital="292940000"
+	p:dismantleTime="1000" p:actualNominalCapacity="100">
+		<property name ="technology" ref="photovoltaicPGT"/>
+		<property name="owner" ref="energyProducerA"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppPhotovoltaicA2"/>
+	</bean>
+	
+	<bean id="ppPhotovoltaicAPGT3" class="emlab.gen.domain.technology.PowerPlant" p:label="Photovoltaic Plant A3"
+	p:constructionStartTime="-6" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="22" p:actualInvestedCapital="292940000"
+	p:dismantleTime="1000" p:actualNominalCapacity="100">
+		<property name ="technology" ref="photovoltaicPGT"/>
+		<property name="owner" ref="energyProducerA"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppPhotovoltaicA3"/>
+	</bean>
+	
+	<bean id="ppPhotovoltaicAPGT4" class="emlab.gen.domain.technology.PowerPlant" p:label="Photovoltaic Plant A4"
+	p:constructionStartTime="-6" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="22" p:actualInvestedCapital="292940000"
+	p:dismantleTime="1000" p:actualNominalCapacity="100">
+		<property name ="technology" ref="photovoltaicPGT"/>
+		<property name="owner" ref="energyProducerA"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppPhotovoltaicA4"/>
+	</bean>
+	
+	<bean id="ppPhotovoltaicAPGT5" class="emlab.gen.domain.technology.PowerPlant" p:label="Photovoltaic Plant A5"
+	p:constructionStartTime="-6" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="22" p:actualInvestedCapital="292940000"
+	p:dismantleTime="1000" p:actualNominalCapacity="100">
+		<property name ="technology" ref="photovoltaicPGT"/>
+		<property name="owner" ref="energyProducerA"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppPhotovoltaicA5"/>
+	</bean>
+	
+	<bean id="ppPhotovoltaicAPGT6" class="emlab.gen.domain.technology.PowerPlant" p:label="Photovoltaic Plant A6"
+	p:constructionStartTime="-6" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="22" p:actualInvestedCapital="292940000"
+	p:dismantleTime="1000" p:actualNominalCapacity="100">
+		<property name ="technology" ref="photovoltaicPGT"/>
+		<property name="owner" ref="energyProducerA"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppPhotovoltaicA6"/>
+	</bean>
+	
+	<bean id="ppPhotovoltaicAPGT7" class="emlab.gen.domain.technology.PowerPlant" p:label="Photovoltaic Plant A7"
+	p:constructionStartTime="-6" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="22" p:actualInvestedCapital="292940000"
+	p:dismantleTime="1000" p:actualNominalCapacity="100">
+		<property name ="technology" ref="photovoltaicPGT"/>
+		<property name="owner" ref="energyProducerA"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppPhotovoltaicA7"/>
+	</bean>
+	
+	<bean id="ppPhotovoltaicAPGT8" class="emlab.gen.domain.technology.PowerPlant" p:label="Photovoltaic Plant A8"
+	p:constructionStartTime="-6" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="22" p:actualInvestedCapital="292940000"
+	p:dismantleTime="1000" p:actualNominalCapacity="100">
+		<property name ="technology" ref="photovoltaicPGT"/>
+		<property name="owner" ref="energyProducerA"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppPhotovoltaicA8"/>
+	</bean>
+	
+	<bean id="ppPhotovoltaicAPGT9" class="emlab.gen.domain.technology.PowerPlant" p:label="Photovoltaic Plant A9"
+	p:constructionStartTime="-6" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="22" p:actualInvestedCapital="292940000"
+	p:dismantleTime="1000" p:actualNominalCapacity="100">
+		<property name ="technology" ref="photovoltaicPGT"/>
+		<property name="owner" ref="energyProducerA"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppPhotovoltaicA9"/>
+	</bean>
+	
+	<bean id="ppPhotovoltaicAPGT10" class="emlab.gen.domain.technology.PowerPlant" p:label="Photovoltaic Plant A10"
+	p:constructionStartTime="-6" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="22" p:actualInvestedCapital="292940000"
+	p:dismantleTime="1000" p:actualNominalCapacity="100">
+		<property name ="technology" ref="photovoltaicPGT"/>
+		<property name="owner" ref="energyProducerA"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppPhotovoltaicA10"/>
+	</bean>
+	
+	<bean id="ppPhotovoltaicAPGT11" class="emlab.gen.domain.technology.PowerPlant" p:label="Photovoltaic Plant A11"
+	p:constructionStartTime="-6" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="22" p:actualInvestedCapital="292940000"
+	p:dismantleTime="1000" p:actualNominalCapacity="100">
+		<property name ="technology" ref="photovoltaicPGT"/>
+		<property name="owner" ref="energyProducerA"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppPhotovoltaicA11"/>
+	</bean>
+	
+	<bean id="ppPhotovoltaicAPGT12" class="emlab.gen.domain.technology.PowerPlant" p:label="Photovoltaic Plant A12"
+	p:constructionStartTime="-6" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="22" p:actualInvestedCapital="292940000"
+	p:dismantleTime="1000" p:actualNominalCapacity="100">
+		<property name ="technology" ref="photovoltaicPGT"/>
+		<property name="owner" ref="energyProducerA"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppPhotovoltaicA12"/>
+	</bean>
+	
+	<bean id="ppPhotovoltaicAPGT13" class="emlab.gen.domain.technology.PowerPlant" p:label="Photovoltaic Plant A13"
+	p:constructionStartTime="-6" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="22" p:actualInvestedCapital="292940000"
+	p:dismantleTime="1000" p:actualNominalCapacity="100">
+		<property name ="technology" ref="photovoltaicPGT"/>
+		<property name="owner" ref="energyProducerA"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppPhotovoltaicA13"/>
+	</bean>
+	
+	<bean id="ppPhotovoltaicAPGT14" class="emlab.gen.domain.technology.PowerPlant" p:label="Photovoltaic Plant A14"
+	p:constructionStartTime="-6" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="22" p:actualInvestedCapital="292940000"
+	p:dismantleTime="1000" p:actualNominalCapacity="100">
+		<property name ="technology" ref="photovoltaicPGT"/>
+		<property name="owner" ref="energyProducerA"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppPhotovoltaicA14"/>
+	</bean>
+	
+	<bean id="ppCoalB1" class="emlab.gen.domain.technology.PowerPlant" p:label="Coal Power Plant B1"
+	p:constructionStartTime="-20" p:actualLeadtime="4" p:actualEfficiency=".44"
+	p:actualPermittime="1" p:expectedEndOfLife="20" p:actualInvestedCapital="1087351000"
+	p:dismantleTime="1000" p:actualNominalCapacity="758">
+		<property name ="technology" ref="coalPulverizedSuperCritical"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppCoalB1"/>
+	</bean>
+	
+	<bean id="ppCoalB2" class="emlab.gen.domain.technology.PowerPlant" p:label="Coal Power Plant B2"
+	p:constructionStartTime="-20" p:actualLeadtime="4" p:actualEfficiency=".44"
+	p:actualPermittime="1" p:expectedEndOfLife="25" p:actualInvestedCapital="1087351000"
+	p:dismantleTime="1000" p:actualNominalCapacity="758">
+		<property name ="technology" ref="coalPulverizedSuperCritical"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppCoalB2"/>
+	</bean>
+	
+	<bean id="ppCoalB3" class="emlab.gen.domain.technology.PowerPlant" p:label="Coal Power Plant B3"
+	p:constructionStartTime="-20" p:actualLeadtime="4" p:actualEfficiency=".44"
+	p:actualPermittime="1" p:expectedEndOfLife="25" p:actualInvestedCapital="1087351000"
+	p:dismantleTime="1000" p:actualNominalCapacity="758">
+		<property name ="technology" ref="coalPulverizedSuperCritical"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppCoalB3"/>
+	</bean>
+	
+	<bean id="ppCoalB4" class="emlab.gen.domain.technology.PowerPlant" p:label="Coal Power Plant B4"
+	p:constructionStartTime="-20" p:actualLeadtime="4" p:actualEfficiency=".44"
+	p:actualPermittime="1" p:expectedEndOfLife="25" p:actualInvestedCapital="1087351000"
+	p:dismantleTime="1000" p:actualNominalCapacity="758">
+		<property name ="technology" ref="coalPulverizedSuperCritical"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppCoalB4"/>
+	</bean>
+	
+	<bean id="ppCoalB5" class="emlab.gen.domain.technology.PowerPlant" p:label="Coal Power Plant B5"
+	p:constructionStartTime="-20" p:actualLeadtime="4" p:actualEfficiency=".44"
+	p:actualPermittime="1" p:expectedEndOfLife="25" p:actualInvestedCapital="1087351000"
+	p:dismantleTime="1000" p:actualNominalCapacity="758">
+		<property name ="technology" ref="coalPulverizedSuperCritical"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppCoalB5"/>
+	</bean>
+	
+	<bean id="ppCoalB6" class="emlab.gen.domain.technology.PowerPlant" p:label="Coal Power Plant B6"
+	p:constructionStartTime="-15" p:actualLeadtime="4" p:actualEfficiency=".44"
+	p:actualPermittime="1" p:expectedEndOfLife="30" p:actualInvestedCapital="1087351000"
+	p:dismantleTime="1000" p:actualNominalCapacity="758">
+		<property name ="technology" ref="coalPulverizedSuperCritical"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppCoalB6"/>
+	</bean>
+	
+	<bean id="ppCoalB7" class="emlab.gen.domain.technology.PowerPlant" p:label="Coal Power Plant B7"
+	p:constructionStartTime="-15" p:actualLeadtime="4" p:actualEfficiency=".44"
+	p:actualPermittime="1" p:expectedEndOfLife="30" p:actualInvestedCapital="1087351000"
+	p:dismantleTime="1000" p:actualNominalCapacity="758">
+		<property name ="technology" ref="coalPulverizedSuperCritical"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppCoalB7"/>
+	</bean>
+	
+	<bean id="ppCoalB8" class="emlab.gen.domain.technology.PowerPlant" p:label="Coal Power Plant B8"
+	p:constructionStartTime="-15" p:actualLeadtime="4" p:actualEfficiency=".44"
+	p:actualPermittime="1" p:expectedEndOfLife="30" p:actualInvestedCapital="1087351000"
+	p:dismantleTime="1000" p:actualNominalCapacity="758">
+		<property name ="technology" ref="coalPulverizedSuperCritical"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppCoalB8"/>
+	</bean>
+	
+	<bean id="ppCoalB9" class="emlab.gen.domain.technology.PowerPlant" p:label="Coal Power Plant B9"
+	p:constructionStartTime="-15" p:actualLeadtime="4" p:actualEfficiency=".44"
+	p:actualPermittime="1" p:expectedEndOfLife="30" p:actualInvestedCapital="1087351000"
+	p:dismantleTime="1000" p:actualNominalCapacity="758">
+		<property name ="technology" ref="coalPulverizedSuperCritical"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppCoalB9"/>
+	</bean>
+	
+	<bean id="ppCoalB10" class="emlab.gen.domain.technology.PowerPlant" p:label="Coal Power Plant B10"
+	p:constructionStartTime="-15" p:actualLeadtime="4" p:actualEfficiency=".44"
+	p:actualPermittime="1" p:expectedEndOfLife="30" p:actualInvestedCapital="1087351000"
+	p:dismantleTime="1000" p:actualNominalCapacity="758">
+		<property name ="technology" ref="coalPulverizedSuperCritical"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppCoalB10"/>
+	</bean>
+	
+	<bean id="ppCoalB11" class="emlab.gen.domain.technology.PowerPlant" p:label="Coal Power Plant B11"
+	p:constructionStartTime="-10" p:actualLeadtime="4" p:actualEfficiency=".44"
+	p:actualPermittime="1" p:expectedEndOfLife="35" p:actualInvestedCapital="1087351000"
+	p:dismantleTime="1000" p:actualNominalCapacity="758">
+		<property name ="technology" ref="coalPulverizedSuperCritical"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppCoalB11"/>
+	</bean>
+	
+	<bean id="ppCoalB12" class="emlab.gen.domain.technology.PowerPlant" p:label="Coal Power Plant B12"
+	p:constructionStartTime="-10" p:actualLeadtime="4" p:actualEfficiency=".44"
+	p:actualPermittime="1" p:expectedEndOfLife="35" p:actualInvestedCapital="1087351000"
+	p:dismantleTime="1000" p:actualNominalCapacity="758">
+		<property name ="technology" ref="coalPulverizedSuperCritical"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppCoalB12"/>
+	</bean>
+	
+	<bean id="ppCoalB13" class="emlab.gen.domain.technology.PowerPlant" p:label="Coal Power Plant B13"
+	p:constructionStartTime="-10" p:actualLeadtime="4" p:actualEfficiency=".44"
+	p:actualPermittime="1" p:expectedEndOfLife="35" p:actualInvestedCapital="1087351000"
+	p:dismantleTime="1000" p:actualNominalCapacity="758">
+		<property name ="technology" ref="coalPulverizedSuperCritical"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppCoalB13"/>
+	</bean>
+	
+	<bean id="ppCoalB14" class="emlab.gen.domain.technology.PowerPlant" p:label="Coal Power Plant B14"
+	p:constructionStartTime="-10" p:actualLeadtime="4" p:actualEfficiency=".44"
+	p:actualPermittime="1" p:expectedEndOfLife="35" p:actualInvestedCapital="1087351000"
+	p:dismantleTime="1000" p:actualNominalCapacity="758">
+		<property name ="technology" ref="coalPulverizedSuperCritical"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppCoalB14"/>
+	</bean>
+	
+		
+	<bean id="ppCCGTB1" class="emlab.gen.domain.technology.PowerPlant" p:label="CCGT Plant B1"
+	p:constructionStartTime="-13" p:actualLeadtime="2" p:actualEfficiency=".56"
+	p:actualPermittime="1" p:expectedEndOfLife="20" p:actualInvestedCapital="527292000"
+	p:dismantleTime="1000" p:actualNominalCapacity="776">
+		<property name ="technology" ref="CCGT"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppCCGTB1"/>
+	</bean>
+	
+	<bean id="ppCCGTB2" class="emlab.gen.domain.technology.PowerPlant" p:label="CCGT Plant B2"
+	p:constructionStartTime="-13" p:actualLeadtime="2" p:actualEfficiency=".56"
+	p:actualPermittime="1" p:expectedEndOfLife="20" p:actualInvestedCapital="527292000"
+	p:dismantleTime="1000" p:actualNominalCapacity="776">
+		<property name ="technology" ref="CCGT"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppCCGTB2"/>
+	</bean>
+	
+	<bean id="ppCCGTB3" class="emlab.gen.domain.technology.PowerPlant" p:label="CCGT Plant B3"
+	p:constructionStartTime="-13" p:actualLeadtime="2" p:actualEfficiency=".56"
+	p:actualPermittime="1" p:expectedEndOfLife="20" p:actualInvestedCapital="527292000"
+	p:dismantleTime="1000" p:actualNominalCapacity="776">
+		<property name ="technology" ref="CCGT"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppCCGTB3"/>
+	</bean>
+	
+	<bean id="ppCCGTB4" class="emlab.gen.domain.technology.PowerPlant" p:label="CCGT Plant B4"
+	p:constructionStartTime="-13" p:actualLeadtime="2" p:actualEfficiency=".56"
+	p:actualPermittime="1" p:expectedEndOfLife="20" p:actualInvestedCapital="527292000"
+	p:dismantleTime="1000" p:actualNominalCapacity="776">
+		<property name ="technology" ref="CCGT"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppCCGTB4"/>
+	</bean>
+	
+	<bean id="ppOCGTB1" class="emlab.gen.domain.technology.PowerPlant" p:label="OCGT Plant B1"
+	p:constructionStartTime="-5" p:actualLeadtime="2" p:actualEfficiency="0.38"
+	p:actualPermittime="1" p:expectedEndOfLife="32" p:actualInvestedCapital="56625000"
+	p:dismantleTime="1000" p:actualNominalCapacity="150">
+		<property name ="technology" ref="OCGT"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppOCGTB1"/>
+	</bean>
+	
+	<bean id="ppOCGTB2" class="emlab.gen.domain.technology.PowerPlant" p:label="OCGT Plant B2"
+	p:constructionStartTime="-5" p:actualLeadtime="2" p:actualEfficiency="0.38"
+	p:actualPermittime="1" p:expectedEndOfLife="32" p:actualInvestedCapital="56625000"
+	p:dismantleTime="1000" p:actualNominalCapacity="150">
+		<property name ="technology" ref="OCGT"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppOCGTB2"/>
+	</bean>
+	
+	<bean id="ppOCGTB3" class="emlab.gen.domain.technology.PowerPlant" p:label="OCGT Plant B3"
+	p:constructionStartTime="-5" p:actualLeadtime="2" p:actualEfficiency="0.38"
+	p:actualPermittime="1" p:expectedEndOfLife="32" p:actualInvestedCapital="56625000"
+	p:dismantleTime="1000" p:actualNominalCapacity="150">
+		<property name ="technology" ref="OCGT"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppOCGTB3"/>
+	</bean>
+	
+	<bean id="ppOCGTB4" class="emlab.gen.domain.technology.PowerPlant" p:label="OCGT Plant B4"
+	p:constructionStartTime="-5" p:actualLeadtime="2" p:actualEfficiency="0.38"
+	p:actualPermittime="1" p:expectedEndOfLife="32" p:actualInvestedCapital="56625000"
+	p:dismantleTime="1000" p:actualNominalCapacity="150">
+		<property name ="technology" ref="OCGT"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppOCGTB4"/>
+	</bean>
+	
+	<bean id="ppOCGTB5" class="emlab.gen.domain.technology.PowerPlant" p:label="OCGT Plant B5"
+	p:constructionStartTime="-5" p:actualLeadtime="2" p:actualEfficiency="0.38"
+	p:actualPermittime="1" p:expectedEndOfLife="32" p:actualInvestedCapital="56625000"
+	p:dismantleTime="1000" p:actualNominalCapacity="150">
+		<property name ="technology" ref="OCGT"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppOCGTB5"/>
+	</bean>
+	
+	<bean id="ppOCGTB6" class="emlab.gen.domain.technology.PowerPlant" p:label="OCGT Plant B6"
+	p:constructionStartTime="-5" p:actualLeadtime="2" p:actualEfficiency="0.38"
+	p:actualPermittime="1" p:expectedEndOfLife="32" p:actualInvestedCapital="56625000"
+	p:dismantleTime="1000" p:actualNominalCapacity="150">
+		<property name ="technology" ref="OCGT"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppOCGTB6"/>
+	</bean>
+	
+	<bean id="ppOCGTB7" class="emlab.gen.domain.technology.PowerPlant" p:label="OCGT Plant B7"
+	p:constructionStartTime="-5" p:actualLeadtime="2" p:actualEfficiency="0.38"
+	p:actualPermittime="1" p:expectedEndOfLife="32" p:actualInvestedCapital="56625000"
+	p:dismantleTime="1000" p:actualNominalCapacity="150">
+		<property name ="technology" ref="OCGT"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppOCGTB7"/>
+	</bean>
+	
+	<bean id="ppOCGTB8" class="emlab.gen.domain.technology.PowerPlant" p:label="OCGT Plant B8"
+	p:constructionStartTime="-5" p:actualLeadtime="2" p:actualEfficiency="0.38"
+	p:actualPermittime="1" p:expectedEndOfLife="32" p:actualInvestedCapital="56625000"
+	p:dismantleTime="1000" p:actualNominalCapacity="150">
+		<property name ="technology" ref="OCGT"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppOCGTB8"/>
+	</bean>
+	
+	<bean id="ppOCGTB9" class="emlab.gen.domain.technology.PowerPlant" p:label="OCGT Plant B9"
+	p:constructionStartTime="-5" p:actualLeadtime="2" p:actualEfficiency="0.38"
+	p:actualPermittime="1" p:expectedEndOfLife="32" p:actualInvestedCapital="56625000"
+	p:dismantleTime="1000" p:actualNominalCapacity="150">
+		<property name ="technology" ref="OCGT"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppOCGTB9"/>
+	</bean>
+	
+	<bean id="ppOCGTB10" class="emlab.gen.domain.technology.PowerPlant" p:label="OCGT Plant B10"
+	p:constructionStartTime="-5" p:actualLeadtime="2" p:actualEfficiency="0.38"
+	p:actualPermittime="1" p:expectedEndOfLife="32" p:actualInvestedCapital="56625000"
+	p:dismantleTime="1000" p:actualNominalCapacity="150">
+		<property name ="technology" ref="OCGT"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppOCGTB10"/>
+	</bean>
+	
+	<bean id="ppOCGTB11" class="emlab.gen.domain.technology.PowerPlant" p:label="OCGT Plant B11"
+	p:constructionStartTime="-5" p:actualLeadtime="2" p:actualEfficiency="0.38"
+	p:actualPermittime="1" p:expectedEndOfLife="32" p:actualInvestedCapital="56625000"
+	p:dismantleTime="1000" p:actualNominalCapacity="150">
+		<property name ="technology" ref="OCGT"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppOCGTB11"/>
+	</bean>
+	
+	<bean id="ppOCGTB12" class="emlab.gen.domain.technology.PowerPlant" p:label="OCGT Plant B12"
+	p:constructionStartTime="-5" p:actualLeadtime="2" p:actualEfficiency="0.38"
+	p:actualPermittime="1" p:expectedEndOfLife="32" p:actualInvestedCapital="56625000"
+	p:dismantleTime="1000" p:actualNominalCapacity="150">
+		<property name ="technology" ref="OCGT"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppOCGTB12"/>
+	</bean>
+	
+	<bean id="ppOCGTB13" class="emlab.gen.domain.technology.PowerPlant" p:label="OCGT Plant B13"
+	p:constructionStartTime="-5" p:actualLeadtime="2" p:actualEfficiency="0.38"
+	p:actualPermittime="1" p:expectedEndOfLife="32" p:actualInvestedCapital="56625000"
+	p:dismantleTime="1000" p:actualNominalCapacity="150">
+		<property name ="technology" ref="OCGT"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppOCGTB13"/>
+	</bean>
+	
+	<bean id="ppOCGTB14" class="emlab.gen.domain.technology.PowerPlant" p:label="OCGT Plant B14"
+	p:constructionStartTime="-5" p:actualLeadtime="2" p:actualEfficiency="0.38"
+	p:actualPermittime="1" p:expectedEndOfLife="32" p:actualInvestedCapital="56625000"
+	p:dismantleTime="1000" p:actualNominalCapacity="150">
+		<property name ="technology" ref="OCGT"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppOCGTB14"/>
+	</bean>
+	
+	<bean id="ppOCGTB15" class="emlab.gen.domain.technology.PowerPlant" p:label="OCGT Plant B15"
+	p:constructionStartTime="-5" p:actualLeadtime="2" p:actualEfficiency="0.38"
+	p:actualPermittime="1" p:expectedEndOfLife="32" p:actualInvestedCapital="56625000"
+	p:dismantleTime="1000" p:actualNominalCapacity="150">
+		<property name ="technology" ref="OCGT"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppOCGTB15"/>
+	</bean>
+	
+	<bean id="ppOCGTB16" class="emlab.gen.domain.technology.PowerPlant" p:label="OCGT Plant B16"
+	p:constructionStartTime="-5" p:actualLeadtime="2" p:actualEfficiency="0.38"
+	p:actualPermittime="1" p:expectedEndOfLife="32" p:actualInvestedCapital="56625000"
+	p:dismantleTime="1000" p:actualNominalCapacity="150">
+		<property name ="technology" ref="OCGT"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppOCGTB16"/>
+	</bean>
+	
+	<bean id="ppOCGTB17" class="emlab.gen.domain.technology.PowerPlant" p:label="OCGT Plant B17"
+	p:constructionStartTime="-5" p:actualLeadtime="2" p:actualEfficiency="0.38"
+	p:actualPermittime="1" p:expectedEndOfLife="32" p:actualInvestedCapital="56625000"
+	p:dismantleTime="1000" p:actualNominalCapacity="150">
+		<property name ="technology" ref="OCGT"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppOCGTB17"/>
+	</bean>
+	
+	<bean id="ppBiomassBPGT1" class="emlab.gen.domain.technology.PowerPlant" p:label="Biomass Plant B1"
+	p:constructionStartTime="-13" p:actualLeadtime="2" p:actualEfficiency="0.35"
+	p:actualPermittime="1" p:expectedEndOfLife="20" p:actualInvestedCapital="894675000"
+	p:dismantleTime="1000" p:actualNominalCapacity="500">
+		<property name ="technology" ref="biomassPGT"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppBiomassB1"/>
+	</bean>
+	
+	<bean id="ppBiomassPGTB2" class="emlab.gen.domain.technology.PowerPlant" p:label="Biomass Plant B2"
+	p:constructionStartTime="-13" p:actualLeadtime="2" p:actualEfficiency="0.35"
+	p:actualPermittime="1" p:expectedEndOfLife="20" p:actualInvestedCapital="894675000"
+	p:dismantleTime="1000" p:actualNominalCapacity="500">
+		<property name ="technology" ref="biomassPGT"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppBiomassB2"/>
+	</bean>
+	
+	<bean id="ppNuclearBPGT1" class="emlab.gen.domain.technology.PowerPlant" p:label="Nuclear Plant B1"
+	p:constructionStartTime="-9" p:actualLeadtime="7" p:actualEfficiency="0.3"
+	p:actualPermittime="2" p:expectedEndOfLife="40" p:actualInvestedCapital="3020000000"
+	p:dismantleTime="1000" p:actualNominalCapacity="1000">
+		<property name ="technology" ref="nuclearPGT"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppNuclearB1"/>
+	</bean>
+	
+	<bean id="ppNuclearPGTB2" class="emlab.gen.domain.technology.PowerPlant" p:label="Nuclear Plant B2"
+	p:constructionStartTime="-9" p:actualLeadtime="7" p:actualEfficiency="0.3"
+	p:actualPermittime="2" p:expectedEndOfLife="40" p:actualInvestedCapital="3020000000"
+	p:dismantleTime="1000" p:actualNominalCapacity="1000">
+		<property name ="technology" ref="nuclearPGT"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppNuclearB2"/>
+	</bean>
+	
+	<bean id="ppWindPGTB1" class="emlab.gen.domain.technology.PowerPlant" p:label="Wind Plant B1"
+	p:constructionStartTime="-3" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="25" p:actualInvestedCapital="191392500"
+	p:dismantleTime="1000" p:actualNominalCapacity="150">
+		<property name ="technology" ref="windPGT"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppWindB1"/>
+	</bean>
+	
+	<bean id="ppWindPGTB2" class="emlab.gen.domain.technology.PowerPlant" p:label="Wind Plant B2"
+	p:constructionStartTime="-3" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="25" p:actualInvestedCapital="191392500"
+	p:dismantleTime="1000" p:actualNominalCapacity="150">
+		<property name ="technology" ref="windPGT"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppWindB2"/>
+	</bean>
+	
+	<bean id="ppWindPGTB3" class="emlab.gen.domain.technology.PowerPlant" p:label="Wind Plant B3"
+	p:constructionStartTime="-3" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="25" p:actualInvestedCapital="191392500"
+	p:dismantleTime="1000" p:actualNominalCapacity="150">
+		<property name ="technology" ref="windPGT"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppWindB3"/>
+	</bean>
+	
+	<bean id="ppWindPGTB4" class="emlab.gen.domain.technology.PowerPlant" p:label="Wind Plant B4"
+	p:constructionStartTime="-3" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="25" p:actualInvestedCapital="191392500"
+	p:dismantleTime="1000" p:actualNominalCapacity="150">
+		<property name ="technology" ref="windPGT"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppWindB4"/>
+	</bean>
+	
+	<bean id="ppWindPGTB5" class="emlab.gen.domain.technology.PowerPlant" p:label="Wind Plant B5"
+	p:constructionStartTime="-3" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="25" p:actualInvestedCapital="191392500"
+	p:dismantleTime="1000" p:actualNominalCapacity="150">
+		<property name ="technology" ref="windPGT"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppWindB5"/>
+	</bean>
+	
+	<bean id="ppWindPGTB6" class="emlab.gen.domain.technology.PowerPlant" p:label="Wind Plant B6"
+	p:constructionStartTime="-3" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="25" p:actualInvestedCapital="191392500"
+	p:dismantleTime="1000" p:actualNominalCapacity="150">
+		<property name ="technology" ref="windPGT"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppWindB6"/>
+	</bean>
+	
+	<bean id="ppWindPGTB7" class="emlab.gen.domain.technology.PowerPlant" p:label="Wind Plant B7"
+	p:constructionStartTime="-3" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="25" p:actualInvestedCapital="191392500"
+	p:dismantleTime="1000" p:actualNominalCapacity="150">
+		<property name ="technology" ref="windPGT"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppWindB7"/>
+	</bean>
+	
+	<bean id="ppWindPGTB8" class="emlab.gen.domain.technology.PowerPlant" p:label="Wind Plant B8"
+	p:constructionStartTime="-3" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="25" p:actualInvestedCapital="191392500"
+	p:dismantleTime="1000" p:actualNominalCapacity="150">
+		<property name ="technology" ref="windPGT"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppWindB8"/>
+	</bean>
+	
+	<bean id="ppWindPGTB9" class="emlab.gen.domain.technology.PowerPlant" p:label="Wind Plant B9"
+	p:constructionStartTime="-3" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="25" p:actualInvestedCapital="191392500"
+	p:dismantleTime="1000" p:actualNominalCapacity="150">
+		<property name ="technology" ref="windPGT"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppWindB9"/>
+	</bean>
+	
+	<bean id="ppWindPGTB10" class="emlab.gen.domain.technology.PowerPlant" p:label="Wind Plant B10"
+	p:constructionStartTime="-3" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="25" p:actualInvestedCapital="191392500"
+	p:dismantleTime="1000" p:actualNominalCapacity="150">
+		<property name ="technology" ref="windPGT"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppWindB10"/>
+	</bean>
+	
+	<bean id="ppWindPGTB11" class="emlab.gen.domain.technology.PowerPlant" p:label="Wind Plant B11"
+	p:constructionStartTime="-3" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="25" p:actualInvestedCapital="191392500"
+	p:dismantleTime="1000" p:actualNominalCapacity="150">
+		<property name ="technology" ref="windPGT"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppWindB11"/>
+	</bean>
+	
+	<bean id="ppWindPGTB12" class="emlab.gen.domain.technology.PowerPlant" p:label="Wind Plant B12"
+	p:constructionStartTime="-3" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="25" p:actualInvestedCapital="191392500"
+	p:dismantleTime="1000" p:actualNominalCapacity="150">
+		<property name ="technology" ref="windPGT"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppWindB12"/>
+	</bean>
+	
+	<bean id="ppWindPGTB13" class="emlab.gen.domain.technology.PowerPlant" p:label="Wind Plant B13"
+	p:constructionStartTime="-3" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="25" p:actualInvestedCapital="191392500"
+	p:dismantleTime="1000" p:actualNominalCapacity="150">
+		<property name ="technology" ref="windPGT"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppWindB13"/>
+	</bean>
+	
+	<bean id="ppWindPGTB14" class="emlab.gen.domain.technology.PowerPlant" p:label="Wind Plant B14"
+	p:constructionStartTime="-3" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="25" p:actualInvestedCapital="191392500"
+	p:dismantleTime="1000" p:actualNominalCapacity="150">
+		<property name ="technology" ref="windPGT"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppWindB14"/>
+	</bean>
+	
+	<bean id="ppWindPGTB15" class="emlab.gen.domain.technology.PowerPlant" p:label="Wind Plant B15"
+	p:constructionStartTime="-3" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="25" p:actualInvestedCapital="191392500"
+	p:dismantleTime="1000" p:actualNominalCapacity="150">
+		<property name ="technology" ref="windPGT"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppWindB15"/>
+	</bean>
+	
+	<bean id="ppWindPGTB16" class="emlab.gen.domain.technology.PowerPlant" p:label="Wind Plant B16"
+	p:constructionStartTime="-3" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="25" p:actualInvestedCapital="191392500"
+	p:dismantleTime="1000" p:actualNominalCapacity="150">
+		<property name ="technology" ref="windPGT"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppWindB16"/>
+	</bean>
+	
+	<bean id="ppWindPGTB17" class="emlab.gen.domain.technology.PowerPlant" p:label="Wind Plant B17"
+	p:constructionStartTime="-3" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="25" p:actualInvestedCapital="191392500"
+	p:dismantleTime="1000" p:actualNominalCapacity="150">
+		<property name ="technology" ref="windPGT"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppWindB17"/>
+	</bean>
+	
+	<bean id="ppWindPGTB18" class="emlab.gen.domain.technology.PowerPlant" p:label="Wind Plant B18"
+	p:constructionStartTime="-3" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="25" p:actualInvestedCapital="191392500"
+	p:dismantleTime="1000" p:actualNominalCapacity="150">
+		<property name ="technology" ref="windPGT"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppWindB18"/>
+	</bean>
+	
+	<bean id="ppWindPGTB19" class="emlab.gen.domain.technology.PowerPlant" p:label="Wind Plant B19"
+	p:constructionStartTime="-3" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="25" p:actualInvestedCapital="191392500"
+	p:dismantleTime="1000" p:actualNominalCapacity="150">
+		<property name ="technology" ref="windPGT"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppWindB19"/>
+	</bean>
+	
+	<bean id="ppWindPGTB20" class="emlab.gen.domain.technology.PowerPlant" p:label="Wind Plant B20"
+	p:constructionStartTime="-3" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="25" p:actualInvestedCapital="191392500"
+	p:dismantleTime="1000" p:actualNominalCapacity="150">
+		<property name ="technology" ref="windPGT"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppWindB20"/>
+	</bean>
+	
+	<bean id="ppWindPGTB21" class="emlab.gen.domain.technology.PowerPlant" p:label="Wind Plant B21"
+	p:constructionStartTime="-3" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="25" p:actualInvestedCapital="191392500"
+	p:dismantleTime="1000" p:actualNominalCapacity="150">
+		<property name ="technology" ref="windPGT"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppWindB21"/>
+	</bean>
+	
+	<bean id="ppWindPGTB22" class="emlab.gen.domain.technology.PowerPlant" p:label="Wind Plant B22"
+	p:constructionStartTime="-3" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="25" p:actualInvestedCapital="191392500"
+	p:dismantleTime="1000" p:actualNominalCapacity="150">
+		<property name ="technology" ref="windPGT"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppWindB22"/>
+	</bean>
+	
+	<bean id="ppWindPGTB23" class="emlab.gen.domain.technology.PowerPlant" p:label="Wind Plant B23"
+	p:constructionStartTime="-3" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="25" p:actualInvestedCapital="191392500"
+	p:dismantleTime="1000" p:actualNominalCapacity="150">
+		<property name ="technology" ref="windPGT"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppWindB23"/>
+	</bean>
+	
+	<bean id="ppPhotovoltaicPGTB1" class="emlab.gen.domain.technology.PowerPlant" p:label="Photovoltaic Plant B1"
+	p:constructionStartTime="-6" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="22" p:actualInvestedCapital="292940000"
+	p:dismantleTime="1000" p:actualNominalCapacity="100">
+		<property name ="technology" ref="photovoltaicPGT"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppPhotovoltaicB1"/>
+	</bean>
+	
+	<bean id="ppPhotovoltaicPGTB2" class="emlab.gen.domain.technology.PowerPlant" p:label="Photovoltaic Plant B2"
+	p:constructionStartTime="-6" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="22" p:actualInvestedCapital="292940000"
+	p:dismantleTime="1000" p:actualNominalCapacity="100">
+		<property name ="technology" ref="photovoltaicPGT"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppPhotovoltaicB2"/>
+	</bean>
+	
+	<bean id="ppPhotovoltaicPGTB3" class="emlab.gen.domain.technology.PowerPlant" p:label="Photovoltaic Plant B3"
+	p:constructionStartTime="-6" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="22" p:actualInvestedCapital="292940000"
+	p:dismantleTime="1000" p:actualNominalCapacity="100">
+		<property name ="technology" ref="photovoltaicPGT"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppPhotovoltaicB3"/>
+	</bean>
+	
+	<bean id="ppPhotovoltaicPGTB4" class="emlab.gen.domain.technology.PowerPlant" p:label="Photovoltaic Plant B4"
+	p:constructionStartTime="-6" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="22" p:actualInvestedCapital="292940000"
+	p:dismantleTime="1000" p:actualNominalCapacity="100">
+		<property name ="technology" ref="photovoltaicPGT"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppPhotovoltaicB4"/>
+	</bean>
+	
+	<bean id="ppPhotovoltaicPGTB5" class="emlab.gen.domain.technology.PowerPlant" p:label="Photovoltaic Plant B5"
+	p:constructionStartTime="-6" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="22" p:actualInvestedCapital="292940000"
+	p:dismantleTime="1000" p:actualNominalCapacity="100">
+		<property name ="technology" ref="photovoltaicPGT"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppPhotovoltaicB5"/>
+	</bean>
+	
+	<bean id="ppPhotovoltaicPGTB6" class="emlab.gen.domain.technology.PowerPlant" p:label="Photovoltaic Plant B6"
+	p:constructionStartTime="-6" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="22" p:actualInvestedCapital="292940000"
+	p:dismantleTime="1000" p:actualNominalCapacity="100">
+		<property name ="technology" ref="photovoltaicPGT"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppPhotovoltaicB6"/>
+	</bean>
+	
+	<bean id="ppPhotovoltaicPGTB7" class="emlab.gen.domain.technology.PowerPlant" p:label="Photovoltaic Plant B7"
+	p:constructionStartTime="-6" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="22" p:actualInvestedCapital="292940000"
+	p:dismantleTime="1000" p:actualNominalCapacity="100">
+		<property name ="technology" ref="photovoltaicPGT"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppPhotovoltaicB7"/>
+	</bean>
+	
+	<bean id="ppPhotovoltaicPGTB8" class="emlab.gen.domain.technology.PowerPlant" p:label="Photovoltaic Plant B8"
+	p:constructionStartTime="-6" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="22" p:actualInvestedCapital="292940000"
+	p:dismantleTime="1000" p:actualNominalCapacity="100">
+		<property name ="technology" ref="photovoltaicPGT"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppPhotovoltaicB8"/>
+	</bean>
+	
+	<bean id="ppPhotovoltaicPGTB9" class="emlab.gen.domain.technology.PowerPlant" p:label="Photovoltaic Plant B9"
+	p:constructionStartTime="-6" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="22" p:actualInvestedCapital="292940000"
+	p:dismantleTime="1000" p:actualNominalCapacity="100">
+		<property name ="technology" ref="photovoltaicPGT"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppPhotovoltaicB9"/>
+	</bean>
+	
+	<bean id="ppPhotovoltaicPGTB10" class="emlab.gen.domain.technology.PowerPlant" p:label="Photovoltaic Plant B10"
+	p:constructionStartTime="-6" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="22" p:actualInvestedCapital="292940000"
+	p:dismantleTime="1000" p:actualNominalCapacity="100">
+		<property name ="technology" ref="photovoltaicPGT"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppPhotovoltaicB10"/>
+	</bean>
+	
+	<bean id="ppPhotovoltaicPGTB11" class="emlab.gen.domain.technology.PowerPlant" p:label="Photovoltaic Plant B11"
+	p:constructionStartTime="-6" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="22" p:actualInvestedCapital="292940000"
+	p:dismantleTime="1000" p:actualNominalCapacity="100">
+		<property name ="technology" ref="photovoltaicPGT"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppPhotovoltaicB11"/>
+	</bean>
+	
+	<bean id="ppPhotovoltaicPGTB12" class="emlab.gen.domain.technology.PowerPlant" p:label="Photovoltaic Plant B12"
+	p:constructionStartTime="-6" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="22" p:actualInvestedCapital="292940000"
+	p:dismantleTime="1000" p:actualNominalCapacity="100">
+		<property name ="technology" ref="photovoltaicPGT"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppPhotovoltaicB12"/>
+	</bean>
+	
+	<bean id="ppPhotovoltaicPGTB13" class="emlab.gen.domain.technology.PowerPlant" p:label="Photovoltaic Plant B13"
+	p:constructionStartTime="-6" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="22" p:actualInvestedCapital="292940000"
+	p:dismantleTime="1000" p:actualNominalCapacity="100">
+		<property name ="technology" ref="photovoltaicPGT"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppPhotovoltaicB13"/>
+	</bean>
+	
+	<bean id="ppPhotovoltaicPGTB14" class="emlab.gen.domain.technology.PowerPlant" p:label="Photovoltaic Plant B14"
+	p:constructionStartTime="-6" p:actualLeadtime="2" p:actualEfficiency="1"
+	p:actualPermittime="1" p:expectedEndOfLife="22" p:actualInvestedCapital="292940000"
+	p:dismantleTime="1000" p:actualNominalCapacity="100">
+		<property name ="technology" ref="photovoltaicPGT"/>
+		<property name="owner" ref="energyProducerB"/>
+		<property name="location" ref="beneluxNode"/>
+		<property name="loan" ref="loanppPhotovoltaicB14"/>
+	</bean>
 	
 	
 	<!-- Power plant loans -->
