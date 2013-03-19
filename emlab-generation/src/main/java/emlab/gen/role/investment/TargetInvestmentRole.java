@@ -16,11 +16,11 @@
 package emlab.gen.role.investment;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.neo4j.annotation.NodeEntity;
 import org.springframework.transaction.annotation.Transactional;
 
-import agentspring.role.AbstractRole;
-import agentspring.role.Role;
-import agentspring.role.RoleComponent;
 import emlab.gen.domain.agent.BigBank;
 import emlab.gen.domain.agent.EnergyProducer;
 import emlab.gen.domain.agent.PowerPlantManufacturer;
@@ -37,9 +37,11 @@ import emlab.gen.repository.Reps;
  * @author JCRichstein
  *
  */
-@RoleComponent
-public class TargetInvestmentRole extends AbstractRole<TargetInvestor> implements Role<TargetInvestor> {
+@Configurable
+@NodeEntity
+public class TargetInvestmentRole extends GenericInvestmentRole<TargetInvestor> {
 
+	@Transient
 	@Autowired Reps reps;
 	
 	@Override

@@ -15,13 +15,19 @@
  ******************************************************************************/
 package emlab.gen.domain.agent;
 
+import org.neo4j.graphdb.Direction;
 import org.springframework.data.neo4j.annotation.NodeEntity;
+import org.springframework.data.neo4j.annotation.RelatedTo;
 
 import agentspring.agent.Agent;
 import agentspring.simulation.SimulationParameter;
+import emlab.gen.role.investment.GenericInvestmentRole;
 
 @NodeEntity
 public class EnergyProducer extends DecarbonizationAgent implements Agent {
+
+	@RelatedTo(type = "PRODUCER_INVESTMENTROLE", elementClass = GenericInvestmentRole.class, direction = Direction.OUTGOING)
+	GenericInvestmentRole<EnergyProducer> investmentRole;
 
     @SimulationParameter(label = "Price Mark-Up for spotmarket (as multiplier)", from = 1, to = 2)
     private double priceMarkUp;
@@ -157,4 +163,12 @@ public class EnergyProducer extends DecarbonizationAgent implements Agent {
     public void setPriceMarkUp(double priceMarkUp) {
         this.priceMarkUp = priceMarkUp;
     }
+
+	public GenericInvestmentRole getInvestmentRole() {
+		return investmentRole;
+	}
+
+	public void setInvestmentRole(GenericInvestmentRole investmentRole) {
+		this.investmentRole = investmentRole;
+	}
 }

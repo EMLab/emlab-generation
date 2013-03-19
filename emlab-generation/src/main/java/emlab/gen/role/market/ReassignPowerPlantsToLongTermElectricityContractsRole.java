@@ -47,11 +47,6 @@ public class ReassignPowerPlantsToLongTermElectricityContractsRole extends
     @Autowired
     Reps reps;
 
-    @Override
-    public Reps getReps() {
-        return reps;
-    }
-
 	@Transactional
 	public void act(EnergyProducer producer) {
 

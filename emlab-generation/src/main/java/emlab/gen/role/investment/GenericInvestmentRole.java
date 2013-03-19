@@ -13,54 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package emlab.gen.trend;
+package emlab.gen.role.investment;
 
 import org.springframework.data.neo4j.annotation.NodeEntity;
+import org.springframework.data.neo4j.aspects.core.NodeBacked;
 
-import agentspring.trend.TimeSeries;
-
-
+import agentspring.role.Role;
+import agentspring.role.RoleComponent;
+import emlab.gen.domain.agent.EnergyProducer;
+import emlab.gen.role.AbstractEnergyProducerRole;
 
 /**
  * @author JCRichstein
  *
  */
+@RoleComponent
 @NodeEntity
-public class TimeSeriesImpl implements TimeSeries {
-
-	/**
-	 * Index of double array corresponds to the tick, unless a
-	 * {@link startingYear} is defined to shift the index.
-	 */
-	private double[] timeSeries;
-
-	/**
-	 * Gives the starting year of the time series (probably a negative number) ,
-	 * is relevant for all implementations with an array.
-	 */
-	private double startingYear;
+public class GenericInvestmentRole<T extends EnergyProducer> extends AbstractEnergyProducerRole<T> implements Role<T>,
+		NodeBacked {
 
 	@Override
-	public double getValue(long time) {
-		return timeSeries[(int) time - (int) startingYear];
+	public void act(T agent) {
+		// logger.warn(agent.getName() + " does " +
+		// agent.getInvestmentRole().getClass().toString());
+			agent.getInvestmentRole().act(agent);
 	}
-
-	public double[] getTimeSeries() {
-		return timeSeries;
-	}
-
-	public void setTimeSeries(double[] timeSeries) {
-		this.timeSeries = timeSeries;
-	}
-
-	public double getStartingYear() {
-		return startingYear;
-	}
-
-	public void setStartingYear(double startingYear) {
-		this.startingYear = startingYear;
-	}
-	
 
 
 }
