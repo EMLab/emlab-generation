@@ -5628,7 +5628,7 @@
 
 	<!-- Power Genration Technologies -->
 	<bean id="coalPulverizedSuperCritical" class="emlab.gen.domain.technology.PowerGeneratingTechnology"
-		p:name="CoalPulverizedSuperCritical" p:capacity="500"
+		p:name="CoalPulverizedSuperCritical" p:capacity="758"
 		p:investmentCostTimeSeries-ref="coalPulverizedInvestmentCostTimeSeries"
 		p:fixedOperatingCostTimeSeries-ref="coalPulverizedFixedOperatingCostTimeSeries"
 		p:efficiencyTimeSeries-ref="coalPulverizedEfficiencyTimeSeries" 
@@ -5654,7 +5654,7 @@
 	<bean id="coalPulverizedEfficiencyTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0.00" p:start=".44" />
 	
 	<bean id="CCGT" class="emlab.gen.domain.technology.PowerGeneratingTechnology"
-		p:name="CCGT" p:capacity="500"
+		p:name="CCGT" p:capacity="776"
 		p:investmentCostTimeSeries-ref="cccgtInvestmentCostTimeSeries"
 		p:fixedOperatingCostTimeSeries-ref="ccgtFixedOperatingCostTimeSeries"
 		p:efficiencyTimeSeries-ref="ccgtEfficiencyTimeSeries" 
@@ -5733,7 +5733,7 @@
 	<bean id="biomassEfficiencyTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0.000001" p:start=".35" />
 	
 	<bean id="windPGT" class="emlab.gen.domain.technology.PowerGeneratingTechnology"
-		p:name="Wind" p:capacity="600" 
+		p:name="Wind" p:capacity="150" 
 		p:investmentCostTimeSeries-ref="windInvestmentCostTimeSeries"
 		p:fixedOperatingCostTimeSeries-ref="windFixedOperatingCostTimeSeries"
 		p:efficiencyTimeSeries-ref="windEfficiencyTimeSeries" 
@@ -5754,7 +5754,7 @@
 	<bean id="windEfficiencyTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0" p:start="1" />
 	
 	<bean id="photovoltaicPGT" class="emlab.gen.domain.technology.PowerGeneratingTechnology"
-		p:name="Photovoltaic" p:capacity="500" 
+		p:name="Photovoltaic" p:capacity="100" 
 		p:investmentCostTimeSeries-ref="pvInvestmentCostTimeSeries"
 		p:fixedOperatingCostTimeSeries-ref="pvFixedOperatingCostTimeSeries"
 		p:efficiencyTimeSeries-ref="pvEfficiencyTimeSeries" 
