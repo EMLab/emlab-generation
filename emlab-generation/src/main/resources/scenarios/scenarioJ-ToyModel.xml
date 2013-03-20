@@ -300,7 +300,7 @@
 	</bean>
 
 	<bean id="energyProducerA" class="emlab.gen.domain.agent.EnergyProducer"
-		p:name="Energy Producer A" p:cash="3e9"
+		p:name="Energy Producer A" p:cash="3e12"
 		p:investmentRole-ref="standardInvestmentRole"
 		p:longTermContractMargin="0.1" p:longTermContractPastTimeHorizon="3"
 		p:investmentFutureTimeHorizon="7" p:pastTimeHorizon="5"
@@ -311,7 +311,7 @@
 		p:willingToInvest="true" p:priceMarkUp="1.0"
 		p:numberOfYearsBacklookingForForecasting="5" />
 	<bean id="energyProducerB" class="emlab.gen.domain.agent.EnergyProducer"
-		p:name="Energy Producer B" p:cash="3e9" 
+		p:name="Energy Producer B" p:cash="3e12" 
 		p:investmentRole-ref="standardInvestmentRole"
 		p:longTermContractMargin="0.1" p:longTermContractPastTimeHorizon="3"
 		p:investmentFutureTimeHorizon="7" p:pastTimeHorizon="5"
@@ -322,7 +322,7 @@
 		p:willingToInvest="true" p:priceMarkUp="1.0"
 		p:numberOfYearsBacklookingForForecasting="5" />
 	<bean id="energyProducerC" class="emlab.gen.domain.agent.EnergyProducer"
-		p:name="Energy Producer C" p:cash="3e9"
+		p:name="Energy Producer C" p:cash="3e12"
 		p:investmentRole-ref="standardInvestmentRole"
 		p:longTermContractMargin="0.1" p:longTermContractPastTimeHorizon="3"
 		p:investmentFutureTimeHorizon="7" p:pastTimeHorizon="5"
@@ -333,7 +333,7 @@
 		p:willingToInvest="true" p:priceMarkUp="1.0"
 		p:numberOfYearsBacklookingForForecasting="5" />
 	<bean id="energyProducerD" class="emlab.gen.domain.agent.EnergyProducer"
-		p:name="Energy Producer D" p:cash="3e9" 
+		p:name="Energy Producer D" p:cash="3e12" 
 		p:investmentRole-ref="standardInvestmentRole"
 		p:longTermContractMargin="0.1" p:longTermContractPastTimeHorizon="3"
 		p:investmentFutureTimeHorizon="7" p:pastTimeHorizon="5"
