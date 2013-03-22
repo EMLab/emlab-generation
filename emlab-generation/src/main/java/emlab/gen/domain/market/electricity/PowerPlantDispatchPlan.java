@@ -39,157 +39,161 @@ import emlab.gen.domain.technology.PowerPlant;
 @NodeEntity
 public class PowerPlantDispatchPlan extends Bid {
 
-	public static int PARTLY_CONTRACTED = -10;
-	public static int NOT_CONTRACTED = -9;
+    public static int PARTLY_CONTRACTED = -10;
+    public static int NOT_CONTRACTED = -9;
 
-	@RelatedTo(type = "SEGMENT_DISPATCHPLAN", elementClass = Segment.class, direction = Direction.OUTGOING)
-	private Segment segment;
+    @RelatedTo(type = "SEGMENT_DISPATCHPLAN", elementClass = Segment.class, direction = Direction.OUTGOING)
+    private Segment segment;
 
-	@RelatedTo(type = "POWERPLANT_DISPATCHPLAN", elementClass = PowerPlant.class, direction = Direction.OUTGOING)
-	private PowerPlant powerPlant;
+    @RelatedTo(type = "POWERPLANT_DISPATCHPLAN", elementClass = PowerPlant.class, direction = Direction.OUTGOING)
+    private PowerPlant powerPlant;
 
-	/**
-	 * Is set to always true, since it the power plant dispatch plan is only for
-	 * supply bids to the spot market.
-	 */
-	private final boolean supplyBid = true;
+    /**
+     * Is set to always true, since it the power plant dispatch plan is only for
+     * supply bids to the spot market.
+     */
+    private final boolean supplyBid = true;
 
-	private double capacityLongTermContract;
-	/*    *//**
-	 * IMPORTANT: Amount (capacity in MW) that is bid on to the SPOT
-	 * MARKET, without long term contracts.
-	 */
-	/*
-	 * private double amount;
-	 *//**
-	 * In the case of the power plant dispatch plan: Marginal cost excluding
-	 * CO2.
-	 */
-	/*
-	 * private double price;
-	 */
-	private double bidWithoutCO2;
+    private double capacityLongTermContract;
+    /*    *//**
+     * IMPORTANT: Amount (capacity in MW) that is bid on to the SPOT
+     * MARKET, without long term contracts.
+     */
+    /*
+     * private double amount;
+     *//**
+     * In the case of the power plant dispatch plan: Marginal cost excluding
+     * CO2.
+     */
+    /*
+     * private double price;
+     */
+    private double bidWithoutCO2;
 
-	private long time;
+    private long time;
 
-	private int SRstatus;
-	private double oldPrice;
+    private int SRstatus;
+    private double oldPrice;
 
-	public int getSRstatus() {
-		return SRstatus;
-	}
+    public int getSRstatus() {
+        return SRstatus;
+    }
 
-	public void setSRstatus(int sRstatus) {
-		SRstatus = sRstatus;
-	}
 
-	public double getOldPrice() {
-		return oldPrice;
-	}
+    public void setSRstatus(int sRstatus) {
+        SRstatus = sRstatus;
+    }
 
-	public void setOldPrice(double oldPrice) {
-		this.oldPrice = oldPrice;
-	}
+    public double getOldPrice() {
+        return oldPrice;
+    }
 
-	@Indexed(indexName = "ppdpTime")
-	private int ppdpTime;
+    public void setOldPrice(double oldPrice) {
+        this.oldPrice = oldPrice;
+    }
 
-	public int getPpdpTime() {
-		return ppdpTime;
-	}
+    @Indexed(indexName = "ppdpTime")
+    private int ppdpTime;
 
-	public void setPpdpTime(int ppdpTime) {
-		this.ppdpTime = ppdpTime;
-	}
+    public int getPpdpTime() {
+        return ppdpTime;
+    }
 
-	public Segment getSegment() {
-		return segment;
-	}
+    public void setPpdpTime(int ppdpTime) {
+        this.ppdpTime = ppdpTime;
+    }
 
-	public void setSegment(Segment segment) {
-		this.segment = segment;
-	}
+    public Segment getSegment() {
+        return segment;
+    }
 
-	public PowerPlant getPowerPlant() {
-		return powerPlant;
-	}
+    public void setSegment(Segment segment) {
+        this.segment = segment;
+    }
 
-	public void setPowerPlant(PowerPlant powerPlant) {
-		this.powerPlant = powerPlant;
-	}
+    public PowerPlant getPowerPlant() {
+        return powerPlant;
+    }
 
-	public double getCapacityLongTermContract() {
-		return capacityLongTermContract;
-	}
+    public void setPowerPlant(PowerPlant powerPlant) {
+        this.powerPlant = powerPlant;
+    }
 
-	public void setCapacityLongTermContract(double capacityLongTermContract) {
-		this.capacityLongTermContract = capacityLongTermContract;
-	}
+    public double getCapacityLongTermContract() {
+        return capacityLongTermContract;
+    }
 
-	public long getTime() {
-		return time;
-	}
+    public void setCapacityLongTermContract(double capacityLongTermContract) {
+        this.capacityLongTermContract = capacityLongTermContract;
+    }
 
-	public void setTime(long time) {
-		this.time = time;
-		this.ppdpTime = (int) time;
-	}
+    @Override
+    public long getTime() {
+        return time;
+    }
 
-	@Override
-	public String toString() {
-		return "for " + getBidder() + " power plant: " + getPowerPlant() + " in segment " + segment
-				+ " plans to sell long term: " + getCapacityLongTermContract() + " plans to sell capacity spot: "
-				+ getAmount();
-	}
+    @Override
+    public void setTime(long time) {
+        this.time = time;
+        this.ppdpTime = (int) time;
+    }
 
-	public double getBidWithoutCO2() {
-		return bidWithoutCO2;
-	}
+    @Override
+    public String toString() {
+        return "for " + getBidder() + " power plant: " + getPowerPlant() + " in segment " + segment
+                + " plans to sell long term: " + getCapacityLongTermContract() + " plans to sell capacity spot: "
+                + getAmount();
+    }
 
-	public void setBidWithoutCO2(double bidWithoutCO2) {
-		this.bidWithoutCO2 = bidWithoutCO2;
-	}
+    public double getBidWithoutCO2() {
+        return bidWithoutCO2;
+    }
 
-	public boolean isSupplyBid() {
-		return supplyBid;
-	}
+    public void setBidWithoutCO2(double bidWithoutCO2) {
+        this.bidWithoutCO2 = bidWithoutCO2;
+    }
 
-	public void specifyNotPersist(PowerPlant plant, EnergyProducer producer, ElectricitySpotMarket market,
-			Segment segment, long time, double price, double bidWithoutCO2, double spotMarketCapacity,
-			double longTermContractCapacity, int status, int sRstatus) {
-		this.setPowerPlant(plant);
-		this.setSegment(segment);
-		this.setTime(time);
-		this.setBidder(producer);
-		this.setBiddingMarket(market);
-		this.setPrice(price);
-		this.setBidWithoutCO2(bidWithoutCO2);
-		this.setAmount(spotMarketCapacity);
-		this.setCapacityLongTermContract(longTermContractCapacity);
-		this.setStatus(status);
-		this.setSRstatus(sRstatus);
+    @Override
+    public boolean isSupplyBid() {
+        return supplyBid;
+    }
 
-	}
+    public void specifyNotPersist(PowerPlant plant, EnergyProducer producer, ElectricitySpotMarket market,
+            Segment segment, long time, double price, double bidWithoutCO2, double spotMarketCapacity,
+            double longTermContractCapacity, int status, int sRstatus) {
+        this.setPowerPlant(plant);
+        this.setSegment(segment);
+        this.setTime(time);
+        this.setBidder(producer);
+        this.setBiddingMarket(market);
+        this.setPrice(price);
+        this.setBidWithoutCO2(bidWithoutCO2);
+        this.setAmount(spotMarketCapacity);
+        this.setCapacityLongTermContract(longTermContractCapacity);
+        this.setStatus(status);
+        this.setSRstatus(sRstatus);
 
-	// All transactional methods below are signified by starting with update
-	@Transactional
-	public void specifyAndPersist(PowerPlant plant, EnergyProducer producer, ElectricitySpotMarket market,
-			Segment segment, long time, double price, double bidWithoutCO2, double spotMarketCapacity,
-			double longTermContractCapacity, int status, int sRstatus) {
-		this.persist();
-		this.specifyNotPersist(plant, producer, market, segment, time, price, bidWithoutCO2, spotMarketCapacity,
-				longTermContractCapacity, status, sRstatus);
+    }
 
-	}
+    // All transactional methods below are signified by starting with update
+    @Transactional
+    public void specifyAndPersist(PowerPlant plant, EnergyProducer producer, ElectricitySpotMarket market,
+            Segment segment, long time, double price, double bidWithoutCO2, double spotMarketCapacity,
+            double longTermContractCapacity, int status, int sRstatus) {
+        this.persist();
+        this.specifyNotPersist(plant, producer, market, segment, time, price, bidWithoutCO2, spotMarketCapacity,
+                longTermContractCapacity, status, sRstatus);
 
-	@Transactional
-	public void updateCapacityLongTermContract(double capacity) {
-		this.setCapacityLongTermContract(capacity);
-	}
+    }
 
-	@Transactional
-	public void updateCapacitySpotMarket(double capacity) {
-		this.setAmount(capacity);
-	}
+    @Transactional
+    public void updateCapacityLongTermContract(double capacity) {
+        this.setCapacityLongTermContract(capacity);
+    }
+
+    @Transactional
+    public void updateCapacitySpotMarket(double capacity) {
+        this.setAmount(capacity);
+    }
 
 }
