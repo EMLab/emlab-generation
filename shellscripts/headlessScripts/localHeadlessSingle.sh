@@ -21,7 +21,15 @@ SCENARIOPATH=file://$LOCALSCENARIOFOLDER
 
 mkdir $LOCALRESULTFOLDER/$JOBNAME
 cd $LOCALRESULTFOLDER/$JOBNAME
-for PBS_ARRAYID in {1..1}
-do
-java -d64 -server -Xmx3072m -Drun.id=$JOBNAME-$PBS_ARRAYID -DSCENARIO_FOLDER=$SCENARIOPATH -Dresults.path=$LOCALRESULTFOLDER/$JOBNAME -Dscenario.file=$SCENARIO -jar $LOCALJARFILE
-done
+if [ ! -z $3 ] 
+then 
+    QUERYCOMMAND="-Dquery.file=$3"
+else
+    QUERYCOMMAND=""
+fi
+
+java -d64 -server -Xmx3072m -Drun.id=$JOBNAME -DSCENARIO_FOLDER=$SCENARIOPATH -Dresults.path=$LOCALRESULTFOLDER/$JOBNAME -Dscenario.file=$SCENARIO".xml" $QUERYCOMMAND -jar $LOCALJARFILE
+rm -rf /tmp/ramdisk/emlab.gen-db/$JOBNAME
+
+
+

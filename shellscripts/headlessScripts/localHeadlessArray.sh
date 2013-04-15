@@ -16,16 +16,24 @@ fi
 ## the first parameter gives the jobname, the second the scenario-file excluding(!) the xml file-ending
 ## the scenario files should correspond to the range of number of PBS_ARRAYID.
 ## Example sh localHeadless.sh example 2 scenarioA
-JOBNAME=example
-#NROFRUNS=$2
-SCENARIO=$3
+JOBNAME=$1
+SCENARIO=$2
 SCENARIOPATH=file://$LOCALSCENARIOFOLDER
-#SCENARIO=scenarioE-MinCO2-resTarget.xml
-START=$1
-END=$2
-for PBS_ARRAYID in {0..2}
+START=$3
+END=$4
+if [ ! -z $5 ] 
+then 
+    QUERYCOMMAND="-Dquery.file=$5"
+else
+    QUERYCOMMAND=""
+fi
+
+mkdir $LOCALRESULTFOLDER/$JOBNAME
+cd $LOCALRESULTFOLDER/$JOBNAME
+for PBS_ARRAYID in $(eval echo "{$START..$END}")
 do
-/usr/lib/jvm/java-1.6.0-openjdk-amd64/bin/java -d64 -server -Xmx3072m -Drun.id=$JOBNAME-$PBS_ARRAYID -DSCENARIO_FOLDER=$SCENARIOPATH -Dresults.path=$LOCALRESULTFOLDER/ -Dscenario.file=$SCENARIO-$PBS_ARRAYID.xml -jar $LOCALFOLDER/target/$JARFILE
 echo "$SCENARIO-$PBS_ARRAYID.xml"
-rm -rf /tmp/ramdisk/polep-db/$JOBNAME-$PBS_ARRAYID
+java -d64 -server -Xmx3072m -Drun.id=$JOBNAME-$PBS_ARRAYID -DSCENARIO_FOLDER=$SCENARIOPATH -Dresults.path=$LOCALRESULTFOLDER/$JOBNAME -Dscenario.file=$SCENARIO-$PBS_ARRAYID".xml" $QUERYCOMMAND -jar $LOCALJARFILE
+mv simulation.log "$JOBNAME-$PBS_ARRAYID.log"
+rm -rf /tmp/ramdisk/emlab.gen-db/$JOBNAME-$PBS_ARRAYID
 done
