@@ -5,7 +5,7 @@ if [ -f scriptConfigurations.cfg ];then
 	cat scriptConfigurations.cfg
 	TARGET=$LOCALRESULTFOLDER
 	SOURCE=$REMOTERESULTFOLDER/*
-	rsync -va --progress -r $REMOTEUSER@hpc07.tudelft.net:$SOURCE $TARGET
+	rsync -va --progress -r $REMOTEUSER@$SERVER:$SOURCE $TARGET
 	echo -e "\n\nFinished synchronisation from HPC!"
 else
     echo "Define scriptConfigurations.cfg, by changing the template. Exiting script."

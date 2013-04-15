@@ -5,7 +5,7 @@ if [ -f scriptConfigurations.cfg ];then
 	cat scriptConfigurations.cfg
 	echo '\n'
 	TARGET=$REMOTERESULTFOLDER
-	rsync -va --progress $LOCALJARFILE $REMOTEUSER@hpc07.tudelft.net:$TARGET
+	rsync -va --progress $LOCALJARFILE $REMOTEUSER@$SERVER:$TARGET
 	echo -e '\n\nCopying of JAR file suceeded!'
 else
     echo "Define scriptConfigurations.cfg, by changing the template. Exiting script."
