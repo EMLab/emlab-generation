@@ -15,7 +15,6 @@ fi
 TEMP="/var/tmp"
 RAMDISK="/tmp/ramdisk"
 EMLABDB="emlab.gen-db"
-SCENARIO=scenarioA-ToyModel.xml
 
 #Make sure your in the right directory
 cd $HOME
@@ -27,8 +26,8 @@ then
 fi 
 
 JOBNAME=$1
-NROFRUNS=$2
-SCENARIO=$3
+SCENARIO=$2
+NROFRUNS=$3
 #######################
 #Creating output folders
 STREAMOUTPUT=$HOME/$JOBNAME/streamOutput
@@ -52,7 +51,7 @@ MD=$(md5sum $HOME/$JARNAME | sed 's/ /_/g')
 echo "$MD"
 
    #Start the set of jobs.
-qsub -t 1-$NROFRUNS -N $JOBNAME -l nodes=1:ppn=8,mem=3000mb,walltime=00:10:01,epilogue=$REMOTEHPCSCRIPTS/epilogueHpc.sh -o $STREAMOUTPUT -e $STREAMOUTPUT -v JOBNAME=$JOBNAME,JARNAME=$JARNAME,SCENARIO=$SCENARIO,TEMP=$TEMP,RAMDISK=$RAMDISK,MD=$MD,HOME=$HOME,D13NDB=$D13NDB,INPUTPARAMETERFOLDER=$INPUTPARAMETERFOLDER,PARAMETER=$PARAMETER $REMOTEHPCSCRIPTS/startASingleArrayJobOnNode.sh
+qsub -t 1-$NROFRUNS -N $JOBNAME -l nodes=1:ppn=8,mem=3000mb,walltime=03:00:01,epilogue=$REMOTEHPCSCRIPTS/epilogueHpc.sh -o $STREAMOUTPUT -e $STREAMOUTPUT -v JOBNAME=$JOBNAME,JARNAME=$JARNAME,SCENARIO=$SCENARIO,TEMP=$TEMP,RAMDISK=$RAMDISK,MD=$MD,HOME=$HOME,D13NDB=$D13NDB,INPUTPARAMETERFOLDER=$INPUTPARAMETERFOLDER,PARAMETER=$PARAMETER $REMOTEHPCSCRIPTS/startASingleArrayJobOnNode.sh
    echo "Started all jobs."
 
 
