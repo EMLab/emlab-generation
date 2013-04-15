@@ -7,10 +7,6 @@ else
     exit
 fi
 
-
-
-REMOTEHPCSCRIPTS=/home/jrichstein/scripts
-
 if [ -z $1 ]; then
     echo -n 'What is the name of the jobarray you want to cancel? (Alternatively give name as bash argument).'
     read JOBNAME
