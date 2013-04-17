@@ -1,26 +1,26 @@
- WARN Running scenarioA-ToyModel.xml, run.Id example-1
+ERROR entityStateFactory not set, not creating accessors for class emlab.gen.role.investment.GenericInvestmentRole
+ WARN No FieldAccessor configured for field: class emlab.gen.repository.Reps reps rel: false idx: false
+ WARN No FieldAccessor configured for field: interface org.springframework.context.ApplicationContext applicationContext rel: false idx: false
+ WARN No FieldAccessor configured for field: interface org.slf4j.Logger logger rel: false idx: false
+ WARN Running scenarioB-OneCountryDE.xml, run.Id testcase-{1..1}
  WARN ***** STARTING TICK 0 *****
  WARN   0. Dismantling & paying loans
  WARN   1. Determining fuel mix
- WARN         took: 0.711 seconds.
+ WARN         took: 1.645 seconds.
  WARN   3. Clearing electricity spot and CO2 markets
- WARN         took: 1.624 seconds.
- WARN         paying took: 0.464 seconds.
- WARN   4. Paying for maintenance & co2
- WARN         took: 0.943 seconds.
- WARN   5. Purchasing commodities
- WARN         took: 1.253 seconds.
- WARN   6. Investing
+ WARN   4. Contracting Strategic Reserve 
+ WARN         took: 3.815 seconds.
+ WARN         paying took: 1.379 seconds.
+ WARN   5. Paying for maintenance & co2
+ WARN         took: 0.418 seconds.
+ WARN   6. Purchasing commodities
+ WARN         took: 0.929 seconds.
+ WARN         took: 0.929 seconds.
+ WARN   7. Investing
  WARN         took: 0.009 seconds.
- WARN Tick 0 took 6.414 seconds.
-ERROR from doPriv: javax.script.ScriptException: java.lang.NullPointerException
-javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.lang.NullPointerException
-	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
-	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
-	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
-	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
-ERROR from doPriv: javax.script.ScriptException: java.lang.NullPointerException
-javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.lang.NullPointerException
+ WARN Tick 0 took 17.034 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
 	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
 	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
 	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
@@ -28,25 +28,21 @@ javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.la
  WARN ***** STARTING TICK 1 *****
  WARN   0. Dismantling & paying loans
  WARN   1. Determining fuel mix
- WARN         took: 0.163 seconds.
+ WARN         took: 0.258 seconds.
  WARN   3. Clearing electricity spot and CO2 markets
- WARN         took: 0.946 seconds.
- WARN         paying took: 0.162 seconds.
- WARN   4. Paying for maintenance & co2
- WARN         took: 1.471 seconds.
- WARN   5. Purchasing commodities
- WARN         took: 1.332 seconds.
- WARN   6. Investing
- WARN         took: 0.003 seconds.
- WARN Tick 1 took 4.424 seconds.
-ERROR from doPriv: javax.script.ScriptException: java.lang.NullPointerException
-javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.lang.NullPointerException
-	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
-	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
-	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
-	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
-ERROR from doPriv: javax.script.ScriptException: java.lang.NullPointerException
-javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.lang.NullPointerException
+ WARN   4. Contracting Strategic Reserve 
+ WARN         took: 1.383 seconds.
+ WARN         paying took: 1.348 seconds.
+ WARN   5. Paying for maintenance & co2
+ WARN         took: 0.277 seconds.
+ WARN   6. Purchasing commodities
+ WARN         took: 0.789 seconds.
+ WARN         took: 0.789 seconds.
+ WARN   7. Investing
+ WARN         took: 0.001 seconds.
+ WARN Tick 1 took 8.816 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
 	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
 	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
 	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
@@ -54,12 +50,1656 @@ javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.la
  WARN ***** STARTING TICK 2 *****
  WARN   0. Dismantling & paying loans
  WARN   1. Determining fuel mix
- WARN         took: 0.243 seconds.
+ WARN         took: 0.147 seconds.
  WARN   3. Clearing electricity spot and CO2 markets
- WARN         took: 0.653 seconds.
- WARN         paying took: 0.184 seconds.
- WARN   4. Paying for maintenance & co2
- WARN         took: 1.398 seconds.
- WARN   5. Purchasing commodities
- WARN         took: 1.005 seconds.
- WARN   6. Investing
+ WARN   4. Contracting Strategic Reserve 
+ WARN         took: 1.162 seconds.
+ WARN         paying took: 1.446 seconds.
+ WARN   5. Paying for maintenance & co2
+ WARN         took: 0.338 seconds.
+ WARN   6. Purchasing commodities
+ WARN         took: 0.757 seconds.
+ WARN         took: 0.757 seconds.
+ WARN   7. Investing
+ WARN         took: 9.139 seconds.
+ WARN Tick 2 took 17.045 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ WARN ***** STARTING TICK 3 *****
+ WARN   0. Dismantling & paying loans
+ WARN   1. Determining fuel mix
+ WARN         took: 0.143 seconds.
+ WARN   3. Clearing electricity spot and CO2 markets
+ WARN   4. Contracting Strategic Reserve 
+ WARN         took: 1.147 seconds.
+ WARN         paying took: 1.563 seconds.
+ WARN   5. Paying for maintenance & co2
+ WARN         took: 0.259 seconds.
+ WARN   6. Purchasing commodities
+ WARN         took: 0.669 seconds.
+ WARN         took: 0.669 seconds.
+ WARN   7. Investing
+ WARN         took: 13.437 seconds.
+ WARN Tick 3 took 21.527 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ WARN ***** STARTING TICK 4 *****
+ WARN   0. Dismantling & paying loans
+ WARN   1. Determining fuel mix
+ WARN         took: 0.129 seconds.
+ WARN   3. Clearing electricity spot and CO2 markets
+ WARN   4. Contracting Strategic Reserve 
+ WARN         took: 1.119 seconds.
+ WARN         paying took: 1.687 seconds.
+ WARN   5. Paying for maintenance & co2
+ WARN         took: 0.254 seconds.
+ WARN   6. Purchasing commodities
+ WARN         took: 0.689 seconds.
+ WARN         took: 0.689 seconds.
+ WARN   7. Investing
+ WARN         took: 16.753 seconds.
+ WARN   9. Delete old nodes in year 0.
+ WARN         took: 1.893 seconds.
+ WARN Tick 4 took 27.747 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ WARN ***** STARTING TICK 5 *****
+ WARN   0. Dismantling & paying loans
+ WARN   1. Determining fuel mix
+ WARN         took: 0.143 seconds.
+ WARN   3. Clearing electricity spot and CO2 markets
+ WARN   4. Contracting Strategic Reserve 
+ WARN         took: 1.179 seconds.
+ WARN         paying took: 1.724 seconds.
+ WARN   5. Paying for maintenance & co2
+ WARN         took: 0.245 seconds.
+ WARN   6. Purchasing commodities
+ WARN         took: 0.652 seconds.
+ WARN         took: 0.652 seconds.
+ WARN   7. Investing
+ WARN         took: 9.975 seconds.
+ WARN   9. Delete old nodes in year 1.
+ WARN         took: 1.362 seconds.
+ WARN Tick 5 took 19.772 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ WARN ***** STARTING TICK 6 *****
+ WARN   0. Dismantling & paying loans
+ WARN   1. Determining fuel mix
+ WARN         took: 0.225 seconds.
+ WARN   3. Clearing electricity spot and CO2 markets
+ WARN   4. Contracting Strategic Reserve 
+ WARN         took: 1.14 seconds.
+ WARN         paying took: 1.64 seconds.
+ WARN   5. Paying for maintenance & co2
+ WARN         took: 0.245 seconds.
+ WARN   6. Purchasing commodities
+ WARN         took: 0.632 seconds.
+ WARN         took: 0.632 seconds.
+ WARN   7. Investing
+ WARN         took: 8.804 seconds.
+ WARN   9. Delete old nodes in year 2.
+ WARN         took: 1.062 seconds.
+ WARN Tick 6 took 18.38 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ WARN ***** STARTING TICK 7 *****
+ WARN   0. Dismantling & paying loans
+ WARN   1. Determining fuel mix
+ WARN         took: 0.137 seconds.
+ WARN   3. Clearing electricity spot and CO2 markets
+ WARN   4. Contracting Strategic Reserve 
+ WARN         took: 1.162 seconds.
+ WARN         paying took: 1.682 seconds.
+ WARN   5. Paying for maintenance & co2
+ WARN         took: 0.251 seconds.
+ WARN   6. Purchasing commodities
+ WARN         took: 0.599 seconds.
+ WARN         took: 0.599 seconds.
+ WARN   7. Investing
+ WARN         took: 9.797 seconds.
+ WARN   9. Delete old nodes in year 3.
+ WARN         took: 0.994 seconds.
+ WARN Tick 7 took 19.181 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ WARN ***** STARTING TICK 8 *****
+ WARN   0. Dismantling & paying loans
+ WARN   1. Determining fuel mix
+ WARN         took: 0.135 seconds.
+ WARN   3. Clearing electricity spot and CO2 markets
+ WARN   4. Contracting Strategic Reserve 
+ WARN         took: 1.125 seconds.
+ WARN         paying took: 1.646 seconds.
+ WARN   5. Paying for maintenance & co2
+ WARN         took: 0.252 seconds.
+ WARN   6. Purchasing commodities
+ WARN         took: 0.708 seconds.
+ WARN         took: 0.708 seconds.
+ WARN   7. Investing
+ WARN         took: 6.026 seconds.
+ WARN   9. Delete old nodes in year 4.
+ WARN         took: 1.06 seconds.
+ WARN Tick 8 took 15.456 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ WARN ***** STARTING TICK 9 *****
+ WARN   0. Dismantling & paying loans
+ WARN   1. Determining fuel mix
+ WARN         took: 0.138 seconds.
+ WARN   3. Clearing electricity spot and CO2 markets
+ WARN   4. Contracting Strategic Reserve 
+ WARN         took: 1.162 seconds.
+ WARN         paying took: 1.671 seconds.
+ WARN   5. Paying for maintenance & co2
+ WARN         took: 0.258 seconds.
+ WARN   6. Purchasing commodities
+ WARN         took: 0.626 seconds.
+ WARN         took: 0.626 seconds.
+ WARN   7. Investing
+ WARN         took: 7.21 seconds.
+ WARN   9. Delete old nodes in year 5.
+ WARN         took: 0.981 seconds.
+ WARN Tick 9 took 16.55 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ WARN ***** STARTING TICK 10 *****
+ WARN   0. Dismantling & paying loans
+ WARN   1. Determining fuel mix
+ WARN         took: 0.132 seconds.
+ WARN   3. Clearing electricity spot and CO2 markets
+ WARN   4. Contracting Strategic Reserve 
+ WARN         took: 1.146 seconds.
+ WARN         paying took: 1.639 seconds.
+ WARN   5. Paying for maintenance & co2
+ WARN         took: 0.268 seconds.
+ WARN   6. Purchasing commodities
+ WARN         took: 0.58 seconds.
+ WARN         took: 0.58 seconds.
+ WARN   7. Investing
+ WARN         took: 6.155 seconds.
+ WARN   9. Delete old nodes in year 6.
+ WARN         took: 0.957 seconds.
+ WARN Tick 10 took 15.472 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ WARN ***** STARTING TICK 11 *****
+ WARN   0. Dismantling & paying loans
+ WARN   1. Determining fuel mix
+ WARN         took: 0.125 seconds.
+ WARN   3. Clearing electricity spot and CO2 markets
+ WARN   4. Contracting Strategic Reserve 
+ WARN         took: 1.149 seconds.
+ WARN         paying took: 1.655 seconds.
+ WARN   5. Paying for maintenance & co2
+ WARN         took: 0.244 seconds.
+ WARN   6. Purchasing commodities
+ WARN         took: 0.6 seconds.
+ WARN         took: 0.6 seconds.
+ WARN   7. Investing
+ WARN         took: 4.169 seconds.
+ WARN   9. Delete old nodes in year 7.
+ WARN         took: 1.045 seconds.
+ WARN Tick 11 took 13.388 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ WARN ***** STARTING TICK 12 *****
+ WARN   0. Dismantling & paying loans
+ WARN   1. Determining fuel mix
+ WARN         took: 0.14 seconds.
+ WARN   3. Clearing electricity spot and CO2 markets
+ WARN   4. Contracting Strategic Reserve 
+ WARN         took: 1.144 seconds.
+ WARN         paying took: 1.617 seconds.
+ WARN   5. Paying for maintenance & co2
+ WARN         took: 0.235 seconds.
+ WARN   6. Purchasing commodities
+ WARN         took: 0.584 seconds.
+ WARN         took: 0.584 seconds.
+ WARN   7. Investing
+ WARN         took: 4.786 seconds.
+ WARN   9. Delete old nodes in year 8.
+ WARN         took: 0.975 seconds.
+ WARN Tick 12 took 14.085 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ WARN ***** STARTING TICK 13 *****
+ WARN   0. Dismantling & paying loans
+ WARN   1. Determining fuel mix
+ WARN         took: 0.134 seconds.
+ WARN   3. Clearing electricity spot and CO2 markets
+ WARN   4. Contracting Strategic Reserve 
+ WARN         took: 1.114 seconds.
+ WARN         paying took: 1.578 seconds.
+ WARN   5. Paying for maintenance & co2
+ WARN         took: 0.228 seconds.
+ WARN   6. Purchasing commodities
+ WARN         took: 0.589 seconds.
+ WARN         took: 0.589 seconds.
+ WARN   7. Investing
+ WARN         took: 5.34 seconds.
+ WARN   9. Delete old nodes in year 9.
+ WARN         took: 0.985 seconds.
+ WARN Tick 13 took 14.318 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ WARN ***** STARTING TICK 14 *****
+ WARN   0. Dismantling & paying loans
+ WARN   1. Determining fuel mix
+ WARN         took: 0.133 seconds.
+ WARN   3. Clearing electricity spot and CO2 markets
+ WARN   4. Contracting Strategic Reserve 
+ WARN         took: 1.119 seconds.
+ WARN         paying took: 1.568 seconds.
+ WARN   5. Paying for maintenance & co2
+ WARN         took: 0.226 seconds.
+ WARN   6. Purchasing commodities
+ WARN         took: 0.563 seconds.
+ WARN         took: 0.563 seconds.
+ WARN   7. Investing
+ WARN         took: 7.22 seconds.
+ WARN   9. Delete old nodes in year 10.
+ WARN         took: 1.06 seconds.
+ WARN Tick 14 took 16.087 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ WARN ***** STARTING TICK 15 *****
+ WARN   0. Dismantling & paying loans
+ WARN   1. Determining fuel mix
+ WARN         took: 0.168 seconds.
+ WARN   3. Clearing electricity spot and CO2 markets
+ WARN   4. Contracting Strategic Reserve 
+ WARN         took: 1.037 seconds.
+ WARN         paying took: 1.994 seconds.
+ WARN   5. Paying for maintenance & co2
+ WARN         took: 0.219 seconds.
+ WARN   6. Purchasing commodities
+ WARN         took: 0.594 seconds.
+ WARN         took: 0.594 seconds.
+ WARN   7. Investing
+ WARN         took: 3.97 seconds.
+ WARN   9. Delete old nodes in year 11.
+ WARN         took: 0.967 seconds.
+ WARN Tick 15 took 13.131 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ WARN ***** STARTING TICK 16 *****
+ WARN   0. Dismantling & paying loans
+ WARN   1. Determining fuel mix
+ WARN         took: 0.121 seconds.
+ WARN   3. Clearing electricity spot and CO2 markets
+ WARN   4. Contracting Strategic Reserve 
+ WARN         took: 1.055 seconds.
+ WARN         paying took: 1.473 seconds.
+ WARN   5. Paying for maintenance & co2
+ WARN         took: 0.208 seconds.
+ WARN   6. Purchasing commodities
+ WARN         took: 0.615 seconds.
+ WARN         took: 0.615 seconds.
+ WARN   7. Investing
+ WARN         took: 5.688 seconds.
+ WARN   9. Delete old nodes in year 12.
+ WARN         took: 0.936 seconds.
+ WARN Tick 16 took 14.102 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ WARN ***** STARTING TICK 17 *****
+ WARN   0. Dismantling & paying loans
+ WARN   1. Determining fuel mix
+ WARN         took: 0.123 seconds.
+ WARN   3. Clearing electricity spot and CO2 markets
+ WARN   4. Contracting Strategic Reserve 
+ WARN         took: 1.026 seconds.
+ WARN         paying took: 1.428 seconds.
+ WARN   5. Paying for maintenance & co2
+ WARN         took: 0.206 seconds.
+ WARN   6. Purchasing commodities
+ WARN         took: 0.581 seconds.
+ WARN         took: 0.581 seconds.
+ WARN   7. Investing
+ WARN         took: 7.327 seconds.
+ WARN   9. Delete old nodes in year 13.
+ WARN         took: 0.909 seconds.
+ WARN Tick 17 took 15.546 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ WARN ***** STARTING TICK 18 *****
+ WARN   0. Dismantling & paying loans
+ WARN   1. Determining fuel mix
+ WARN         took: 0.133 seconds.
+ WARN   3. Clearing electricity spot and CO2 markets
+ WARN   4. Contracting Strategic Reserve 
+ WARN         took: 1.018 seconds.
+ WARN         paying took: 1.387 seconds.
+ WARN   5. Paying for maintenance & co2
+ WARN         took: 0.203 seconds.
+ WARN   6. Purchasing commodities
+ WARN         took: 0.586 seconds.
+ WARN         took: 0.586 seconds.
+ WARN   7. Investing
+ WARN         took: 7.756 seconds.
+ WARN   9. Delete old nodes in year 14.
+ WARN         took: 0.897 seconds.
+ WARN Tick 18 took 15.91 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ WARN ***** STARTING TICK 19 *****
+ WARN   0. Dismantling & paying loans
+ WARN   1. Determining fuel mix
+ WARN         took: 0.131 seconds.
+ WARN   3. Clearing electricity spot and CO2 markets
+ WARN   4. Contracting Strategic Reserve 
+ WARN         took: 1.023 seconds.
+ WARN         paying took: 1.367 seconds.
+ WARN   5. Paying for maintenance & co2
+ WARN         took: 0.203 seconds.
+ WARN   6. Purchasing commodities
+ WARN         took: 0.636 seconds.
+ WARN         took: 0.636 seconds.
+ WARN   7. Investing
+ WARN         took: 8.083 seconds.
+ WARN   9. Delete old nodes in year 15.
+ WARN         took: 0.959 seconds.
+ WARN Tick 19 took 16.358 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ WARN ***** STARTING TICK 20 *****
+ WARN   0. Dismantling & paying loans
+ WARN   1. Determining fuel mix
+ WARN         took: 0.129 seconds.
+ WARN   3. Clearing electricity spot and CO2 markets
+ WARN   4. Contracting Strategic Reserve 
+ WARN         took: 0.965 seconds.
+ WARN         paying took: 1.377 seconds.
+ WARN   5. Paying for maintenance & co2
+ WARN         took: 0.203 seconds.
+ WARN   6. Purchasing commodities
+ WARN         took: 0.579 seconds.
+ WARN         took: 0.579 seconds.
+ WARN   7. Investing
+ WARN         took: 8.038 seconds.
+ WARN   9. Delete old nodes in year 16.
+ WARN         took: 0.83 seconds.
+ WARN Tick 20 took 16.501 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ WARN ***** STARTING TICK 21 *****
+ WARN   0. Dismantling & paying loans
+ WARN   1. Determining fuel mix
+ WARN         took: 0.132 seconds.
+ WARN   3. Clearing electricity spot and CO2 markets
+ WARN   4. Contracting Strategic Reserve 
+ WARN         took: 1.001 seconds.
+ WARN         paying took: 1.332 seconds.
+ WARN   5. Paying for maintenance & co2
+ WARN         took: 0.199 seconds.
+ WARN   6. Purchasing commodities
+ WARN         took: 0.583 seconds.
+ WARN         took: 0.583 seconds.
+ WARN   7. Investing
+ WARN         took: 6.863 seconds.
+ WARN   9. Delete old nodes in year 17.
+ WARN         took: 0.836 seconds.
+ WARN Tick 21 took 14.646 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ WARN ***** STARTING TICK 22 *****
+ WARN   0. Dismantling & paying loans
+ WARN   1. Determining fuel mix
+ WARN         took: 0.165 seconds.
+ WARN   3. Clearing electricity spot and CO2 markets
+ WARN   4. Contracting Strategic Reserve 
+ WARN         took: 1.001 seconds.
+ WARN         paying took: 1.31 seconds.
+ WARN   5. Paying for maintenance & co2
+ WARN         took: 0.206 seconds.
+ WARN   6. Purchasing commodities
+ WARN         took: 0.583 seconds.
+ WARN         took: 0.583 seconds.
+ WARN   7. Investing
+ WARN         took: 6.057 seconds.
+ WARN   9. Delete old nodes in year 18.
+ WARN         took: 0.879 seconds.
+ WARN Tick 22 took 14.044 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ WARN ***** STARTING TICK 23 *****
+ WARN   0. Dismantling & paying loans
+ WARN   1. Determining fuel mix
+ WARN         took: 0.129 seconds.
+ WARN   3. Clearing electricity spot and CO2 markets
+ WARN   4. Contracting Strategic Reserve 
+ WARN         took: 0.96 seconds.
+ WARN         paying took: 1.375 seconds.
+ WARN   5. Paying for maintenance & co2
+ WARN         took: 0.204 seconds.
+ WARN   6. Purchasing commodities
+ WARN         took: 0.572 seconds.
+ WARN         took: 0.572 seconds.
+ WARN   7. Investing
+ WARN         took: 6.006 seconds.
+ WARN   9. Delete old nodes in year 19.
+ WARN         took: 0.863 seconds.
+ WARN Tick 23 took 13.969 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ WARN ***** STARTING TICK 24 *****
+ WARN   0. Dismantling & paying loans
+ WARN   1. Determining fuel mix
+ WARN         took: 0.13 seconds.
+ WARN   3. Clearing electricity spot and CO2 markets
+ WARN   4. Contracting Strategic Reserve 
+ WARN         took: 1.033 seconds.
+ WARN         paying took: 1.343 seconds.
+ WARN   5. Paying for maintenance & co2
+ WARN         took: 0.201 seconds.
+ WARN   6. Purchasing commodities
+ WARN         took: 0.566 seconds.
+ WARN         took: 0.566 seconds.
+ WARN   7. Investing
+ WARN         took: 5.36 seconds.
+ WARN   9. Delete old nodes in year 20.
+ WARN         took: 0.813 seconds.
+ WARN Tick 24 took 13.19 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ WARN ***** STARTING TICK 25 *****
+ WARN   0. Dismantling & paying loans
+ WARN   1. Determining fuel mix
+ WARN         took: 0.125 seconds.
+ WARN   3. Clearing electricity spot and CO2 markets
+ WARN   4. Contracting Strategic Reserve 
+ WARN         took: 0.963 seconds.
+ WARN         paying took: 1.344 seconds.
+ WARN   5. Paying for maintenance & co2
+ WARN         took: 0.201 seconds.
+ WARN   6. Purchasing commodities
+ WARN         took: 0.575 seconds.
+ WARN         took: 0.575 seconds.
+ WARN   7. Investing
+ WARN         took: 3.439 seconds.
+ WARN   9. Delete old nodes in year 21.
+ WARN         took: 0.953 seconds.
+ WARN Tick 25 took 11.379 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ WARN ***** STARTING TICK 26 *****
+ WARN   0. Dismantling & paying loans
+ WARN   1. Determining fuel mix
+ WARN         took: 0.123 seconds.
+ WARN   3. Clearing electricity spot and CO2 markets
+ WARN   4. Contracting Strategic Reserve 
+ WARN         took: 0.987 seconds.
+ WARN         paying took: 1.33 seconds.
+ WARN   5. Paying for maintenance & co2
+ WARN         took: 0.193 seconds.
+ WARN   6. Purchasing commodities
+ WARN         took: 0.539 seconds.
+ WARN         took: 0.539 seconds.
+ WARN   7. Investing
+ WARN         took: 4.693 seconds.
+ WARN   9. Delete old nodes in year 22.
+ WARN         took: 0.857 seconds.
+ WARN Tick 26 took 12.408 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ WARN ***** STARTING TICK 27 *****
+ WARN   0. Dismantling & paying loans
+ WARN   1. Determining fuel mix
+ WARN         took: 0.161 seconds.
+ WARN   3. Clearing electricity spot and CO2 markets
+ WARN   4. Contracting Strategic Reserve 
+ WARN         took: 0.92 seconds.
+ WARN         paying took: 1.338 seconds.
+ WARN   5. Paying for maintenance & co2
+ WARN         took: 0.188 seconds.
+ WARN   6. Purchasing commodities
+ WARN         took: 0.559 seconds.
+ WARN         took: 0.559 seconds.
+ WARN   7. Investing
+ WARN         took: 4.009 seconds.
+ WARN   9. Delete old nodes in year 23.
+ WARN         took: 0.834 seconds.
+ WARN Tick 27 took 11.602 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ WARN ***** STARTING TICK 28 *****
+ WARN   0. Dismantling & paying loans
+ WARN   1. Determining fuel mix
+ WARN         took: 0.158 seconds.
+ WARN   3. Clearing electricity spot and CO2 markets
+ WARN   4. Contracting Strategic Reserve 
+ WARN         took: 0.925 seconds.
+ WARN         paying took: 1.276 seconds.
+ WARN   5. Paying for maintenance & co2
+ WARN         took: 0.19 seconds.
+ WARN   6. Purchasing commodities
+ WARN         took: 0.542 seconds.
+ WARN         took: 0.542 seconds.
+ WARN   7. Investing
+ WARN         took: 8.628 seconds.
+ WARN   9. Delete old nodes in year 24.
+ WARN         took: 0.796 seconds.
+ WARN Tick 28 took 16.082 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ WARN ***** STARTING TICK 29 *****
+ WARN   0. Dismantling & paying loans
+ WARN   1. Determining fuel mix
+ WARN         took: 0.139 seconds.
+ WARN   3. Clearing electricity spot and CO2 markets
+ WARN   4. Contracting Strategic Reserve 
+ WARN         took: 0.955 seconds.
+ WARN         paying took: 1.203 seconds.
+ WARN   5. Paying for maintenance & co2
+ WARN         took: 0.186 seconds.
+ WARN   6. Purchasing commodities
+ WARN         took: 0.551 seconds.
+ WARN         took: 0.551 seconds.
+ WARN   7. Investing
+ WARN         took: 11.674 seconds.
+ WARN   9. Delete old nodes in year 25.
+ WARN         took: 0.786 seconds.
+ WARN Tick 29 took 19.027 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ WARN ***** STARTING TICK 30 *****
+ WARN   0. Dismantling & paying loans
+ WARN   1. Determining fuel mix
+ WARN         took: 0.125 seconds.
+ WARN   3. Clearing electricity spot and CO2 markets
+ WARN   4. Contracting Strategic Reserve 
+ WARN         took: 0.954 seconds.
+ WARN         paying took: 1.197 seconds.
+ WARN   5. Paying for maintenance & co2
+ WARN         took: 0.186 seconds.
+ WARN   6. Purchasing commodities
+ WARN         took: 0.572 seconds.
+ WARN         took: 0.572 seconds.
+ WARN   7. Investing
+ WARN         took: 17.812 seconds.
+ WARN   9. Delete old nodes in year 26.
+ WARN         took: 0.73 seconds.
+ WARN Tick 30 took 25.059 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ WARN ***** STARTING TICK 31 *****
+ WARN   0. Dismantling & paying loans
+ WARN   1. Determining fuel mix
+ WARN         took: 0.135 seconds.
+ WARN   3. Clearing electricity spot and CO2 markets
+ WARN   4. Contracting Strategic Reserve 
+ WARN         took: 0.891 seconds.
+ WARN         paying took: 1.232 seconds.
+ WARN   5. Paying for maintenance & co2
+ WARN         took: 0.18 seconds.
+ WARN   6. Purchasing commodities
+ WARN         took: 0.527 seconds.
+ WARN         took: 0.527 seconds.
+ WARN   7. Investing
+ WARN         took: 15.072 seconds.
+ WARN   9. Delete old nodes in year 27.
+ WARN         took: 0.727 seconds.
+ WARN Tick 31 took 22.146 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ WARN ***** STARTING TICK 32 *****
+ WARN   0. Dismantling & paying loans
+ WARN   1. Determining fuel mix
+ WARN         took: 0.196 seconds.
+ WARN   3. Clearing electricity spot and CO2 markets
+ WARN   4. Contracting Strategic Reserve 
+ WARN         took: 0.993 seconds.
+ WARN         paying took: 1.249 seconds.
+ WARN   5. Paying for maintenance & co2
+ WARN         took: 0.192 seconds.
+ WARN   6. Purchasing commodities
+ WARN         took: 0.508 seconds.
+ WARN         took: 0.508 seconds.
+ WARN   7. Investing
+ WARN         took: 18.939 seconds.
+ WARN   9. Delete old nodes in year 28.
+ WARN         took: 0.71 seconds.
+ WARN Tick 32 took 26.397 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ WARN ***** STARTING TICK 33 *****
+ WARN   0. Dismantling & paying loans
+ WARN   1. Determining fuel mix
+ WARN         took: 0.17 seconds.
+ WARN   3. Clearing electricity spot and CO2 markets
+ WARN   4. Contracting Strategic Reserve 
+ WARN         took: 1.025 seconds.
+ WARN         paying took: 1.223 seconds.
+ WARN   5. Paying for maintenance & co2
+ WARN         took: 0.213 seconds.
+ WARN   6. Purchasing commodities
+ WARN         took: 0.57 seconds.
+ WARN         took: 0.57 seconds.
+ WARN   7. Investing
+ WARN         took: 9.545 seconds.
+ WARN   9. Delete old nodes in year 29.
+ WARN         took: 0.75 seconds.
+ WARN Tick 33 took 17.301 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ WARN ***** STARTING TICK 34 *****
+ WARN   0. Dismantling & paying loans
+ WARN   1. Determining fuel mix
+ WARN         took: 0.18 seconds.
+ WARN   3. Clearing electricity spot and CO2 markets
+ WARN   4. Contracting Strategic Reserve 
+ WARN         took: 1.049 seconds.
+ WARN         paying took: 1.289 seconds.
+ WARN   5. Paying for maintenance & co2
+ WARN         took: 0.233 seconds.
+ WARN   6. Purchasing commodities
+ WARN         took: 0.555 seconds.
+ WARN         took: 0.555 seconds.
+ WARN   7. Investing
+ WARN         took: 6.16 seconds.
+ WARN   9. Delete old nodes in year 30.
+ WARN         took: 0.761 seconds.
+ WARN Tick 34 took 14.281 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ WARN ***** STARTING TICK 35 *****
+ WARN   0. Dismantling & paying loans
+ WARN   1. Determining fuel mix
+ WARN         took: 0.183 seconds.
+ WARN   3. Clearing electricity spot and CO2 markets
+ WARN   4. Contracting Strategic Reserve 
+ WARN         took: 1.046 seconds.
+ WARN         paying took: 1.358 seconds.
+ WARN   5. Paying for maintenance & co2
+ WARN         took: 0.237 seconds.
+ WARN   6. Purchasing commodities
+ WARN         took: 0.559 seconds.
+ WARN         took: 0.559 seconds.
+ WARN   7. Investing
+ WARN         took: 6.156 seconds.
+ WARN   9. Delete old nodes in year 31.
+ WARN         took: 0.777 seconds.
+ WARN Tick 35 took 14.618 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ WARN ***** STARTING TICK 36 *****
+ WARN   0. Dismantling & paying loans
+ WARN   1. Determining fuel mix
+ WARN         took: 0.203 seconds.
+ WARN   3. Clearing electricity spot and CO2 markets
+ WARN   4. Contracting Strategic Reserve 
+ WARN         took: 1.085 seconds.
+ WARN         paying took: 1.366 seconds.
+ WARN   5. Paying for maintenance & co2
+ WARN         took: 0.231 seconds.
+ WARN   6. Purchasing commodities
+ WARN         took: 0.579 seconds.
+ WARN         took: 0.579 seconds.
+ WARN   7. Investing
+ WARN         took: 6.018 seconds.
+ WARN   9. Delete old nodes in year 32.
+ WARN         took: 0.773 seconds.
+ WARN Tick 36 took 14.507 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ WARN ***** STARTING TICK 37 *****
+ WARN   0. Dismantling & paying loans
+ WARN   1. Determining fuel mix
+ WARN         took: 0.183 seconds.
+ WARN   3. Clearing electricity spot and CO2 markets
+ WARN   4. Contracting Strategic Reserve 
+ WARN         took: 1.046 seconds.
+ WARN         paying took: 1.422 seconds.
+ WARN   5. Paying for maintenance & co2
+ WARN         took: 0.217 seconds.
+ WARN   6. Purchasing commodities
+ WARN         took: 0.527 seconds.
+ WARN         took: 0.527 seconds.
+ WARN   7. Investing
+ WARN         took: 3.301 seconds.
+ WARN   9. Delete old nodes in year 33.
+ WARN         took: 0.827 seconds.
+ WARN Tick 37 took 11.664 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ WARN ***** STARTING TICK 38 *****
+ WARN   0. Dismantling & paying loans
+ WARN   1. Determining fuel mix
+ WARN         took: 0.156 seconds.
+ WARN   3. Clearing electricity spot and CO2 markets
+ WARN   4. Contracting Strategic Reserve 
+ WARN         took: 1.015 seconds.
+ WARN         paying took: 1.405 seconds.
+ WARN   5. Paying for maintenance & co2
+ WARN         took: 0.208 seconds.
+ WARN   6. Purchasing commodities
+ WARN         took: 0.517 seconds.
+ WARN         took: 0.517 seconds.
+ WARN   7. Investing
+ WARN         took: 3.417 seconds.
+ WARN   9. Delete old nodes in year 34.
+ WARN         took: 0.964 seconds.
+ WARN Tick 38 took 11.713 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ WARN ***** STARTING TICK 39 *****
+ WARN   0. Dismantling & paying loans
+ WARN   1. Determining fuel mix
+ WARN         took: 0.157 seconds.
+ WARN   3. Clearing electricity spot and CO2 markets
+ WARN   4. Contracting Strategic Reserve 
+ WARN         took: 1.009 seconds.
+ WARN         paying took: 1.407 seconds.
+ WARN   5. Paying for maintenance & co2
+ WARN         took: 0.204 seconds.
+ WARN   6. Purchasing commodities
+ WARN         took: 0.508 seconds.
+ WARN         took: 0.508 seconds.
+ WARN   7. Investing
+ WARN         took: 3.28 seconds.
+ WARN   9. Delete old nodes in year 35.
+ WARN         took: 0.868 seconds.
+ WARN Tick 39 took 11.403 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ WARN ***** STARTING TICK 40 *****
+ WARN   0. Dismantling & paying loans
+ WARN   1. Determining fuel mix
+ WARN         took: 0.16 seconds.
+ WARN   3. Clearing electricity spot and CO2 markets
+ WARN   4. Contracting Strategic Reserve 
+ WARN         took: 1.059 seconds.
+ WARN         paying took: 1.365 seconds.
+ WARN   5. Paying for maintenance & co2
+ WARN         took: 0.204 seconds.
+ WARN   6. Purchasing commodities
+ WARN         took: 0.502 seconds.
+ WARN         took: 0.502 seconds.
+ WARN   7. Investing
+ WARN         took: 3.285 seconds.
+ WARN   9. Delete old nodes in year 36.
+ WARN         took: 1.039 seconds.
+ WARN Tick 40 took 11.473 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ WARN ***** STARTING TICK 41 *****
+ WARN   0. Dismantling & paying loans
+ WARN   1. Determining fuel mix
+ WARN         took: 0.217 seconds.
+ WARN   3. Clearing electricity spot and CO2 markets
+ WARN   4. Contracting Strategic Reserve 
+ WARN         took: 1.019 seconds.
+ WARN         paying took: 1.373 seconds.
+ WARN   5. Paying for maintenance & co2
+ WARN         took: 0.206 seconds.
+ WARN   6. Purchasing commodities
+ WARN         took: 0.525 seconds.
+ WARN         took: 0.525 seconds.
+ WARN   7. Investing
+ WARN         took: 4.036 seconds.
+ WARN   9. Delete old nodes in year 37.
+ WARN         took: 0.943 seconds.
+ WARN Tick 41 took 12.654 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ WARN ***** STARTING TICK 42 *****
+ WARN   0. Dismantling & paying loans
+ WARN   1. Determining fuel mix
+ WARN         took: 0.195 seconds.
+ WARN   3. Clearing electricity spot and CO2 markets
+ WARN   4. Contracting Strategic Reserve 
+ WARN         took: 1.008 seconds.
+ WARN         paying took: 1.359 seconds.
+ WARN   5. Paying for maintenance & co2
+ WARN         took: 0.205 seconds.
+ WARN   6. Purchasing commodities
+ WARN         took: 0.531 seconds.
+ WARN         took: 0.531 seconds.
+ WARN   7. Investing
+ WARN         took: 3.895 seconds.
+ WARN   9. Delete old nodes in year 38.
+ WARN         took: 0.902 seconds.
+ WARN Tick 42 took 12.188 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ WARN ***** STARTING TICK 43 *****
+ WARN   0. Dismantling & paying loans
+ WARN   1. Determining fuel mix
+ WARN         took: 0.157 seconds.
+ WARN   3. Clearing electricity spot and CO2 markets
+ WARN   4. Contracting Strategic Reserve 
+ WARN         took: 1.041 seconds.
+ WARN         paying took: 1.319 seconds.
+ WARN   5. Paying for maintenance & co2
+ WARN         took: 0.208 seconds.
+ WARN   6. Purchasing commodities
+ WARN         took: 0.544 seconds.
+ WARN         took: 0.544 seconds.
+ WARN   7. Investing
+ WARN         took: 4.293 seconds.
+ WARN   9. Delete old nodes in year 39.
+ WARN         took: 0.817 seconds.
+ WARN Tick 43 took 12.393 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ WARN ***** STARTING TICK 44 *****
+ WARN   0. Dismantling & paying loans
+ WARN   1. Determining fuel mix
+ WARN         took: 0.164 seconds.
+ WARN   3. Clearing electricity spot and CO2 markets
+ WARN   4. Contracting Strategic Reserve 
+ WARN         took: 1.078 seconds.
+ WARN         paying took: 1.318 seconds.
+ WARN   5. Paying for maintenance & co2
+ WARN         took: 0.248 seconds.
+ WARN   6. Purchasing commodities
+ WARN         took: 0.494 seconds.
+ WARN         took: 0.494 seconds.
+ WARN   7. Investing
+ WARN         took: 4.102 seconds.
+ WARN   9. Delete old nodes in year 40.
+ WARN         took: 0.863 seconds.
+ WARN Tick 44 took 12.309 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ WARN ***** STARTING TICK 45 *****
+ WARN   0. Dismantling & paying loans
+ WARN   1. Determining fuel mix
+ WARN         took: 0.157 seconds.
+ WARN   3. Clearing electricity spot and CO2 markets
+ WARN   4. Contracting Strategic Reserve 
+ WARN         took: 0.986 seconds.
+ WARN         paying took: 1.365 seconds.
+ WARN   5. Paying for maintenance & co2
+ WARN         took: 0.209 seconds.
+ WARN   6. Purchasing commodities
+ WARN         took: 0.548 seconds.
+ WARN         took: 0.548 seconds.
+ WARN   7. Investing
+ WARN         took: 6.848 seconds.
+ WARN   9. Delete old nodes in year 41.
+ WARN         took: 0.779 seconds.
+ WARN Tick 45 took 14.933 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ WARN ***** STARTING TICK 46 *****
+ WARN   0. Dismantling & paying loans
+ WARN   1. Determining fuel mix
+ WARN         took: 0.16 seconds.
+ WARN   3. Clearing electricity spot and CO2 markets
+ WARN   4. Contracting Strategic Reserve 
+ WARN         took: 1.049 seconds.
+ WARN         paying took: 1.317 seconds.
+ WARN   5. Paying for maintenance & co2
+ WARN         took: 0.243 seconds.
+ WARN   6. Purchasing commodities
+ WARN         took: 0.543 seconds.
+ WARN         took: 0.543 seconds.
+ WARN   7. Investing
+ WARN         took: 5.168 seconds.
+ WARN   9. Delete old nodes in year 42.
+ WARN         took: 0.846 seconds.
+ WARN Tick 46 took 13.305 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ WARN ***** STARTING TICK 47 *****
+ WARN   0. Dismantling & paying loans
+ WARN   1. Determining fuel mix
+ WARN         took: 0.163 seconds.
+ WARN   3. Clearing electricity spot and CO2 markets
+ WARN   4. Contracting Strategic Reserve 
+ WARN         took: 0.991 seconds.
+ WARN         paying took: 1.356 seconds.
+ WARN   5. Paying for maintenance & co2
+ WARN         took: 0.201 seconds.
+ WARN   6. Purchasing commodities
+ WARN         took: 0.54 seconds.
+ WARN         took: 0.54 seconds.
+ WARN   7. Investing
+ WARN         took: 6.163 seconds.
+ WARN   9. Delete old nodes in year 43.
+ WARN         took: 0.904 seconds.
+ WARN Tick 47 took 14.389 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ WARN ***** STARTING TICK 48 *****
+ WARN   0. Dismantling & paying loans
+ WARN   1. Determining fuel mix
+ WARN         took: 0.168 seconds.
+ WARN   3. Clearing electricity spot and CO2 markets
+ WARN   4. Contracting Strategic Reserve 
+ WARN         took: 0.994 seconds.
+ WARN         paying took: 1.344 seconds.
+ WARN   5. Paying for maintenance & co2
+ WARN         took: 0.202 seconds.
+ WARN   6. Purchasing commodities
+ WARN         took: 0.541 seconds.
+ WARN         took: 0.541 seconds.
+ WARN   7. Investing
+ WARN         took: 4.536 seconds.
+ WARN   9. Delete old nodes in year 44.
+ WARN         took: 0.772 seconds.
+ WARN Tick 48 took 12.592 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ WARN ***** STARTING TICK 49 *****
+ WARN   0. Dismantling & paying loans
+ WARN   1. Determining fuel mix
+ WARN         took: 0.17 seconds.
+ WARN   3. Clearing electricity spot and CO2 markets
+ WARN   4. Contracting Strategic Reserve 
+ WARN         took: 1.069 seconds.
+ WARN         paying took: 1.306 seconds.
+ WARN   5. Paying for maintenance & co2
+ WARN         took: 0.202 seconds.
+ WARN   6. Purchasing commodities
+ WARN         took: 0.548 seconds.
+ WARN         took: 0.548 seconds.
+ WARN   7. Investing
+ WARN         took: 3.378 seconds.
+ WARN   9. Delete old nodes in year 45.
+ WARN         took: 0.792 seconds.
+ WARN Tick 49 took 11.441 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ WARN ***** STARTING TICK 50 *****
+ WARN   0. Dismantling & paying loans
+ WARN   1. Determining fuel mix
+ WARN         took: 0.176 seconds.
+ WARN   3. Clearing electricity spot and CO2 markets
+ WARN   4. Contracting Strategic Reserve 
+ WARN         took: 1.078 seconds.
+ WARN         paying took: 1.349 seconds.
+ WARN   5. Paying for maintenance & co2
+ WARN         took: 0.204 seconds.
+ WARN   6. Purchasing commodities
+ WARN         took: 0.545 seconds.
+ WARN         took: 0.545 seconds.
+ WARN   7. Investing
+ WARN         took: 3.93 seconds.
+ WARN   9. Delete old nodes in year 46.
+ WARN         took: 0.812 seconds.
+ WARN Tick 50 took 12.547 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ WARN ***** STARTING TICK 51 *****
+ WARN   0. Dismantling & paying loans
+ WARN   1. Determining fuel mix
+ WARN         took: 0.171 seconds.
+ WARN   3. Clearing electricity spot and CO2 markets
+ WARN   4. Contracting Strategic Reserve 
+ WARN         took: 0.987 seconds.
+ WARN         paying took: 1.304 seconds.
+ WARN   5. Paying for maintenance & co2
+ WARN         took: 0.199 seconds.
+ WARN   6. Purchasing commodities
+ WARN         took: 0.533 seconds.
+ WARN         took: 0.533 seconds.
+ WARN   7. Investing
+ WARN         took: 4.538 seconds.
+ WARN   9. Delete old nodes in year 47.
+ WARN         took: 0.92 seconds.
+ WARN Tick 51 took 12.496 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ WARN ***** STARTING TICK 52 *****
+ WARN   0. Dismantling & paying loans
+ WARN   1. Determining fuel mix
+ WARN         took: 0.204 seconds.
+ WARN   3. Clearing electricity spot and CO2 markets
+ WARN   4. Contracting Strategic Reserve 
+ WARN         took: 1.038 seconds.
+ WARN         paying took: 1.267 seconds.
+ WARN   5. Paying for maintenance & co2
+ WARN         took: 0.192 seconds.
+ WARN   6. Purchasing commodities
+ WARN         took: 0.538 seconds.
+ WARN         took: 0.538 seconds.
+ WARN   7. Investing
+ WARN         took: 9.225 seconds.
+ WARN   9. Delete old nodes in year 48.
+ WARN         took: 0.785 seconds.
+ WARN Tick 52 took 16.947 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ WARN ***** STARTING TICK 53 *****
+ WARN   0. Dismantling & paying loans
+ WARN   1. Determining fuel mix
+ WARN         took: 0.167 seconds.
+ WARN   3. Clearing electricity spot and CO2 markets
+ WARN   4. Contracting Strategic Reserve 
+ WARN         took: 1.019 seconds.
+ WARN         paying took: 1.249 seconds.
+ WARN   5. Paying for maintenance & co2
+ WARN         took: 0.188 seconds.
+ WARN   6. Purchasing commodities
+ WARN         took: 0.528 seconds.
+ WARN         took: 0.528 seconds.
+ WARN   7. Investing
+ WARN         took: 2.917 seconds.
+ WARN   9. Delete old nodes in year 49.
+ WARN         took: 0.86 seconds.
+ WARN Tick 53 took 10.497 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ WARN ***** STARTING TICK 54 *****
+ WARN   0. Dismantling & paying loans
+ WARN   1. Determining fuel mix
+ WARN         took: 0.237 seconds.
+ WARN   3. Clearing electricity spot and CO2 markets
+ WARN   4. Contracting Strategic Reserve 
+ WARN         took: 0.946 seconds.
+ WARN         paying took: 1.352 seconds.
+ WARN   5. Paying for maintenance & co2
+ WARN         took: 0.179 seconds.
+ WARN   6. Purchasing commodities
+ WARN         took: 0.519 seconds.
+ WARN         took: 0.519 seconds.
+ WARN   7. Investing
+ WARN         took: 5.183 seconds.
+ WARN   9. Delete old nodes in year 50.
+ WARN         took: 0.774 seconds.
+ WARN Tick 54 took 12.678 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ WARN ***** STARTING TICK 55 *****
+ WARN   0. Dismantling & paying loans
+ WARN   1. Determining fuel mix
+ WARN         took: 0.156 seconds.
+ WARN   3. Clearing electricity spot and CO2 markets
+ WARN   4. Contracting Strategic Reserve 
+ WARN         took: 1.01 seconds.
+ WARN         paying took: 1.248 seconds.
+ WARN   5. Paying for maintenance & co2
+ WARN         took: 0.185 seconds.
+ WARN   6. Purchasing commodities
+ WARN         took: 0.53 seconds.
+ WARN         took: 0.53 seconds.
+ WARN   7. Investing
+ WARN         took: 5.824 seconds.
+ WARN   9. Delete old nodes in year 51.
+ WARN         took: 0.83 seconds.
+ WARN Tick 55 took 13.278 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ WARN ***** STARTING TICK 56 *****
+ WARN   0. Dismantling & paying loans
+ WARN   1. Determining fuel mix
+ WARN         took: 0.162 seconds.
+ WARN   3. Clearing electricity spot and CO2 markets
+ WARN   4. Contracting Strategic Reserve 
+ WARN         took: 0.939 seconds.
+ WARN         paying took: 1.293 seconds.
+ WARN   5. Paying for maintenance & co2
+ WARN         took: 0.197 seconds.
+ WARN   6. Purchasing commodities
+ WARN         took: 0.484 seconds.
+ WARN         took: 0.484 seconds.
+ WARN   7. Investing
+ WARN         took: 12.467 seconds.
+ WARN   9. Delete old nodes in year 52.
+ WARN         took: 0.747 seconds.
+ WARN Tick 56 took 19.949 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ WARN ***** STARTING TICK 57 *****
+ WARN   0. Dismantling & paying loans
+ WARN   1. Determining fuel mix
+ WARN         took: 0.17 seconds.
+ WARN   3. Clearing electricity spot and CO2 markets
+ WARN   4. Contracting Strategic Reserve 
+ WARN         took: 1.022 seconds.
+ WARN         paying took: 1.244 seconds.
+ WARN   5. Paying for maintenance & co2
+ WARN         took: 0.201 seconds.
+ WARN   6. Purchasing commodities
+ WARN         took: 0.535 seconds.
+ WARN         took: 0.535 seconds.
+ WARN   7. Investing
+ WARN         took: 13.301 seconds.
+ WARN   9. Delete old nodes in year 53.
+ WARN         took: 0.716 seconds.
+ WARN Tick 57 took 20.845 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ WARN ***** STARTING TICK 58 *****
+ WARN   0. Dismantling & paying loans
+ WARN   1. Determining fuel mix
+ WARN         took: 0.181 seconds.
+ WARN   3. Clearing electricity spot and CO2 markets
+ WARN   4. Contracting Strategic Reserve 
+ WARN         took: 1.028 seconds.
+ WARN         paying took: 1.243 seconds.
+ WARN   5. Paying for maintenance & co2
+ WARN         took: 0.195 seconds.
+ WARN   6. Purchasing commodities
+ WARN         took: 0.532 seconds.
+ WARN         took: 0.532 seconds.
+ WARN   7. Investing
+ WARN         took: 22.348 seconds.
+ WARN   9. Delete old nodes in year 54.
+ WARN         took: 0.758 seconds.
+ WARN Tick 58 took 29.962 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ WARN ***** STARTING TICK 59 *****
+ WARN   0. Dismantling & paying loans
+ WARN   1. Determining fuel mix
+ WARN         took: 0.179 seconds.
+ WARN   3. Clearing electricity spot and CO2 markets
+ WARN   4. Contracting Strategic Reserve 
+ WARN         took: 0.979 seconds.
+ WARN         paying took: 1.324 seconds.
+ WARN   5. Paying for maintenance & co2
+ WARN         took: 0.204 seconds.
+ WARN   6. Purchasing commodities
+ WARN         took: 0.555 seconds.
+ WARN         took: 0.555 seconds.
+ WARN   7. Investing
+ WARN         took: 19.887 seconds.
+ WARN   9. Delete old nodes in year 55.
+ WARN         took: 0.815 seconds.
+ WARN Tick 59 took 27.713 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ WARN ***** STARTING TICK 60 *****
+ WARN   0. Dismantling & paying loans
+ WARN   1. Determining fuel mix
+ WARN         took: 0.19 seconds.
+ WARN   3. Clearing electricity spot and CO2 markets
+ WARN   4. Contracting Strategic Reserve 
+ WARN         took: 1.013 seconds.
+ WARN         paying took: 1.346 seconds.
+ WARN   5. Paying for maintenance & co2
+ WARN         took: 0.215 seconds.
+ WARN   6. Purchasing commodities
+ WARN         took: 0.543 seconds.
+ WARN         took: 0.543 seconds.
+ WARN   7. Investing
+ WARN         took: 17.717 seconds.
+ WARN   9. Delete old nodes in year 56.
+ WARN         took: 0.758 seconds.
+ WARN Tick 60 took 25.757 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ WARN ***** STARTING TICK 61 *****
+ WARN   0. Dismantling & paying loans
+ WARN   1. Determining fuel mix
+ WARN         took: 0.204 seconds.
+ WARN   3. Clearing electricity spot and CO2 markets
+ WARN   4. Contracting Strategic Reserve 
+ WARN         took: 1.157 seconds.
+ WARN         paying took: 1.393 seconds.
+ WARN   5. Paying for maintenance & co2
+ WARN         took: 0.284 seconds.
+ WARN   6. Purchasing commodities
+ WARN         took: 0.516 seconds.
+ WARN         took: 0.516 seconds.
+ WARN   7. Investing
+ WARN         took: 12.274 seconds.
+ WARN   9. Delete old nodes in year 57.
+ WARN         took: 0.772 seconds.
+ WARN Tick 61 took 20.771 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ WARN ***** STARTING TICK 62 *****
+ WARN   0. Dismantling & paying loans
+ WARN   1. Determining fuel mix
+ WARN         took: 0.211 seconds.
+ WARN   3. Clearing electricity spot and CO2 markets
+ WARN   4. Contracting Strategic Reserve 
+ WARN         took: 1.195 seconds.
+ WARN         paying took: 1.429 seconds.
+ WARN   5. Paying for maintenance & co2
+ WARN         took: 0.285 seconds.
+ WARN   6. Purchasing commodities
+ WARN         took: 0.521 seconds.
+ WARN         took: 0.521 seconds.
+ WARN   7. Investing
+ WARN         took: 7.278 seconds.
+ WARN   9. Delete old nodes in year 58.
+ WARN         took: 0.796 seconds.
+ WARN Tick 62 took 16.114 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ WARN ***** STARTING TICK 63 *****
+ WARN   0. Dismantling & paying loans
+ WARN   1. Determining fuel mix
+ WARN         took: 0.211 seconds.
+ WARN   3. Clearing electricity spot and CO2 markets
+ WARN   4. Contracting Strategic Reserve 
+ WARN         took: 1.175 seconds.
+ WARN         paying took: 1.459 seconds.
+ WARN   5. Paying for maintenance & co2
+ WARN         took: 0.241 seconds.
+ WARN   6. Purchasing commodities
+ WARN         took: 0.561 seconds.
+ WARN         took: 0.561 seconds.
+ WARN   7. Investing
+ WARN         took: 5.157 seconds.
+ WARN   9. Delete old nodes in year 59.
+ WARN         took: 0.819 seconds.
+ WARN Tick 63 took 14.032 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ WARN ***** STARTING TICK 64 *****
+ WARN   0. Dismantling & paying loans
+ WARN   1. Determining fuel mix
+ WARN         took: 0.202 seconds.
+ WARN   3. Clearing electricity spot and CO2 markets
+ WARN   4. Contracting Strategic Reserve 
+ WARN         took: 1.741 seconds.
+ WARN         paying took: 1.525 seconds.
+ WARN   5. Paying for maintenance & co2
+ WARN         took: 0.235 seconds.
+ WARN   6. Purchasing commodities
+ WARN         took: 0.54 seconds.
+ WARN         took: 0.54 seconds.
+ WARN   7. Investing
+ WARN         took: 14.325 seconds.
+ WARN   9. Delete old nodes in year 60.
+ WARN         took: 0.891 seconds.
+ WARN Tick 64 took 23.85 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ WARN ***** STARTING TICK 65 *****
+ WARN   0. Dismantling & paying loans
+ WARN   1. Determining fuel mix
+ WARN         took: 0.179 seconds.
+ WARN   3. Clearing electricity spot and CO2 markets
+ WARN   4. Contracting Strategic Reserve 
+ WARN         took: 1.102 seconds.
+ WARN         paying took: 1.528 seconds.
+ WARN   5. Paying for maintenance & co2
+ WARN         took: 0.217 seconds.
+ WARN   6. Purchasing commodities
+ WARN         took: 0.528 seconds.
+ WARN         took: 0.528 seconds.
+ WARN   7. Investing
+ WARN         took: 5.267 seconds.
+ WARN   9. Delete old nodes in year 61.
+ WARN         took: 0.901 seconds.
+ WARN Tick 65 took 13.884 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ WARN ***** STARTING TICK 66 *****
+ WARN   0. Dismantling & paying loans
+ WARN   1. Determining fuel mix
+ WARN         took: 0.19 seconds.
+ WARN   3. Clearing electricity spot and CO2 markets
+ WARN   4. Contracting Strategic Reserve 
+ WARN         took: 1.099 seconds.
+ WARN         paying took: 1.508 seconds.
+ WARN   5. Paying for maintenance & co2
+ WARN         took: 0.209 seconds.
+ WARN   6. Purchasing commodities
+ WARN         took: 0.532 seconds.
+ WARN         took: 0.532 seconds.
+ WARN   7. Investing
+ WARN         took: 4.572 seconds.
+ WARN   9. Delete old nodes in year 62.
+ WARN         took: 1.059 seconds.
+ WARN Tick 66 took 13.23 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ WARN ***** STARTING TICK 67 *****
+ WARN   0. Dismantling & paying loans
+ WARN   1. Determining fuel mix
+ WARN         took: 0.186 seconds.
+ WARN   3. Clearing electricity spot and CO2 markets
+ WARN   4. Contracting Strategic Reserve 
+ WARN         took: 1.176 seconds.
+ WARN         paying took: 1.503 seconds.
+ WARN   5. Paying for maintenance & co2
+ WARN         took: 0.263 seconds.
+ WARN   6. Purchasing commodities
+ WARN         took: 0.515 seconds.
+ WARN         took: 0.515 seconds.
+ WARN   7. Investing
+ WARN         took: 26.081 seconds.
+ WARN   9. Delete old nodes in year 63.
+ WARN         took: 0.961 seconds.
+ WARN Tick 67 took 34.877 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ WARN ***** STARTING TICK 68 *****
+ WARN   0. Dismantling & paying loans
+ WARN   1. Determining fuel mix
+ WARN         took: 0.19 seconds.
+ WARN   3. Clearing electricity spot and CO2 markets
+ WARN   4. Contracting Strategic Reserve 
+ WARN         took: 1.082 seconds.
+ WARN         paying took: 1.598 seconds.
+ WARN   5. Paying for maintenance & co2
+ WARN         took: 0.242 seconds.
+ WARN   6. Purchasing commodities
+ WARN         took: 0.585 seconds.
+ WARN         took: 0.585 seconds.
+ WARN   7. Investing
+ WARN         took: 4.306 seconds.
+ WARN   9. Delete old nodes in year 64.
+ WARN         took: 0.94 seconds.
+ WARN Tick 68 took 13.193 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ WARN ***** STARTING TICK 69 *****
+ WARN   0. Dismantling & paying loans
+ WARN   1. Determining fuel mix
+ WARN         took: 0.174 seconds.
+ WARN   3. Clearing electricity spot and CO2 markets
+ WARN   4. Contracting Strategic Reserve 
+ WARN         took: 1.152 seconds.
+ WARN         paying took: 1.509 seconds.
+ WARN   5. Paying for maintenance & co2
+ WARN         took: 0.259 seconds.
+ WARN   6. Purchasing commodities
+ WARN         took: 0.509 seconds.
+ WARN         took: 0.509 seconds.
+ WARN   7. Investing
+ WARN         took: 3.866 seconds.
+ WARN   9. Delete old nodes in year 65.
+ WARN         took: 1.076 seconds.
+ WARN Tick 69 took 12.8 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ WARN ***** STARTING TICK 70 *****
+ WARN   0. Dismantling & paying loans
+ WARN   1. Determining fuel mix
+ WARN         took: 0.181 seconds.
+ WARN   3. Clearing electricity spot and CO2 markets
+ WARN   4. Contracting Strategic Reserve 
+ WARN         took: 1.198 seconds.
+ WARN         paying took: 1.612 seconds.
+ WARN   5. Paying for maintenance & co2
+ WARN         took: 0.244 seconds.
+ WARN   6. Purchasing commodities
+ WARN         took: 0.574 seconds.
+ WARN         took: 0.574 seconds.
+ WARN   7. Investing
+ WARN         took: 51.072 seconds.
+ WARN   9. Delete old nodes in year 66.
+ WARN         took: 0.855 seconds.
+ WARN Tick 70 took 60.387 seconds.
+ERROR from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+javax.script.ScriptException: from doPriv: javax.script.ScriptException: java.util.NoSuchElementException
+	at agentspring.service.DbServiceImpl.executeQuery(DbServiceImpl.java:145)
+	at agentspring.service.DbServiceImpl.executeGremlinQueries(DbServiceImpl.java:80)
+	at agentspring.HPCService$EngineListener.runQueries(HPCService.java:189)
+	at agentspring.HPCService$EngineListener.run(HPCService.java:171)
+ WARN Simulation is terminating!!!
+ WARN ***** STARTING TICK 71 *****
+ WARN   0. Dismantling & paying loans
+ WARN Stopping AgentSpring!

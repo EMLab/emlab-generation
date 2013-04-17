@@ -116,7 +116,7 @@
 	<!-- Electricity Spot -->
 	<bean id="beneluxElectricitySpotMarket" class="emlab.gen.domain.market.electricity.ElectricitySpotMarket"
 		p:name="Country A electricity spot market" p:auction="false"
-		p:referencePrice="40" p:valueOfLostLoad="10000">
+		p:referencePrice="40" p:valueOfLostLoad="5000">
 		<property name="substance" ref="electricity" />
 		<property name="demandGrowthTrend" ref="demandGrowthTrendDE" />
 		<property name="zone" ref="de" />
@@ -379,7 +379,7 @@
 		p:name="Power Plant Maintainer" />
 
 	<bean id="beneluxPowerPortfolio" class="emlab.gen.domain.factory.ElectricityProducerFactory">
-		<property name="capacityMargin" value="0.5" />
+		<property name="capacityMargin" value="0.50" />
 		<property name="portfolioShares">
 			<map>
 				<entry>
@@ -478,8 +478,8 @@
 	</bean>
 	
 	<bean id="strategicReserveOperatorA" class="emlab.gen.domain.agent.StrategicReserveOperator"
-		p:name="StrategicReserveOperatorDE" p:cash="0" p:reservePriceSR="2000"
-		p:reserveVolumePercentSR="0.05">
+		p:name="StrategicReserveOperatorDE" p:cash="0" p:reservePriceSR="3000"
+		p:reserveVolumePercentSR="0.2">
 		<property name="zone" ref="de" />
 	</bean>
 

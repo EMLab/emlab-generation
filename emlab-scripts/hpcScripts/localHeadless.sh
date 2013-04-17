@@ -5,8 +5,8 @@
 ########################################################################
 USAGE="Provide name of run and number of runs"
 #Load configuration script to substitute
-if [ -f scriptConfigurations.cfg ];then 
-	. scriptConfigurations.cfg
+if [ -f ~/emlab/emlab-scripts/hpcScripts/scriptConfigurations.cfg ]; then 
+	. ~/emlab/emlab-scripts/hpcScripts/scriptConfigurations.cfg
 	HOME=$REMOTERESULTFOLDER
 else
     echo "Define scriptConfigurations.cfg, by changing the template. Exiting script."
@@ -15,13 +15,13 @@ fi
 
 ## the first parameter gives the jobname, the second the scenario-file including the xml file-ending
 ## Example sh localHeadless.sh example 2 scenarioA-ToyModel.xml
-JOBNAME=$1
+JOBNAME=testcase
 #NROFRUNS=$2
-SCENARIO=$2
+SCENARIO=scenarioB-OneCountryDE.xml
 SCENARIOPATH=file://$LOCALSCENARIOFOLDER
-#SCENARIO=scenarioE-MinCO2-resTarget.xml
+#SCENARIO=scenarioB-OneCountryDE.xml
 
-mkdir $LOCALRESULTFOLDER/$JOBNAME
+mkdir $LOCALRESULTFOLDER/testcase
 
 for PBS_ARRAYID in {1..1}
 do

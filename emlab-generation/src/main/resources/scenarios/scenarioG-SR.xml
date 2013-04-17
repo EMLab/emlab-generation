@@ -627,7 +627,7 @@
 					<key>
 						<ref bean="CCGT" />
 					</key>
-					<value>0.1271</value>
+					<value>0.1371</value>
 				</entry>
 				<entry>
 					<key>
@@ -730,8 +730,8 @@
 	</bean>
 
 	<bean id="strategicReserveOperatorB" class="emlab.gen.domain.agent.StrategicReserveOperator"
-		p:name="StrategicReserveOperatorDE" p:cash="0" p:reservePriceSR="3000"
-		p:reserveVolumePercentSR="0.1">
+		p:name="StrategicReserveOperatorDE" p:cash="0" p:reservePriceSR="0"
+		p:reserveVolumePercentSR="0">
 		<property name="zone" ref="de" />
 	</bean>
 
@@ -1068,7 +1068,7 @@
 	<bean id="nuclearInvestmentCostTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0" p:start="2874800" />
 	<bean id="nuclearFixedOperatingCostTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0" p:start="71870" />
 	<bean id="nuclearEfficiencyTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0.00001" p:start=".33" />
-
+	
 	<!-- Parameter file -->
 	<bean id="projectPropertyConfigurer"
 		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
