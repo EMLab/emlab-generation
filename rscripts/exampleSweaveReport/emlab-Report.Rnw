@@ -1,0 +1,66 @@
+% ----------------------------------
+\documentclass{article} %
+\usepackage{Sweave}
+\usepackage{subfig}
+\usepackage{graphicx}
+\usepackage[margin=0.2in, paperwidth=11in, paperheight=17in]{geometry}
+\SweaveOpts{echo=FALSE}
+
+<<echo=false,results=hide>>=
+setwd("~/emlab-generation/rscripts/")
+source("rConfig.R")
+source("simulation.R")
+source("singleRunAnalysis.R")
+@
+
+\newcommand\report[1]{
+
+  \begin{figure}
+    \subfloat[Segment 1]{\label{fig:esm1}\includegraphics[width=9in]{figures/CountryAelectricityspotmarket_Tick#1_Segment1.pdf}}\\
+    \subfloat[Segment 10]{\label{fig:esm3}\includegraphics[width=9in]{figures/CountryAelectricityspotmarket_Tick#1_Segment10.pdf}}\\
+    \subfloat[Segment 20]{\label{fig:esm5}\includegraphics[width=9in]{figures/CountryAelectricityspotmarket_Tick#1_Segment20.pdf}}
+    \caption{Electricity Spot Market A, Tick #1}
+  \end{figure}
+  
+  \clearpage 
+  
+    \begin{figure}
+    \subfloat[Segment 1]{\label{fig:esm1}\includegraphics[width=9in]{figures/CountryBelectricityspotmarket_Tick#1_Segment1.pdf}}\\
+    \subfloat[Segment 10]{\label{fig:esm3}\includegraphics[width=9in]{figures/CountryBelectricityspotmarket_Tick#1_Segment10.pdf}}\\
+    \subfloat[Segment 20]{\label{fig:esm5}\includegraphics[width=9in]{figures/CountryBelectricityspotmarket_Tick#1_Segment20.pdf}}
+    \caption{Electricity Spot Market B, Tick #1}
+  \end{figure}
+}
+
+\newcommand\postrunplot[2]{
+  \begin{figure}
+        \includegraphics[width=9in]{figures/#1.pdf}
+        \caption{#2}
+  \end{figure}
+}
+
+\begin{document}
+\SweaveOpts{concordance=TRUE}
+
+<<results=tex>>=
+createReportPdf <- function(tick,listOfDFs) {
+  with(listOfDFs,printPowerPlantDispatchForAllTicksAndMarkets(tick, simpleQueriesDF, PowerPlantDispatchPlans, 
+                                                         SegmentClearingPoints, DemandLevels, paste(rscriptFolder,"exampleSweaveReport/figures/",sep=""), ".pdf"))
+  cat("\\report{",tick,"}\n",sep="")
+}
+
+createPostRunPlots <- function(listOfDFs, listOfVariablesAndCaptions){
+  names(listOfDFs$simpleQueriesDF)<-sapply(names(listOfDFs$simpleQueriesDF), function(x){gsub(x=x, pattern=" ", replacement="_")})
+  for(variableAndCaption in listOfVariablesAndCaptions){
+    filename=sub(x=variableAndCaption[[1]], pattern=' ', replacement='_')
+    with(listOfDFs, printTimeSeriesForVariable(df=simpleQueriesDF, variable=filename, ylabel=variableAndCaption[[2]], filetype=".pdf", filename=filename, analysisFolder=paste(rscriptFolder,"exampleSweaveReport/figures/", sep="")))
+    cat("\\postrunplot{",filename,"}{",variableAndCaption[[3]],"}\n",sep="")
+  }
+}
+setwd("~/emlab-generation/rscripts/exampleSweaveReport/")
+runResult<-runSimulation(createReportPdf,10, "exampleSweaveReport")
+
+createPostRunPlots(runResult, list(list("Avg_El_PricesinEURpMWh_Country A", "Electr. Price [Eur/MWh]", "Average Eletricity Price in Country A"),list("Avg_El_PricesinEURpMWh_Country B", "Electr. Price [Eur/MWh]", "Average Eletricity Price in Country B"), list("CO2Emissions_inTonpA",expression(paste(CO[2], " Emissions [Ton/a]", sep="")), "CO$_2$ Emissions"), list("CO2Auction", expression(paste(CO[2]," Price [EUR/t]", sep="")), "CO$_2$ Price")))
+@
+
+\end{document}
