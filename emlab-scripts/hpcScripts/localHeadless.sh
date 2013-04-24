@@ -15,13 +15,13 @@ fi
 
 ## the first parameter gives the jobname, the second the scenario-file including the xml file-ending
 ## Example sh localHeadless.sh example 2 scenarioA-ToyModel.xml
-JOBNAME=testcase
+JOBNAME=ThermalMix
 #NROFRUNS=$2
-SCENARIO=scenarioB-OneCountryDE.xml
+SCENARIO=scenarioB-ThermalMixDE.xml
 SCENARIOPATH=file://$LOCALSCENARIOFOLDER
-#SCENARIO=scenarioB-OneCountryDE.xml
+#SCENARIO=scenarioB-ThermalMixDE.xml
 
-mkdir $LOCALRESULTFOLDER/testcase
+mkdir $LOCALRESULTFOLDER/ThermalMix
 
 for PBS_ARRAYID in {1..1}
 do

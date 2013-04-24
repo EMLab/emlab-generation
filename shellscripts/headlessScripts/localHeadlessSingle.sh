@@ -5,8 +5,8 @@
 ########################################################################
 USAGE="Provide name of run and name of scenario file."
 #Load configuration script to substitute
-if [ -f scriptConfigurations.cfg ];then 
-	. scriptConfigurations.cfg
+if [ -f ~/emlab/shellscripts/headlessScripts/scriptConfigurations.cfg ];then 
+	. ~/emlab/shellscripts/headlessScripts/scriptConfigurations.cfg
 	HOME=$REMOTERESULTFOLDER
 else
     echo "Define scriptConfigurations.cfg, by changing the template. Exiting script."
@@ -15,12 +15,12 @@ fi
 
 ## the first parameter gives the jobname, the second the scenario-file including the xml file-ending
 ## Example sh localHeadless.sh example scenarioA-ToyModel.xml
-JOBNAME=$1
-SCENARIO=$2
+JOBNAME=
+SCENARIO=scenarioB-ThermalMixDE.xml
 SCENARIOPATH=file://$LOCALSCENARIOFOLDER
 
-mkdir $LOCALRESULTFOLDER/$JOBNAME
-cd $LOCALRESULTFOLDER/$JOBNAME
+mkdir $LOCALRESULTFOLDER/ThermalMix1
+cd $LOCALRESULTFOLDER/ThermalMix1
 if [ ! -z $3 ] 
 then 
     QUERYCOMMAND="-Dquery.file=$3"
