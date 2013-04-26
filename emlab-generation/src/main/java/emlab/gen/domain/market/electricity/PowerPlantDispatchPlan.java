@@ -71,7 +71,7 @@ public class PowerPlantDispatchPlan extends Bid {
      */
     private double bidWithoutCO2;
 
-   // private long time;
+    // private long time;
 
     private int SRstatus;
     private double oldPrice;
@@ -128,16 +128,16 @@ public class PowerPlantDispatchPlan extends Bid {
         this.capacityLongTermContract = capacityLongTermContract;
     }
 
-   
-   // public long getTime() {
-    //    return time;
-  //  }
 
-    
-   // public void setTime(long time) {
+    // public long getTime() {
+    //    return time;
+    //  }
+
+
+    // public void setTime(long time) {
     //    this.time = time;
-   //     this.ppdpTime = (int) time;
-   // }
+    //     this.ppdpTime = (int) time;
+    // }
 
     @Override
     public String toString() {
@@ -154,13 +154,14 @@ public class PowerPlantDispatchPlan extends Bid {
         this.bidWithoutCO2 = bidWithoutCO2;
     }
 
-       public boolean isSupplyBid() {
+    @Override
+    public boolean isSupplyBid() {
         return supplyBid;
     }
 
     public void specifyNotPersist(PowerPlant plant, EnergyProducer producer, ElectricitySpotMarket market,
             Segment segment, long time, double price, double bidWithoutCO2, double spotMarketCapacity,
-            double longTermContractCapacity, int status, int sRstatus) {
+            double longTermContractCapacity, int status, int sRstatus, double oldPrice) {
         this.setPowerPlant(plant);
         this.setSegment(segment);
         this.setTime(time);
@@ -172,6 +173,7 @@ public class PowerPlantDispatchPlan extends Bid {
         this.setCapacityLongTermContract(longTermContractCapacity);
         this.setStatus(status);
         this.setSRstatus(sRstatus);
+        this.setOldPrice(oldPrice);
 
     }
 
@@ -179,10 +181,10 @@ public class PowerPlantDispatchPlan extends Bid {
     @Transactional
     public void specifyAndPersist(PowerPlant plant, EnergyProducer producer, ElectricitySpotMarket market,
             Segment segment, long time, double price, double bidWithoutCO2, double spotMarketCapacity,
-            double longTermContractCapacity, int status, int sRstatus) {
+            double longTermContractCapacity, int status, int sRstatus, double oldPrice) {
         this.persist();
         this.specifyNotPersist(plant, producer, market, segment, time, price, bidWithoutCO2, spotMarketCapacity,
-                longTermContractCapacity, status, sRstatus);
+                longTermContractCapacity, status, sRstatus, oldPrice);
 
     }
 
