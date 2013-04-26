@@ -39,6 +39,7 @@ import emlab.gen.domain.technology.PowerPlant;
 @NodeEntity
 public class PowerPlantDispatchPlan extends Bid {
 
+    public static int CONTRACTED = -11;
     public static int PARTLY_CONTRACTED = -10;
     public static int NOT_CONTRACTED = -9;
 
@@ -70,7 +71,7 @@ public class PowerPlantDispatchPlan extends Bid {
      */
     private double bidWithoutCO2;
 
-    private long time;
+   // private long time;
 
     private int SRstatus;
     private double oldPrice;
@@ -127,16 +128,16 @@ public class PowerPlantDispatchPlan extends Bid {
         this.capacityLongTermContract = capacityLongTermContract;
     }
 
-    @Override
-    public long getTime() {
-        return time;
-    }
+   
+   // public long getTime() {
+    //    return time;
+  //  }
 
-    @Override
-    public void setTime(long time) {
-        this.time = time;
-        this.ppdpTime = (int) time;
-    }
+    
+   // public void setTime(long time) {
+    //    this.time = time;
+   //     this.ppdpTime = (int) time;
+   // }
 
     @Override
     public String toString() {
@@ -153,8 +154,7 @@ public class PowerPlantDispatchPlan extends Bid {
         this.bidWithoutCO2 = bidWithoutCO2;
     }
 
-    @Override
-    public boolean isSupplyBid() {
+       public boolean isSupplyBid() {
         return supplyBid;
     }
 

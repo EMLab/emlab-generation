@@ -31,8 +31,6 @@ public class Bid {
     public static int SUBMITTED = 1;
     public static int PARTLY_ACCEPTED = 2;
     public static int ACCEPTED = 3;
-    public static int CONTRACTED = -11;
-    
 
     @RelatedTo(type = "BIDDER", elementClass = DecarbonizationAgent.class, direction = Direction.INCOMING)
     private DecarbonizationAgent bidder;
@@ -46,9 +44,7 @@ public class Bid {
     @Indexed(indexName = "bidTime")
     private long time;
     private int status;
-    
     private boolean supplyBid;
-   
 
     public DecarbonizationAgent getBidder() {
         return bidder;
@@ -92,7 +88,7 @@ public class Bid {
     public double getPrice() {
         return price;
     }
-    
+
     public void setPrice(double price) {
         this.price = price;
     }
@@ -121,7 +117,7 @@ public class Bid {
         this.status = status;
     }
 
-	/**
+    /**
      * Changes the amount of a bid
      * 
      * @param bid
