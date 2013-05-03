@@ -67,11 +67,11 @@ public interface PowerPlantDispatchPlanRepository extends GraphRepository<PowerP
     @Query("START segment = node({segment}) MATCH (segment)<-[:SEGMENT_DISPATCHPLAN]-(ppdp) WHERE (ppdp.time = {time}) RETURN ppdp ORDER BY ppdp.price")
     public Iterable<PowerPlantDispatchPlan> findSortedPowerPlantDispatchPlansForSegmentForTime(@Param("segment") Segment segment,
             @Param("time") long time);
-    
-    //descending order
+
+    // descending order
     @Query("START segment = node({segment}) MATCH (segment)<-[:SEGMENT_DISPATCHPLAN]-(ppdp) WHERE (ppdp.time = {time}) RETURN ppdp ORDER BY ppdp.price desc")
-    public Iterable<PowerPlantDispatchPlan> findDescendingSortedPowerPlantDispatchPlansForSegmentForTime(@Param("segment") Segment segment,
-            @Param("time") long time);
+    public Iterable<PowerPlantDispatchPlan> findDescendingSortedPowerPlantDispatchPlansForSegmentForTime(
+            @Param("segment") Segment segment, @Param("time") long time);
 
     @Query(value = "g.v(plant).in('POWERPLANT_DISPATCHPLAN').propertyFilter('time', FilterPipe.Filter.EQUAL, time)", type = QueryType.Gremlin)
     public Iterable<PowerPlantDispatchPlan> findAllPowerPlantDispatchPlansForPowerPlantForTime(@Param("plant") PowerPlant plant,
@@ -100,19 +100,7 @@ public interface PowerPlantDispatchPlanRepository extends GraphRepository<PowerP
     @Query(value = "g.v(market).in('BIDDINGMARKET').propertyFilter('time', FilterPipe.Filter.EQUAL, time).propertyFilter('status', FilterPipe.Filter.GREATER_THAN, 2).as('x').out('SEGMENT_DISPATCHPLAN').idFilter(segment, FilterPipe.Filter.EQUAL).back('x')", type = QueryType.Gremlin)
     public Iterable<PowerPlantDispatchPlan> findAllAcceptedPowerPlantDispatchPlansForMarketSegmentAndTime(
             @Param("market") ElectricitySpotMarket esm, @Param("segment") Segment segment, @Param("time") long time);
-    
-    // Sort by Market, time and segment in decending order of price
-    
-    @Query(value="g.v(market).in('BIDDINGMARKET').propertyFilter('time', FilterPipe.Filter.EQUAL, time).out('SEGMENT_DISPATCHPLAN').idFilter(segment, FilterPipe.Filter.EQUAL).back('x').sort{-it.price}", type = QueryType.Gremlin)
-    public Iterable<PowerPlantDispatchPlan> findAllDescendingListAllPowerPlantDispatchPlansbyMarketTimeSegment(@Param("market") ElectricitySpotMarket esm, @Param("segment") Segment segment, @Param("time") long time);
 
-    @Query(value="g.v(segment).in('SEGMENT_DISPATCHPLAN').filter{it.time==tick}.sort{-it.price}", type = QueryType.Gremlin)
-    public Iterable<PowerPlantDispatchPlan> findallPowerPlantDispatchPlantsinDescendingbyMarketandTime(@Param("segment") Segment segment, @Param("time") long time);
-    //sort by Market time segmentID in decending order of price
-    
-    /*@(value="g.v(market).in("BIDDINGMARKET").filter{it.time==tick}.out("SEGMENT_DISPATCHPLAN").filter{it.segmentID==segID}.sort{it.price}.reverse()_()", type = QueryType.Gremlin)
-    public public Iterable<PowerPlantDispatchPlan> DistAllPowerPlantDispatchPlansbyMarketTimeSegmentID(@Param("market") ElectricitySpotMarket esm, @Param("segment") Segment segment, @Param("time") long time);*/
-    
     // @Query("START segment = node({segment} MATCH (segment)<-[:SEGMENT_DISPATCHPLAN]-(ppdp)<-[:BIDDER]-(node({producer})) WHERE (ppdp.time = {time}) AND (ppdp.status >=2) RETURN ppdp")
     // public Iterable<PowerPlantDispatchPlan> findAllAcceptedPowerPlantDispatchPlansForEnergyProducerForTimeAndSegment(
     // @Param("segment") Segment segment, @Param("producer") EnergyProducer producer, @Param("time") long time);

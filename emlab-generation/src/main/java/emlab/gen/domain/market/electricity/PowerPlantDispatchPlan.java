@@ -39,36 +39,30 @@ import emlab.gen.domain.technology.PowerPlant;
 @NodeEntity
 public class PowerPlantDispatchPlan extends Bid {
 
-    public static int CONTRACTED = -11;
-    public static int PARTLY_CONTRACTED = -10;
-    public static int NOT_CONTRACTED = -9;
-
     @RelatedTo(type = "SEGMENT_DISPATCHPLAN", elementClass = Segment.class, direction = Direction.OUTGOING)
     private Segment segment;
 
     @RelatedTo(type = "POWERPLANT_DISPATCHPLAN", elementClass = PowerPlant.class, direction = Direction.OUTGOING)
     private PowerPlant powerPlant;
 
+    public static int CONTRACTED = -11;
+    public static int PARTLY_CONTRACTED = -10;
+    public static int NOT_CONTRACTED = -9;
+
     /**
-     * Is set to always true, since it the power plant dispatch plan is only for
-     * supply bids to the spot market.
+     * Is set to always true, since it the power plant dispatch plan is only for supply bids to the spot market.
      */
     private final boolean supplyBid = true;
 
     private double capacityLongTermContract;
-    /*    *//**
-     * IMPORTANT: Amount (capacity in MW) that is bid on to the SPOT
-     * MARKET, without long term contracts.
+    /**
+     * IMPORTANT: Amount (capacity in MW) that is bid on to the SPOT MARKET, without long term contracts.
      */
-    /*
-     * private double amount;
-     *//**
-     * In the case of the power plant dispatch plan: Marginal cost excluding
-     * CO2.
+    // private double amount;
+    /**
+     * In the case of the power plant dispatch plan: Marginal cost excluding CO2.
      */
-    /*
-     * private double price;
-     */
+    // private double price;
     private double bidWithoutCO2;
 
     // private long time;
@@ -79,7 +73,6 @@ public class PowerPlantDispatchPlan extends Bid {
     public int getSRstatus() {
         return SRstatus;
     }
-
 
     public void setSRstatus(int sRstatus) {
         SRstatus = sRstatus;
@@ -128,22 +121,19 @@ public class PowerPlantDispatchPlan extends Bid {
         this.capacityLongTermContract = capacityLongTermContract;
     }
 
-
     // public long getTime() {
-    //    return time;
-    //  }
-
-
+    // return time;
+    // }
+    //
     // public void setTime(long time) {
-    //    this.time = time;
-    //     this.ppdpTime = (int) time;
+    // this.time = time;
+    // this.ppdpTime = (int) time;
     // }
 
     @Override
     public String toString() {
-        return "for " + getBidder() + " power plant: " + getPowerPlant() + " in segment " + segment
-                + " plans to sell long term: " + getCapacityLongTermContract() + " plans to sell capacity spot: "
-                + getAmount();
+        return "for " + getBidder() + " power plant: " + getPowerPlant() + " in segment " + segment + " plans to sell long term: "
+                + getCapacityLongTermContract() + " plans to sell capacity spot: " + getAmount();
     }
 
     public double getBidWithoutCO2() {
@@ -159,9 +149,8 @@ public class PowerPlantDispatchPlan extends Bid {
         return supplyBid;
     }
 
-    public void specifyNotPersist(PowerPlant plant, EnergyProducer producer, ElectricitySpotMarket market,
-            Segment segment, long time, double price, double bidWithoutCO2, double spotMarketCapacity,
-            double longTermContractCapacity, int status, int sRstatus, double oldPrice) {
+    public void specifyNotPersist(PowerPlant plant, EnergyProducer producer, ElectricitySpotMarket market, Segment segment, long time,
+            double price, double bidWithoutCO2, double spotMarketCapacity, double longTermContractCapacity, int status) {
         this.setPowerPlant(plant);
         this.setSegment(segment);
         this.setTime(time);
@@ -172,19 +161,15 @@ public class PowerPlantDispatchPlan extends Bid {
         this.setAmount(spotMarketCapacity);
         this.setCapacityLongTermContract(longTermContractCapacity);
         this.setStatus(status);
-        this.setSRstatus(sRstatus);
-        this.setOldPrice(oldPrice);
-
     }
 
     // All transactional methods below are signified by starting with update
     @Transactional
-    public void specifyAndPersist(PowerPlant plant, EnergyProducer producer, ElectricitySpotMarket market,
-            Segment segment, long time, double price, double bidWithoutCO2, double spotMarketCapacity,
-            double longTermContractCapacity, int status, int sRstatus, double oldPrice) {
+    public void specifyAndPersist(PowerPlant plant, EnergyProducer producer, ElectricitySpotMarket market, Segment segment, long time,
+            double price, double bidWithoutCO2, double spotMarketCapacity, double longTermContractCapacity, int status) {
         this.persist();
-        this.specifyNotPersist(plant, producer, market, segment, time, price, bidWithoutCO2, spotMarketCapacity,
-                longTermContractCapacity, status, sRstatus, oldPrice);
+        this.specifyNotPersist(plant, producer, market, segment, time, price, bidWithoutCO2, spotMarketCapacity, longTermContractCapacity,
+                status);
 
     }
 

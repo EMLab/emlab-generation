@@ -12,6 +12,6 @@ import emlab.gen.domain.agent.StrategicReserveOperator;
  */
 @Repository
 public interface StrategicReserveOperatorRepository extends
-		GraphRepository<StrategicReserveOperator> {
+GraphRepository<StrategicReserveOperator> {
 
 }

@@ -90,6 +90,7 @@ public class CashFlow {
         this.type = type;
     }
 
+    @Override
     public String toString() {
         return "from " + getFrom() + " to " + getTo() + " type " + getType() + " amount " + getMoney();
     }

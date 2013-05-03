@@ -498,31 +498,17 @@ NodeBacked {
                 // expectedSegmentLoad);
 
                 // Find strategic reserve operator for the market.
-
                 double reservePrice = 0;
                 double reserveVolume = 0;
                 for (StrategicReserveOperator operator : strategicReserveOperatorRepository.findAll()) {
-                    // logger.warn(""+ operator.getReserveVolume());
                     ElectricitySpotMarket market1 = reps.marketRepository.findElectricitySpotMarketForZone(operator
                             .getZone());
-                    // logger.warn("enter SROLOOP " +
-                    // +market1.getNodeId().intValue());
                     if (market.getNodeId().intValue() == market1.getNodeId().intValue()) {
-                        // logger.warn("Entered market loop "+ market1.getName()
-                        // + " == " + market.getName());
                         reservePrice = operator.getReservePriceSR();
                         reserveVolume = operator.getReserveVolume();
                     }
-
                 }
-                // logger.warn("segmentSupply "+ segmentSupply
-                // +"expectedSLoad "+ expectedSegmentLoad +
-                // " Difference "+(totalCapacityAvailable-expectedSegmentLoad) +
-                // "SR " + reserveVolume);
-                // logger.warn("installed Supply " + capacitySum +
-                // "Availble supply " + totalCapacityAvailable);
-                // If difference between demand and supply is less than equal to
-                // reserveVolume, set segment electric price = ReservePrice
+
                 if (segmentSupply >= expectedSegmentLoad
                         && ((totalCapacityAvailable - expectedSegmentLoad) <= (reserveVolume))) {
                     expectedElectricityPricesPerSegment.put(segmentLoad.getSegment(), reservePrice);

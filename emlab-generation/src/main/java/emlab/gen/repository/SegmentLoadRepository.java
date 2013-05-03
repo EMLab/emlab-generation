@@ -59,36 +59,9 @@ public interface SegmentLoadRepository extends GraphRepository<SegmentLoad> {
             + "return baseLoad", type = QueryType.Gremlin)
     public double returnSegmentBaseLoadBySegmentAndMarket(@Param("segment") Segment segment, @Param("market") ElectricitySpotMarket market);
 
-	//Average Load in market
+    // peak Load by Zone
 
-	@Query(value="segmentloads = g.v(market).out('SEGMENT_LOAD');double sumofLoads  = 0;double counter = 0;" +
-			"for(segmentload in segmentloads){ " +
-			
-			"sumofLoads += segmentload.baseLoad; " +
-			"adjustedsum = sumofLoads;" +
-			" counter += 1;" +
-			"}" +
-			"averageLoad = adjustedsum/counter " +
-			"return[averageLoad]}", type=QueryType.Gremlin)	
-	double calculateAverageLoadbyMarketandTime(@Param("market") ElectricitySpotMarket market, @Param("tick") long time);
+    @Query(value = "g.v(zone).in('ZONE').filter{it.__type__=='emlab.gen.domain.market.electricity.ElectricitySpotMarket'}.outE('SEGMENT_LOAD').inV.max{it.baseLoad}.baseLoad", type = QueryType.Gremlin)
+    double peakLoadbyZoneMarketandTime(@Param("zone") Zone zone, @Param("market") ElectricitySpotMarket market);
 
-	// Peak Load in market
-
-	@Query(value="segmentloads = g.v(market).out('SEGMENT_LOAD');" +
-			"double sumofLoads  = 0;double counter = 0;" +
-			"for(segmentload in segmentloads){" +
-			"growthfactor = segmentload.in('SEGMENT_LOAD').out('DEMANDGROWTH_TREND').collect{f.getTrendValue(it, tick)}[0];" +
-			"if (sumofLoads < segmentload.baseLoad) {" +
-			"sumofLoads = segmentload.baseLoad" +
-			"   }" +
-			"adjustedpeak = sumofLoads*growthfactor;" +
-			"counter += 1;" +
-			"}" +
-			"return[adjustedpeak]}", type=QueryType.Gremlin)	
-	double calculatePeakLoadbyMarketandTime(@Param("market") ElectricitySpotMarket market, @Param("tick") long time);
-	
-	// peak Load by Zone
-	
-	@Query(value="g.v(zone).in('ZONE').filter{it.__type__=='emlab.gen.domain.market.electricity.ElectricitySpotMarket'}.outE('SEGMENT_LOAD').inV.max{it.baseLoad}.baseLoad", type=QueryType.Gremlin)
-	double peakLoadbyZoneMarketandTime(@Param("zone") Zone zone, @Param("market") ElectricitySpotMarket market);
 }
