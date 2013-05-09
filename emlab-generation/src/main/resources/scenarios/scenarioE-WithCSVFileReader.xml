@@ -91,8 +91,8 @@
 		<property name="intermittentTechnology" ref="windPGT"></property>
 		<property name="intermittentProductionNode" ref="germanNode"></property>
 	</bean>
-	<bean id="demandDE" class="emlab.gen.trend.HourlyCSVTimeSeries" p:filename="/data/demandEuropeLessUK2010.csv"/>
-	<bean id="demandNL" class="emlab.gen.trend.HourlyCSVTimeSeries" p:filename="/data/demandUK2010Weighted.csv"/>
+	<bean id="demandDE" class="emlab.gen.trend.HourlyCSVTimeSeries" p:filename="/data/GermanyEntsoe2009_LC.csv"/>
+	<bean id="demandNL" class="emlab.gen.trend.HourlyCSVTimeSeries" p:filename="/data/NetherlandsEntsoe2009_LC.csv"/>
 
 
 	<!-- Segments of load duration curves -->
@@ -1070,7 +1070,7 @@
 					<key>
 						<ref bean="windPGT" />
 					</key>
-					<value>0.07</value>
+					<value>0.01</value>
 				</entry>
 			</map>
 		</property>
@@ -1134,7 +1134,7 @@
 					<key>
 						<ref bean="windPGT" />
 					</key>
-					<value>0.1725</value>
+					<value>0.01</value>
 				</entry>
 				<entry>
 					<key>

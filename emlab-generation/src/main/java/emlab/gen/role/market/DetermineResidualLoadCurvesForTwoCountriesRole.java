@@ -19,8 +19,6 @@ import cern.colt.matrix.impl.DenseDoubleMatrix2D;
 import cern.jet.math.Functions;
 import emlab.gen.domain.agent.DecarbonizationModel;
 import emlab.gen.domain.gis.Zone;
-import emlab.gen.domain.market.electricity.IntermittentProductionProfile;
-import emlab.gen.domain.market.electricity.SegmentIntermittentProduction;
 import emlab.gen.domain.technology.Interconnector;
 import emlab.gen.domain.technology.IntermittentResourceProfile;
 import emlab.gen.domain.technology.PowerGeneratingTechnology;
@@ -192,21 +190,6 @@ Role<DecarbonizationModel> {
                     m.viewColumn(IPROD.get(zone)).assign(hourlyProductionPerNode, Functions.plus);
                     // Add to zonal-technological RES column
 
-
-                    // Store it to a SegmentIntermittentProduction
-                    // TODO: Finish the definition of
-                    // IntermittentProductionProfile and
-                    // SegmentIntermittentProduction later
-                    // in the method call!!!!
-
-                    IntermittentProductionProfile ipp = new IntermittentProductionProfile();
-                    ipp.persist();
-                    ipp.specifyNotPersist(intermittentResourceProfile, null, getCurrentTick());
-
-                    SegmentIntermittentProduction sip = new SegmentIntermittentProduction();
-                    sip.persist();
-                    sip.specifyNotPersist(ipp, null, 0, intermittentCapacityOfTechnologyInNode, 0);
-
                     // Substracts the above from the residual load curve
                     m.viewColumn(RLOADINZONE.get(zone)).assign(m.viewColumn(IPROD.get(zone)), Functions.minus);
 
@@ -333,9 +316,20 @@ Role<DecarbonizationModel> {
         // First divide it by new value. Spilled values are than greater
         // than 1, the other equal to 1.
         for (Zone zone : zoneList) {
+            DoubleMatrix1D minValuesVector = spillFactorMap.get(zone).like();
+            minValuesVector.assign(Double.MIN_NORMAL);
+            spillFactorMap.get(zone).assign(minValuesVector, Functions.plus);
+            m.viewColumn(IPROD.get(zone)).assign(minValuesVector, Functions.plus);
             spillFactorMap.get(zone).assign(m.viewColumn(IPROD.get(zone)), Functions.div);
+            m.viewColumn(IPROD.get(zone)).assign(minValuesVector, Functions.minus);
         }
 
+        oneVector.assign(spillFactorMap.get(zoneA), Functions.minus);
+
+        DoubleMatrix1D differenceVector = m.viewColumn(12).copy();
+        differenceVector.assign(m.viewColumn(13), Functions.minus);
+        double result = differenceVector.aggregate(Functions.plus, Functions.identity);
+        logger.warn("Result: " + result);
         // Divide all the technologies in the zone by the spill factors above
         for (Zone zone : zoneList) {
             for (PowerGridNode node : zoneToNodeList.get(zone)) {
@@ -436,16 +430,30 @@ Role<DecarbonizationModel> {
             segmentRloadBins[currentSegmentID - 1].add(m.get(row, RLOADTOTAL));
             for (Zone zone : zoneList) {
                 segmentRloadBinsByZone.get(zone)[currentSegmentID - 1].add(m.get(row, RLOADINZONE.get(zone)));
-                for (PowerGridNode node : zoneToNodeList.get(zone)) {
-                    for (PowerGeneratingTechnology technology : reps.powerGeneratingTechnologyRepository
-                            .findAllIntermittentPowerGeneratingTechnologies()) {
-                        spillFactorBinMap.get(zone).get(node).get(technology)[currentSegmentID - 1].add(m.get(row,
-                                TECHNOLOGYSPILLFACTORSFORZONEANDNODE.get(zone).get(node).get(technology)));
-                    }
-                }
             }
             segmentInterConnectorBins[currentSegmentID - 1].add(m.get(row, INTERCONNECTOR));
         }
+
+        for (Zone zone : zoneList) {
+            for (PowerGridNode node : zoneToNodeList.get(zone)) {
+                for (PowerGeneratingTechnology technology : reps.powerGeneratingTechnologyRepository
+                        .findAllIntermittentPowerGeneratingTechnologies()) {
+                    DynamicBin1D[] currentBinArray = spillFactorBinMap.get(zone).get(node).get(technology);
+                    int columnNumber = TECHNOLOGYSPILLFACTORSFORZONEANDNODE.get(zone).get(node).get(technology);
+                    currentSegmentID = 1;
+                    for (int row = 0; row < m.rows() && currentSegmentID <= noSegments; row++) {
+                        // IMPORTANT: since [] is zero-based index, it checks one index
+                        // ahead of current segment.
+                        while (currentSegmentID < noSegments && m.get(row, RLOADTOTAL) <= upperBoundSplit[currentSegmentID]) {
+                            currentSegmentID++;
+                        }
+                        currentBinArray[currentSegmentID - 1].add(m.get(row,columnNumber));
+                    }
+                    spillFactorBinMap.get(zone).get(node).put(technology, currentBinArray);
+                }
+            }
+        }
+
 
         // Assign hours to segments according to residual load in this country.
         // Only for error estimation purposes
@@ -476,14 +484,18 @@ Role<DecarbonizationModel> {
             }
             if (hoursInDifferentSegment != 0) {
                 averageSegmentDeviation = averageSegmentDeviation / hoursInDifferentSegment;
+                averageSegmentDeviation = averageSegmentDeviation * 1000;
+                averageSegmentDeviation = Math.round(averageSegmentDeviation);
+                averageSegmentDeviation = averageSegmentDeviation / 1000;
                 logger.warn("For " + zone + ", " + hoursInDifferentSegment
-                        + " hours would have been in different segments, and on average " + Math.round(averageSegmentDeviation)
+                        + " hours would have been in different segments, and on average " + averageSegmentDeviation
                         + " Segments away from the segment they were in.");
             } else {
                 logger.warn("For " + zone + ", all hours were in the same segment, as for combined sorting!");
             }
 
         }
+
 
         // m = m.viewSorted(RLOADTOTAL).viewRowFlip();
         //
@@ -516,19 +528,28 @@ Role<DecarbonizationModel> {
             }
         }
 
+        String loadFactors;
         for (Zone zone : zoneList) {
+            String loadFactorString = new String("LF in " + zone.getName() + ":");
             for (PowerGridNode node : zoneToNodeList.get(zone)) {
                 for (PowerGeneratingTechnology technology : technologyList) {
                     logger.warn("Bins for " + zone + ", " + node + "and " + technology);
                     it = 1;
                     for (DynamicBin1D bin : spillFactorBinMap.get(zone).get(node).get(technology)) {
-                        logger.warn("Segment " + it + "\n      Size: " + bin.size() + "\n      Mean RLOAD~: "
-                                + bin.mean() + "\n      Max RLOAD~: " + bin.max() + "\n      Min RLOAD~: " + bin.min()
-                                + "\n      Std RLOAD~: " + bin.standardDeviation());
+                        // logger.warn("Segment " + it + "\n      Size: " +
+                        // bin.size() + "\n      Mean RLOAD~: "
+                        // + bin.mean() + "\n      Max RLOAD~: " + bin.max() +
+                        // "\n      Min RLOAD~: " + bin.min()
+                        // + "\n      Std RLOAD~: " + bin.standardDeviation());
+                        double mean = bin.mean() * 1000;
+                        mean = Math.round(mean);
+                        mean = mean / 1000.0;
+                        loadFactorString = loadFactorString.concat(" " + mean);
                         it++;
                     }
                 }
             }
+            logger.warn(loadFactorString);
         }
 
         // 8. Store the segment duration and the average load in that segment
