@@ -30,7 +30,7 @@ import emlab.gen.domain.technology.PowerGeneratingTechnology;
 public interface PowerGeneratingTechnologyRepository extends
         GraphRepository<PowerGeneratingTechnology> {
 
-	@Query(value = "g.idx('__types__')[[className:'emlab.domain.technology.PowerGeneratingTechnology']].filter{it.intermittent==true}", type = QueryType.Gremlin)
+	@Query(value = "g.idx('__types__')[[className:'emlab.gen.domain.technology.PowerGeneratingTechnology']].filter{it.intermittent==true}", type = QueryType.Gremlin)
 	Iterable<PowerGeneratingTechnology> findAllIntermittentPowerGeneratingTechnologies();
 
 }

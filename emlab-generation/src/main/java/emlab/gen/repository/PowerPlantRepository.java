@@ -234,21 +234,21 @@ public interface PowerPlantRepository extends GraphRepository<PowerPlant> {
     public double calculateCapacityOfPowerPlantsByTechnologyInPipeline(
             @Param("tech") PowerGeneratingTechnology technology, @Param("tick") long tick);
 
-    @Query(value = "g.v(gridnode).in('LOCATION').filter{(it.__type__=='emlab.domain.technology.PowerPlant')}.as('p').out('TECHNOLOGY').filter{it.intermittent == true}.back('p').filter{((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick) && (it.dismantleTime > tick)}", type = QueryType.Gremlin)
+    @Query(value = "g.v(gridnode).in('LOCATION').filter{(it.__type__=='emlab.gen.domain.technology.PowerPlant')}.as('p').out('TECHNOLOGY').filter{it.intermittent == true}.back('p').filter{((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick) && (it.dismantleTime > tick)}", type = QueryType.Gremlin)
     Iterable<PowerPlant> findOperationalIntermittentPowerPlantsByPowerGridNode(@Param("gridnode") PowerGridNode node,
             @Param("tick") long tick);
 
-    @Query(value = "result = g.v(gridnode).in('LOCATION').filter{(it.__type__=='emlab.domain.technology.PowerPlant')}.as('p').out('TECHNOLOGY').filter{it.intermittent == true}.back('p').filter{((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick) && (it.dismantleTime > tick)}.out('TECHNOLOGY').sum{it.capacity};"
+    @Query(value = "result = g.v(gridnode).in('LOCATION').filter{(it.__type__=='emlab.gen.domain.technology.PowerPlant')}.as('p').out('TECHNOLOGY').filter{it.intermittent == true}.back('p').filter{((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick) && (it.dismantleTime > tick)}.out('TECHNOLOGY').sum{it.capacity};"
             + "if(result == null){return 0;} else{return result;}", type = QueryType.Gremlin)
     double calculateCapacityOfIntermittentPowerPlantsByPowerGridNode(@Param("gridnode") PowerGridNode node,
             @Param("tick") long tick);
 
-    @Query(value = "g.v(gridnode).in('LOCATION').filter{(it.__type__=='emlab.domain.technology.PowerPlant')}.as('p').out('TECHNOLOGY').filter{it.intermittent == true && it==g.v(technology)}.back('p').filter{((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick) && (it.dismantleTime > tick)}", type = QueryType.Gremlin)
+    @Query(value = "g.v(gridnode).in('LOCATION').filter{(it.__type__=='emlab.gen.domain.technology.PowerPlant')}.as('p').out('TECHNOLOGY').filter{it.intermittent == true && it==g.v(technology)}.back('p').filter{((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick) && (it.dismantleTime > tick)}", type = QueryType.Gremlin)
     Iterable<PowerPlant> findOperationalIntermittentPowerPlantsByPowerGridNodeAndTechnology(
             @Param("gridnode") PowerGridNode node,
             @Param("technology") PowerGeneratingTechnology powerGeneratingTechnology, @Param("tick") long tick);
 
-    @Query(value = "result = g.v(gridnode).in('LOCATION').filter{(it.__type__=='emlab.domain.technology.PowerPlant')}.as('p').out('TECHNOLOGY').filter{it.intermittent == true && it==g.v(technology)}.back('p').filter{((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick) && (it.dismantleTime > tick)}.out('TECHNOLOGY').sum{it.capacity};"
+    @Query(value = "result = g.v(gridnode).in('LOCATION').filter{(it.__type__=='emlab.gen.domain.technology.PowerPlant')}.as('p').out('TECHNOLOGY').filter{it.intermittent == true && it==g.v(technology)}.back('p').filter{((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick) && (it.dismantleTime > tick)}.out('TECHNOLOGY').sum{it.capacity};"
             + "if(result == null){return 0;} else{return result;}", type = QueryType.Gremlin)
     double calculateCapacityOfOperationalIntermittentPowerPlantsByPowerGridNodeAndTechnology(
             @Param("gridnode") PowerGridNode node,

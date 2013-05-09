@@ -124,6 +124,9 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
         Timer timer = new Timer();
         timer.start();
 
+        logger.warn("  0a. Determing load duration curves.");
+        determineResidualLoadCurve.act(model);
+
         logger.warn("  0. Dismantling & paying loans");
         for (EnergyProducer producer : reps.genericRepository.findAllAtRandom(EnergyProducer.class)) {
             dismantlePowerPlantRole.act(producer);

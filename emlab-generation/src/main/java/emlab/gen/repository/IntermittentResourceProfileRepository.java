@@ -12,7 +12,7 @@ import emlab.gen.domain.technology.PowerGridNode;
 public interface IntermittentResourceProfileRepository extends
         GraphRepository<IntermittentResourceProfile> {
 
-	@Query(value = "g.v(technology).in('INTERMITTENT_TECHNOLOGY').filter{it.__type__=='emlab.domain.technology.IntermittentResourceProfile'}.as('irp').in('INTERMITTENT_PRODUCTION_NODE').filter{it==g.v(node)}.back('irp').next()", type = QueryType.Gremlin)
+	@Query(value = "g.v(technology).in('INTERMITTENT_TECHNOLOGY').filter{it.__type__=='emlab.gen.domain.technology.IntermittentResourceProfile'}.as('irp').in('INTERMITTENT_PRODUCTION_NODE').filter{it==g.v(node)}.back('irp').next()", type = QueryType.Gremlin)
 	IntermittentResourceProfile findIntermittentResourceProfileByTechnologyAndNode(
 	        @Param("technology") PowerGeneratingTechnology technology,
 	        @Param("node") PowerGridNode node);
