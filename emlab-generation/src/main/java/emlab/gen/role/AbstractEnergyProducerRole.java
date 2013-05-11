@@ -55,7 +55,7 @@ public abstract class AbstractEnergyProducerRole<T extends EnergyProducer> exten
 
     public double calculateMarketCapacity(PowerGeneratingTechnology technology, long time) {
         double capacity = 0d;
-		for (PowerPlant plant : reps.powerPlantRepository.findOperationalPowerPlantsByTechnology(technology, time)) {
+        for (PowerPlant plant : reps.powerPlantRepository.findOperationalPowerPlantsByTechnology(technology, time)) {
             capacity += plant.getAvailableCapacity(getCurrentTick());
         }
         logger.info("Capacity for technology {} is {}", technology.getName(), capacity);
@@ -64,7 +64,7 @@ public abstract class AbstractEnergyProducerRole<T extends EnergyProducer> exten
 
     public double calculateMarketCapacity(ElectricitySpotMarket market, PowerGeneratingTechnology technology, long time) {
         double capacity = 0d;
-		for (PowerPlant plant : reps.powerPlantRepository.findOperationalPowerPlantsByTechnology(technology, time)) {
+        for (PowerPlant plant : reps.powerPlantRepository.findOperationalPowerPlantsByTechnology(technology, time)) {
             if (plant.getLocation().getZone().equals(market.getZone())) {
                 capacity += plant.getAvailableCapacity(time);
             }
@@ -74,9 +74,9 @@ public abstract class AbstractEnergyProducerRole<T extends EnergyProducer> exten
     }
 
     public double calculateOwnerCapacityOfType(ElectricitySpotMarket market, PowerGeneratingTechnology technology, long time,
- T owner) {
+            T owner) {
         double capacity = 0d;
-		for (PowerPlant plant : reps.powerPlantRepository.findOperationalPowerPlantsByTechnology(technology, time)) {
+        for (PowerPlant plant : reps.powerPlantRepository.findOperationalPowerPlantsByTechnology(technology, time)) {
             if (plant.getLocation().getZone().equals(market.getZone()) && plant.getOwner().equals(owner)) {
                 capacity += plant.getAvailableCapacity(time);
             }
@@ -85,22 +85,22 @@ public abstract class AbstractEnergyProducerRole<T extends EnergyProducer> exten
         return capacity;
     }
 
-	public double calculateTotalOwnerCapacity(ElectricitySpotMarket market, long time, T owner) {
+    public double calculateTotalOwnerCapacity(ElectricitySpotMarket market, long time, T owner) {
         double capacity = 0d;
-		reps.powerPlantRepository.findOperationalPowerPlantsByOwnerAndMarket(
-(T) owner, market, time);
-		for (PowerPlant plant : reps.powerPlantRepository.findOperationalPowerPlantsByOwnerAndMarket(owner, market,
-				time)) {
+        reps.powerPlantRepository.findOperationalPowerPlantsByOwnerAndMarket(
+                owner, market, time);
+        for (PowerPlant plant : reps.powerPlantRepository.findOperationalPowerPlantsByOwnerAndMarket(owner, market,
+                time)) {
             capacity += plant.getAvailableCapacity(time);
         }
         logger.info("Capacity for owner {} is {}", owner, capacity);
         return capacity;
     }
 
-	public double calculateTotalOwnerCapacityInPipeline(ElectricitySpotMarket market, long time, T owner) {
+    public double calculateTotalOwnerCapacityInPipeline(ElectricitySpotMarket market, long time, T owner) {
         double capacity = 0d;
-		for (PowerPlant plant : reps.powerPlantRepository.findPowerPlantsByOwnerAndMarketInPipeline(owner, market,
-				getCurrentTick())) {
+        for (PowerPlant plant : reps.powerPlantRepository.findPowerPlantsByOwnerAndMarketInPipeline(owner, market,
+                getCurrentTick())) {
             capacity += plant.getAvailableCapacity(time);
         }
         logger.info("Capacity in pipeline for owner {} is {}", owner, capacity);
@@ -110,7 +110,7 @@ public abstract class AbstractEnergyProducerRole<T extends EnergyProducer> exten
     public double calculateMarketCapacityEverInstalledUpToGivenTime(PowerGeneratingTechnology technology, long time) {
         double capacity = 0d;
 
-		for (PowerPlant plant : reps.powerPlantRepository.findPowerPlantsByTechnology(technology)) {
+        for (PowerPlant plant : reps.powerPlantRepository.findPowerPlantsByTechnology(technology)) {
             if (plant.getConstructionStartTime() <= time) {
                 capacity += plant.getAvailableCapacity(getCurrentTick());
             }
@@ -170,7 +170,7 @@ public abstract class AbstractEnergyProducerRole<T extends EnergyProducer> exten
      * @return the (average) price found
      */
     public double findLastKnownPriceOnMarket(DecarbonizationMarket market) {
-		Double average = calculateAverageMarketPriceBasedOnClearingPoints(reps.clearingPointRepositoryOld
+        Double average = calculateAverageMarketPriceBasedOnClearingPoints(reps.clearingPointRepositoryOld
                 .findClearingPointsForMarketAndTime(market, getCurrentTick()));
         Substance substance = market.getSubstance();
 
@@ -179,9 +179,9 @@ public abstract class AbstractEnergyProducerRole<T extends EnergyProducer> exten
             return average;
         }
 
-		average = calculateAverageMarketPriceBasedOnClearingPoints(reps.clearingPointRepositoryOld
-				.findClearingPointsForMarketAndTime(
-                market, getCurrentTick() - 1));
+        average = calculateAverageMarketPriceBasedOnClearingPoints(reps.clearingPointRepositoryOld
+                .findClearingPointsForMarketAndTime(
+                        market, getCurrentTick() - 1));
         if (average != null) {
             logger.info("Average price found on market for previous tick for {}", substance.getName());
             return average;
@@ -192,7 +192,7 @@ public abstract class AbstractEnergyProducerRole<T extends EnergyProducer> exten
             return market.getReferencePrice();
         }
 
-		for (CommoditySupplier supplier : reps.genericRepository.findAll(CommoditySupplier.class)) {
+        for (CommoditySupplier supplier : reps.genericRepository.findAll(CommoditySupplier.class)) {
             if (supplier.getSubstance().equals(substance)) {
 
                 return supplier.getPriceOfCommodity().getValue(getCurrentTick());
@@ -213,7 +213,7 @@ public abstract class AbstractEnergyProducerRole<T extends EnergyProducer> exten
      */
     public double findLastKnownPriceForSubstance(Substance substance) {
 
-		DecarbonizationMarket market = reps.marketRepository.findFirstMarketBySubstance(substance);
+        DecarbonizationMarket market = reps.marketRepository.findFirstMarketBySubstance(substance);
         if (market == null) {
             logger.warn("No market found for {} so no price can be found", substance.getName());
             return 0d;
@@ -245,14 +245,14 @@ public abstract class AbstractEnergyProducerRole<T extends EnergyProducer> exten
 
     public double calculateCO2MarketMarginalCost(PowerPlant powerPlant) {
         double co2Intensity = powerPlant.calculateEmissionIntensity();
-		CO2Auction auction = reps.genericRepository.findFirst(CO2Auction.class);
+        CO2Auction auction = reps.genericRepository.findFirst(CO2Auction.class);
         double co2Price = findLastKnownPriceOnMarket(auction);
         return co2Intensity * co2Price;
     }
 
     public double calculateCO2MarketCost(PowerPlant powerPlant) {
         double co2Intensity = powerPlant.calculateEmissionIntensity();
-		CO2Auction auction = reps.genericRepository.findFirst(CO2Auction.class);
+        CO2Auction auction = reps.genericRepository.findFirst(CO2Auction.class);
         double co2Price = findLastKnownPriceOnMarket(auction);
         double electricityOutput = powerPlant.calculateElectricityOutputAtTime(getCurrentTick());
         return co2Intensity * co2Price * electricityOutput;
@@ -266,10 +266,10 @@ public abstract class AbstractEnergyProducerRole<T extends EnergyProducer> exten
      */
     public double calculatePaymentEffictiveCO2NationalMinimumPriceCost(PowerPlant powerPlant) {
         double co2Intensity = powerPlant.calculateEmissionIntensity();
-		CO2Auction auction = reps.genericRepository.findFirst(CO2Auction.class);
+        CO2Auction auction = reps.genericRepository.findFirst(CO2Auction.class);
         double co2Price = findLastKnownPriceOnMarket(auction);
         double electricityOutput = powerPlant.calculateElectricityOutputAtTime(getCurrentTick());
-		double nationalMinCo2price = reps.nationalGovernmentRepository.findNationalGovernmentByPowerPlant(powerPlant)
+        double nationalMinCo2price = reps.nationalGovernmentRepository.findNationalGovernmentByPowerPlant(powerPlant)
                 .getMinNationalCo2PriceTrend().getValue(getCurrentTick());
         double paymentEffectivePartOfNationalCO2;
         if (nationalMinCo2price > co2Price)
@@ -281,14 +281,14 @@ public abstract class AbstractEnergyProducerRole<T extends EnergyProducer> exten
 
     public double calculateCO2TaxMarginalCost(PowerPlant powerPlant) {
         double co2Intensity = powerPlant.calculateEmissionIntensity();
-		Government government = reps.genericRepository.findFirst(Government.class);
+        Government government = reps.genericRepository.findFirst(Government.class);
         double co2Tax = government.getCO2Tax(getCurrentTick());
         return co2Intensity * co2Tax;
     }
 
     public double findLastKnownCO2Price() {
-		Government government = reps.genericRepository.findFirst(Government.class);
-		CO2Auction auction = reps.genericRepository.findFirst(CO2Auction.class);
+        Government government = reps.genericRepository.findFirst(Government.class);
+        CO2Auction auction = reps.genericRepository.findFirst(CO2Auction.class);
         double co2Price = findLastKnownPriceOnMarket(auction);
         double co2Tax = government.getCO2Tax(getCurrentTick());
         return co2Price + co2Tax;
@@ -297,16 +297,16 @@ public abstract class AbstractEnergyProducerRole<T extends EnergyProducer> exten
     public double calculateCO2Tax(PowerPlant powerPlant) {
         double co2Intensity = powerPlant.calculateEmissionIntensity();
         double electricityOutput = powerPlant.calculateElectricityOutputAtTime(getCurrentTick());
-		Government government = reps.genericRepository.findFirst(Government.class);
+        Government government = reps.genericRepository.findFirst(Government.class);
         double co2Tax = government.getCO2Tax(getCurrentTick());
         double taxToPay = (co2Intensity * electricityOutput) * co2Tax;
         return taxToPay;
     }
 
-	// TODO: needs to be updated and used somewhere
+    // TODO: needs to be updated and used somewhere
     public double calculateFixedOperatingCost(PowerPlant powerPlant) {
 
-		double norm = powerPlant.getActualFixedOperatingCost();
+        double norm = powerPlant.getActualFixedOperatingCost();
         long timeConstructed = powerPlant.getConstructionStartTime() + powerPlant.calculateActualLeadtime();
         double mod = powerPlant.getTechnology().getFixedOperatingCostModifierAfterLifetime();
         long lifetime = powerPlant.calculateActualLifetime();
@@ -400,7 +400,7 @@ public abstract class AbstractEnergyProducerRole<T extends EnergyProducer> exten
             for (Substance substance : substancePriceMap.keySet()) {
                 fuelAndCO2Costs[i] = substancePriceMap.get(substance) + substance.getCo2Density() * (co2Price);
                 fuelDensities[i] = substance.getEnergyDensity();
-                fuelQuality[i] = substance.getQuality() - minimumFuelMixQuality;
+                fuelQuality[i] = (substance.getQuality() - minimumFuelMixQuality) * fuelDensities[i];
                 i++;
             }
 
@@ -517,7 +517,7 @@ public abstract class AbstractEnergyProducerRole<T extends EnergyProducer> exten
      * @return
      */
     protected HashMap<ElectricitySpotMarket, Double> determineExpectedCO2PriceInclTax(long futureTimePoint, long yearsLookingBackForRegression){
-    	return determineExpectedCO2PriceInclTax(futureTimePoint, yearsLookingBackForRegression, 0);
+        return determineExpectedCO2PriceInclTax(futureTimePoint, yearsLookingBackForRegression, 0);
     }
 
     /**
@@ -531,23 +531,23 @@ public abstract class AbstractEnergyProducerRole<T extends EnergyProducer> exten
     protected HashMap<ElectricitySpotMarket, Double> determineExpectedCO2PriceInclTax(long futureTimePoint, long yearsLookingBackForRegression, int adjustmentForDetermineFuelMix) {
         HashMap<ElectricitySpotMarket, Double> co2Prices = new HashMap<ElectricitySpotMarket, Double>();
         CO2Auction co2Auction = reps.marketRepository.findCO2Auction();
-      //Find Clearing Points for the last 5 years (counting current year as one of the last 5 years).
-    	Iterable<ClearingPoint> cps = reps.clearingPointRepository.findAllClearingPointsForMarketAndTimeRange(co2Auction, getCurrentTick()-yearsLookingBackForRegression+1-adjustmentForDetermineFuelMix, getCurrentTick()-adjustmentForDetermineFuelMix);
-    	//Create regression object
-    	SimpleRegression sr = new SimpleRegression();
-    	double lastPrice = 0;
-    	int i = 0;
-		for (ClearingPoint clearingPoint : cps) {
-			sr.addData(clearingPoint.getTime(), clearingPoint.getPrice());
-			lastPrice = clearingPoint.getPrice();
-			i++;
-		}
-		double expectedCO2Price;
-		if(i>1){
-			expectedCO2Price = sr.predict(futureTimePoint);
-		}else{
-			 expectedCO2Price = lastPrice;
-		}
+        //Find Clearing Points for the last 5 years (counting current year as one of the last 5 years).
+        Iterable<ClearingPoint> cps = reps.clearingPointRepository.findAllClearingPointsForMarketAndTimeRange(co2Auction, getCurrentTick()-yearsLookingBackForRegression+1-adjustmentForDetermineFuelMix, getCurrentTick()-adjustmentForDetermineFuelMix);
+        //Create regression object
+        SimpleRegression sr = new SimpleRegression();
+        double lastPrice = 0;
+        int i = 0;
+        for (ClearingPoint clearingPoint : cps) {
+            sr.addData(clearingPoint.getTime(), clearingPoint.getPrice());
+            lastPrice = clearingPoint.getPrice();
+            i++;
+        }
+        double expectedCO2Price;
+        if(i>1){
+            expectedCO2Price = sr.predict(futureTimePoint);
+        }else{
+            expectedCO2Price = lastPrice;
+        }
 
         for (ElectricitySpotMarket esm : reps.marketRepository.findAllElectricitySpotMarkets()) {
             double nationalCo2MinPriceinFutureTick = reps.nationalGovernmentRepository.findNationalGovernmentByElectricitySpotMarket(esm)
