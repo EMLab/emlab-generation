@@ -533,22 +533,29 @@ public abstract class AbstractEnergyProducerRole<T extends EnergyProducer> exten
         CO2Auction co2Auction = reps.marketRepository.findCO2Auction();
         //Find Clearing Points for the last 5 years (counting current year as one of the last 5 years).
         Iterable<ClearingPoint> cps = reps.clearingPointRepository.findAllClearingPointsForMarketAndTimeRange(co2Auction, getCurrentTick()-yearsLookingBackForRegression+1-adjustmentForDetermineFuelMix, getCurrentTick()-adjustmentForDetermineFuelMix);
-        //Create regression object
+        // Create regression object and calculate average
         SimpleRegression sr = new SimpleRegression();
+        Government government = reps.template.findAll(Government.class).iterator().next();
         double lastPrice = 0;
+        double averagePrice = 0;
         int i = 0;
         for (ClearingPoint clearingPoint : cps) {
             sr.addData(clearingPoint.getTime(), clearingPoint.getPrice());
             lastPrice = clearingPoint.getPrice();
+            averagePrice += lastPrice;
             i++;
         }
+        averagePrice = averagePrice / i;
         double expectedCO2Price;
         if(i>1){
             expectedCO2Price = sr.predict(futureTimePoint);
+            expectedCO2Price = Math.max(0, expectedCO2Price);
+            expectedCO2Price = Math.min(expectedCO2Price, government.getCo2Penalty());
         }else{
             expectedCO2Price = lastPrice;
         }
-
+        // Calculate average of regression and past average:
+        expectedCO2Price = (expectedCO2Price + averagePrice) / 2;
         for (ElectricitySpotMarket esm : reps.marketRepository.findAllElectricitySpotMarkets()) {
             double nationalCo2MinPriceinFutureTick = reps.nationalGovernmentRepository.findNationalGovernmentByElectricitySpotMarket(esm)
                     .getMinNationalCo2PriceTrend().getValue(futureTimePoint);

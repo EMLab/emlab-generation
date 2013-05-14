@@ -87,8 +87,10 @@ NodeBacked {
         Map<Substance, Double> expectedFuelPrices = predictFuelPrices(agent, futureTimePoint);
 
         // CO2
-        Map<ElectricitySpotMarket, Double> expectedCO2Price = determineExpectedCO2PriceInclTax(futureTimePoint, agent.getNumberOfYearsBacklookingForForecasting());
+        Map<ElectricitySpotMarket, Double> expectedCO2Price = determineExpectedCO2PriceInclTax(futureTimePoint,
+                agent.getNumberOfYearsBacklookingForForecasting());
 
+        // logger.warn(expectedCO2Price.toString());
 
         //Demand
         Map<ElectricitySpotMarket, Double> expectedDemand = new HashMap<ElectricitySpotMarket, Double>();
@@ -118,12 +120,13 @@ NodeBacked {
         // expectedCO2Price.get(market) + " Euro/MWh at timepoint "
         // + futureTimePoint + " in Market " + market);
 
-        logger.warn("Agent {}  found the expected prices to be {}", agent,
-                marketInformation.expectedElectricityPricesPerSegment);
+        // logger.warn("Agent {}  found the expected prices to be {}", agent,
+        // marketInformation.expectedElectricityPricesPerSegment);
 
-        logger.warn("Agent {}  found that the installed capacity in the market {} in future to be "
-                + marketInformation.capacitySum + "and expectde maximum demand to be "
-                + marketInformation.maxExpectedLoad, agent, market);
+        // logger.warn("Agent {}  found that the installed capacity in the market {} in future to be "
+        // + marketInformation.capacitySum +
+        // "and expectde maximum demand to be "
+        // + marketInformation.maxExpectedLoad, agent, market);
 
         double highestValue = Double.MIN_VALUE;
         PowerGeneratingTechnology bestTechnology = null;
@@ -159,6 +162,8 @@ NodeBacked {
                     technology, getCurrentTick());
             double operationalCapacityOfTechnology = reps.powerPlantRepository.calculateCapacityOfOperationalPowerPlantsByTechnology(
                     technology, getCurrentTick());
+            double capacityInPipelineInMarket = reps.powerPlantRepository
+                    .calculateCapacityOfPowerPlantsByMarketInPipeline(market, getCurrentTick());
 
             if ((expectedInstalledCapacityOfTechnology + plant.getActualNominalCapacity())
                     / (marketInformation.maxExpectedLoad + plant.getActualNominalCapacity()) > technology
@@ -173,6 +178,9 @@ NodeBacked {
                 // logger.warn(agent +
                 // " will not invest in {} technology because there's too much capacity planned by him",
                 // technology);
+            } else if (capacityInPipelineInMarket > 0.2 * marketInformation.maxExpectedLoad) {
+                // logger.warn("Not investing because more than 20% of demand in pipeline.");
+
             } else if ((capacityOfTechnologyInPipeline > 2.0 * operationalCapacityOfTechnology)
                     && capacityOfTechnologyInPipeline > 9000) { // TODO:
                 // reflects that you cannot expand a technology out of zero.
@@ -218,10 +226,9 @@ NodeBacked {
                 // runningHours);
                 // expect to meet minimum running hours?
                 if (runningHours < plant.getTechnology().getMinimumRunningHours()) {
-                    logger.warn(
-                            agent
-                            + " will not invest in {} technology as he expect to have {} running, which is lower then required",
-                            technology, runningHours);
+                    // logger.warn(agent+
+                    // " will not invest in {} technology as he expect to have {} running, which is lower then required",
+                    // technology, runningHours);
                 } else {
 
                     double fixedOMCost = calculateFixedOperatingCost(plant);// /
@@ -267,10 +274,12 @@ NodeBacked {
 
                     double projectValue = discountedOpProfit + discountedCapitalCosts;
 
-                    logger.warn(
-                            "Agent {}  found the project value for technology {} to be "
-                                    + Math.round(projectValue / plant.getActualNominalCapacity())
-                                    + " EUR/kW (running hours: " + runningHours + "", agent, technology);
+                    // logger.warn(
+                    // "Agent {}  found the project value for technology {} to be "
+                    // + Math.round(projectValue /
+                    // plant.getActualNominalCapacity())
+                    // + " EUR/kW (running hours: " + runningHours + "", agent,
+                    // technology);
 
                     // double projectTotalValue = projectValuePerMW *
                     // plant.getActualNominalCapacity();
@@ -329,10 +338,11 @@ NodeBacked {
     private void createSpreadOutDownPayments(EnergyProducer agent, PowerPlantManufacturer manufacturer, double totalDownPayment,
             PowerPlant plant) {
         int buildingTime = (int) plant.getActualLeadtime();
-        for (int i = 0; i < buildingTime; i++) {
-            reps.nonTransactionalCreateRepository.createCashFlow(agent, manufacturer, totalDownPayment / buildingTime,
-                    CashFlow.DOWNPAYMENT, getCurrentTick() + i, plant);
-        }
+        reps.nonTransactionalCreateRepository.createCashFlow(agent, manufacturer, totalDownPayment / buildingTime,
+                CashFlow.DOWNPAYMENT, getCurrentTick(), plant);
+        Loan downpayment = reps.loanRepository.createLoan(agent, manufacturer, totalDownPayment / buildingTime,
+                buildingTime - 1, getCurrentTick(), plant);
+        plant.createOrUpdateDownPayment(downpayment);
     }
 
     @Transactional

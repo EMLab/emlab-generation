@@ -10,7 +10,6 @@
 setwd("~/emlab-generation/rscripts/")
 source("rConfig.R")
 source("simulation.R")
-source("singleRunAnalysis.R")
 @
 
 \newcommand\report[1]{
@@ -58,7 +57,7 @@ createPostRunPlots <- function(listOfDFs, listOfVariablesAndCaptions){
   }
 }
 setwd("~/emlab-generation/rscripts/exampleSweaveReport/")
-runResult<-runSimulation(createReportPdf,10, "exampleSweaveReport")
+runResult<-runSimulation(createReportPdf,40, "newInvestment")
 
 createPostRunPlots(runResult, list(list("Avg_El_PricesinEURpMWh_Country A", "Electr. Price [Eur/MWh]", "Average Eletricity Price in Country A"),list("Avg_El_PricesinEURpMWh_Country B", "Electr. Price [Eur/MWh]", "Average Eletricity Price in Country B"), list("CO2Emissions_inTonpA",expression(paste(CO[2], " Emissions [Ton/a]", sep="")), "CO$_2$ Emissions"), list("CO2Auction", expression(paste(CO[2]," Price [EUR/t]", sep="")), "CO$_2$ Price")))
 @
