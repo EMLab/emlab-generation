@@ -68,6 +68,11 @@ public interface PowerPlantDispatchPlanRepository extends GraphRepository<PowerP
     public Iterable<PowerPlantDispatchPlan> findSortedPowerPlantDispatchPlansForSegmentForTime(@Param("segment") Segment segment,
             @Param("time") long time);
 
+    // descending order
+    @Query("START segment = node({segment}) MATCH (segment)<-[:SEGMENT_DISPATCHPLAN]-(ppdp) WHERE (ppdp.time = {time}) RETURN ppdp ORDER BY ppdp.price desc")
+    public Iterable<PowerPlantDispatchPlan> findDescendingSortedPowerPlantDispatchPlansForSegmentForTime(
+            @Param("segment") Segment segment, @Param("time") long time);
+
     @Query(value = "g.v(plant).in('POWERPLANT_DISPATCHPLAN').propertyFilter('time', FilterPipe.Filter.EQUAL, time)", type = QueryType.Gremlin)
     public Iterable<PowerPlantDispatchPlan> findAllPowerPlantDispatchPlansForPowerPlantForTime(@Param("plant") PowerPlant plant,
             @Param("time") long time);

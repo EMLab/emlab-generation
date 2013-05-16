@@ -27,10 +27,13 @@ import emlab.gen.domain.agent.CommoditySupplier;
 import emlab.gen.domain.agent.DecarbonizationModel;
 import emlab.gen.domain.agent.EnergyConsumer;
 import emlab.gen.domain.agent.EnergyProducer;
+import emlab.gen.domain.agent.StrategicReserveOperator;
 import emlab.gen.domain.agent.TargetInvestor;
 import emlab.gen.domain.market.CommodityMarket;
 import emlab.gen.domain.market.electricity.ElectricitySpotMarket;
 import emlab.gen.repository.Reps;
+import emlab.gen.role.capacitymechanisms.ProcessAcceptedPowerPlantDispatchRoleinSR;
+import emlab.gen.role.capacitymechanisms.StrategicReserveOperatorRole;
 import emlab.gen.role.investment.DismantlePowerPlantPastTechnicalLifetimeRole;
 import emlab.gen.role.investment.GenericInvestmentRole;
 import emlab.gen.role.market.ClearCommodityMarketRole;
@@ -95,6 +98,10 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
     private PayForLoansRole payForLoansRole;
     @Autowired
     private PayOperatingAndMaintainanceCostsRole payOperatingAndMaintainanceCostsRole;
+    @Autowired
+    private StrategicReserveOperatorRole strategicReserveOperatorRole;
+    @Autowired
+    private ProcessAcceptedPowerPlantDispatchRoleinSR acceptedPowerPlantDispatchRoleinSR;
 
     @Autowired
     Reps reps;
@@ -174,6 +181,17 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
             //            producer.act(submitOffersToElectricitySpotMarketRole);
         }
 
+        /*
+         * Contract strategic reserve volume and set strategic reserve dispatch
+         * price
+         */
+        timerMarket.reset();
+        timerMarket.start();
+        logger.warn("  4. Contracting Strategic Reserve ");
+        for (StrategicReserveOperator strategicReserveOperator : reps.strategicReserveOperatorRepository.findAll()) {
+            strategicReserveOperatorRole.act(strategicReserveOperator);
+        }
+
         clearIterativeCO2AndElectricitySpotMarketTwoCountryRole.act(model);
         //        model.act(clearIterativeCO2AndElectricitySpotMarketTwoCountryRole);
         timerMarket.stop();
@@ -189,6 +207,10 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
             processAcceptedPowerPlantDispatchRole.act(electricitySpotMarket);
             //            electricitySpotMarket.act(processAcceptedPowerPlantDispatchRole);
         }
+        for (StrategicReserveOperator strategicReserveOperator : reps.strategicReserveOperatorRepository.findAll()) {
+            acceptedPowerPlantDispatchRoleinSR.act(strategicReserveOperator);
+        }
+        // logger.warn(" 4. Processing Strategic Reserve Payment ");
         timerMarket.stop();
         logger.warn("        paying took: {} seconds.", timerMarket.seconds());
         /*

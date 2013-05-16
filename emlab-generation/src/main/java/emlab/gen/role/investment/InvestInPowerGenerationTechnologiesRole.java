@@ -33,6 +33,7 @@ import agentspring.role.Role;
 import emlab.gen.domain.agent.BigBank;
 import emlab.gen.domain.agent.EnergyProducer;
 import emlab.gen.domain.agent.PowerPlantManufacturer;
+import emlab.gen.domain.agent.StrategicReserveOperator;
 import emlab.gen.domain.contract.CashFlow;
 import emlab.gen.domain.contract.Loan;
 import emlab.gen.domain.gis.Zone;
@@ -48,6 +49,7 @@ import emlab.gen.domain.technology.PowerPlant;
 import emlab.gen.domain.technology.Substance;
 import emlab.gen.domain.technology.SubstanceShareInFuelMix;
 import emlab.gen.repository.Reps;
+import emlab.gen.repository.StrategicReserveOperatorRepository;
 import emlab.gen.util.GeometricTrendRegression;
 import emlab.gen.util.MapValueComparator;
 
@@ -72,8 +74,12 @@ NodeBacked {
     @Autowired
     Neo4jTemplate template;
 
-    // market expectations
     @Transient
+    @Autowired
+    StrategicReserveOperatorRepository strategicReserveOperatorRepository;
+
+    // market expectations
+	@Transient
     Map<ElectricitySpotMarket, MarketInformation> marketInfoMap = new HashMap<ElectricitySpotMarket, MarketInformation>();
 
     @Override
@@ -267,38 +273,37 @@ NodeBacked {
 
                     double discountedOpProfit = npv(discountedProjectCashInflow, wacc);
 
+                        // logger.warn("Agent {}  found that the projected discounted inflows for technology {} to be "
+                        // + discountedOpProfit,
+                        // agent, technology);
 
-                    // logger.warn("Agent {}  found that the projected discounted inflows for technology {} to be "
-                    // + discountedOpProfit,
-                    // agent, technology);
+                        double projectValue = discountedOpProfit + discountedCapitalCosts;
 
-                    double projectValue = discountedOpProfit + discountedCapitalCosts;
+                        // logger.warn(
+                        // "Agent {}  found the project value for technology {} to be "
+                        // + Math.round(projectValue /
+						// plant.getActualNominalCapacity()) +
+                        // " EUR/kW (running hours: "
+                        // + runningHours + "", agent, technology);
 
-                    // logger.warn(
-                    // "Agent {}  found the project value for technology {} to be "
-                    // + Math.round(projectValue /
-                    // plant.getActualNominalCapacity())
-                    // + " EUR/kW (running hours: " + runningHours + "", agent,
-                    // technology);
+                        // double projectTotalValue = projectValuePerMW *
+						// plant.getActualNominalCapacity();
 
-                    // double projectTotalValue = projectValuePerMW *
-                    // plant.getActualNominalCapacity();
+                        // double projectReturnOnInvestment = discountedOpProfit
+                        // / (-discountedCapitalCosts);
 
-                    // double projectReturnOnInvestment = discountedOpProfit
-                    // / (-discountedCapitalCosts);
+                        /*
+                         * Divide by capacity, in order not to favour large power plants (which have the single largest NPV
+                         */
 
-                    /*
-                     * Divide by capacity, in order not to favour large power plants (which have the single largest NPV
-                     */
-
-                    if (projectValue > 0 && projectValue / plant.getActualNominalCapacity() > highestValue) {
-                        highestValue = projectValue / plant.getActualNominalCapacity();
-                        bestTechnology = plant.getTechnology();
+						if (projectValue > 0 && projectValue / plant.getActualNominalCapacity() > highestValue) {
+							highestValue = projectValue / plant.getActualNominalCapacity();
+                            bestTechnology = plant.getTechnology();
+                        }
                     }
-                }
 
+                }
             }
-        }
 
         if (bestTechnology != null) {
             // logger.warn("Agent {} invested in technology {} at tick " + getCurrentTick(), agent, bestTechnology);
@@ -481,6 +486,7 @@ NodeBacked {
 
                 double segmentSupply = 0d;
                 double segmentPrice = 0d;
+                double totalCapacityAvailable = 0d;
 
                 for (Entry<PowerPlant, Double> plantCost : meritOrder.entrySet()) {
                     PowerPlant plant = plantCost.getKey();
@@ -488,7 +494,7 @@ NodeBacked {
                     // Determine available capacity in the future in this
                     // segment
                     plantCapacity = plant.getExpectedAvailableCapacity(time, segmentLoad.getSegment(), numberOfSegments);
-
+                    totalCapacityAvailable += plantCapacity;
                     // logger.warn("Capacity of plant " + plant.toString() +
                     // " is " +
                     // plantCapacity/plant.getActualNominalCapacity());
@@ -504,8 +510,28 @@ NodeBacked {
                 // segmentSupply + " and segment demand equals " +
                 // expectedSegmentLoad);
 
-                if (segmentSupply >= expectedSegmentLoad) {
+                // Find strategic reserve operator for the market.
+                double reservePrice = 0;
+                double reserveVolume = 0;
+                for (StrategicReserveOperator operator : strategicReserveOperatorRepository.findAll()) {
+                    ElectricitySpotMarket market1 = reps.marketRepository.findElectricitySpotMarketForZone(operator
+                            .getZone());
+                    if (market.getNodeId().intValue() == market1.getNodeId().intValue()) {
+                        reservePrice = operator.getReservePriceSR();
+                        reserveVolume = operator.getReserveVolume();
+                    }
+                }
+
+                if (segmentSupply >= expectedSegmentLoad
+                        && ((totalCapacityAvailable - expectedSegmentLoad) <= (reserveVolume))) {
+                    expectedElectricityPricesPerSegment.put(segmentLoad.getSegment(), reservePrice);
+                    // logger.warn("Price: "+
+                    // expectedElectricityPricesPerSegment);
+                } else if (segmentSupply >= expectedSegmentLoad
+                        && ((totalCapacityAvailable - expectedSegmentLoad) > (reserveVolume))) {
                     expectedElectricityPricesPerSegment.put(segmentLoad.getSegment(), segmentPrice);
+                    // logger.warn("Price: "+
+                    // expectedElectricityPricesPerSegment);
                 } else {
                     expectedElectricityPricesPerSegment.put(segmentLoad.getSegment(), market.getValueOfLostLoad());
                 }

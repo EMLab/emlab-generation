@@ -189,7 +189,7 @@
 		<property name ="technology" ref="coalPulverizedSuperCritical"/>
 		<property name="owner" ref="energyProducerA"/>
 		<property name="location" ref="beneluxNode"/>
-		<property name="loan" ref="loanppCoalA1"/>
+		<property name="loan" ref="loanppCoalA2"/>
 	</bean>
 	
 	<bean id="ppCoalB1" class="emlab.gen.domain.technology.PowerPlant" p:label="Coal Power Plant B1"

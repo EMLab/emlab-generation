@@ -14,82 +14,46 @@
 # limitations under the License.
 #-------------------------------------------------------------------------------
 #coalPriceStart=86.300754753
-#coalPriceStart=50.0
+coalPriceStart=50.0
 #coalPriceMin=0.96
-#coalPriceMin=0.97
+coalPriceMin=0.97
 #coalPriceTop=1.00
-#coalPriceTop=1.01
+coalPriceTop=1.01
 #coalPriceMax=1.04
-#coalPriceMax=1.05
+coalPriceMax=1.05
 
-coalPriceStart=100.8629923136
-coalPriceMin=1
-coalPriceTop=1
-coalPriceMax=1
-	
-gasPriceStart=0.3246874961
-#gasPriceStart=0.2286412084
-gasPriceMin=1
-#gasPriceMin=0.9446627902
-gasPriceTop=1
-#gasPriceTop=1.0146627902
-gasPriceMax=1
-#gasPriceMax=1.0846627902
-
-#gasPriceStart=0.2286412084
+gasPriceStart=0.2286412084
 #gasPriceMin=0.95
-#gasPriceMin=0.96
+gasPriceMin=0.96
 #gasPriceTop=1.01
-#gasPriceTop=1.03
+gasPriceTop=1.03
 #gasPriceMax=1.07
-#gasPriceMax=1.10
+gasPriceMax=1.10
 
 biomassPriceStart=112.5
-biomassPriceMin=1
-#biomassPriceMin=0.97
-biomassPriceTop=1
-#biomassPriceTop=1.01
-biomassPriceMax=1
-#biomassPriceMax=1.05
-
-#biomassPriceStart=112.5
 #biomassPriceMin=0.95
-#biomassPriceMin=0.97
+biomassPriceMin=0.97
 #biomassPriceTop=1.01
-#biomassPriceTop=1.01
+biomassPriceTop=1.01
 #biomassPriceMax=1.05
-#biomassPriceMax=1.05
+biomassPriceMax=1.05
 
 uraniumPriceStart=5000000
-uraniumPriceMin=1
-uraniumPriceMax=1
+uraniumPriceMin=1.00
 #uraniumPriceMax=1.02
-uraniumPriceTop=1
+uraniumPriceMax=1.02
 #uraniumPriceTop=1.01
-
-#uraniumPriceStart=5000000
-#uraniumPriceMin=1.00
-#uraniumPriceMax=1.02
-#uraniumPriceMax=1.02
-#uraniumPriceTop=1.01
-#uraniumPriceTop=1.01
+uraniumPriceTop=1.01
 
 co2TaxStart=0
 co2TaxIncrement=0
 co2TaxDuration=5
 
-minCo2EUPriceStart=0
-minCo2EUPriceIncrement=0
-minCo2PriceDuration=1
 
-co2CapStart=72e10
-#co2CapIncrement=-1.104e6
-co2CapIncrement=0
+co2CapStart=72e6
+co2CapIncrement=-1.104e6
+#co2CapIncrement=0
 co2CapDuration=1
-
-minCo2NLPriceStart=0
-minCo2NLPriceIncrement=0
-minCo2NLPriceDuration=1
 
 minCo2PriceStart=0
 minCo2PriceIncrement=0
@@ -116,19 +80,13 @@ segment18nl=17535.46
 segment19nl=18179.78
 segment20nl=18390.00
 
-
-#demandGrowthNLStart=1
-#demandGrowthNLMin=0.99
-#demandGrowthNLTop=1.02
-#demandGrowthNLMax=1.05
-
 demandGrowthNLStart=1
-demandGrowthNLMin=1
-demandGrowthNLTop=1
-demandGrowthNLMax=1
+demandGrowthNLMin=0.99
+demandGrowthNLTop=1.02
+demandGrowthNLMax=1.05
 
 startCash=3e9
-priceMarkUp=1
+priceMarkUp=1.1
 
 co2TradingImplemented=true
 simulationLength=50
