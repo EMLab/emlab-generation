@@ -27,7 +27,7 @@
 		p:co2TradingImplemented="true"
 		p:realRenewableDataImplemented="false"
 		p:iterationSpeedFactor="3" p:iterationSpeedCriterion="0.005"
-		p:capDeviationCriterion="0.025" p:deletionOldPPDPBidsAndCashFlowsEnabled="true"
+		p:capDeviationCriterion="0.03" p:deletionOldPPDPBidsAndCashFlowsEnabled="true"
 		p:deletionAge="2">
 	</bean>
 
@@ -915,7 +915,7 @@
 		p:debtRatioOfInvestments="0.7"
 		p:dismantlingProlongingYearsAfterTechnicalLifetime="0"
 		p:dismantlingRequiredOperatingProfit="0" p:downpaymentFractionOfCash="0.5"
-		p:willingToInvest="true" p:priceMarkUp="${priceMarkUp}" 
+		p:willingToInvest="true" p:priceMarkUp="${priceMarkUp}"
 		p:numberOfYearsBacklookingForForecasting="${numberOfYearsBacklookingForForecasting}"
 		p:investorMarket-ref="beneluxElectricitySpotMarket"/>
 
@@ -957,12 +957,6 @@
 				<entry>
 					<key>
 						<ref bean="CCGT" />
-					</key>
-					<value>0.40</value>
-				</entry>
-				<entry>
-					<key>
-						<ref bean="OCGT" />
 					</key>
 					<value>0.16</value>
 				</entry>
@@ -1182,7 +1176,7 @@
 		p:co2CaptureEffciency="0"
 		p:depreciationTime="20" p:minimumRunningHours="0"
 		p:fixedOperatingCostModifierAfterLifetime=".05" p:expectedLifetime="40"
-		p:expectedLeadtime="5" p:expectedPermittime="1" p:minimumFuelQuality=".9"
+		p:expectedLeadtime="4" p:expectedPermittime="1" p:minimumFuelQuality=".9"
 		p:maximumInstalledCapacityFractionInCountry="1"
 		p:maximumInstalledCapacityFractionPerAgent="1"
 		p:baseSegmentDependentAvailability="1"
@@ -1209,7 +1203,7 @@
 		p:co2CaptureEffciency="0.875"
 		p:depreciationTime="20" p:minimumRunningHours="5000"
 		p:fixedOperatingCostModifierAfterLifetime=".05" p:expectedLifetime="40"
-		p:expectedLeadtime="5" p:expectedPermittime="1" p:minimumFuelQuality=".9"
+		p:expectedLeadtime="4" p:expectedPermittime="1" p:minimumFuelQuality=".9"
 		p:maximumInstalledCapacityFractionInCountry="1"
 		p:maximumInstalledCapacityFractionPerAgent="1"
 		p:baseSegmentDependentAvailability="1"

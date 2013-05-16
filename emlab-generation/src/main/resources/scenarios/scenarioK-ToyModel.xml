@@ -274,7 +274,8 @@
 		p:dismantlingProlongingYearsAfterTechnicalLifetime="0"
 		p:dismantlingRequiredOperatingProfit="0" p:downpaymentFractionOfCash="0.5"
 		p:willingToInvest="true" p:priceMarkUp="1.0"
-		p:numberOfYearsBacklookingForForecasting="5" />
+		p:numberOfYearsBacklookingForForecasting="5"
+		p:investorMarket-ref="beneluxElectricitySpotMarket"/>
 	<bean id="energyProducerB" class="emlab.gen.domain.agent.EnergyProducer"
 		p:name="Energy Producer B" p:cash="3e12" 
 		p:investmentRole-ref="standardInvestmentRole"
@@ -285,7 +286,8 @@
 		p:dismantlingProlongingYearsAfterTechnicalLifetime="0"
 		p:dismantlingRequiredOperatingProfit="0" p:downpaymentFractionOfCash="0.5"
 		p:willingToInvest="true" p:priceMarkUp="1.0"
-		p:numberOfYearsBacklookingForForecasting="5" />
+		p:numberOfYearsBacklookingForForecasting="5"
+		p:investorMarket-ref="beneluxElectricitySpotMarket"/>
 	<bean id="energyProducerC" class="emlab.gen.domain.agent.EnergyProducer"
 		p:name="Energy Producer C" p:cash="3e12"
 		p:investmentRole-ref="standardInvestmentRole"
@@ -296,7 +298,8 @@
 		p:dismantlingProlongingYearsAfterTechnicalLifetime="0"
 		p:dismantlingRequiredOperatingProfit="0" p:downpaymentFractionOfCash="0.5"
 		p:willingToInvest="true" p:priceMarkUp="1.0"
-		p:numberOfYearsBacklookingForForecasting="5" />
+		p:numberOfYearsBacklookingForForecasting="5"
+		p:investorMarket-ref="beneluxElectricitySpotMarket"/>
 	<bean id="energyProducerD" class="emlab.gen.domain.agent.EnergyProducer"
 		p:name="Energy Producer D" p:cash="3e12" 
 		p:investmentRole-ref="standardInvestmentRole"
@@ -307,7 +310,8 @@
 		p:dismantlingProlongingYearsAfterTechnicalLifetime="0"
 		p:dismantlingRequiredOperatingProfit="0" p:downpaymentFractionOfCash="0.5"
 		p:willingToInvest="true" p:priceMarkUp="1.0"
-		p:numberOfYearsBacklookingForForecasting="5" />
+		p:numberOfYearsBacklookingForForecasting="5"
+		p:investorMarket-ref="beneluxElectricitySpotMarket"/>
 	
 
 	<bean id="standardInvestmentRole" class="emlab.gen.role.investment.InvestInPowerGenerationTechnologiesRole"/>

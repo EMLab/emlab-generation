@@ -309,7 +309,8 @@
 		p:dismantlingProlongingYearsAfterTechnicalLifetime="0"
 		p:dismantlingRequiredOperatingProfit="0" p:downpaymentFractionOfCash="0.5"
 		p:willingToInvest="true" p:priceMarkUp="1.0"
-		p:numberOfYearsBacklookingForForecasting="5" />
+		p:numberOfYearsBacklookingForForecasting="5"
+		p:investorMarket-ref="beneluxElectricitySpotMarket"/>
 	<bean id="energyProducerB" class="emlab.gen.domain.agent.EnergyProducer"
 		p:name="Energy Producer B" p:cash="3e12" 
 		p:investmentRole-ref="standardInvestmentRole"
@@ -320,7 +321,8 @@
 		p:dismantlingProlongingYearsAfterTechnicalLifetime="0"
 		p:dismantlingRequiredOperatingProfit="0" p:downpaymentFractionOfCash="0.5"
 		p:willingToInvest="true" p:priceMarkUp="1.0"
-		p:numberOfYearsBacklookingForForecasting="5" />
+		p:numberOfYearsBacklookingForForecasting="5"
+		p:investorMarket-ref="beneluxElectricitySpotMarket"/>
 	<bean id="energyProducerC" class="emlab.gen.domain.agent.EnergyProducer"
 		p:name="Energy Producer C" p:cash="3e12"
 		p:investmentRole-ref="standardInvestmentRole"
@@ -331,7 +333,8 @@
 		p:dismantlingProlongingYearsAfterTechnicalLifetime="0"
 		p:dismantlingRequiredOperatingProfit="0" p:downpaymentFractionOfCash="0.5"
 		p:willingToInvest="true" p:priceMarkUp="1.0"
-		p:numberOfYearsBacklookingForForecasting="5" />
+		p:numberOfYearsBacklookingForForecasting="5"
+		p:investorMarket-ref="beneluxElectricitySpotMarket"/>
 	<bean id="energyProducerD" class="emlab.gen.domain.agent.EnergyProducer"
 		p:name="Energy Producer D" p:cash="3e12" 
 		p:investmentRole-ref="standardInvestmentRole"
@@ -342,7 +345,8 @@
 		p:dismantlingProlongingYearsAfterTechnicalLifetime="0"
 		p:dismantlingRequiredOperatingProfit="0" p:downpaymentFractionOfCash="0.5"
 		p:willingToInvest="true" p:priceMarkUp="1.0"
-		p:numberOfYearsBacklookingForForecasting="5" />
+		p:numberOfYearsBacklookingForForecasting="5"
+		p:investorMarket-ref="beneluxElectricitySpotMarket"/>
 	
 
 	<bean id="standardInvestmentRole" class="emlab.gen.role.investment.InvestInPowerGenerationTechnologiesRole"/>
@@ -5762,7 +5766,7 @@
 		p:depreciationTime="15"
 		p:minimumRunningHours="0"
 		p:fixedOperatingCostModifierAfterLifetime=".05" p:expectedLifetime="25"
-		p:expectedLeadtime="2" p:expectedPermittime="1" p:minimumFuelQuality="1"
+		p:expectedLeadtime="1" p:expectedPermittime="0" p:minimumFuelQuality="1"
 		p:maximumInstalledCapacityFractionInCountry="1"
 		p:maximumInstalledCapacityFractionPerAgent="1"
 		p:baseSegmentDependentAvailability="0.16"
@@ -5783,7 +5787,7 @@
 		p:depreciationTime="25"
 		p:minimumRunningHours="5000"
 		p:fixedOperatingCostModifierAfterLifetime=".05" p:expectedLifetime="40"
-		p:expectedLeadtime="7" p:expectedPermittime="2" p:minimumFuelQuality="1"
+		p:expectedLeadtime="5" p:expectedPermittime="2" p:minimumFuelQuality="1"
 		p:maximumInstalledCapacityFractionInCountry="1"
 		p:maximumInstalledCapacityFractionPerAgent="1"
 		p:baseSegmentDependentAvailability="1"
