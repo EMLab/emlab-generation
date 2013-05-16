@@ -3,6 +3,7 @@ library(RCurl)
 library(plyr)
 source("rConfig.R")
 source("AgentSpringQueryReader.R")
+source("singleRunAnalysis.R")
 options(warn=-1)
 ### FUNCTIONS ###
 # start simulation
@@ -101,14 +102,24 @@ saveQueriesToDataFrameList <- function(tick, listOfDataFrames, queries){
       
       splitQueryName=strsplit(as.character(queries[i,1]), "_")
       if(tick>0){
-        listOfDataFrames[[splitQueryName[[1]][2]]]<-rbind(listOfDataFrames[[splitQueryName[[1]][2]]],tableQueryResultToDataFrame(querySimulation(queries[i,2],queries[i,3])$result, splitQueryName))
-      }else{
+        listOfDataFrames[[splitQueryName[[1]][2]]]<-try(rbind(listOfDataFrames[[splitQueryName[[1]][2]]],tableQueryResultToDataFrame(querySimulation(queries[i,2],queries[i,3])$result, splitQueryName)))
+        if(class(listOfDataFrames[[splitQueryName[[1]][2]]]) == "try-error"){
+          stop(paste("Table Query Columns don't match:", splitQueryName[[1]][2]))
+        }
+        }else{
         listOfDataFrames[[splitQueryName[[1]][2]]]<-tableQueryResultToDataFrame(querySimulation(queries[i,2],queries[i,3])$result, splitQueryName)
       }
     }
   }
   if(tick>0){
-    listOfDataFrames[["simpleQueriesDF"]]<-rbind(listOfDataFrames[["simpleQueriesDF"]],df)
+    tempDF<-try(rbind(listOfDataFrames[["simpleQueriesDF"]],df))
+    if(class(tempDF)== "try-error"){
+      browser()
+      warning(paste("Additional Column:",names(df)[!(names(df) %in% names(listOfDataFrames[["simpleQueriesDF"]]))]))
+      stop(paste("Missing Column:",names(listOfDataFrames[["simpleQueriesDF"]])[!(names(listOfDataFrames[["simpleQueriesDF"]]) %in% names(df))]))
+      stop("Columns of big data frame don't match!")
+    }
+    listOfDataFrames[["simpleQueriesDF"]]<-tempDF
   } else{
     listOfDataFrames[["simpleQueriesDF"]]<-df
   }
