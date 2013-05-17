@@ -175,7 +175,7 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
          */
         timerMarket.reset();
         timerMarket.start();
-        logger.warn("  3. Clearing electricity spot and CO2 markets");
+        logger.warn("  3. Submitting offers to market");
         for (EnergyProducer producer : reps.genericRepository.findAllAtRandom(EnergyProducer.class)) {
             submitOffersToElectricitySpotMarketRole.act(producer);
             //            producer.act(submitOffersToElectricitySpotMarketRole);
@@ -187,17 +187,14 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
          * Contract strategic reserve volume and set strategic reserve dispatch
          * price
          */
-        timerMarket.reset();
-        timerMarket.start();
-        logger.warn("  4. Contracting Strategic Reserve ");
         for (StrategicReserveOperator strategicReserveOperator : reps.strategicReserveOperatorRepository.findAll()) {
+            logger.warn("  3a. Contracting Strategic Reserve in " + strategicReserveOperator.getZone().getName());
             strategicReserveOperatorRole.act(strategicReserveOperator);
         }
-        timerMarket.stop();
-        logger.warn("        took: {} seconds.", timerMarket.seconds());
 
         timerMarket.reset();
         timerMarket.start();
+        logger.warn("  4. Clearing electricity spot and CO2 markets");
         clearIterativeCO2AndElectricitySpotMarketTwoCountryRole.act(model);
         //        model.act(clearIterativeCO2AndElectricitySpotMarketTwoCountryRole);
         timerMarket.stop();
@@ -222,7 +219,7 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
         /*
          * Maintenance and CO2
          */
-        logger.warn("  4. Paying for maintenance & co2");
+        logger.warn("  5. Paying for maintenance & co2");
         timerMarket.reset();
         timerMarket.start();
         for (EnergyProducer producer : reps.genericRepository.findAllAtRandom(EnergyProducer.class)) {
@@ -244,7 +241,7 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
         /*
          * COMMODITY MARKETS
          */
-        logger.warn("  5. Purchasing commodities");
+        logger.warn("  6. Purchasing commodities");
         timerMarket.reset();
         timerMarket.start();
 
@@ -271,7 +268,7 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
         timerMarket.stop();
         logger.warn("        took: {} seconds.", timerMarket.seconds());
 
-        logger.warn("  6. Investing");
+        logger.warn("  7. Investing");
         Timer timerInvest = new Timer();
         timerInvest.start();
         if (getCurrentTick() > 1) {
@@ -301,7 +298,7 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
             // agentspring.simulation.Schedule.getSchedule().stop();
             // }
 
-            logger.warn("  7. Reassign LTCs");
+            logger.warn("  7.5. Reassign LTCs");
             timerMarket.reset();
             timerMarket.start();
             for (EnergyProducer producer : reps.genericRepository.findAllAtRandom(EnergyProducer.class)) {

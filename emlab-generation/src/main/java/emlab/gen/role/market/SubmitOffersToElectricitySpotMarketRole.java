@@ -49,14 +49,19 @@ public class SubmitOffersToElectricitySpotMarketRole extends AbstractEnergyProdu
     @Autowired
     Reps reps;
 
+    @Override
     @Transactional
     public void act(EnergyProducer producer) {
+
+        long numberOfSegments = reps.segmentRepository.count();
+        ElectricitySpotMarket market = producer.getInvestorMarket();
 
         // find all my operating power plants
         for (PowerPlant plant : reps.powerPlantRepository.findOperationalPowerPlantsByOwner(producer, getCurrentTick())) {
 
             // get market for the plant by zone
-            ElectricitySpotMarket market = reps.marketRepository.findElectricitySpotMarketForZone(plant.getLocation().getZone());
+            // ElectricitySpotMarket market =
+            // reps.marketRepository.findElectricitySpotMarketForZone(plant.getLocation().getZone());
 
             double mc = calculateMarginalCostExclCO2MarketCost(plant);
             double price = mc * producer.getPriceMarkUp();
@@ -66,7 +71,6 @@ public class SubmitOffersToElectricitySpotMarketRole extends AbstractEnergyProdu
             for (SegmentLoad segmentload : market.getLoadDurationCurve()) {
 
                 Segment segment = segmentload.getSegment();
-                long numberOfSegments = reps.segmentRepository.count();
                 double capacity = plant.getAvailableCapacity(getCurrentTick(), segment, numberOfSegments);
                 logger.info("I bid capacity: {} and price: {}", capacity, mc);
 
