@@ -114,7 +114,7 @@
 
 	<!-- Markets -->
 	<!-- Electricity Spot -->
-	<bean id="beneluxElectricitySpotMarket" class="emlab.gen.domain.market.electricity.ElectricitySpotMarket"
+	<bean id="germanElectricitySpotMarket" class="emlab.gen.domain.market.electricity.ElectricitySpotMarket"
 		p:name="Country A electricity spot market" p:auction="false"
 		p:referencePrice="40" p:valueOfLostLoad="5000">
 		<property name="substance" ref="electricity" />
@@ -441,7 +441,7 @@
 				<ref bean="beneluxNode" />
 			</set>
 		</property>
-		<property name="market" ref="beneluxElectricitySpotMarket" />
+		<property name="market" ref="germanElectricitySpotMarket" />
 		<property name="producers">
 			<list>
 				<ref bean="energyProducerA" />

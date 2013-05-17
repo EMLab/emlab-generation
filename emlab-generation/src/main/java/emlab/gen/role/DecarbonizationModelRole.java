@@ -180,6 +180,8 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
             submitOffersToElectricitySpotMarketRole.act(producer);
             //            producer.act(submitOffersToElectricitySpotMarketRole);
         }
+        timerMarket.stop();
+        logger.warn("        took: {} seconds.", timerMarket.seconds());
 
         /*
          * Contract strategic reserve volume and set strategic reserve dispatch
@@ -191,7 +193,11 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
         for (StrategicReserveOperator strategicReserveOperator : reps.strategicReserveOperatorRepository.findAll()) {
             strategicReserveOperatorRole.act(strategicReserveOperator);
         }
+        timerMarket.stop();
+        logger.warn("        took: {} seconds.", timerMarket.seconds());
 
+        timerMarket.reset();
+        timerMarket.start();
         clearIterativeCO2AndElectricitySpotMarketTwoCountryRole.act(model);
         //        model.act(clearIterativeCO2AndElectricitySpotMarketTwoCountryRole);
         timerMarket.stop();
