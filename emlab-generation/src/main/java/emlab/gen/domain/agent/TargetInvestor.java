@@ -22,42 +22,21 @@ import org.springframework.data.neo4j.annotation.NodeEntity;
 import org.springframework.data.neo4j.annotation.RelatedTo;
 
 import agentspring.agent.Agent;
-import emlab.gen.domain.gis.Zone;
-import emlab.gen.domain.market.electricity.ElectricitySpotMarket;
 import emlab.gen.domain.policy.PowerGeneratingTechnologyTarget;
 
 @NodeEntity
 public class TargetInvestor extends EnergyProducer implements Agent {
-	
-	@RelatedTo(type="INVESTOR_TARGET",elementClass=PowerGeneratingTechnologyTarget.class, direction=Direction.OUTGOING)
-	private Set<PowerGeneratingTechnologyTarget> powerGeneratingTechnologyTargets;
-	
-	@RelatedTo(type="INVESTOR_MARKET", elementClass=ElectricitySpotMarket.class, direction=Direction.OUTGOING)
-	private ElectricitySpotMarket investorMarket;
 
-	public Set<PowerGeneratingTechnologyTarget> getPowerGenerationTechnologyTargets() {
-		return powerGeneratingTechnologyTargets;
-	}
+    @RelatedTo(type="INVESTOR_TARGET",elementClass=PowerGeneratingTechnologyTarget.class, direction=Direction.OUTGOING)
+    private Set<PowerGeneratingTechnologyTarget> powerGeneratingTechnologyTargets;
 
-	public void setPowerGenerationTechnologyTargets(
-			Set<PowerGeneratingTechnologyTarget> powerGeneratingTechnologyTargets) {
-		this.powerGeneratingTechnologyTargets = powerGeneratingTechnologyTargets;
-	}
+    public Set<PowerGeneratingTechnologyTarget> getPowerGenerationTechnologyTargets() {
+        return powerGeneratingTechnologyTargets;
+    }
 
-
-	/**
-	 * @return the investorMarket
-	 */
-	public ElectricitySpotMarket getInvestorMarket() {
-		return investorMarket;
-	}
-
-	/**
-	 * @param investorMarket the investorMarket to set
-	 */
-	public void setInvestorMarket(ElectricitySpotMarket investorMarket) {
-		this.investorMarket = investorMarket;
-	}
-
+    public void setPowerGenerationTechnologyTargets(
+            Set<PowerGeneratingTechnologyTarget> powerGeneratingTechnologyTargets) {
+        this.powerGeneratingTechnologyTargets = powerGeneratingTechnologyTargets;
+    }
 
 }
