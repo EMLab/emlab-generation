@@ -520,12 +520,21 @@ Role<DecarbonizationModel> {
         for (Zone zone : zoneList) {
             logger.warn("Bins for " + zone);
             it = 1;
+            String meanRLoad = new String("Residual load in " + zone.getName() + ":");
+            String segmentLength = new String("Segment length " + zone.getName() + ":");
             for (DynamicBin1D bin : segmentRloadBinsByZone.get(zone)) {
                 logger.warn("Segment " + it + "\n      Size: " + bin.size() + "\n      Mean RLOAD~: " + Math.round(bin.mean())
                         + "\n      Max RLOAD~: " + Math.round(bin.max()) + "\n      Min RLOAD~: " + Math.round(bin.min())
                         + "\n      Std RLOAD~: " + Math.round(bin.standardDeviation()));
                 it++;
+                double mean = bin.mean() * 1000;
+                mean = Math.round(mean);
+                mean = mean / 1000.0;
+                meanRLoad = meanRLoad.concat("," + mean);
+                segmentLength = segmentLength.concat("," + bin.size());
             }
+            logger.warn(meanRLoad);
+            logger.warn(segmentLength);
         }
 
         String loadFactors;
