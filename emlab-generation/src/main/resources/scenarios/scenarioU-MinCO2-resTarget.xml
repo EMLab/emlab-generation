@@ -68,8 +68,8 @@ Transmission capacity is assumed to be 3016 in both directions, based on maximum
 		p:quality="1" p:energyDensity="0" p:co2Density="1" />
 
 	<!-- Zones -->
-	<bean id="cwe" class="emlab.gen.domain.gis.Zone" p:name="CWE" />
-	<bean id="gb" class="emlab.gen.domain.gis.Zone" p:name="GB" />
+	<bean id="cwe" class="emlab.gen.domain.gis.Zone" p:name="Country A" />
+	<bean id="gb" class="emlab.gen.domain.gis.Zone" p:name="Country B" />
 
 	<!-- PowerGrid -->
 	<bean id="gbNode" class="emlab.gen.domain.technology.PowerGridNode"
@@ -91,47 +91,46 @@ Transmission capacity is assumed to be 3016 in both directions, based on maximum
 		</property>
 	</bean>
 
-
 	<!-- Segments of load duration curves -->
-	<bean id="segment1" class="emlab.gen.domain.market.electricity.Segment" p:lengthInHours="10"
+	<bean id="segment1" class="emlab.gen.domain.market.electricity.Segment" p:lengthInHours="17"
 		p:segmentID="20" />
-	<bean id="segment2" class="emlab.gen.domain.market.electricity.Segment" p:lengthInHours="50"
+	<bean id="segment2" class="emlab.gen.domain.market.electricity.Segment" p:lengthInHours="77"
 		p:segmentID="19" />
-	<bean id="segment3" class="emlab.gen.domain.market.electricity.Segment" p:lengthInHours="576"
+	<bean id="segment3" class="emlab.gen.domain.market.electricity.Segment" p:lengthInHours="187"
 		p:segmentID="18" />
-	<bean id="segment4" class="emlab.gen.domain.market.electricity.Segment" p:lengthInHours="576"
+	<bean id="segment4" class="emlab.gen.domain.market.electricity.Segment" p:lengthInHours="293"
 		p:segmentID="17" />
-	<bean id="segment5" class="emlab.gen.domain.market.electricity.Segment" p:lengthInHours="576"
+	<bean id="segment5" class="emlab.gen.domain.market.electricity.Segment" p:lengthInHours="294"
 		p:segmentID="16" />
-	<bean id="segment6" class="emlab.gen.domain.market.electricity.Segment" p:lengthInHours="576"
+	<bean id="segment6" class="emlab.gen.domain.market.electricity.Segment" p:lengthInHours="306"
 		p:segmentID="15" />
-	<bean id="segment7" class="emlab.gen.domain.market.electricity.Segment" p:lengthInHours="576"
+	<bean id="segment7" class="emlab.gen.domain.market.electricity.Segment" p:lengthInHours="346"
 		p:segmentID="14" />
-	<bean id="segment8" class="emlab.gen.domain.market.electricity.Segment" p:lengthInHours="576"
+	<bean id="segment8" class="emlab.gen.domain.market.electricity.Segment" p:lengthInHours="450"
 		p:segmentID="13" />
-	<bean id="segment9" class="emlab.gen.domain.market.electricity.Segment" p:lengthInHours="576"
+	<bean id="segment9" class="emlab.gen.domain.market.electricity.Segment" p:lengthInHours="649"
 		p:segmentID="12" />
-	<bean id="segment10" class="emlab.gen.domain.market.electricity.Segment" p:lengthInHours="576"
+	<bean id="segment10" class="emlab.gen.domain.market.electricity.Segment" p:lengthInHours="933"
 		p:segmentID="11" />
-	<bean id="segment11" class="emlab.gen.domain.market.electricity.Segment" p:lengthInHours="576"
+	<bean id="segment11" class="emlab.gen.domain.market.electricity.Segment" p:lengthInHours="894"
 		p:segmentID="10" />
-	<bean id="segment12" class="emlab.gen.domain.market.electricity.Segment" p:lengthInHours="576"
+	<bean id="segment12" class="emlab.gen.domain.market.electricity.Segment" p:lengthInHours="711"
 		p:segmentID="9" />
-	<bean id="segment13" class="emlab.gen.domain.market.electricity.Segment" p:lengthInHours="576"
+	<bean id="segment13" class="emlab.gen.domain.market.electricity.Segment" p:lengthInHours="630"
 		p:segmentID="8" />
-	<bean id="segment14" class="emlab.gen.domain.market.electricity.Segment" p:lengthInHours="576"
+	<bean id="segment14" class="emlab.gen.domain.market.electricity.Segment" p:lengthInHours="549"
 		p:segmentID="7" />
-	<bean id="segment15" class="emlab.gen.domain.market.electricity.Segment" p:lengthInHours="576"
+	<bean id="segment15" class="emlab.gen.domain.market.electricity.Segment" p:lengthInHours="571"
 		p:segmentID="6" />
-	<bean id="segment16" class="emlab.gen.domain.market.electricity.Segment" p:lengthInHours="576"
+	<bean id="segment16" class="emlab.gen.domain.market.electricity.Segment" p:lengthInHours="666"
 		p:segmentID="5" />
-	<bean id="segment17" class="emlab.gen.domain.market.electricity.Segment" p:lengthInHours="576"
+	<bean id="segment17" class="emlab.gen.domain.market.electricity.Segment" p:lengthInHours="544"
 		p:segmentID="4" />
-	<bean id="segment18" class="emlab.gen.domain.market.electricity.Segment" p:lengthInHours="50"
+	<bean id="segment18" class="emlab.gen.domain.market.electricity.Segment" p:lengthInHours="351"
 		p:segmentID="3" />
-	<bean id="segment19" class="emlab.gen.domain.market.electricity.Segment" p:lengthInHours="9"
+	<bean id="segment19" class="emlab.gen.domain.market.electricity.Segment" p:lengthInHours="207"
 		p:segmentID="2" />
-	<bean id="segment20" class="emlab.gen.domain.market.electricity.Segment" p:lengthInHours="1"
+	<bean id="segment20" class="emlab.gen.domain.market.electricity.Segment" p:lengthInHours="85"
 		p:segmentID="1" />
 
 	<!-- Markets -->
@@ -948,34 +947,36 @@ Transmission capacity is assumed to be 3016 in both directions, based on maximum
 			<ref bean="windOffshoreTargetCountryCWE" />
 			<ref bean="biomassTargetCountryCWE" />
 			<ref bean="pvTargetCountryCWE" />
+			<ref bean="biogasTargetCountryCWE" />
 		</set>
 	</property>
 	</bean>
 	
 	
 	<bean id="windTargetCountryCWE" class="emlab.gen.domain.policy.PowerGeneratingTechnologyTarget"
-	p:trend-ref="windTrendCountryCWE" p:powerGeneratingTechnology-ref="windPGT" />
+	p:trend-ref="windTrendCountryCWE" p:powerGeneratingTechnology-ref="windPGT"/>
 	
-	<bean id="windTrendCountryCWE" class="emlab.gen.trend.StepTrend"
-	p:duration="1" p:minValue="1995" p:increment="445" p:start="1995" />
+	<bean id="windTrendCountryCWE" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/policyGoalNREAP_CF_CWE.csv" p:delimiter="," p:variableName="WindOnshore"/>
 	
 	<bean id="windOffshoreTargetCountryCWE" class="emlab.gen.domain.policy.PowerGeneratingTechnologyTarget"
 	p:trend-ref="windOffshoreTrendCountryCWE" p:powerGeneratingTechnology-ref="windOffshorePGT"/>
 	
-	<bean id="windOffshoreTrendCountryCWE" class="emlab.gen.trend.StepTrend"
-	p:duration="1" p:minValue="228" p:increment="550" p:start="228" /> 
+	<bean id="windOffshoreTrendCountryCWE" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/policyGoalNREAP_CF_CWE.csv" p:delimiter="," p:variableName="WindOffshore"/>
 	
 	<bean id="biomassTargetCountryCWE" class="emlab.gen.domain.policy.PowerGeneratingTechnologyTarget"
 	p:trend-ref="biomassTrendCountryCWE" p:powerGeneratingTechnology-ref="biomassPGT"/>
 	
-	<bean id="biomassTrendCountryCWE" class="emlab.gen.trend.StepTrend"
-	p:duration="1" p:minValue="1543" p:increment="149.8888888889" p:start="1543	" /> 
+	<bean id="biomassTrendCountryCWE" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/policyGoalNREAP_CF_CWE.csv" p:delimiter="," p:variableName="BiomassSolid"/> 
 	
 	<bean id="pvTargetCountryCWE" class="emlab.gen.domain.policy.PowerGeneratingTechnologyTarget"
 	p:trend-ref="pvTrendCountryCWE" p:powerGeneratingTechnology-ref="photovoltaicPGT"/>
 	
-	<bean id="pvTrendCountryCWE" class="emlab.gen.trend.StepTrend"
-	p:duration="1" p:minValue="149" p:increment="63.6666666667" p:start="149" />
+	<bean id="pvTrendCountryCWE" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/policyGoalNREAP_CF_CWE.csv" p:delimiter="," p:variableName="Photovoltaic"/>
+	
+	<bean id="biogasTargetCountryCWE" class="emlab.gen.domain.policy.PowerGeneratingTechnologyTarget"
+	p:trend-ref="biogasTrendCountryCWE" p:powerGeneratingTechnology-ref="biogasPGT"/>
+	
+	<bean id="biogasTrendCountryCWE" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/policyGoalNREAP_CF_CWE.csv" p:delimiter="," p:variableName="Biogas"/> 
 	
 	<!-- Renewable Targets GB -->
 	
@@ -992,6 +993,7 @@ Transmission capacity is assumed to be 3016 in both directions, based on maximum
 			<ref bean="pvTargetCountryGB" />
 			<ref bean="windOffshoreTargetCountryGB"/>
 			<ref bean="biomassTargetCountryGB"/>
+			<ref bean="biogasTargetCountryGB"/>
 		</set>
 	</property>
 	</bean>
@@ -999,26 +1001,27 @@ Transmission capacity is assumed to be 3016 in both directions, based on maximum
 	<bean id="windTargetCountryGB" class="emlab.gen.domain.policy.PowerGeneratingTechnologyTarget"
 	p:trend-ref="windTrendCountryGB" p:powerGeneratingTechnology-ref="windPGT"/>
 	
-	<bean id="windTrendCountryGB" class="emlab.gen.trend.StepTrend"
-	p:duration="1" p:minValue="29175" p:increment="822.4" p:start="29175" /> 
+	<bean id="windTrendCountryGB" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/policyGoalNREAP_CF_UK.csv" p:delimiter="," p:variableName="WindOnshore"/>
 	
 	<bean id="windOffshoreTargetCountryGB" class="emlab.gen.domain.policy.PowerGeneratingTechnologyTarget"
 	p:trend-ref="windOffshoreTrendCountryGB" p:powerGeneratingTechnology-ref="windOffshorePGT"/>
 	
-	<bean id="windOffshoreTrendCountryGB" class="emlab.gen.trend.StepTrend"
-	p:duration="1" p:minValue="432" p:increment="822.4" p:start="432" /> 
+	<bean id="windOffshoreTrendCountryGB" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/policyGoalNREAP_CF_UK.csv" p:delimiter="," p:variableName="WindOffshore"/>
 	
 	<bean id="biomassTargetCountryGB" class="emlab.gen.domain.policy.PowerGeneratingTechnologyTarget"
 	p:trend-ref="biomassTrendCountryGB" p:powerGeneratingTechnology-ref="biomassPGT"/>
 	
-	<bean id="biomassTrendCountryGB" class="emlab.gen.trend.StepTrend"
-	p:duration="1" p:minValue="6620" p:increment="251.3" p:start="6620" /> 
+	<bean id="biomassTrendCountryGB" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/policyGoalNREAP_CF_UK.csv" p:delimiter="," p:variableName="BiomassSolid"/> 
 	
 	<bean id="pvTargetCountryGB" class="emlab.gen.domain.policy.PowerGeneratingTechnologyTarget"
 	p:trend-ref="pvTrendCountryGB" p:powerGeneratingTechnology-ref="photovoltaicPGT"/>
 	
-	<bean id="pvTrendCountryGB" class="emlab.gen.trend.StepTrend"
-	p:duration="1" p:minValue="20284" p:increment="3596.9" p:start="20284" />
+	<bean id="pvTrendCountryGB" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/policyGoalNREAP_CF_UK.csv" p:delimiter="," p:variableName="Photovoltaic"/>
+	
+	<bean id="biogasTargetCountryGB" class="emlab.gen.domain.policy.PowerGeneratingTechnologyTarget"
+	p:trend-ref="biogasTrendCountryGB" p:powerGeneratingTechnology-ref="biogasPGT"/>
+	
+	<bean id="biogasTrendCountryGB" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/policyGoalNREAP_CF_UK.csv" p:delimiter="," p:variableName="Biogas"/> 
 	
 	<!-- PowerGenerationTechnology Node Limits -->
 	
@@ -1077,7 +1080,6 @@ Transmission capacity is assumed to be 3016 in both directions, based on maximum
 					</key>
 					<value>0.061</value>
 				</entry>
-				<entry>
 				<entry>
 					<key>
 						<ref bean="CCGT" />
@@ -1145,7 +1147,7 @@ Transmission capacity is assumed to be 3016 in both directions, based on maximum
 	</bean>
 
 	<bean id="gbPowerPortfolio" class="emlab.gen.domain.factory.ElectricityProducerFactory">
-		<property name="capacityMargin" value="1.545" />
+		<property name="capacityMargin" value="0.545" />
 		<property name="portfolioShares">
 			<map>
 				<entry>
@@ -1221,8 +1223,7 @@ Transmission capacity is assumed to be 3016 in both directions, based on maximum
 		p:minValue="0" />
 
 	<!-- CO2 Cap -->
-	<bean id="co2CapTrend" class="emlab.gen.trend.TimeSeriesPropReader" p:timeSeriesStr="566353.0957438,561962.761668267,557572.427592733,553182.0935172,548791.759441667,544401.425366133,540011.0912906,535620.757215067,531230.423139533,526840.089064,513669.0868374,500498.0846108,487327.0823842,474156.0801576,460985.077931,447814.0757044,434643.0734778,421472.0712512,408301.0690246,395130.066798,381959.0645714,368788.0623448,355617.0601182,342446.0578916,329275.055665,316104.0534384,302933.0512118,289762.0489852,276591.0467586,263420.044532,250249.0423054,237078.0400788,223907.0378522,210736.0356256,197565.033399,184394.0311724,171223.0289458,158052.0267192,144881.0244926,131710.022266,131710.022266,131710.022266,131710.022266,131710.022266,131710.022266,131710.022266,131710.022266,131710.022266,131710.022266,131710.022266" />
-
+	<bean id="co2CapTrend" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/emissionCapCweUk.csv" />
 	<!-- Minimum CO2 Price Trends -->
 	<bean id="minCo2PriceTrend" class="emlab.gen.trend.StepTrend" p:start="${minCo2EUPriceStart}"
 		p:duration="${minCo2PriceDuration}" p:increment="${minCo2EUPriceIncrement}"
