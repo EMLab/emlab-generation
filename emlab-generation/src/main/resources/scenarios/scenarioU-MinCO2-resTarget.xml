@@ -14,6 +14,16 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
+
+<!-- This scenario is based on the Central Western European Zone / CWE (Belgium, Germany, France, Luxemburg, The Netherlands)
+and Great Britan / GB 
+Node limits are set for lignite, nuclear and hydro and correspond to the maximum values in EURELECTRIC Power Statistics 2012, except for
+Nuclear, where Germany is distracted, due to the nuclear phase out, and hydro where maximum values from 
+Roadmap 2050 were taken.
+
+Transmission capacity is assumed to be 3016 in both directions, based on maximum NTC data provided by ENTSOE in 2012-->
+
+
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
@@ -1031,13 +1041,13 @@
 	</bean>
 	
 	<bean id="hydroNodeLimitCWE" class="emlab.gen.domain.technology.PowerGeneratingTechnologyNodeLimit"
-	p:permanentUpperCapacityLimit="32106">
+	p:permanentUpperCapacityLimit="35267.18">
 		<property name="powerGeneratingTechnology" ref="hydroPower" />
 		<property name="powerGridNode" ref="cweNode" />
 	</bean>
 	
 	<bean id="hydroNodeLimitGB" class="emlab.gen.domain.technology.PowerGeneratingTechnologyNodeLimit"
-	p:permanentUpperCapacityLimit="2344">
+	p:permanentUpperCapacityLimit="5552.8">
 		<property name="powerGeneratingTechnology" ref="hydroPower" />
 		<property name="powerGridNode" ref="gbNode" />
 	</bean>
@@ -1052,26 +1062,33 @@
 		p:name="Power Plant Maintainer" />
 
 	<bean id="cwePowerPortfolio" class="emlab.gen.domain.factory.ElectricityProducerFactory">
-		<property name="capacityMargin" value="0.6599782595" />
+		<property name="capacityMargin" value="0.5706494374" />
 		<property name="portfolioShares">
 			<map>
 				<entry>
 					<key>
 						<ref bean="coalPulverizedSuperCritical" />
 					</key>
-					<value>0.12</value>
+					<value>0.123</value>
 				</entry>
+				<entry>
+					<key>
+						<ref bean="lignitePGT" />
+					</key>
+					<value>0.061</value>
+				</entry>
+				<entry>
 				<entry>
 					<key>
 						<ref bean="CCGT" />
 					</key>
-					<value>0.135</value>
+					<value>0.134</value>
 				</entry>
 				<entry>
 					<key>
 						<ref bean="OCGT" />
 					</key>
-					<value>0.107</value>
+					<value>0.108</value>
 				</entry>
 				<entry>
 					<key>
@@ -1089,19 +1106,25 @@
 					<key>
 						<ref bean="hydroPower" />
 					</key>
-					<value>0.091</value>
+					<value>0.080</value>
 				</entry>
 				<entry>
 					<key>
 						<ref bean="nuclearPGT" />
 					</key>
-					<value>0.255</value>
+					<value>0.270</value>
 				</entry>
 				<entry>
 					<key>
 						<ref bean="windPGT" />
 					</key>
-					<value>0.104</value>
+					<value>0.107</value>
+				</entry>
+				<entry>
+					<key>
+						<ref bean="photovoltaicPGT" />
+					</key>
+					<value>0.058</value>
 				</entry>
 			</map>
 		</property>
@@ -1125,12 +1148,6 @@
 		<property name="capacityMargin" value="1.545" />
 		<property name="portfolioShares">
 			<map>
-				<entry>
-					<key>
-						<ref bean="lignitePGT" />
-					</key>
-					<value>0.0</value>
-				</entry>
 				<entry>
 					<key>
 						<ref bean="coalPulverizedSuperCritical" />
@@ -1177,7 +1194,7 @@
 					<key>
 						<ref bean="hydroPower" />
 					</key>
-					<value>0.01770</value>
+					<value>0.018</value>
 				</entry>
 			</map>
 		</property>
@@ -1204,7 +1221,7 @@
 		p:minValue="0" />
 
 	<!-- CO2 Cap -->
-	<bean id="co2CapTrend" class="emlab.gen.trend.TimeSeriesPropReader" p:timeSeriesStr="580187.183480667,575724.2051462,571261.226811733,566798.248477267,562335.2701428,557872.291808333,553409.313473867,548946.3351394,544483.356804933,540020.378470467,535557.400136,522168.4651326,508779.5301292,495390.5951258,482001.6601224,468612.725119,455223.7901156,441834.8551122,428445.9201088,415056.9851054,401668.050102,388279.1150986,374890.1800952,361501.2450918,348112.3100884,334723.375085,321334.4400816,307945.5050782,294556.5700748,281167.6350714,267778.700068,254389.7650646,241000.8300612,227611.8950578,214222.9600544,200834.025051,187445.0900476,174056.1550442,160667.2200408,147278.2850374,133889.350034,133889.350034,133889.350034,133889.350034,133889.350034,133889.350034,133889.350034,133889.350034,133889.350034,133889.350034,133889.350034" />
+	<bean id="co2CapTrend" class="emlab.gen.trend.TimeSeriesPropReader" p:timeSeriesStr="566353.0957438,561962.761668267,557572.427592733,553182.0935172,548791.759441667,544401.425366133,540011.0912906,535620.757215067,531230.423139533,526840.089064,513669.0868374,500498.0846108,487327.0823842,474156.0801576,460985.077931,447814.0757044,434643.0734778,421472.0712512,408301.0690246,395130.066798,381959.0645714,368788.0623448,355617.0601182,342446.0578916,329275.055665,316104.0534384,302933.0512118,289762.0489852,276591.0467586,263420.044532,250249.0423054,237078.0400788,223907.0378522,210736.0356256,197565.033399,184394.0311724,171223.0289458,158052.0267192,144881.0244926,131710.022266,131710.022266,131710.022266,131710.022266,131710.022266,131710.022266,131710.022266,131710.022266,131710.022266,131710.022266,131710.022266" />
 
 	<!-- Minimum CO2 Price Trends -->
 	<bean id="minCo2PriceTrend" class="emlab.gen.trend.StepTrend" p:start="${minCo2EUPriceStart}"
