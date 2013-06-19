@@ -17,6 +17,15 @@ package emlab.gen.domain.technology;
 
 import org.springframework.data.neo4j.annotation.NodeEntity;
 
+/**
+ * Used to describe substances in the simulation. If it refers to a fuel, the
+ * basic unit is is MJ. energyDensity, in conjunction with unit can be used to
+ * integrate more commonly used quantities in the simulation.
+ * 
+ * @author JCRichstein
+ * 
+ */
+
 @NodeEntity
 public class Substance {
 
@@ -24,6 +33,7 @@ public class Substance {
     private double quality;
     private double energyDensity;
     private double co2Density;
+	private String unit;
 
     public String getName() {
         return name;
@@ -57,7 +67,15 @@ public class Substance {
         this.co2Density = co2Density;
     }
     
-    public String toString(){
+	public String getUnit() {
+		return unit;
+	}
+
+	public void setUnit(String unit) {
+		this.unit = unit;
+	}
+
+	public String toString(){
     	return this.getName();
     }
 }

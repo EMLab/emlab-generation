@@ -1,0 +1,216 @@
+library(ggplot2)
+library(plyr)
+library(reshape)
+library(grid)
+source("AgentSpringHeadlessReader.R")
+source("TimeSeriesSummariser.R")
+
+technologyPalette=c("CoalPSC" = "black", "Biomass" = "darkgreen", "Nuclear" = "purple", "Lignite" = "saddlebrown",
+                    "OCGT" = "darkred", "CCGT" = "blue", "PV" = "yellow", "Wind" = "chartreuse4",
+                    "CoalPSCCCS" = "darkgray", "IGCC" = "orange", "IgccCCS"="orangered", "CcgtCCS" = "red",
+                    "WindOffshore" = "navyblue")
+
+technologyOrder=c("Nuclear","Lignite","CoalPSC","CoalCCS","IGCC","IgccCCS","CCGT","CcgtCCS","OCGT","Biomass",
+                  "Wind","WindOffshore","PV")
+
+renamerList=list(list("CoalPulverizedCSS","CoalCCS"),list("Photovoltaic","PV"))
+
+
+# Generic Data Preparation -------------------------------------------------
+
+meltPrefixVariables <- function(df, variablePrefix, renamerList=NULL, factor=TRUE, orderedFactorVector=NULL){
+  ## This function can be used to melt and factor variables, in order to use them for example in stacked graphs.
+  ## The variablePrefix is used to select columns of the originating dataframe, and
+  ## the renamerList can be used to potentially further rename/shorten the variables.
+  ## The renamerList should be double-nested and contain char: 
+  ## renamerList=list(list("orig1","new1"),list("orig2","new2"))
+  moltenVariable<-melt(df, id.vars=c("tick", "runId", "modelRun"), measure.vars=names(df)[grepl(variablePrefix, names(df))])
+  moltenVariable$variable<-renamer(moltenVariable$variable, variablePrefix, "")
+  for(renameElement in renamerList){
+    moltenVariable$variable<-renamer(moltenVariable$variable, renameElement[1], renameElement[2])
+  }
+  if(!factor)
+    return(moltenVariable)
+  if(!is.null(orderedFactorVector))
+    moltenVariable$variable<-factor(moltenVariable$variable, levels=orderedFactorVector, ordered=TRUE)
+  else
+    moltenVariable$variable<-factor(moltenVariable$variable)
+  return(moltenVariable)
+}
+
+applyFunToColumnInDF<- function(df=df, column=column, fun=fun) fun(df[,column])
+sdPerRunId<-function(df,variableName) sd(df[,variableName])
+
+quantilesOfStandardDeviationOverModelRun <- function(df, variableName){
+  quantiles <- ddply(ddply(df, .variables=c("runId", "modelRun"), .fun=sdPerRunId, variableName), .variables="modelRun", .fun=applyFunToColumnInDF ,fun=quantile, column="V1")
+  return(quantiles)
+}
+
+addSumOfVariablesByVariableListToDF <- function(df, variableNames, newColumnName){
+  sum<-apply(df[variableNames],1,sum)
+  oldNames<-names(df)
+  df<-cbind(df, sum)
+  names(df)<-c(oldNames,newColumnName)
+  return(df)
+}
+
+addSumOfVariablesByPrefixToDF<-function(df, prefix, newColumnName=NULL){
+  sum<-apply(df[names(df)[grepl(prefix, names(df))]],1,sum)
+  oldNames<-names(df)
+  df<-cbind(df, sum)
+  names(df)<-c(oldNames,paste(prefix,"Sum", sep=""))
+  return(df)
+}
+
+
+# Purpose-specific data preparation ---------------------------------------
+
+
+meltTechnologyVariable <- function(df, variablePrefix){
+  return(meltPrefixVariables(df, variablePrefix, renamerList=renamerList, orderedFactorVector=technologyOrder))
+}
+
+addSupplyRatios <- function(df){
+  operationalCapacityVariables=names(df)[grepl("TotalOperationalCapacityPerZoneInMW_", names(df))]
+  countries=strsplit(operationalCapacityVariables,"_")
+  for(i in seq(1:length(countries))){
+    supplyRatio <- df[[paste("TotalOperationalCapacityPerZoneInMW_",countries[[i]][2],"_Capacity", sep="")]] / df[[paste("PeakDemandPerZoneInMW_",countries[[i]][2], sep="")]]
+    oldNames<-names(df)
+    df<-cbind(df, supplyRatio)
+    names(df)<-c(oldNames,paste("SupplyRatio_",countries[[i]][2], sep=""))
+  }
+  return(df)
+}
+
+
+# Generic Plotting Functions over Time ------------------------------------
+
+plotStackedDiagram <- function(moltenVariable, ylabel, legendName, absolute=TRUE, variable="variable", value="value", xlabel="Time [a]", manuelPalette=NULL, summaryFunction=median){
+  ## This function can plot stacked diagrams of variables over time, and is set to accept the standard
+  ## output of the melt (reshape) function. the absolute parameter can be used to switch between absolute
+  ## and relative plotting (e.g. 20GW installed capacity vs 20% of a total of 100GW)
+  ## summaryFunction defines which aggregating function is used, the standard value is median, but can be changed to mean.
+  ## or other functions
+  if(absolute)
+    position="stack"
+  else
+    position="fill"
+  p<-ggplot(moltenVariable, aes_string(x="tick", y=value))+
+    stat_summary(aes_string(fill=variable,order= -as.numeric(moltenVariable[[variable]])), fun.y=summaryFunction, geom="area", position=position)+
+    facet_wrap( ~ modelRun)+
+    xlab("Time [a]")+
+    ylab(ylabel)+
+    theme_grey(base_size=14)+
+    theme(legend.position="bottom", legend.margin=unit(0.5, "cm"))+
+    guides(fill=guide_legend(nrow=3, keywidth=1, keylength=1, keyheight=1))
+  if(is.null(manuelPalette))
+    p <- p + scale_fill_brewer(type="qual", palette=3, name="Technology")
+  else
+    p <- p + scale_fill_manual(name=legendName, values=manuelPalette)
+  return(p)
+}
+
+
+plotTimeSeriesWithConfidenceIntervalByFacettedGroup <- function(df, variable, ylabel){
+  g<-ggplot(df, aes_string(x="tick", y=variable))+ #colour=modelRun, fill=modelRun,
+    stat_summary(aes_string(fill="modelRun"), fun.data="median_hilow", conf.int=.5, geom="smooth") +
+    stat_summary(fun.data="median_hilow", conf.int=.95, geom="smooth")+
+    #facet_grid(. ~ modelRun)+
+    facet_wrap(~ modelRun)+
+    theme(legend.position="none")+
+    xlab("Time [a]")+
+    ylab(ylabel)
+}
+
+
+plotTimeSeriesWithOnly50PerConfidenceIntervalByFacettedGroup <- function(df, variable, ylabel){
+  g<-ggplot(df, aes_string(x="tick", y=variable))+ #colour=run, fill=run,
+    stat_summary(aes_string(fill="modelRun"), fun.data="median_hilow", conf.int=.5, geom="smooth") +
+    #facet_grid(. ~ run)+
+    facet_wrap(~ run)+
+    theme(legend.position="none")+
+    xlab("Time [a]")+
+    ylab(ylabel)
+}
+
+
+plotTimeSeriesWithConfidenceIntervalGroupedInOnePlot <- function(df, variable, ylabel){
+  g<-ggplot(df, aes_string(x="tick", y=variable, group="modelRun", colour="modelRun", linestyle="modelRun"))+ #colour=run, fill=run,
+    stat_summary(aes_string(fill="modelRun", linestyle="modelRun"), fun.data="median_hilow", conf.int=.5, geom="errorbar") +
+    stat_summary(aes_string(fill="modelRun", linestyle="modelRun"), fun.data="median_hilow", conf.int=.5, geom="line") +
+    #stat_summary(fun.data="median_hilow", conf.int=.95, geom="smooth")+
+    #facet_grid(. ~ run)+
+    #facet_wrap(~ run)+
+    theme(legend.position="bottom")+
+    xlab("Time [a]")+
+    ylab(ylabel)
+}
+
+
+plotSpaghettiTimeSeries <- function(df, variable, ylabel, xlabel="Time [a]", ylim=NULL, basesize=8){
+  p<- ggplot(df, aes_string(x="tick", y=variable))+
+      geom_line(aes_string(group="runId", linestyle="runId"), alpha=I(0.2))+
+      stat_summary(aes_string(fill="modelRun"), fun.data="median_hilow", conf.int=.5, geom="smooth") +
+      #stat_summary(fun.data="median_hilow", conf.int=.95, geom="smooth")+
+      facet_grid(. ~ modelRun)+
+      ylab(ylabel)+
+      xlab(xlabel)+
+      theme_grey(base_size=basesize)+
+      theme(legend.position="none")
+  if(!is.null(ylim))
+    p<- p + ylim(ylim)
+  return(p)
+}
+
+plotMoltenVariableFacettedByVariable <- function(moltenDF, ylabel, facet_wrap=T){
+  facet_wrap_option = facet_wrap(~ variable, scales="free_y")
+  if(!facet_wrap)
+    facet_wrap_option =facet_grid(variable ~ .)
+  g<-ggplot(moltenDF, aes_string(x="tick", y="value", colour="modelRun", fill="modelRun"))+ #colour=modelRun, fill=modelRun,
+    stat_summary(aes_string(colour="modelRun", fill="modelRun", group="modelRun"), fun.data="median_hilow", conf.int=.5, geom="smooth") +
+    #stat_summary(aes_string(colour="modelRun", fill="modelRun", group="modelRun"), fun.data="median_hilow", conf.int=.95, geom="smooth")+
+    facet_wrap_option+
+    #facet_wrap(~ modelRun)+
+    theme(legend.position="bottom")+
+    scale_color_discrete(name="Model Run")+
+    scale_fill_discrete(name="Model Run")+
+    xlab("Time [a]")+
+    ylab(ylabel)
+  return(g)
+}
+
+
+# Purpose-specific Plotting Functions over Time ---------------------------
+
+
+plotStackedTechnologyDiagram <- function(moltenVariable, ylabel, absolute=TRUE, ...){
+  return(plotStackedDiagram(moltenVariable, ylabel, legendName="Technology", manuelPalette=technologyPalette, absolute=absolute, ...))
+}
+
+
+
+
+# Others ------------------------------------------------------------------
+
+selectFirstXRunIdsFromDataFrame <- function(df, X){
+  df[is.element(df$runId,as.vector(unique(df$runId))[1:X]),]
+}
+
+
+selectFirstXRunIdsFromDataFrameAndCheckForLength <- function(df, X, length){
+  table<-ddply(df, .variables=c("runId"), .fun=correctLengthOfSubDataFrame, length)
+  uniqueRunIdsWithCorrectLength<-table[table$V1,]$runId
+  df[is.element(df$runId,as.vector(uniqueRunIdsWithCorrectLength)[1:X]),]
+}
+
+
+correctLengthOfSubDataFrame<-function(df, length){
+  length(df$tick)==length
+}
+
+
+renamer <- function(x, pattern, replace) {
+  for (i in seq_along(pattern))
+    x <- gsub(pattern[i], replace[i], x)
+  x
+}

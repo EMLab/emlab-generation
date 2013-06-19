@@ -35,6 +35,7 @@ public class CashFlow {
     public static final int LOAN = 7;
     public static final int DOWNPAYMENT = 8;
     public static final int NATIONALMINCO2 = 9;
+    public static final int STRRESPAYMENT = 10;
 
     @RelatedTo(type = "FROM_AGENT", elementClass = DecarbonizationAgent.class, direction = Direction.OUTGOING)
     private DecarbonizationAgent from;
@@ -89,6 +90,7 @@ public class CashFlow {
         this.type = type;
     }
 
+    @Override
     public String toString() {
         return "from " + getFrom() + " to " + getTo() + " type " + getType() + " amount " + getMoney();
     }

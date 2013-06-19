@@ -16,6 +16,9 @@
 package emlab.gen.role.investment;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.neo4j.annotation.NodeEntity;
 import org.springframework.transaction.annotation.Transactional;
 
 import emlab.gen.domain.agent.BigBank;
@@ -26,19 +29,19 @@ import emlab.gen.domain.contract.CashFlow;
 import emlab.gen.domain.contract.Loan;
 import emlab.gen.domain.policy.PowerGeneratingTechnologyTarget;
 import emlab.gen.domain.technology.PowerGeneratingTechnology;
+import emlab.gen.domain.technology.PowerGeneratingTechnologyNodeLimit;
 import emlab.gen.domain.technology.PowerPlant;
 import emlab.gen.repository.Reps;
-import agentspring.role.AbstractRole;
-import agentspring.role.Role;
-import agentspring.role.RoleComponent;
 
 /**
  * @author JCRichstein
  *
  */
-@RoleComponent
-public class TargetInvestmentRole extends AbstractRole<TargetInvestor> implements Role<TargetInvestor> {
+@Configurable
+@NodeEntity
+public class TargetInvestmentRole extends GenericInvestmentRole<TargetInvestor> {
 
+	@Transient
 	@Autowired Reps reps;
 	
 	@Override
@@ -49,7 +52,22 @@ public class TargetInvestmentRole extends AbstractRole<TargetInvestor> implement
 			PowerGeneratingTechnology pgt = target.getPowerGeneratingTechnology();
 			long futureTimePoint = getCurrentTick()+pgt.getExpectedLeadtime()+pgt.getExpectedPermittime();
 			double expectedInstalledCapacity = reps.powerPlantRepository.calculateCapacityOfExpectedOperationalPowerPlantsInMarketAndTechnology(targetInvestor.getInvestorMarket(), pgt, futureTimePoint);
-			double installedCapacityDeviation = target.getTrend().getValue(futureTimePoint)-expectedInstalledCapacity;
+			double pgtNodeLimit = Double.MAX_VALUE;
+			// For simplicity using the market, instead of the node here. Needs
+			// to be changed, if more than one node per market exists.
+			PowerGeneratingTechnologyNodeLimit pgtLimit = reps.powerGeneratingTechnologyNodeLimitRepository
+					.findOneByTechnologyAndMarket(pgt, targetInvestor.getInvestorMarket());
+			if (pgtLimit != null) {
+				pgtNodeLimit = pgtLimit.getUpperCapacityLimit(futureTimePoint);
+			}
+			double targetCapacity = target.getTrend().getValue(futureTimePoint);
+			double installedCapacityDeviation = 0;
+			if (pgtNodeLimit > targetCapacity) {
+				installedCapacityDeviation = targetCapacity - expectedInstalledCapacity;
+			} else {
+				installedCapacityDeviation = pgtNodeLimit - expectedInstalledCapacity;
+			}
+
 			if(installedCapacityDeviation>0){
 				
 				double powerPlantCapacityRatio = installedCapacityDeviation/pgt.getCapacity();
@@ -80,7 +98,7 @@ public class TargetInvestmentRole extends AbstractRole<TargetInvestor> implement
 	
     private void createSpreadOutDownPayments(EnergyProducer agent, PowerPlantManufacturer manufacturer, double totalDownPayment,
             PowerPlant plant) {
-        int buildingTime = plant.getTechnology().getExpectedLeadtime();
+		int buildingTime = (int) plant.getActualLeadtime();
         for (int i = 0; i < buildingTime; i++) {
             reps.nonTransactionalCreateRepository.createCashFlow(agent, manufacturer, totalDownPayment / buildingTime,
                     CashFlow.DOWNPAYMENT, getCurrentTick() + i, plant);

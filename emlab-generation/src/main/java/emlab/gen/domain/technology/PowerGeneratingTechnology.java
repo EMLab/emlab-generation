@@ -23,6 +23,7 @@ import org.springframework.data.neo4j.annotation.NodeEntity;
 import org.springframework.data.neo4j.annotation.RelatedTo;
 
 import agentspring.simulation.SimulationParameter;
+import emlab.gen.trend.TimeSeriesImpl;
 
 @NodeEntity
 public class PowerGeneratingTechnology {
@@ -32,21 +33,18 @@ public class PowerGeneratingTechnology {
     @SimulationParameter(label = "Capacity (MW)", from = 0, to = 2000)
     private double capacity;
 
-    @SimulationParameter(label = "Efficiency", from = 0, to = 1)
-    private double efficiency;
+	@RelatedTo(type = "PGT_INVESTMENTCOSTS", elementClass = TimeSeriesImpl.class, direction = Direction.OUTGOING)
+	private TimeSeriesImpl investmentCostTimeSeries;
 
-    @SimulationParameter(label = "Efficiency modifier (exogenous)", from = -1, to = 1)
-    private double efficiencyModifierExogenous;
+	@RelatedTo(type = "PGT_OMCOSTS", elementClass = TimeSeriesImpl.class, direction = Direction.OUTGOING)
+	private TimeSeriesImpl fixedOperatingCostTimeSeries;
+
+	@RelatedTo(type = "PGT_EFFICIENCYTS", elementClass = TimeSeriesImpl.class, direction = Direction.OUTGOING)
+	private TimeSeriesImpl efficiencyTimeSeries;
 
     @SimulationParameter(label = "CO2 capture efficiency", from = 0, to = 1)
     private double co2CaptureEffciency;
 
-    @SimulationParameter(label = "Total investment cost (EUR)", from = 0, to = 1000000000)
-    private double baseInvestmentCost;
-    private double investmentCostModifierExogenous;
-
-    @SimulationParameter(label = "Down payment (30% of investment)", from = 0, to = 1000000000)
-    private double downPayment;
 
     @SimulationParameter(label = "Depreciation time (years)", from = 0, to = 40)
     private int depreciationTime;
@@ -54,8 +52,6 @@ public class PowerGeneratingTechnology {
     @SimulationParameter(label = "Minimum running hours (hours/year)", from = 0, to = 8760)
     private double minimumRunningHours;
 
-    @SimulationParameter(label = "Fixed operating cost (euro/MW)", from = 0, to = 100000)
-    private double fixedOperatingCost;
     private double fixedOperatingCostModifierAfterLifetime;
 
     @SimulationParameter(label = "Expected lifetime", from = 0, to = 40)
@@ -113,14 +109,6 @@ public class PowerGeneratingTechnology {
         this.maximumInstalledCapacityFractionPerAgent = maximumInstalledCapacityFractionPerAgent;
     }
 
-    public double getDownPayment() {
-        return downPayment;
-    }
-
-    public void setDownPayment(double downPayment) {
-        this.downPayment = downPayment;
-    }
-
     public int getDepreciationTime() {
         return depreciationTime;
     }
@@ -173,44 +161,40 @@ public class PowerGeneratingTechnology {
         this.capacity = capacity;
     }
 
-    public double getEfficiency() {
-        return efficiency;
+	public double getEfficiency(long time) {
+		return efficiencyTimeSeries.getValue(time);
     }
 
-    public void setEfficiency(double efficiency) {
-        this.efficiency = efficiency;
-    }
+	public TimeSeriesImpl getInvestmentCostTimeSeries() {
+		return investmentCostTimeSeries;
+	}
 
-    public double getEfficiencyModifierExogenous() {
-        return efficiencyModifierExogenous;
-    }
+	public void setInvestmentCostTimeSeries(TimeSeriesImpl investmentCostTrend) {
+		this.investmentCostTimeSeries = investmentCostTrend;
+	}
 
-    public void setEfficiencyModifierExogenous(double efficiencyModifierExogenous) {
-        this.efficiencyModifierExogenous = efficiencyModifierExogenous;
-    }
+	public TimeSeriesImpl getFixedOperatingCostTimeSeries() {
+		return fixedOperatingCostTimeSeries;
+	}
 
-    public double getCo2CaptureEffciency() {
+	public void setFixedOperatingCostTimeSeries(TimeSeriesImpl fixedOperatingCostTrend) {
+		this.fixedOperatingCostTimeSeries = fixedOperatingCostTrend;
+	}
+
+	public TimeSeriesImpl getEfficiencyTimeSeries() {
+		return efficiencyTimeSeries;
+	}
+
+	public void setEfficiencyTimeSeries(TimeSeriesImpl efficiencyTrend) {
+		this.efficiencyTimeSeries = efficiencyTrend;
+	}
+
+	public double getCo2CaptureEffciency() {
         return co2CaptureEffciency;
     }
 
     public void setCo2CaptureEffciency(double co2CaptureEffciency) {
         this.co2CaptureEffciency = co2CaptureEffciency;
-    }
-
-    public double getInvestmentCostModifierExogenous() {
-        return investmentCostModifierExogenous;
-    }
-
-    public void setInvestmentCostModifierExogenous(double investmentCostModifierExogenous) {
-        this.investmentCostModifierExogenous = investmentCostModifierExogenous;
-    }
-
-    public double getFixedOperatingCost() {
-        return fixedOperatingCost;
-    }
-
-    public void setFixedOperatingCost(double fixedOperatingCost) {
-        this.fixedOperatingCost = fixedOperatingCost;
     }
 
     public double getFixedOperatingCostModifierAfterLifetime() {
@@ -273,15 +257,15 @@ public class PowerGeneratingTechnology {
         this.applicableForLongTermContract = applicableForLongTermContract;
     }
 
-    public double getBaseInvestmentCost() {
-        return baseInvestmentCost;
+	public double getInvestmentCost(long time) {
+		return investmentCostTimeSeries.getValue(time);
     }
 
-    public void setBaseInvestmentCost(double baseInvestmentCost) {
-        this.baseInvestmentCost = baseInvestmentCost;
-    }
+	public double getFixedOperatingCost(long time) {
+		return fixedOperatingCostTimeSeries.getValue(time);
+	}
 
-    public boolean isIntermittent() {
+	public boolean isIntermittent() {
         return intermittent;
     }
 

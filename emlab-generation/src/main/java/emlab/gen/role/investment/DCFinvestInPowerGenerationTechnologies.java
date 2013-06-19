@@ -20,21 +20,29 @@ import java.util.Map;
 
 import org.apache.commons.math.stat.regression.SimpleRegression;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.neo4j.annotation.NodeEntity;
+import org.springframework.data.neo4j.aspects.core.NodeBacked;
+import org.springframework.transaction.annotation.Transactional;
 
 import agentspring.role.Role;
-import agentspring.role.RoleComponent;
 import emlab.gen.domain.agent.EnergyProducer;
 import emlab.gen.domain.market.ClearingPoint;
 import emlab.gen.domain.technology.Substance;
 import emlab.gen.repository.Reps;
-import emlab.gen.role.AbstractEnergyProducerRole;
 
-@RoleComponent
-public class DCFinvestInPowerGenerationTechnologies extends AbstractEnergyProducerRole implements Role<EnergyProducer> {
+@Configurable
+@NodeEntity
+public class DCFinvestInPowerGenerationTechnologies<T extends EnergyProducer> extends GenericInvestmentRole<T>
+		implements Role<T>,
+		NodeBacked {
 
+	@Transient
     @Autowired
     Reps reps;
 
+	@Transactional
     @Override
     public void act(EnergyProducer agent) {
 
@@ -46,7 +54,7 @@ public class DCFinvestInPowerGenerationTechnologies extends AbstractEnergyProduc
         // price
 
         // Investment decision
-
+		agent.setWillingToInvest(false);
     }
 
     SimpleRegression calculateRegressionBasedOnTimeStepsAndSubstance(long startTime, long endTime, Substance substance) {
@@ -60,11 +68,6 @@ public class DCFinvestInPowerGenerationTechnologies extends AbstractEnergyProduc
             sr.addData(cp.getTime(), cp.getPrice());
         }
         return sr;
-    }
-
-    @Override
-    public Reps getReps() {
-        return reps;
     }
 
 }
