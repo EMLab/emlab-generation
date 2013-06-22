@@ -1225,21 +1225,21 @@ Transmission capacity is assumed to be 3016 in both directions, based on maximum
 	<!-- CO2 Cap -->
 	<bean id="co2CapTrend" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/emissionCapCweUk.csv" />
 	<!-- Minimum CO2 Price Trends -->
-	<bean id="minCo2PriceTrend" class="emlab.gen.trend.StepTrend" p:start="25"
-		p:duration="1" p:increment="1"
-		p:minValue="0" />
-		
-	<bean id="minCo2PriceTrendCWE" class="emlab.gen.trend.StepTrend" p:start="0"
+	<bean id="minCo2PriceTrend" class="emlab.gen.trend.StepTrend" p:start="0"
 		p:duration="0" p:increment="0"
 		p:minValue="0" />
 		
+	<bean id="minCo2PriceTrendCWE" class="emlab.gen.trend.StepTrend" p:start="0"
+		p:duration="1" p:increment="0"
+		p:minValue="0" />
+		
 	<bean id="minCo2PriceTrendGB" class="emlab.gen.trend.StepTrend" p:start="0"
-		p:duration="${minCo2GBPriceDuration}" p:increment="0"
+		p:duration="1" p:increment="0"
 		p:minValue="0" />
 
 	<!-- Government -->
 	<bean id="government" class="emlab.gen.domain.agent.Government"
-		p:name="European Government" p:co2Penalty="500">
+		p:name="European Government" p:co2Penalty="100">
 		<property name="co2TaxTrend" ref="co2TaxTrend" />
 		<property name="co2CapTrend" ref="co2CapTrend" />
 		<property name="minCo2PriceTrend" ref="minCo2PriceTrend" />
