@@ -53,6 +53,23 @@ public interface PowerPlantRepository extends GraphRepository<PowerPlant> {
     public long countPowerPlantsByOwner(@Param("owner") EnergyProducer owner);
 
     /**
+     * powerplants per tech per owner
+     * 
+     * @param owner
+     * 
+     * @param technology
+     * 
+     * @return
+     */
+    @Query("START owner=node({owner}), technology=node({technology}) "
+            + "MATCH (owner)<-[:POWERPLANT_OWNER]-(plant), (technology)-[:TECHNOLOGY]-(plant)" + "RETURN count(plant)")
+    public long findPowerPlantsByOwnerAndTechnology(@Param("owner") EnergyProducer owner,
+            @Param("technology") PowerGeneratingTechnology technology);
+
+    @Query(value = "g.v(owner).in('POWERPLANT_OWNER').out('TECHNOLOGY')", type = QueryType.Gremlin)
+    Iterable<PowerPlant> findtechownerplant(@Param("owner") EnergyProducer owner);
+
+    /**
      * Finds operational plants (only use for current tick, since only
      * officially dismantled powerplants and plants in the building process will
      * be excluded).
@@ -95,9 +112,9 @@ public interface PowerPlantRepository extends GraphRepository<PowerPlant> {
     @Query(value = "g.idx('__types__')[[className:'emlab.gen.domain.technology.PowerPlant']].filter{(it.dismantleTime > tick) && ((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick)}.sum{it.actualNominalCapacity};", type = QueryType.Gremlin)
     double calculateCapacityOfOperationalPowerPlants(@Param("tick") long tick);
 
-    @Query(value = "t = new Table();" +
-            "g.idx('__types__')[[className:'emlab.gen.domain.technology.PowerPlant']].filter{(it.dismantleTime > tick) && ((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick)}.as('pp').out('TECHNOLOGY').as('ty').table(t){it.actualNominalCapacity}{it.peakSegmentDependentAvailability}.cap().next(); " +
-            "capacitySum = 0; for (row in t){capacitySum += row.get(0) * row.get(1);}; return capacitySum;" , type = QueryType.Gremlin)
+    @Query(value = "t = new Table();"
+            + "g.idx('__types__')[[className:'emlab.gen.domain.technology.PowerPlant']].filter{(it.dismantleTime > tick) && ((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick)}.as('pp').out('TECHNOLOGY').as('ty').table(t){it.actualNominalCapacity}{it.peakSegmentDependentAvailability}.cap().next(); "
+            + "capacitySum = 0; for (row in t){capacitySum += row.get(0) * row.get(1);}; return capacitySum;", type = QueryType.Gremlin)
     double calculatePeakCapacityOfOperationalPowerPlants(@Param("tick") long tick);
 
     /**
@@ -159,9 +176,9 @@ public interface PowerPlantRepository extends GraphRepository<PowerPlant> {
     public double calculateCapacityOfOperationalPowerPlantsInMarket(@Param("market") ElectricitySpotMarket market,
             @Param("tick") long tick);
 
-    @Query(value = "t = new Table();" +
-            "g.v(market).out('ZONE').in('REGION').in('LOCATION').filter{it.__type__=='emlab.gen.domain.technology.PowerPlant'}.filter{((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick) && (it.dismantleTime > tick)}.as('pp').out('TECHNOLOGY').as('ty').table(t){it.actualNominalCapacity}{it.peakSegmentDependentAvailability}.cap().next(); " +
-            "capacitySum = 0; for (row in t){capacitySum += row.get(0) * row.get(1);}; return capacitySum;" , type = QueryType.Gremlin)
+    @Query(value = "t = new Table();"
+            + "g.v(market).out('ZONE').in('REGION').in('LOCATION').filter{it.__type__=='emlab.gen.domain.technology.PowerPlant'}.filter{((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick) && (it.dismantleTime > tick)}.as('pp').out('TECHNOLOGY').as('ty').table(t){it.actualNominalCapacity}{it.peakSegmentDependentAvailability}.cap().next(); "
+            + "capacitySum = 0; for (row in t){capacitySum += row.get(0) * row.get(1);}; return capacitySum;", type = QueryType.Gremlin)
     public double calculatePeakCapacityOfOperationalPowerPlantsInMarket(@Param("market") ElectricitySpotMarket market,
             @Param("tick") long tick);
 
@@ -240,4 +257,8 @@ public interface PowerPlantRepository extends GraphRepository<PowerPlant> {
     public double calculateCapacityOfPowerPlantsByMarketInPipeline(@Param("market") ElectricitySpotMarket market,
             @Param("tick") long tick);
 
+    @Query(value = "result = g.v(owner).in('POWERPLANT_OWNER').filter{(it.dismantleTime > tick) && ((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick)}.sum{it.actualNominalCapacity};"
+            + "if(result == null){return 0} else{return result}", type = QueryType.Gremlin)
+    double calculateCapacityOfOperationalPowerPlantsByOwner(@Param("owner") EnergyProducer owner,
+            @Param("tick") long tick);
 }

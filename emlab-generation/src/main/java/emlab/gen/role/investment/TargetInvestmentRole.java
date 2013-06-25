@@ -35,76 +35,85 @@ import emlab.gen.repository.Reps;
 
 /**
  * @author JCRichstein
- *
+ * 
  */
 @Configurable
 @NodeEntity
 public class TargetInvestmentRole extends GenericInvestmentRole<TargetInvestor> {
 
-	@Transient
-	@Autowired Reps reps;
-	
-	@Override
-	@Transactional
-	public void act(TargetInvestor targetInvestor) {
-		
-		for(PowerGeneratingTechnologyTarget target : targetInvestor.getPowerGenerationTechnologyTargets()){
-			PowerGeneratingTechnology pgt = target.getPowerGeneratingTechnology();
-			long futureTimePoint = getCurrentTick()+pgt.getExpectedLeadtime()+pgt.getExpectedPermittime();
-			double expectedInstalledCapacity = reps.powerPlantRepository.calculateCapacityOfExpectedOperationalPowerPlantsInMarketAndTechnology(targetInvestor.getInvestorMarket(), pgt, futureTimePoint);
-			double pgtNodeLimit = Double.MAX_VALUE;
-			// For simplicity using the market, instead of the node here. Needs
-			// to be changed, if more than one node per market exists.
-			PowerGeneratingTechnologyNodeLimit pgtLimit = reps.powerGeneratingTechnologyNodeLimitRepository
-					.findOneByTechnologyAndMarket(pgt, targetInvestor.getInvestorMarket());
-			if (pgtLimit != null) {
-				pgtNodeLimit = pgtLimit.getUpperCapacityLimit(futureTimePoint);
-			}
-			double targetCapacity = target.getTrend().getValue(futureTimePoint);
-			double installedCapacityDeviation = 0;
-			if (pgtNodeLimit > targetCapacity) {
-				installedCapacityDeviation = targetCapacity - expectedInstalledCapacity;
-			} else {
-				installedCapacityDeviation = pgtNodeLimit - expectedInstalledCapacity;
-			}
+    @Transient
+    @Autowired
+    Reps reps;
 
-			if(installedCapacityDeviation>0){
-				
-				double powerPlantCapacityRatio = installedCapacityDeviation/pgt.getCapacity();
-				
-				PowerPlant plant = new PowerPlant();
-                plant.specifyNotPersist(getCurrentTick(), targetInvestor, reps.powerGridNodeRepository.findFirstPowerGridNodeByElectricitySpotMarket(targetInvestor.getInvestorMarket()), pgt);
-                plant.setActualNominalCapacity(pgt.getCapacity()*powerPlantCapacityRatio);
+    @Override
+    @Transactional
+    public void act(TargetInvestor targetInvestor) {
+
+        for (PowerGeneratingTechnologyTarget target : targetInvestor.getPowerGenerationTechnologyTargets()) {
+            PowerGeneratingTechnology pgt = target.getPowerGeneratingTechnology();
+            long futureTimePoint = getCurrentTick() + pgt.getExpectedLeadtime() + pgt.getExpectedPermittime();
+            double expectedInstalledCapacity = reps.powerPlantRepository
+                    .calculateCapacityOfExpectedOperationalPowerPlantsInMarketAndTechnology(
+                            targetInvestor.getInvestorMarket(), pgt, futureTimePoint);
+            double pgtNodeLimit = Double.MAX_VALUE;
+            // For simplicity using the market, instead of the node here. Needs
+            // to be changed, if more than one node per market exists.
+            PowerGeneratingTechnologyNodeLimit pgtLimit = reps.powerGeneratingTechnologyNodeLimitRepository
+                    .findOneByTechnologyAndMarket(pgt, targetInvestor.getInvestorMarket());
+            if (pgtLimit != null) {
+                pgtNodeLimit = pgtLimit.getUpperCapacityLimit(futureTimePoint);
+            }
+            double targetCapacity = target.getTrend().getValue(futureTimePoint);
+            double installedCapacityDeviation = 0;
+            if (pgtNodeLimit > targetCapacity) {
+                installedCapacityDeviation = targetCapacity - expectedInstalledCapacity;
+            } else {
+                installedCapacityDeviation = pgtNodeLimit - expectedInstalledCapacity;
+            }
+
+            if (installedCapacityDeviation > 0) {
+
+                double powerPlantCapacityRatio = installedCapacityDeviation / pgt.getCapacity();
+
+                PowerPlant plant = new PowerPlant();
+
+                // no location present here!
+                plant.specifyNotPersist(getCurrentTick(), targetInvestor, reps.powerGridNodeRepository
+                        .findFirstPowerGridNodeByElectricitySpotMarket(targetInvestor.getInvestorMarket()), pgt, null);
+                plant.setActualNominalCapacity(pgt.getCapacity() * powerPlantCapacityRatio);
                 PowerPlantManufacturer manufacturer = reps.genericRepository.findFirst(PowerPlantManufacturer.class);
                 BigBank bigbank = reps.genericRepository.findFirst(BigBank.class);
 
-                double investmentCostPayedByEquity = plant.getActualInvestedCapital() * (1 - targetInvestor.getDebtRatioOfInvestments())*powerPlantCapacityRatio;
-                double investmentCostPayedByDebt = plant.getActualInvestedCapital() * targetInvestor.getDebtRatioOfInvestments()*powerPlantCapacityRatio;
-                double downPayment = investmentCostPayedByEquity*powerPlantCapacityRatio;
+                double investmentCostPayedByEquity = plant.getActualInvestedCapital()
+                        * (1 - targetInvestor.getDebtRatioOfInvestments()) * powerPlantCapacityRatio;
+                double investmentCostPayedByDebt = plant.getActualInvestedCapital()
+                        * targetInvestor.getDebtRatioOfInvestments() * powerPlantCapacityRatio;
+                double downPayment = investmentCostPayedByEquity * powerPlantCapacityRatio;
                 createSpreadOutDownPayments(targetInvestor, manufacturer, downPayment, plant);
 
-                double amount = determineLoanAnnuities(investmentCostPayedByDebt, plant.getTechnology().getDepreciationTime(),
-                		targetInvestor.getLoanInterestRate());
+                double amount = determineLoanAnnuities(investmentCostPayedByDebt, plant.getTechnology()
+                        .getDepreciationTime(), targetInvestor.getLoanInterestRate());
                 // logger.warn("Loan amount is: " + amount);
-                Loan loan = reps.loanRepository.createLoan(targetInvestor, bigbank, amount, plant.getTechnology().getDepreciationTime(),
-                        getCurrentTick(), plant);
+                Loan loan = reps.loanRepository.createLoan(targetInvestor, bigbank, amount, plant.getTechnology()
+                        .getDepreciationTime(), getCurrentTick(), plant);
                 // Create the loan
                 plant.createOrUpdateLoan(loan);
-				
-			}
-		}
-		
-	}
-	
-    private void createSpreadOutDownPayments(EnergyProducer agent, PowerPlantManufacturer manufacturer, double totalDownPayment,
-            PowerPlant plant) {
-		int buildingTime = (int) plant.getActualLeadtime();
+
+            }
+        }
+
+    }
+
+    private void createSpreadOutDownPayments(EnergyProducer agent, PowerPlantManufacturer manufacturer,
+            double totalDownPayment, PowerPlant plant) {
+        int buildingTime = (int) plant.getActualLeadtime();
         for (int i = 0; i < buildingTime; i++) {
             reps.nonTransactionalCreateRepository.createCashFlow(agent, manufacturer, totalDownPayment / buildingTime,
                     CashFlow.DOWNPAYMENT, getCurrentTick() + i, plant);
         }
     }
-    
+
+    @Override
     public double determineLoanAnnuities(double totalLoan, double payBackTime, double interestRate) {
 
         double q = 1 + interestRate;

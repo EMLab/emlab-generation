@@ -42,6 +42,7 @@ public class DismantlePowerPlantOperationalLossRole extends AbstractEnergyProduc
         return reps;
     }
 
+    @Override
     public void act(EnergyProducer producer) {
 
         logger.info("Dismantling plants if out of merit");
@@ -55,6 +56,9 @@ public class DismantlePowerPlantOperationalLossRole extends AbstractEnergyProduc
                 logger.info("Dismantling power plant because it has had an operating loss (incl O&M cost) on average in the last "
                         + horizon + " years: " + plant);
 
+                double currentnumberofplants = plant.getSiteLocation().getPlantPresent();
+
+                plant.getSiteLocation().setPlantPresent(currentnumberofplants - 1);
                 plant.dismantlePowerPlant(getCurrentTick());
 
             }

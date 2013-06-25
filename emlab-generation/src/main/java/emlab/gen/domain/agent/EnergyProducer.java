@@ -42,7 +42,7 @@ public class EnergyProducer extends DecarbonizationAgent implements Agent {
     @SimulationParameter(label = "Long-term contract horizon", from = 0, to = 10)
     private double longTermContractPastTimeHorizon;
 
-    //Investment
+    // Investment
     @SimulationParameter(label = "Investment horizon", from = 0, to = 15)
     private int investmentFutureTimeHorizon;
     @SimulationParameter(label = "Equity Interest Rate", from = 0, to = 1)
@@ -50,13 +50,15 @@ public class EnergyProducer extends DecarbonizationAgent implements Agent {
     private double downpaymentFractionOfCash;
     @SimulationParameter(label = "Debt ratio in investments", from = 0, to = 1)
     private double debtRatioOfInvestments;
+    private double learningEffectPositive;
+    private double learningEffectNegative;
     private boolean willingToInvest;
 
     // Loan
     @SimulationParameter(label = "Loan Interest Rate", from = 0, to = 1)
     private double loanInterestRate;
 
-    //Forecasting
+    // Forecasting
     private int numberOfYearsBacklookingForForecasting;
 
     // Dismantling
@@ -158,6 +160,22 @@ public class EnergyProducer extends DecarbonizationAgent implements Agent {
 
     public void setDebtRatioOfInvestments(double debtRatioOfInvestments) {
         this.debtRatioOfInvestments = debtRatioOfInvestments;
+    }
+
+    public double getLearningEffectPositive() {
+        return learningEffectPositive;
+    }
+
+    public void setLearningEffectPositive(double learningEffectPositive) {
+        this.learningEffectPositive = learningEffectPositive;
+    }
+
+    public double getLearningEffectNegative() {
+        return learningEffectNegative;
+    }
+
+    public void setLearningEffectNegative(double learningEffectNegative) {
+        this.learningEffectNegative = learningEffectNegative;
     }
 
     public double getPriceMarkUp() {

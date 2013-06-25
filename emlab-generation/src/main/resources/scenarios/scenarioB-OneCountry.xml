@@ -317,6 +317,8 @@
 		p:investmentFutureTimeHorizon="${investmentFutureTimeHorizon}" p:pastTimeHorizon="5"
 		p:equityInterestRate="0.12" p:loanInterestRate="0.09"
 		p:debtRatioOfInvestments="0.7"
+		p:learningEffectPositive="0.95"
+		p:learningEffectNegative="1.05"
 		p:dismantlingProlongingYearsAfterTechnicalLifetime="0"
 		p:dismantlingRequiredOperatingProfit="0" p:downpaymentFractionOfCash="0.5"
 		p:willingToInvest="true" p:priceMarkUp="${priceMarkUp}" 
@@ -329,6 +331,8 @@
 		p:investmentFutureTimeHorizon="${investmentFutureTimeHorizon}" p:pastTimeHorizon="5"
 		p:equityInterestRate="0.12" p:loanInterestRate="0.09"
 		p:debtRatioOfInvestments="0.7"
+		p:learningEffectPositive="0.95"
+		p:learningEffectNegative="1.05"
 		p:dismantlingProlongingYearsAfterTechnicalLifetime="0"
 		p:dismantlingRequiredOperatingProfit="0" p:downpaymentFractionOfCash="0.5"
 		p:willingToInvest="true" p:priceMarkUp="${priceMarkUp}" 
@@ -341,6 +345,8 @@
 		p:investmentFutureTimeHorizon="${investmentFutureTimeHorizon}" p:pastTimeHorizon="5"
 		p:equityInterestRate="0.12" p:loanInterestRate="0.09"
 		p:debtRatioOfInvestments="0.7"
+		p:learningEffectPositive="0.95"
+		p:learningEffectNegative="1.05"
 		p:dismantlingProlongingYearsAfterTechnicalLifetime="0"
 		p:dismantlingRequiredOperatingProfit="0" p:downpaymentFractionOfCash="0.5"
 		p:willingToInvest="true" p:priceMarkUp="${priceMarkUp}" 
@@ -353,6 +359,8 @@
 		p:investmentFutureTimeHorizon="${investmentFutureTimeHorizon}" p:pastTimeHorizon="5"
 		p:equityInterestRate="0.12" p:loanInterestRate="0.09"
 		p:debtRatioOfInvestments="0.7"
+		p:learningEffectPositive="0.95"
+		p:learningEffectNegative="1.05"
 		p:dismantlingProlongingYearsAfterTechnicalLifetime="0"
 		p:dismantlingRequiredOperatingProfit="0" p:downpaymentFractionOfCash="0.5"
 		p:willingToInvest="true" p:priceMarkUp="${priceMarkUp}" 
@@ -420,6 +428,48 @@
 				</entry>
 			</map>
 		</property>
+		<property name="coallocations" >
+			<list>
+				<ref bean="Maasvlakte2" />
+				<ref bean="Moerdijk" />
+				<ref bean="Eemshaven"/>
+			</list>
+		</property>
+		<property name="gaslocations">
+			<list>
+				<ref bean="Maasvlakte2" />
+				<ref bean="Moerdijk" />
+				<ref bean="Eemshaven"/>
+			</list>
+		</property>
+		<property name="biomasslocations" >
+			<list>
+				<ref bean="Maasvlakte2" />
+				<ref bean="Moerdijk" />
+				<ref bean="Eemshaven"/>
+			</list>
+		</property>
+		<property name="nuclearlocations" >
+			<list>
+				<ref bean="Maasvlakte2" />
+				<ref bean="Moerdijk" />
+				<ref bean="Eemshaven"/>
+			</list>
+		</property>
+		<property name="windlocations" >
+			<list>
+				<ref bean="Maasvlakte2" />
+				<ref bean="Moerdijk" />
+				<ref bean="Eemshaven"/>
+			</list>
+		</property>
+		<property name="sunlocations" >
+			<list>
+				<ref bean="Maasvlakte2" />
+				<ref bean="Moerdijk" />
+				<ref bean="Eemshaven"/>
+			</list>
+		</property>
 		<property name="nodes">
 			<set>
 				<ref bean="beneluxNode" />
@@ -482,12 +532,20 @@
 		p:minimumRunningHours="5000"
 		p:fixedOperatingCostModifierAfterLifetime=".05" p:expectedLifetime="40"
 		p:expectedLeadtime="4" p:expectedPermittime="1" p:minimumFuelQuality=".95"
+		p:expectedLeadtime2="6"
+		p:expectedPermittime2="1"
 		p:maximumInstalledCapacityFractionInCountry="1"
 		p:maximumInstalledCapacityFractionPerAgent="1"
 		p:baseSegmentDependentAvailability="1"
+		p:environmentalCosts="0"
+		p:technologyPreference="0"
+		p:employment="0"
 		p:peakSegmentDependentAvailability="1"
 		p:applicableForLongTermContract="true"
-		p:intermittent="false">
+		p:intermittent="false"
+		p:locationFailure="1"
+		p:locationFailureTime="0"
+		p:feedstockID="Coal">
 		<property name="fuels">
 			<set>
 				<ref bean="coal" />
@@ -511,12 +569,19 @@
 		p:minimumRunningHours="5000"
 		p:fixedOperatingCostModifierAfterLifetime=".05" p:expectedLifetime="40"
 		p:expectedLeadtime="5" p:expectedPermittime="1" p:minimumFuelQuality=".95"
+		p:expectedLeadtime2="5" p:expectedPermittime2="1"
 		p:maximumInstalledCapacityFractionInCountry="1"
 		p:maximumInstalledCapacityFractionPerAgent="1"
 		p:baseSegmentDependentAvailability="1"
 		p:peakSegmentDependentAvailability="1"
 		p:applicableForLongTermContract="true"
-		p:intermittent="false">
+		p:environmentalCosts="0"
+		p:technologyPreference="0"
+		p:employment="0"
+		p:intermittent="false"
+		p:locationFailure="1"
+		p:locationFailureTime="0"
+		p:feedstockID="Coal">
 		<property name="fuels">
 			<set>
 				<ref bean="lignite" />
@@ -537,12 +602,19 @@
 		p:depreciationTime="20" p:minimumRunningHours="0"
 		p:fixedOperatingCostModifierAfterLifetime=".05" p:expectedLifetime="40"
 		p:expectedLeadtime="4" p:expectedPermittime="1" p:minimumFuelQuality=".9"
+		p:expectedLeadtime2="4" p:expectedPermittime2="1"
 		p:maximumInstalledCapacityFractionInCountry="1"
 		p:maximumInstalledCapacityFractionPerAgent="1"
 		p:baseSegmentDependentAvailability="1"
 		p:peakSegmentDependentAvailability="1"
 		p:applicableForLongTermContract="true"
-		p:intermittent="false">
+		p:environmentalCosts="0"
+		p:technologyPreference="0"
+		p:employment="0"
+		p:intermittent="false"
+		p:locationFailure="1"
+		p:locationFailureTime="0"
+		p:feedstockID="Gas">
 		<property name="fuels">
 			<set>
 				<ref bean="coal" />
@@ -564,12 +636,19 @@
 		p:depreciationTime="20" p:minimumRunningHours="5000"
 		p:fixedOperatingCostModifierAfterLifetime=".05" p:expectedLifetime="40"
 		p:expectedLeadtime="4" p:expectedPermittime="1" p:minimumFuelQuality=".9"
+		p:expectedLeadtime2="4" p:expectedPermittime2="1"
 		p:maximumInstalledCapacityFractionInCountry="1"
 		p:maximumInstalledCapacityFractionPerAgent="1"
 		p:baseSegmentDependentAvailability="1"
+		p:environmentalCosts="0"
+		p:technologyPreference="0"
+		p:employment="0"
 		p:peakSegmentDependentAvailability="1"
 		p:applicableForLongTermContract="true"
-		p:intermittent="false">
+		p:intermittent="false"
+		p:locationFailure="1"
+		p:locationFailureTime="0"
+		p:feedstockID="Coal">
 		<property name="fuels">
 			<set>
 				<ref bean="coal" />
@@ -591,12 +670,19 @@
 		p:depreciationTime="20" p:minimumRunningHours="0"
 		p:fixedOperatingCostModifierAfterLifetime=".05" p:expectedLifetime="40"
 		p:expectedLeadtime="4" p:expectedPermittime="1" p:minimumFuelQuality=".9"
+		p:expectedLeadtime2="4" p:expectedPermittime2="1"
 		p:maximumInstalledCapacityFractionInCountry="1"
 		p:maximumInstalledCapacityFractionPerAgent="1"
 		p:baseSegmentDependentAvailability="1"
+		p:environmentalCosts="0"
+		p:technologyPreference="0"
+		p:employment="0"
 		p:peakSegmentDependentAvailability="1"
 		p:applicableForLongTermContract="true"
-		p:intermittent="false">
+		p:intermittent="false"
+		p:locationFailure="1"
+		p:locationFailureTime="0"
+		p:feedstockID="Gas">
 		<property name="fuels">
 			<set>
 				<ref bean="coal" />
@@ -618,12 +704,19 @@
 		p:depreciationTime="15" p:minimumRunningHours="0"
 		p:fixedOperatingCostModifierAfterLifetime=".05" p:expectedLifetime="30"
 		p:expectedLeadtime="2" p:expectedPermittime="1" p:minimumFuelQuality="1"
+		p:expectedLeadtime2="2" p:expectedPermittime2="1"
 		p:maximumInstalledCapacityFractionInCountry="1"
 		p:maximumInstalledCapacityFractionPerAgent="1"
 		p:baseSegmentDependentAvailability="1"
 		p:peakSegmentDependentAvailability="1"
+		p:environmentalCosts="0"
+		p:technologyPreference="0"
+		p:employment="0"
 		p:applicableForLongTermContract="true"
-		p:intermittent="false">
+		p:intermittent="false"
+		p:locationFailure="1"
+		p:locationFailureTime="0"
+		p:feedstockID="Gas">
 		<property name="fuels">
 			<set>
 				<ref bean="naturalgas" />
@@ -644,12 +737,19 @@
 		p:depreciationTime="15" p:minimumRunningHours="0"
 		p:fixedOperatingCostModifierAfterLifetime=".05" p:expectedLifetime="30"
 		p:expectedLeadtime="3" p:expectedPermittime="1" p:minimumFuelQuality="1"
+		p:expectedLeadtime2="3" p:expectedPermittime2="1"
 		p:maximumInstalledCapacityFractionInCountry="1"
 		p:maximumInstalledCapacityFractionPerAgent="1"
 		p:baseSegmentDependentAvailability="1"
 		p:peakSegmentDependentAvailability="1"
+		p:environmentalCosts="0"
+		p:technologyPreference="0"
+		p:employment="0"
 		p:applicableForLongTermContract="true"
-		p:intermittent="false">
+		p:intermittent="false"
+		p:locationFailure="1"
+		p:locationFailureTime="0"
+		p:feedstockID="Gas">
 		<property name="fuels">
 			<set>
 				<ref bean="naturalgas" />
@@ -670,12 +770,19 @@
 		p:depreciationTime="15" p:minimumRunningHours="0"		
 		p:fixedOperatingCostModifierAfterLifetime=".05" p:expectedLifetime="30"
 		p:expectedLeadtime="1" p:expectedPermittime="0" p:minimumFuelQuality="1"
+		p:expectedLeadtime2="1" p:expectedPermittime2="0"
 		p:maximumInstalledCapacityFractionInCountry="1"
 		p:maximumInstalledCapacityFractionPerAgent="1"
 		p:baseSegmentDependentAvailability="1"
 		p:peakSegmentDependentAvailability="1"
+		p:environmentalCosts="0"
+		p:technologyPreference="0"
+		p:employment="0"
 		p:applicableForLongTermContract="true"
-		p:intermittent="false">
+		p:intermittent="false"
+		p:locationFailure="1"
+		p:locationFailureTime="0"
+		p:feedstockID="Gas">
 		<property name="fuels">
 			<set>
 				<ref bean="naturalgas" />
@@ -697,12 +804,19 @@
 		p:minimumRunningHours="0"
 		p:fixedOperatingCostModifierAfterLifetime=".05" p:expectedLifetime="30"
 		p:expectedLeadtime="3" p:expectedPermittime="1" p:minimumFuelQuality="0.5"
+		p:expectedLeadtime2="3" p:expectedPermittime2="1"
 		p:maximumInstalledCapacityFractionInCountry="1"
 		p:maximumInstalledCapacityFractionPerAgent="1"
 		p:baseSegmentDependentAvailability="0.7"
 		p:peakSegmentDependentAvailability="0.7"
+		p:environmentalCosts="0"
+		p:technologyPreference="0"
+		p:employment="0"
 		p:applicableForLongTermContract="true"
-		p:intermittent="false">
+		p:intermittent="false"
+		p:locationFailure="1"
+		p:locationFailureTime="0"
+		p:feedstockID="Biomass">
 		<property name="fuels">
 			<set>
 				<ref bean="biomass" />
@@ -724,11 +838,18 @@
 		p:minimumRunningHours="0"
 		p:fixedOperatingCostModifierAfterLifetime=".05" p:expectedLifetime="25"
 		p:expectedLeadtime="1" p:expectedPermittime="1" p:minimumFuelQuality="1"
+		p:expectedLeadtime2="1" p:expectedPermittime2="1"
 		p:maximumInstalledCapacityFractionInCountry="1"
 		p:maximumInstalledCapacityFractionPerAgent="1"
 		p:baseSegmentDependentAvailability="0.40"
 		p:peakSegmentDependentAvailability="0.05"
-		p:applicableForLongTermContract="true">
+		p:environmentalCosts="0"
+		p:technologyPreference="0"
+		p:employment="0"
+		p:applicableForLongTermContract="true"
+		p:locationFailure="1"
+		p:locationFailureTime="0"
+		p:feedstockID="Wind">
 	</bean>
 	
 	<bean id="windInvestmentCostTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="-0.0017610467" p:start="1214600" />
@@ -746,11 +867,18 @@
 		p:minimumRunningHours="0"
 		p:fixedOperatingCostModifierAfterLifetime=".05" p:expectedLifetime="25"
 		p:expectedLeadtime="2" p:expectedPermittime="1" p:minimumFuelQuality="1"
+		p:expectedLeadtime2="2" p:expectedPermittime2="1"
 		p:maximumInstalledCapacityFractionInCountry="1"
 		p:maximumInstalledCapacityFractionPerAgent="1"
 		p:baseSegmentDependentAvailability="0.65"
 		p:peakSegmentDependentAvailability="0.08"
-		p:applicableForLongTermContract="true">
+		p:environmentalCosts="0"
+		p:technologyPreference="0"
+		p:employment="0"
+		p:applicableForLongTermContract="true"
+		p:locationFailure="1"
+		p:locationFailureTime="0"
+		p:feedstockID="Wind">
 	</bean>
 	
 	<bean id="windOffshoreInvestmentCostTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="-0.02058369" p:start="2450770" />
@@ -767,11 +895,18 @@
 		p:minimumRunningHours="0"
 		p:fixedOperatingCostModifierAfterLifetime=".05" p:expectedLifetime="25"
 		p:expectedLeadtime="1" p:expectedPermittime="0" p:minimumFuelQuality="1"
+		p:expectedLeadtime2="1" p:expectedPermittime2="0"
 		p:maximumInstalledCapacityFractionInCountry="1"
 		p:maximumInstalledCapacityFractionPerAgent="1"
 		p:baseSegmentDependentAvailability="0.16"
 		p:peakSegmentDependentAvailability="0.08"
-		p:applicableForLongTermContract="true">
+		p:environmentalCosts="0"
+		p:technologyPreference="0"
+		p:employment="0"
+		p:applicableForLongTermContract="true"
+		p:locationFailure="1"
+		p:locationFailureTime="0"
+		p:feedstockID="Sun">
 	</bean>
 	
 	<bean id="pvInvestmentCostTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="-0.0247970888" p:start="2048300" />
@@ -788,12 +923,19 @@
 		p:minimumRunningHours="5000"
 		p:fixedOperatingCostModifierAfterLifetime=".05" p:expectedLifetime="40"
 		p:expectedLeadtime="5" p:expectedPermittime="2" p:minimumFuelQuality="1"
+		p:expectedLeadtime2="5" p:expectedPermittime2="2"
 		p:maximumInstalledCapacityFractionInCountry="1"
 		p:maximumInstalledCapacityFractionPerAgent="1"
 		p:baseSegmentDependentAvailability="1"
 		p:peakSegmentDependentAvailability="1"
 		p:applicableForLongTermContract="true"
-		p:intermittent="false">
+		p:intermittent="false"
+		p:environmentalCosts="0"
+		p:technologyPreference="0"
+		p:employment="0"
+		p:locationFailure="1"
+		p:locationFailureTime="0"
+		p:feedstockID="Nuclear">
 		<property name="fuels">
 			<set>
 				<ref bean="uranium" />
@@ -810,5 +952,63 @@
 		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="location" value="classpath:scenarios/parametersB-OneCountry.properties" />
 	</bean>
-
+	
+	<!-- Locations for power plants -->
+	<bean id="Maasvlakte2" class="emlab.gen.domain.sitelocation.Location"
+		p:name="Maasvlakte II" p:possiblePlants="20"
+		p:plantPresent="0"
+		p:populationDensity="2952"
+		p:wealth="14"
+		p:qualityWater="3"
+		p:distanceGrid="0"
+		p:capacityGrid="0"
+		p:utilityLocation="0"
+		p:feedstockAvailabilityNuclear="True"
+		p:feedstockAvailabilityCoal="True"
+		p:feedstockAvailabilityGas="True"
+		p:feedstockAvailabilityWind="True"
+		p:feedstockAvailabilitySun="True"
+		p:carbonCaptureStorageAvailability="True"
+		p:feedstockAvailabilityBiomass="True"
+		p:sunHours="1000"
+		p:windPower="8">
+	</bean>
+	<bean id="Eemshaven" class="emlab.gen.domain.sitelocation.Location"
+		p:name="Eemshaven" p:possiblePlants="20"
+		p:plantPresent="0"
+		p:populationDensity="86"
+		p:wealth="13.1"
+		p:qualityWater="3"
+		p:distanceGrid="0"
+		p:capacityGrid="0"
+		p:utilityLocation="0"
+		p:feedstockAvailabilityNuclear="True"
+		p:feedstockAvailabilityCoal="True"
+		p:feedstockAvailabilityGas="True"
+		p:feedstockAvailabilityWind="True"
+		p:feedstockAvailabilitySun="True"
+		p:carbonCaptureStorageAvailability="True"
+		p:feedstockAvailabilityBiomass="True"
+		p:sunHours="1200"
+		p:windPower="6">
+	</bean>
+	<bean id="Moerdijk" class="emlab.gen.domain.sitelocation.Location"
+		p:name="Moerdijk" p:possiblePlants="20"
+		p:plantPresent="0"
+		p:populationDensity="229"
+		p:wealth="15.3"
+		p:qualityWater="2"
+		p:distanceGrid="0"
+		p:capacityGrid="0"
+		p:utilityLocation="0"
+		p:feedstockAvailabilityNuclear="False"
+		p:feedstockAvailabilityCoal="True"
+		p:feedstockAvailabilityGas="True"
+		p:feedstockAvailabilityWind="True"
+		p:feedstockAvailabilitySun="True"
+		p:feedstockAvailabilityBiomass="True"
+		p:carbonCaptureStorageAvailability="False"
+		p:sunHours="1300"
+		p:windPower="9">
+	</bean>
 </beans>

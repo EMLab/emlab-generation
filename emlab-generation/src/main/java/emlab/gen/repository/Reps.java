@@ -89,4 +89,10 @@ public class Reps {
     @Autowired
     public StrategicReserveOperatorRepository strategicReserveOperatorRepository;
 
+    @Autowired
+    public LocationRepository locationRepository;
+
+    @Autowired
+    public LocationLocalPartiesRepository locationLocalPartiesRepository;
+
 }

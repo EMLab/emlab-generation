@@ -30,21 +30,22 @@ public class PowerGeneratingTechnology {
 
     private String name;
 
+    private double locationFailure;
+
     @SimulationParameter(label = "Capacity (MW)", from = 0, to = 2000)
     private double capacity;
 
-	@RelatedTo(type = "PGT_INVESTMENTCOSTS", elementClass = TimeSeriesImpl.class, direction = Direction.OUTGOING)
-	private TimeSeriesImpl investmentCostTimeSeries;
+    @RelatedTo(type = "PGT_INVESTMENTCOSTS", elementClass = TimeSeriesImpl.class, direction = Direction.OUTGOING)
+    private TimeSeriesImpl investmentCostTimeSeries;
 
-	@RelatedTo(type = "PGT_OMCOSTS", elementClass = TimeSeriesImpl.class, direction = Direction.OUTGOING)
-	private TimeSeriesImpl fixedOperatingCostTimeSeries;
+    @RelatedTo(type = "PGT_OMCOSTS", elementClass = TimeSeriesImpl.class, direction = Direction.OUTGOING)
+    private TimeSeriesImpl fixedOperatingCostTimeSeries;
 
-	@RelatedTo(type = "PGT_EFFICIENCYTS", elementClass = TimeSeriesImpl.class, direction = Direction.OUTGOING)
-	private TimeSeriesImpl efficiencyTimeSeries;
+    @RelatedTo(type = "PGT_EFFICIENCYTS", elementClass = TimeSeriesImpl.class, direction = Direction.OUTGOING)
+    private TimeSeriesImpl efficiencyTimeSeries;
 
     @SimulationParameter(label = "CO2 capture efficiency", from = 0, to = 1)
     private double co2CaptureEffciency;
-
 
     @SimulationParameter(label = "Depreciation time (years)", from = 0, to = 40)
     private int depreciationTime;
@@ -63,6 +64,18 @@ public class PowerGeneratingTechnology {
     private int expectedPermittime;
     private double minimumFuelQuality;
 
+    private int expectedLeadtime2;
+
+    private double environmentalCosts;
+
+    private double technologyPreference;
+
+    private double employment;
+
+    private double locationFailureTime;
+
+    private int expectedPermittime2;
+
     @SimulationParameter(label = "Maximum installed capacity fraction in country", from = 0, to = 1)
     private double maximumInstalledCapacityFractionInCountry;
 
@@ -76,6 +89,16 @@ public class PowerGeneratingTechnology {
     private boolean applicableForLongTermContract;
 
     private boolean intermittent;
+
+    private String FeedstockID;
+
+    public String getFeedstockID() {
+        return FeedstockID;
+    }
+
+    public void setFeedstockID(String feedstockID) {
+        FeedstockID = feedstockID;
+    }
 
     public double getBaseSegmentDependentAvailability() {
         return baseSegmentDependentAvailability;
@@ -99,6 +122,30 @@ public class PowerGeneratingTechnology {
 
     public void setMaximumInstalledCapacityFractionInCountry(double maximumInstalledCapacityFractionInCountry) {
         this.maximumInstalledCapacityFractionInCountry = maximumInstalledCapacityFractionInCountry;
+    }
+
+    public double getEnvironmentalCosts() {
+        return environmentalCosts;
+    }
+
+    public void setEnvironmentalCosts(double environmentalCosts) {
+        this.environmentalCosts = environmentalCosts;
+    }
+
+    public double getTechnologyPreference() {
+        return technologyPreference;
+    }
+
+    public void setTechnologyPreference(double technologyPreference) {
+        this.technologyPreference = technologyPreference;
+    }
+
+    public double getEmployment() {
+        return employment;
+    }
+
+    public void setEmployment(double employment) {
+        this.employment = employment;
     }
 
     public double getMaximumInstalledCapacityFractionPerAgent() {
@@ -161,35 +208,35 @@ public class PowerGeneratingTechnology {
         this.capacity = capacity;
     }
 
-	public double getEfficiency(long time) {
-		return efficiencyTimeSeries.getValue(time);
+    public double getEfficiency(long time) {
+        return efficiencyTimeSeries.getValue(time);
     }
 
-	public TimeSeriesImpl getInvestmentCostTimeSeries() {
-		return investmentCostTimeSeries;
-	}
+    public TimeSeriesImpl getInvestmentCostTimeSeries() {
+        return investmentCostTimeSeries;
+    }
 
-	public void setInvestmentCostTimeSeries(TimeSeriesImpl investmentCostTrend) {
-		this.investmentCostTimeSeries = investmentCostTrend;
-	}
+    public void setInvestmentCostTimeSeries(TimeSeriesImpl investmentCostTrend) {
+        this.investmentCostTimeSeries = investmentCostTrend;
+    }
 
-	public TimeSeriesImpl getFixedOperatingCostTimeSeries() {
-		return fixedOperatingCostTimeSeries;
-	}
+    public TimeSeriesImpl getFixedOperatingCostTimeSeries() {
+        return fixedOperatingCostTimeSeries;
+    }
 
-	public void setFixedOperatingCostTimeSeries(TimeSeriesImpl fixedOperatingCostTrend) {
-		this.fixedOperatingCostTimeSeries = fixedOperatingCostTrend;
-	}
+    public void setFixedOperatingCostTimeSeries(TimeSeriesImpl fixedOperatingCostTrend) {
+        this.fixedOperatingCostTimeSeries = fixedOperatingCostTrend;
+    }
 
-	public TimeSeriesImpl getEfficiencyTimeSeries() {
-		return efficiencyTimeSeries;
-	}
+    public TimeSeriesImpl getEfficiencyTimeSeries() {
+        return efficiencyTimeSeries;
+    }
 
-	public void setEfficiencyTimeSeries(TimeSeriesImpl efficiencyTrend) {
-		this.efficiencyTimeSeries = efficiencyTrend;
-	}
+    public void setEfficiencyTimeSeries(TimeSeriesImpl efficiencyTrend) {
+        this.efficiencyTimeSeries = efficiencyTrend;
+    }
 
-	public double getCo2CaptureEffciency() {
+    public double getCo2CaptureEffciency() {
         return co2CaptureEffciency;
     }
 
@@ -221,12 +268,28 @@ public class PowerGeneratingTechnology {
         this.expectedLeadtime = expectedLeadtime;
     }
 
+    public int getExpectedLeadtime2() {
+        return expectedLeadtime2;
+    }
+
+    public void setExpectedLeadtime2(int expectedLeadtime2) {
+        this.expectedLeadtime2 = expectedLeadtime2;
+    }
+
     public int getExpectedPermittime() {
         return expectedPermittime;
     }
 
     public void setExpectedPermittime(int expectedPermittime) {
         this.expectedPermittime = expectedPermittime;
+    }
+
+    public int getExpectedPermittime2() {
+        return expectedPermittime2;
+    }
+
+    public void setExpectedPermittime2(int expectedPermittime2) {
+        this.expectedPermittime2 = expectedPermittime2;
     }
 
     public double getMinimumFuelQuality() {
@@ -245,6 +308,7 @@ public class PowerGeneratingTechnology {
         this.fuels = fuels;
     }
 
+    @Override
     public String toString() {
         return this.getName();
     }
@@ -257,20 +321,36 @@ public class PowerGeneratingTechnology {
         this.applicableForLongTermContract = applicableForLongTermContract;
     }
 
-	public double getInvestmentCost(long time) {
-		return investmentCostTimeSeries.getValue(time);
+    public double getInvestmentCost(long time) {
+        return investmentCostTimeSeries.getValue(time);
     }
 
-	public double getFixedOperatingCost(long time) {
-		return fixedOperatingCostTimeSeries.getValue(time);
-	}
+    public double getFixedOperatingCost(long time) {
+        return fixedOperatingCostTimeSeries.getValue(time);
+    }
 
-	public boolean isIntermittent() {
+    public boolean isIntermittent() {
         return intermittent;
     }
 
     public void setIntermittent(boolean intermittent) {
         this.intermittent = intermittent;
+    }
+
+    public double getLocationFailure() {
+        return locationFailure;
+    }
+
+    public void setLocationFailure(double locationFailure) {
+        this.locationFailure = locationFailure;
+    }
+
+    public double getLocationFailureTime() {
+        return locationFailureTime;
+    }
+
+    public void setLocationFailureTime(double locationFailureTime) {
+        this.locationFailureTime = locationFailureTime;
     }
 
 }
