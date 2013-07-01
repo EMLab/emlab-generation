@@ -53,7 +53,7 @@ import emlab.gen.util.Utils;
  */
 @RoleComponent
 public class ClearIterativeCO2AndElectricitySpotMarketTwoCountryRole extends AbstractClearElectricitySpotMarketRole<DecarbonizationModel>
-        implements Role<DecarbonizationModel> {
+implements Role<DecarbonizationModel> {
 
     @Autowired
     private Reps reps;
@@ -64,6 +64,7 @@ public class ClearIterativeCO2AndElectricitySpotMarketTwoCountryRole extends Abs
     @Autowired
     Neo4jTemplate template;
 
+    @Override
     @Transactional
     public void act(DecarbonizationModel model) {
 
@@ -139,7 +140,7 @@ public class ClearIterativeCO2AndElectricitySpotMarketTwoCountryRole extends Abs
 
                 //updatePowerPlanDispatchPlansWithNewCO2Prices(co2SecantSearch.co2Price, nationalMinCo2Prices);
                 submitOffersToElectricitySpotMarketRole.updateMarginalCostInclCO2AfterFuelMixChange(co2SecantSearch.co2Price, nationalMinCo2Prices);
-                
+
                 if (model.isLongTermContractsImplemented())
                     determineCommitmentOfPowerPlantsOnTheBasisOfLongTermContracts(segments);
 
@@ -244,7 +245,7 @@ public class ClearIterativeCO2AndElectricitySpotMarketTwoCountryRole extends Abs
                 // updatePowerDispatchPlansAfterTwoCountryClearingIsComplete(segment);
 
                 reps.clearingPointRepositoryOld.createOrUpdateSegmentClearingPoint(segment, market, globalOutcome.globalPrice,
-                        supplyInThisMarket, getCurrentTick());
+ supplyInThisMarket * segment.getLengthInHours(), getCurrentTick());
                 logger.info("Stored a system-uniform price for market " + market + " / segment " + segment + " -- supply "
                         + supplyInThisMarket + " -- price: " + globalOutcome.globalPrice);
             }
@@ -354,6 +355,7 @@ public class ClearIterativeCO2AndElectricitySpotMarketTwoCountryRole extends Abs
 
     }
 
+    @Override
     public Reps getReps() {
         return reps;
     }

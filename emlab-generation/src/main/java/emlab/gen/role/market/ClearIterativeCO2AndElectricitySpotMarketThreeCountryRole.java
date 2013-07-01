@@ -52,7 +52,7 @@ import emlab.gen.util.Utils;
  */
 @RoleComponent
 public class ClearIterativeCO2AndElectricitySpotMarketThreeCountryRole extends AbstractClearElectricitySpotMarketRole<DecarbonizationModel>
-        implements Role<DecarbonizationModel> {
+implements Role<DecarbonizationModel> {
 
     @Autowired
     private Reps reps;
@@ -60,6 +60,7 @@ public class ClearIterativeCO2AndElectricitySpotMarketThreeCountryRole extends A
     @Autowired
     Neo4jTemplate template;
 
+    @Override
     @Transactional
     public void act(DecarbonizationModel model) {
 
@@ -215,7 +216,7 @@ public class ClearIterativeCO2AndElectricitySpotMarketThreeCountryRole extends A
                 // updatePowerDispatchPlansAfterTwoCountryClearingIsComplete(segment);
 
                 reps.clearingPointRepositoryOld.createOrUpdateSegmentClearingPoint(segment, market, marginalPlantMarginalCost,
-                        supplyInThisMarket, getCurrentTick());
+ supplyInThisMarket * segment.getLengthInHours(), getCurrentTick());
                 logger.info("Stored a system-uniform price for market " + market + " / segment " + segment + " -- supply "
                         + supplyInThisMarket + " -- price: " + marginalPlantMarginalCost);
             }
@@ -326,6 +327,7 @@ public class ClearIterativeCO2AndElectricitySpotMarketThreeCountryRole extends A
 
     }
 
+    @Override
     public Reps getReps() {
         return reps;
     }
