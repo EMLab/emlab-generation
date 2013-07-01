@@ -1226,7 +1226,7 @@ Transmission capacity is assumed to be 3016 in both directions, based on maximum
 	<bean id="co2CapTrend" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/emissionCapCweUk.csv" />
 	<!-- Minimum CO2 Price Trends -->
 	<bean id="minCo2PriceTrend" class="emlab.gen.trend.StepTrend" p:start="0"
-		p:duration="0" p:increment="0"
+		p:duration="1" p:increment="0"
 		p:minValue="0" />
 		
 	<bean id="minCo2PriceTrendCWE" class="emlab.gen.trend.StepTrend" p:start="0"

@@ -39,7 +39,6 @@ import emlab.gen.domain.market.electricity.PowerPlantDispatchPlan;
 import emlab.gen.domain.market.electricity.Segment;
 import emlab.gen.domain.technology.PowerPlant;
 import emlab.gen.domain.technology.Substance;
-import emlab.gen.domain.technology.SubstanceShareInFuelMix;
 import emlab.gen.repository.Reps;
 
 /**
@@ -64,6 +63,7 @@ public abstract class AbstractClearElectricitySpotMarketRole<T extends Decarboni
         HashMap<ElectricitySpotMarket, Double> prices = new HashMap<ElectricitySpotMarket, Double>();
         HashMap<ElectricitySpotMarket, Double> supplies = new HashMap<ElectricitySpotMarket, Double>();
 
+        @Override
         public String toString() {
             return new String("Market outcome: loads " + loads + " prices: " + prices + " supplies: " + supplies);
         }
@@ -76,6 +76,7 @@ public abstract class AbstractClearElectricitySpotMarketRole<T extends Decarboni
         double globalPrice;
         double globalSupply;
 
+        @Override
         public String toString() {
             return "Global Data; loads: " + loads + ", supplies: " + supplies + " globalLoad: " + globalLoad + ", globalSupply: "
                     + globalSupply;
@@ -91,20 +92,14 @@ public abstract class AbstractClearElectricitySpotMarketRole<T extends Decarboni
 
     public class CO2PriceStability extends CO2Iteration {
 
-        public boolean stable;
         public boolean positive;
         public double iterationSpeedFactor;
-        public double co2Price;
-        public double co2Emissions;
         public double changeInDeviationFromLastStep;
 
     }
 
     public class CO2SecantSearch extends CO2Iteration {
-        public boolean stable;
         public boolean twoPricesExistWithBelowAboveEmissions;
-        public double co2Price;
-        public double co2Emissions;
         public double higherCO2Price;
         public int iteration = 0;
         public PriceEmissionPair tooLowEmissionsPair;
