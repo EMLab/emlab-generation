@@ -1239,7 +1239,7 @@ Transmission capacity is assumed to be 3016 in both directions, based on maximum
 
 	<!-- Government -->
 	<bean id="government" class="emlab.gen.domain.agent.Government"
-		p:name="European Government" p:co2Penalty="100">
+		p:name="European Government" p:co2Penalty="150">
 		<property name="co2TaxTrend" ref="co2TaxTrend" />
 		<property name="co2CapTrend" ref="co2CapTrend" />
 		<property name="minCo2PriceTrend" ref="minCo2PriceTrend" />
