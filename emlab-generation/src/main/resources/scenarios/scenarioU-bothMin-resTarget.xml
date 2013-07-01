@@ -1338,9 +1338,9 @@ Transmission capacity is assumed to be 3016 in both directions, based on maximum
 		</property>
 	</bean>
 	
-	<bean id="igccInvestmentCostTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="-0.0036189099" p:start="1724880" />
-	<bean id="igccFixedOperatingCostTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="-0.0036189099" p:start="60370" />
-	<bean id="igccEfficiencyTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0.0033406805" p:start="0.48" />
+	<bean id="igccInvestmentCostTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/learningCurves.csv" p:startingYear="-50" p:delimiter="," p:variableName="Igcc_Inv" />
+	<bean id="igccFixedOperatingCostTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/learningCurves.csv" p:startingYear="-50" p:delimiter="," p:variableName="Igcc_OM" />
+	<bean id="igccEfficiencyTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/learningCurves.csv" p:startingYear="-50" p:delimiter="," p:variableName="Igcc_Eff" />
 	
 	<bean id="coalPscCSS" class="emlab.gen.domain.technology.PowerGeneratingTechnology"
 		p:name="CoalPscCSS" p:capacity="600" 
@@ -1392,9 +1392,9 @@ Transmission capacity is assumed to be 3016 in both directions, based on maximum
 		</property>
 	</bean>
 	
-	<bean id="igccCCSInvestmentCostTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="-0.0075679493" p:start="2501080" />
-	<bean id="igccCCSFixedOperatingCostTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="-0.0074325837	" p:start="87680" />
-	<bean id="igccCCSEfficiencyTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0.0059803464" p:start=".39" />
+	<bean id="igccCCSInvestmentCostTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/learningCurves.csv" p:startingYear="-50" p:delimiter="," p:variableName="IgccCCS_Inv" />
+	<bean id="igccCCSFixedOperatingCostTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/learningCurves.csv" p:startingYear="-50" p:delimiter="," p:variableName="IgccCCS_OM" />
+	<bean id="igccCCSEfficiencyTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/learningCurves.csv" p:startingYear="-50" p:delimiter="," p:variableName="IgccCCS_Eff" />
 	
 	<bean id="CCGT" class="emlab.gen.domain.technology.PowerGeneratingTechnology"
 		p:name="CCGT" p:capacity="776"
@@ -1444,9 +1444,10 @@ Transmission capacity is assumed to be 3016 in both directions, based on maximum
 		</property>
 	</bean>
 	
-	<bean id="ccgtCCSInvestmentCostTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="-0.0075679493" p:start="1164290" />
-	<bean id="ccgtCCSFixedOperatingCostTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="-0.0077701361" p:start="29470" />
-	<bean id="ccgtCCSEfficiencyTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0.0031511023" p:start=".51" />
+	<bean id="ccgtCCSInvestmentCostTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/learningCurves.csv" p:startingYear="-50" p:delimiter="," p:variableName="CcgtCCS_Inv" />
+	<bean id="ccgtCCSFixedOperatingCostTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/learningCurves.csv" p:startingYear="-50" p:delimiter="," p:variableName="CcgtCCS_OM" />
+	<bean id="ccgtCCSEfficiencyTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/learningCurves.csv" p:startingYear="-50" p:delimiter="," p:variableName="CcgtCCS_Eff" />
+
 	
 	<bean id="OCGT" class="emlab.gen.domain.technology.PowerGeneratingTechnology"
 		p:name="OCGT" p:capacity="150"
@@ -1497,9 +1498,9 @@ Transmission capacity is assumed to be 3016 in both directions, based on maximum
 		</property>
 	</bean>
 	
-	<bean id="biomassInvestmentCostTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="-0.004438785" p:start="1703320" />
-	<bean id="biomassFixedOperatingCostTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="-0.004438785" p:start="59620" />
-	<bean id="biomassEfficiencyTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0.000001" p:start=".35" />
+	<bean id="biomassInvestmentCostTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/learningCurves.csv" p:startingYear="-50" p:delimiter="," p:variableName="Biomass_Inv" />
+	<bean id="biomassFixedOperatingCostTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/learningCurves.csv" p:startingYear="-50" p:delimiter="," p:variableName="Biomass_OM" />
+	<bean id="biomassEfficiencyTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/learningCurves.csv" p:startingYear="-50" p:delimiter="," p:variableName="Biomass_Eff" />
 	
 	<bean id="biogasPGT" class="emlab.gen.domain.technology.PowerGeneratingTechnology"
 		p:name="Biogas" p:capacity="500"
@@ -1524,9 +1525,9 @@ Transmission capacity is assumed to be 3016 in both directions, based on maximum
 		</property>
 	</bean>
 	
-	<bean id="biogasInvestmentCostTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="-0.0032311452" p:start="2019550" />
-	<bean id="biogasFixedOperatingCostTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="-0.0032311452" p:start="76740" />
-	<bean id="biogasEfficiencyTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0.000001" p:start=".30" />
+	<bean id="biogasInvestmentCostTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/learningCurves.csv" p:startingYear="-50" p:delimiter="," p:variableName="Biogas_Inv" />
+	<bean id="biogasFixedOperatingCostTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/learningCurves.csv" p:startingYear="-50" p:delimiter="," p:variableName="Biogas_OM" />
+	<bean id="biogasEfficiencyTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/learningCurves.csv" p:startingYear="-50" p:delimiter="," p:variableName="Biogas_Eff" />
 	
 	<bean id="windPGT" class="emlab.gen.domain.technology.PowerGeneratingTechnology"
 		p:name="Wind" p:capacity="600" 
@@ -1545,9 +1546,9 @@ Transmission capacity is assumed to be 3016 in both directions, based on maximum
 		p:applicableForLongTermContract="true">
 	</bean>
 	
-	<bean id="windInvestmentCostTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="-0.0017610467" p:start="1214600" />
-	<bean id="windFixedOperatingCostTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="-0.0004101736" p:start="18220" />
-	<bean id="windEfficiencyTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0" p:start="1" />
+	<bean id="windInvestmentCostTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/learningCurves.csv" p:startingYear="-50" p:delimiter="," p:variableName="Wind_Inv" />
+	<bean id="windFixedOperatingCostTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/learningCurves.csv" p:startingYear="-50" p:delimiter="," p:variableName="Wind_OM" />
+	<bean id="windEfficiencyTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/learningCurves.csv" p:startingYear="-50" p:delimiter="," p:variableName="Wind_Eff" />
 	
 	
 	<bean id="windOffshorePGT" class="emlab.gen.domain.technology.PowerGeneratingTechnology"
@@ -1567,9 +1568,9 @@ Transmission capacity is assumed to be 3016 in both directions, based on maximum
 		p:applicableForLongTermContract="true">
 	</bean>
 	
-	<bean id="windOffshoreInvestmentCostTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="-0.02058369" p:start="2450770" />
-	<bean id="windOffshoreFixedOperatingCostTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="-0.0144431157" p:start="73520" />
-	<bean id="windOffshoreEfficiencyTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0" p:start="1" />
+	<bean id="windOffshoreInvestmentCostTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/learningCurves.csv" p:startingYear="-50" p:delimiter="," p:variableName="WindOffshore_Inv" />
+	<bean id="windOffshoreFixedOperatingCostTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/learningCurves.csv" p:startingYear="-50" p:delimiter="," p:variableName="WindOffshore_OM" />
+	<bean id="windOffshoreEfficiencyTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/learningCurves.csv" p:startingYear="-50" p:delimiter="," p:variableName="WindOffshore_Eff" />
 	
 	<bean id="hydroPower" class="emlab.gen.domain.technology.PowerGeneratingTechnology"
 		p:name="HydroPower" p:capacity="1000"
@@ -1611,10 +1612,9 @@ Transmission capacity is assumed to be 3016 in both directions, based on maximum
 	</bean>
 	
 	
-	
-	<bean id="pvInvestmentCostTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="-0.0247970888" p:start="2048300" />
-	<bean id="pvFixedOperatingCostTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="-0.0049911825" p:start="20480" />
-	<bean id="pvEfficiencyTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0" p:start="1" />
+	<bean id="pvInvestmentCostTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/learningCurves.csv" p:startingYear="-50" p:delimiter="," p:variableName="PV_Inv" />
+	<bean id="pvFixedOperatingCostTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/learningCurves.csv" p:startingYear="-50" p:delimiter="," p:variableName="PV_OM" />
+	<bean id="pvEfficiencyTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/learningCurves.csv" p:startingYear="-50" p:delimiter="," p:variableName="PV_Eff" />
 	
 	<bean id="nuclearPGT" class="emlab.gen.domain.technology.PowerGeneratingTechnology"
 		p:name="Nuclear" p:capacity="1000"
