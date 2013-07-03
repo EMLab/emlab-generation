@@ -65,7 +65,6 @@ public class PowerPlantEntryParser implements CSVEntryParser<PowerPlant> {
         String ownerName = data[2];
         String locationName = data[3];
         int age = Integer.parseInt(data[4]);
-        logger.warn(data[1]);
 
         EnergyProducer energyProducer = null;
         if (ownerName != "") {

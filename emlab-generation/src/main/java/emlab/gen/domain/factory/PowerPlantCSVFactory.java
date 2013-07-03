@@ -51,6 +51,7 @@ public class PowerPlantCSVFactory implements InitializingBean {
     @Transactional
     @Override
     public void afterPropertiesSet() throws Exception {
+        logger.warn("Reading power plant from CSV file: " + csvFile);
         InputStreamReader inputStreamReader = new InputStreamReader(this.getClass().getResourceAsStream(csvFile));
 
         CSVReader<PowerPlant> csvPersonReader = new CSVReaderBuilder<PowerPlant>(inputStreamReader).entryParser(
