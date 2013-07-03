@@ -1563,8 +1563,8 @@ Transmission capacity is assumed to be 3016 in both directions, based on maximum
 		p:expectedLeadtime="2" p:expectedPermittime="1" p:minimumFuelQuality="1"
 		p:maximumInstalledCapacityFractionInCountry="1"
 		p:maximumInstalledCapacityFractionPerAgent="1"
-		p:baseSegmentDependentAvailability="0.65"
-		p:peakSegmentDependentAvailability="0.08"
+		p:baseSegmentDependentAvailability="0.60"
+		p:peakSegmentDependentAvailability="0.07"
 		p:applicableForLongTermContract="true">
 	</bean>
 	
@@ -1578,14 +1578,14 @@ Transmission capacity is assumed to be 3016 in both directions, based on maximum
 		p:fixedOperatingCostTimeSeries-ref="hydroPowerFixedOperatingCostTimeSeries"
 		p:efficiencyTimeSeries-ref="hydroPowerEfficiencyTimeSeries" 
 		p:co2CaptureEffciency="0" 
-		p:depreciationTime="15"
+		p:depreciationTime="30"
 		p:minimumRunningHours="0"
-		p:fixedOperatingCostModifierAfterLifetime=".05" p:expectedLifetime="25"
+		p:fixedOperatingCostModifierAfterLifetime=".05" p:expectedLifetime="50"
 		p:expectedLeadtime="2" p:expectedPermittime="1" p:minimumFuelQuality="1"
 		p:maximumInstalledCapacityFractionInCountry="1"
 		p:maximumInstalledCapacityFractionPerAgent="1"
-		p:baseSegmentDependentAvailability="0.26"
-		p:peakSegmentDependentAvailability="0.26"
+		p:baseSegmentDependentAvailability="0.0"
+		p:peakSegmentDependentAvailability="0.60"
 		p:applicableForLongTermContract="true">
 	</bean>
 	
@@ -1606,8 +1606,8 @@ Transmission capacity is assumed to be 3016 in both directions, based on maximum
 		p:expectedLeadtime="1" p:expectedPermittime="0" p:minimumFuelQuality="1"
 		p:maximumInstalledCapacityFractionInCountry="1"
 		p:maximumInstalledCapacityFractionPerAgent="1"
-		p:baseSegmentDependentAvailability="0.16"
-		p:peakSegmentDependentAvailability="0.08"
+		p:baseSegmentDependentAvailability="0.20"
+		p:peakSegmentDependentAvailability="0.04"
 		p:applicableForLongTermContract="true">
 	</bean>
 	
