@@ -1,5 +1,5 @@
-Name,Technology,Owner,Location,Age
-Coal1,coalPGT,aon,de,10
-Coal2,coalPGT,swe,nl,30
-Gas1,gasPGT,aon,nl,15
-Gas2,gasPGT,swe,de,3
+Name,Technology,Location,Age,Owner,Capacity,Efficiency
+Coal1,coalPGT,de,10,aon,650,
+Coal2,coalPGT,nl,30,swe,,0.37
+Gas1,gasPGT,nl,15,aon,,
+Gas2,gasPGT,de,3,,,

@@ -15,8 +15,10 @@
  ******************************************************************************/
 package emlab.gen.domain.factory;
 
+import java.io.IOException;
 import java.util.List;
 
+import org.codehaus.groovy.syntax.ReadException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,8 +33,28 @@ import emlab.gen.domain.technology.PowerPlant;
 import emlab.gen.repository.Reps;
 
 /**
+ * The power plant entry parser, takes rows of a CSV table and turns it into
+ * power plants in the database when the simulation starts.
+ * 
+ * The columns of the table need to be defined in the following order:
+ * 
+ * Name|TechnologyName|LocationName|Age|OwnerName|Capacity|Efficiency
+ * 
+ * and column headers should be given.
+ * 
+ * TechnologyName (of class PowerGeneratingTechnology), OwnerName (of class
+ * EnergyProducer) and LocationName (of class PowerGridNode) need to correspond
+ * exactly to the names defined in the scenario file.
+ * 
+ * The entries of the columns OwnerName, Capacity and Efficiency may be left
+ * empty. In this case the owner is randomly assigned, the capacity set to the
+ * standard capacity times the locational capacity factor, and the efficiency is
+ * calculated from the age of the power plant and the learning curve of the
+ * technology. The columns OwnerName, Capacity, and Efficiency maybe left away
+ * entirely (but only if the columns to the right are also left away).
+ * 
  * @author JCRichstein
- *
+ * 
  */
 public class PowerPlantEntryParser implements CSVEntryParser<PowerPlant> {
 
@@ -62,24 +84,33 @@ public class PowerPlantEntryParser implements CSVEntryParser<PowerPlant> {
     public PowerPlant parseEntry(String... data) {
         String name = data[0];
         String technologyName = data[1];
-        String ownerName = data[2];
-        String locationName = data[3];
-        int age = Integer.parseInt(data[4]);
+        String locationName = data[2];
+        int age = Integer.parseInt(data[3]);
+        String ownerName = "";
+        if (data.length > 3)
+            ownerName = data[4];
+
+        double capacity = 0;
+        if (data.length > 4 && !data[5].isEmpty())
+            capacity = Double.parseDouble(data[5]);
+        double efficiency = 0;
+        if (data.length > 5 && !data[6].isEmpty()) {
+            efficiency = Double.parseDouble(data[6]);
+        }
 
         EnergyProducer energyProducer = null;
-        if (ownerName != "") {
+        if (!ownerName.isEmpty()) {
             for (EnergyProducer producer : producers) {
                 if (producer.getName().equals(ownerName)) {
                     energyProducer = producer;
                     break;
                 }
-
             }
         } else {
             energyProducer = getRandomProducer(producers);
         }
         PowerGeneratingTechnology pgt = null;
-        if (ownerName != "") {
+        if (!technologyName.isEmpty()) {
             for (PowerGeneratingTechnology ppTechnology : technologies) {
                 if (ppTechnology.getName().equals(technologyName)) {
                     pgt = ppTechnology;
@@ -91,7 +122,7 @@ public class PowerPlantEntryParser implements CSVEntryParser<PowerPlant> {
             pgt = technologies.get(0);
         }
         PowerGridNode powerGridNode = null;
-        if (locationName != "") {
+        if (!locationName.isEmpty()) {
             for (PowerGridNode node : powerGridNodes) {
                 if (node.getName().equals(locationName)) {
                     powerGridNode = node;
@@ -99,13 +130,19 @@ public class PowerPlantEntryParser implements CSVEntryParser<PowerPlant> {
                 }
 
             }
+        } else {
+            try {
+                throw new ReadException("Location fields is not allowed to be empty!", new IOException());
+            } catch (ReadException e) {
+                e.printStackTrace();
+            }
         }
-        return createPowerPlant(name, pgt, energyProducer, powerGridNode, age);
+        return createPowerPlant(name, pgt, energyProducer, powerGridNode, age, capacity, efficiency);
     }
 
     private PowerPlant createPowerPlant(String name, PowerGeneratingTechnology technology,
             EnergyProducer energyProducer,
-            PowerGridNode location, int age) {
+            PowerGridNode location, int age, double capacity, double efficiency) {
         PowerPlant plant = new PowerPlant().persist();
         plant.setName(name);
         plant.setTechnology(technology);
@@ -116,9 +153,18 @@ public class PowerPlantEntryParser implements CSVEntryParser<PowerPlant> {
         plant.setActualPermittime(plant.getTechnology().getExpectedPermittime());
         plant.setExpectedEndOfLife(plant.getConstructionStartTime() + plant.getActualPermittime()
                 + plant.getActualLeadtime() + plant.getTechnology().getExpectedLifetime());
-        plant.setActualNominalCapacity(technology.getCapacity() * location.getCapacityMultiplicationFactor());
+        if (capacity == 0) {
+            plant.setActualNominalCapacity(technology.getCapacity() * location.getCapacityMultiplicationFactor());
+        } else {
+            plant.setActualNominalCapacity(capacity);
+        }
+
         plant.calculateAndSetActualInvestedCapital(plant.getConstructionStartTime());
-        plant.calculateAndSetActualEfficiency(plant.getConstructionStartTime());
+        if (efficiency == 0) {
+            plant.calculateAndSetActualEfficiency(plant.getConstructionStartTime());
+        } else {
+            plant.setActualEfficiency(efficiency);
+        }
         plant.calculateAndSetActualFixedOperatingCosts(plant.getConstructionStartTime());
         plant.setDismantleTime(1000);
         Loan loan = new Loan().persist();

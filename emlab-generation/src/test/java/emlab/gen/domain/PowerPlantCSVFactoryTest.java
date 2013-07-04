@@ -15,6 +15,9 @@
  ******************************************************************************/
 package emlab.gen.domain;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 
 import org.apache.log4j.Logger;
@@ -126,8 +129,6 @@ public class PowerPlantCSVFactoryTest {
         gasPGT.setInvestmentCostTimeSeries(investmentCostSeries);
         gasPGT.persist();
 
-        logger.warn(reps.powerGeneratingTechnologyRepository.findAll().iterator().next());
-
         PowerPlantCSVFactory ppCsvFactory = new PowerPlantCSVFactory();
         ppCsvFactory.setCsvFile("/data/jUnitpowerPlantList.csv");
         EnergyProducer[] energyProducers = { aon, swe };
@@ -140,15 +141,57 @@ public class PowerPlantCSVFactoryTest {
             ppCsvFactory.afterPropertiesSet();
         } catch (Exception e) {
             // TODO Auto-generated catch block
-            logger.warn("Failed.");
+            logger.warn("Reading in failed:");
             e.printStackTrace();
         }
         logger.warn("All PowerPlants:");
         Iterable<PowerPlant> powerPlants = reps.powerPlantRepository.findAll();
         for(PowerPlant plant :powerPlants){
-            logger.warn(plant.getName() + "," + plant.getOwner().getName() + "," + plant.getTechnology().getName()
-                    + "," + plant.getLocation().getName() + "," + plant.getConstructionStartTime() + ","
-                    + (plant.getConstructionStartTime() + plant.getActualLeadtime() + plant.getActualPermittime()));
+            logger.warn(plant.getName() + ", Owner: " + plant.getOwner().getName() + ",Tech: "
+                    + plant.getTechnology().getName() + ", Location: " + plant.getLocation().getName()
+                    + ", contructionStarted: "
+ + plant.getConstructionStartTime() + ", Age: "
+                    + -(plant.getConstructionStartTime() + plant.getActualLeadtime() + plant.getActualPermittime())
+                    + ", Cap: " + plant.getActualNominalCapacity() + ", Eff: " + plant.getActualEfficiency());
+            String name = plant.getName();
+            if (name.equals("Coal1")) {
+                assertEquals("Correct tech", "coalPGT", plant.getTechnology().getName());
+                assertEquals("Correct location", "de", plant.getLocation().getName());
+                assertEquals("Correct age", 10,
+                        -(plant.getConstructionStartTime() + plant.getActualLeadtime() + plant.getActualPermittime()));
+                assertEquals("Correct capacity: ", 650.0, plant.getActualNominalCapacity(), 0.01);
+                assertEquals("Correct efficiency: ", 0.3, plant.getActualEfficiency(), 0.01);
+                assertEquals("Correct owner", "aon", plant.getOwner().getName());
+            }
+            if (name.equals("Coal2")) {
+                assertEquals("Correct tech", "coalPGT", plant.getTechnology().getName());
+                assertEquals("Correct location", "nl", plant.getLocation().getName());
+                assertEquals("Correct age", 30,
+                        -(plant.getConstructionStartTime() + plant.getActualLeadtime() + plant.getActualPermittime()));
+                assertEquals("Correct capacity: ", 500, plant.getActualNominalCapacity(), 0.01);
+                assertEquals("Correct efficiency: ", 0.37, plant.getActualEfficiency(), 0.01);
+                assertEquals("Correct owner", "swe", plant.getOwner().getName());
+            }
+            if (name.equals("Gas1")) {
+                assertEquals("Correct tech", "gasPGT", plant.getTechnology().getName());
+                assertEquals("Correct location", "nl", plant.getLocation().getName());
+                assertEquals("Correct age", 15,
+                        -(plant.getConstructionStartTime() + plant.getActualLeadtime() + plant.getActualPermittime()));
+                assertEquals("Correct capacity: ", 300, plant.getActualNominalCapacity(), 0.01);
+                assertEquals("Correct efficiency: ", 0.3, plant.getActualEfficiency(), 0.01);
+                assertEquals("Correct owner", "aon", plant.getOwner().getName());
+            }
+            if (name.equals("Gas2")) {
+                assertEquals("Correct tech", "gasPGT", plant.getTechnology().getName());
+                assertEquals("Correct location", "de", plant.getLocation().getName());
+                assertEquals("Correct age", 3,
+                        -(plant.getConstructionStartTime() + plant.getActualLeadtime() + plant.getActualPermittime()));
+                assertEquals("Correct capacity: ", 300, plant.getActualNominalCapacity(), 0.01);
+                assertEquals("Correct efficiency: ", 0.3, plant.getActualEfficiency(), 0.01);
+                assertTrue("Correct owner", (plant.getOwner().getName().equals("aon") || plant.getOwner().getName()
+                        .equals("swe")));
+            }
+
         }
 
     }
