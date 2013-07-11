@@ -42,6 +42,18 @@ public class EnergyProducer extends DecarbonizationAgent implements Agent {
     @SimulationParameter(label = "Long-term contract horizon", from = 0, to = 10)
     private double longTermContractPastTimeHorizon;
 
+    private double weightFactorWealth;
+
+    private double riskAcceptance;
+
+    private double weightFactorDensity;
+
+    private double weightFactorCapacity;
+
+    private double weightFactorDistance;
+
+    private double weightFactorFeedstock;
+
     // Investment
     @SimulationParameter(label = "Investment horizon", from = 0, to = 15)
     private int investmentFutureTimeHorizon;
@@ -65,6 +77,54 @@ public class EnergyProducer extends DecarbonizationAgent implements Agent {
     private int dismantlingProlongingYearsAfterTechnicalLifetime;
     private double dismantlingRequiredOperatingProfit;
     private long pastTimeHorizon;
+
+    public double getWeightFactorWealth() {
+        return weightFactorWealth;
+    }
+
+    public void setWeightFactorWealth(double weightFactorWealth) {
+        this.weightFactorWealth = weightFactorWealth;
+    }
+
+    public double getWeightFactorDensity() {
+        return weightFactorDensity;
+    }
+
+    public void setWeightFactorDensity(double weightFactorDensity) {
+        this.weightFactorDensity = weightFactorDensity;
+    }
+
+    public double getWeightFactorCapacity() {
+        return weightFactorCapacity;
+    }
+
+    public double getRiskAcceptance() {
+        return riskAcceptance;
+    }
+
+    public void setRiskAcceptance(double riskAcceptance) {
+        this.riskAcceptance = riskAcceptance;
+    }
+
+    public void setWeightFactorCapacity(double weightFactorCapacity) {
+        this.weightFactorCapacity = weightFactorCapacity;
+    }
+
+    public double getWeightFactorDistance() {
+        return weightFactorDistance;
+    }
+
+    public void setWeightFactorDistance(double weightFactorDistance) {
+        this.weightFactorDistance = weightFactorDistance;
+    }
+
+    public double getWeightFactorFeedstock() {
+        return weightFactorFeedstock;
+    }
+
+    public void setWeightFactorFeedstock(double weightFactorFeedstock) {
+        this.weightFactorFeedstock = weightFactorFeedstock;
+    }
 
     public boolean isWillingToInvest() {
         return willingToInvest;

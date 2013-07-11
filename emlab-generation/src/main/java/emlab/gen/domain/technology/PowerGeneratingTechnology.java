@@ -76,6 +76,10 @@ public class PowerGeneratingTechnology {
 
     private int expectedPermittime2;
 
+    private double npv;
+
+    private double npvDelay;
+
     @SimulationParameter(label = "Maximum installed capacity fraction in country", from = 0, to = 1)
     private double maximumInstalledCapacityFractionInCountry;
 
@@ -91,6 +95,22 @@ public class PowerGeneratingTechnology {
     private boolean intermittent;
 
     private String FeedstockID;
+
+    public double getNpv() {
+        return npv;
+    }
+
+    public void setNpv(double npv) {
+        this.npv = npv;
+    }
+
+    public double getNpvDelay() {
+        return npvDelay;
+    }
+
+    public void setNpvDelay(double npvDelay) {
+        this.npvDelay = npvDelay;
+    }
 
     public String getFeedstockID() {
         return FeedstockID;

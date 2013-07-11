@@ -319,6 +319,12 @@
 		p:debtRatioOfInvestments="0.7"
 		p:learningEffectPositive="0.95"
 		p:learningEffectNegative="1.05"
+		p:weightFactorCapacity="1"
+		p:weightFactorDistance="1"
+		p:weightFactorDensity="1"
+		p:weightFactorWealth="1"
+		p:weightFactorFeedstock="1"
+		p:riskAcceptance="1"
 		p:dismantlingProlongingYearsAfterTechnicalLifetime="0"
 		p:dismantlingRequiredOperatingProfit="0" p:downpaymentFractionOfCash="0.5"
 		p:willingToInvest="true" p:priceMarkUp="${priceMarkUp}" 
@@ -333,6 +339,12 @@
 		p:debtRatioOfInvestments="0.7"
 		p:learningEffectPositive="0.95"
 		p:learningEffectNegative="1.05"
+		p:WeightFactorCapacity="1"
+		p:WeightFactorDistance="1"
+		p:WeightFactorDensity="1"
+		p:WeightFactorWealth="1"
+		p:WeightFactorFeedstock="1"
+		p:riskAcceptance="1"
 		p:dismantlingProlongingYearsAfterTechnicalLifetime="0"
 		p:dismantlingRequiredOperatingProfit="0" p:downpaymentFractionOfCash="0.5"
 		p:willingToInvest="true" p:priceMarkUp="${priceMarkUp}" 
@@ -347,6 +359,12 @@
 		p:debtRatioOfInvestments="0.7"
 		p:learningEffectPositive="0.95"
 		p:learningEffectNegative="1.05"
+		p:WeightFactorCapacity="1"
+		p:WeightFactorDistance="1"
+		p:WeightFactorDensity="1"
+		p:WeightFactorWealth="1"
+		p:WeightFactorFeedstock="1"
+		p:riskAcceptance="1"
 		p:dismantlingProlongingYearsAfterTechnicalLifetime="0"
 		p:dismantlingRequiredOperatingProfit="0" p:downpaymentFractionOfCash="0.5"
 		p:willingToInvest="true" p:priceMarkUp="${priceMarkUp}" 
@@ -361,6 +379,12 @@
 		p:debtRatioOfInvestments="0.7"
 		p:learningEffectPositive="0.95"
 		p:learningEffectNegative="1.05"
+		p:WeightFactorCapacity="1"
+		p:WeightFactorDistance="1"
+		p:WeightFactorDensity="1"
+		p:WeightFactorWealth="1"
+		p:WeightFactorFeedstock="1"
+		p:riskAcceptance="1"
 		p:dismantlingProlongingYearsAfterTechnicalLifetime="0"
 		p:dismantlingRequiredOperatingProfit="0" p:downpaymentFractionOfCash="0.5"
 		p:willingToInvest="true" p:priceMarkUp="${priceMarkUp}" 
@@ -520,6 +544,199 @@
 		<property name="governedZone" ref="nl" />
 	</bean>
 	
+	<bean id="NoordHolland" class="emlab.gen.domain.agent.LocalGovernment"
+		p:name="Noord Holland"
+		p:numberccs="0"
+		p:numberCoal="0"
+		p:numberSolar="0"
+		p:numberWind="0"
+		p:numberGas="0"
+		p:numberNuclear="0"
+		p:numberBiomass="0"
+		p:weightEnvironment="1"
+		p:weightEmployment="1"
+		p:weightCompensation="1"
+		p:weightPrevious="1"
+		p:effectivenessCompensationGov="0.1"
+		>
+	</bean>
+	<bean id="ZuidHolland" class="emlab.gen.domain.agent.LocalGovernment"
+		p:name="Zuid Holland"
+		p:numberccs="0"
+		p:numberCoal="0"
+		p:numberSolar="0"
+		p:numberWind="0"
+		p:numberGas="0"
+		p:numberNuclear="0"
+		p:numberBiomass="0"
+		p:weightEnvironment="1"
+		p:weightEmployment="1"
+		p:weightCompensation="1"
+		p:weightPrevious="1"
+		p:effectivenessCompensationGov="0.1"
+		>
+	</bean>
+	<bean id="Utrecht" class="emlab.gen.domain.agent.LocalGovernment"
+		p:name="Utrecht"
+		p:numberccs="0"
+		p:numberCoal="0"
+		p:numberSolar="0"
+		p:numberWind="0"
+		p:numberGas="0"
+		p:numberNuclear="0"
+		p:numberBiomass="0"
+		p:weightEnvironment="1"
+		p:weightEmployment="1"
+		p:weightCompensation="1"
+		p:weightPrevious="1"
+		p:effectivenessCompensationGov="0.1"
+		>
+	</bean>
+	<bean id="Gelderland" class="emlab.gen.domain.agent.LocalGovernment"
+		p:name="Gelderland"
+		p:numberccs="0"
+		p:numberCoal="0"
+		p:numberSolar="0"
+		p:numberWind="0"
+		p:numberGas="0"
+		p:numberNuclear="0"
+		p:numberBiomass="0"
+		p:weightEnvironment="1"
+		p:weightEmployment="1"
+		p:weightCompensation="1"
+		p:weightPrevious="1"
+		p:effectivenessCompensationGov="0.1"
+		>
+	</bean>
+	<bean id="Zeeland" class="emlab.gen.domain.agent.LocalGovernment"
+		p:name="Zeeland"
+		p:numberccs="0"
+		p:numberCoal="0"
+		p:numberSolar="0"
+		p:numberWind="0"
+		p:numberGas="0"
+		p:numberNuclear="0"
+		p:numberBiomass="0"
+		p:weightEnvironment="1"
+		p:weightEmployment="1"
+		p:weightCompensation="1"
+		p:weightPrevious="1"
+		p:effectivenessCompensationGov="0.1"
+		>
+	</bean>
+	<bean id="NoordBrabant" class="emlab.gen.domain.agent.LocalGovernment"
+		p:name="Noord Brabant"
+		p:numberccs="0"
+		p:numberCoal="0"
+		p:numberSolar="0"
+		p:numberWind="0"
+		p:numberGas="0"
+		p:numberNuclear="0"
+		p:numberBiomass="0"
+		p:weightEnvironment="1"
+		p:weightEmployment="1"
+		p:weightCompensation="1"
+		p:weightPrevious="1"
+		p:effectivenessCompensationGov="0.1"
+		>
+	</bean>
+	<bean id="Limburg" class="emlab.gen.domain.agent.LocalGovernment"
+		p:name="Limburg"
+		p:numberccs="0"
+		p:numberCoal="0"
+		p:numberSolar="0"
+		p:numberWind="0"
+		p:numberGas="0"
+		p:numberNuclear="0"
+		p:numberBiomass="0"
+		p:weightEnvironment="1"
+		p:weightEmployment="1"
+		p:weightCompensation="1"
+		p:weightPrevious="1"
+		p:effectivenessCompensationGov="0.1"
+		>
+	</bean>
+	<bean id="Overijssel" class="emlab.gen.domain.agent.LocalGovernment"
+		p:name="Overijssel"
+		p:numberccs="0"
+		p:numberCoal="0"
+		p:numberSolar="0"
+		p:numberWind="0"
+		p:numberGas="0"
+		p:numberNuclear="0"
+		p:numberBiomass="0"
+		p:weightEnvironment="1"
+		p:weightEmployment="1"
+		p:weightCompensation="1"
+		p:weightPrevious="1"
+		p:effectivenessCompensationGov="0.1"
+		>
+	</bean>
+	<bean id="Drenthe" class="emlab.gen.domain.agent.LocalGovernment"
+		p:name="Drenthe"
+		p:numberccs="0"
+		p:numberCoal="0"
+		p:numberSolar="0"
+		p:numberWind="0"
+		p:numberGas="0"
+		p:numberNuclear="0"
+		p:numberBiomass="0"
+		p:weightEnvironment="1"
+		p:weightEmployment="1"
+		p:weightCompensation="1"
+		p:weightPrevious="1"
+		p:effectivenessCompensationGov="0.1"
+		>
+	</bean>
+	<bean id="Friesland" class="emlab.gen.domain.agent.LocalGovernment"
+		p:name="Friesland"
+		p:numberccs="0"
+		p:numberCoal="0"
+		p:numberSolar="0"
+		p:numberWind="0"
+		p:numberGas="0"
+		p:numberNuclear="0"
+		p:numberBiomass="0"
+		p:weightEnvironment="1"
+		p:weightEmployment="1"
+		p:weightCompensation="1"
+		p:weightPrevious="1"
+		p:effectivenessCompensationGov="0.1"
+		>
+	</bean>
+	<bean id="Groningen" class="emlab.gen.domain.agent.LocalGovernment"
+		p:name="Groningen"
+		p:numberccs="0"
+		p:numberCoal="0"
+		p:numberSolar="0"
+		p:numberWind="0"
+		p:numberGas="0"
+		p:numberNuclear="0"
+		p:numberBiomass="0"
+		p:weightEnvironment="1"
+		p:weightEmployment="1"
+		p:weightCompensation="1"
+		p:weightPrevious="1"
+		p:effectivenessCompensationGov="0.1"
+		>
+	</bean>
+	<bean id="Flevoland" class="emlab.gen.domain.agent.LocalGovernment"
+		p:name="Flevoland"
+		p:numberccs="0"
+		p:numberCoal="0"
+		p:numberSolar="0"
+		p:numberWind="0"
+		p:numberGas="0"
+		p:numberNuclear="0"
+		p:numberBiomass="0"
+		p:weightEnvironment="1"
+		p:weightEmployment="1"
+		p:weightCompensation="1"
+		p:weightPrevious="1"
+		p:effectivenessCompensationGov="0.1"
+		>
+	</bean>
+	
 
 	<!-- Power Genration Technologies -->
 	<bean id="coalPulverizedSuperCritical" class="emlab.gen.domain.technology.PowerGeneratingTechnology"
@@ -581,7 +798,9 @@
 		p:intermittent="false"
 		p:locationFailure="1"
 		p:locationFailureTime="0"
-		p:feedstockID="Coal">
+		p:feedstockID="Coal"
+		p:npv="0"
+		p:npvDelay="0">
 		<property name="fuels">
 			<set>
 				<ref bean="lignite" />
@@ -614,7 +833,9 @@
 		p:intermittent="false"
 		p:locationFailure="1"
 		p:locationFailureTime="0"
-		p:feedstockID="Gas">
+		p:feedstockID="Gas"
+		p:npv="0"
+		p:npvDelay="0">
 		<property name="fuels">
 			<set>
 				<ref bean="coal" />
@@ -648,7 +869,9 @@
 		p:intermittent="false"
 		p:locationFailure="1"
 		p:locationFailureTime="0"
-		p:feedstockID="Coal">
+		p:feedstockID="Coal"
+		p:npv="0"
+		p:npvDelay="0">
 		<property name="fuels">
 			<set>
 				<ref bean="coal" />
@@ -682,7 +905,9 @@
 		p:intermittent="false"
 		p:locationFailure="1"
 		p:locationFailureTime="0"
-		p:feedstockID="Gas">
+		p:feedstockID="Gas"
+		p:npv="0"
+		p:npvDelay="0">
 		<property name="fuels">
 			<set>
 				<ref bean="coal" />
@@ -716,7 +941,9 @@
 		p:intermittent="false"
 		p:locationFailure="1"
 		p:locationFailureTime="0"
-		p:feedstockID="Gas">
+		p:feedstockID="Gas"
+		p:npv="0"
+		p:npvDelay="0">
 		<property name="fuels">
 			<set>
 				<ref bean="naturalgas" />
@@ -749,7 +976,9 @@
 		p:intermittent="false"
 		p:locationFailure="1"
 		p:locationFailureTime="0"
-		p:feedstockID="Gas">
+		p:feedstockID="Gas"
+		p:npv="0"
+		p:npvDelay="0">
 		<property name="fuels">
 			<set>
 				<ref bean="naturalgas" />
@@ -782,7 +1011,9 @@
 		p:intermittent="false"
 		p:locationFailure="1"
 		p:locationFailureTime="0"
-		p:feedstockID="Gas">
+		p:feedstockID="Gas"
+		p:npv="0"
+		p:npvDelay="0">
 		<property name="fuels">
 			<set>
 				<ref bean="naturalgas" />
@@ -816,7 +1047,9 @@
 		p:intermittent="false"
 		p:locationFailure="1"
 		p:locationFailureTime="0"
-		p:feedstockID="Biomass">
+		p:feedstockID="Biomass"
+		p:npv="0"
+		p:npvDelay="0">
 		<property name="fuels">
 			<set>
 				<ref bean="biomass" />
@@ -849,7 +1082,9 @@
 		p:applicableForLongTermContract="true"
 		p:locationFailure="1"
 		p:locationFailureTime="0"
-		p:feedstockID="Wind">
+		p:feedstockID="Wind"
+		p:npv="0"
+		p:npvDelay="0">
 	</bean>
 	
 	<bean id="windInvestmentCostTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="-0.0017610467" p:start="1214600" />
@@ -878,7 +1113,9 @@
 		p:applicableForLongTermContract="true"
 		p:locationFailure="1"
 		p:locationFailureTime="0"
-		p:feedstockID="Wind">
+		p:feedstockID="Wind"
+		p:npv="0"
+		p:npvDelay="0">
 	</bean>
 	
 	<bean id="windOffshoreInvestmentCostTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="-0.02058369" p:start="2450770" />
@@ -906,7 +1143,9 @@
 		p:applicableForLongTermContract="true"
 		p:locationFailure="1"
 		p:locationFailureTime="0"
-		p:feedstockID="Sun">
+		p:feedstockID="Sun"
+		p:npv="0"
+		p:npvDelay="0">
 	</bean>
 	
 	<bean id="pvInvestmentCostTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="-0.0247970888" p:start="2048300" />
@@ -935,7 +1174,9 @@
 		p:employment="0"
 		p:locationFailure="1"
 		p:locationFailureTime="0"
-		p:feedstockID="Nuclear">
+		p:feedstockID="Nuclear"
+		p:npv="0"
+		p:npvDelay="0">
 		<property name="fuels">
 			<set>
 				<ref bean="uranium" />
@@ -952,6 +1193,8 @@
 		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="location" value="classpath:scenarios/parametersB-OneCountry.properties" />
 	</bean>
+	
+	
 	
 	<!-- Locations for power plants -->
 	<bean id="Maasvlakte2" class="emlab.gen.domain.sitelocation.Location"
@@ -971,7 +1214,14 @@
 		p:carbonCaptureStorageAvailability="True"
 		p:feedstockAvailabilityBiomass="True"
 		p:sunHours="1000"
-		p:windPower="8">
+		p:windPower="8"
+		p:province="Zuid Holland"
+		p:weightFactorWealth="1"
+		p:weightFactorDensity="1"
+		p:weightFactorCompensation="1"
+		p:weightFactorTechPref="1"
+		p:courtChance="0.5"
+		p:effectivenessCompensation="0.05">
 	</bean>
 	<bean id="Eemshaven" class="emlab.gen.domain.sitelocation.Location"
 		p:name="Eemshaven" p:possiblePlants="20"
@@ -990,7 +1240,14 @@
 		p:carbonCaptureStorageAvailability="True"
 		p:feedstockAvailabilityBiomass="True"
 		p:sunHours="1200"
-		p:windPower="6">
+		p:windPower="6"
+		p:province="Groningen"
+		p:weightFactorWealth="1"
+		p:weightFactorDensity="1"
+		p:weightFactorCompensation="1"
+		p:weightFactorTechPref="1"
+		p:courtChance="0.5"
+		p:effectivenessCompensation="0.05">
 	</bean>
 	<bean id="Moerdijk" class="emlab.gen.domain.sitelocation.Location"
 		p:name="Moerdijk" p:possiblePlants="20"
@@ -1009,6 +1266,13 @@
 		p:feedstockAvailabilityBiomass="True"
 		p:carbonCaptureStorageAvailability="False"
 		p:sunHours="1300"
-		p:windPower="9">
+		p:windPower="9"
+		p:province="Noord Brabant"
+		p:weightFactorWealth="1"
+		p:weightFactorDensity="1"
+		p:weightFactorCompensation="1"
+		p:weightFactorTechPref="1"
+		p:courtChance="0.5"
+		p:effectivenessCompensation="0.05">
 	</bean>
 </beans>

@@ -34,6 +34,8 @@ public class Location {
     @SimulationParameter(label = "Number of Plants possible at Location", from = 0, to = 10)
     private int possiblePlants;
 
+    private String province;
+
     private int populationDensity;
 
     private double utilityLocation;
@@ -68,12 +70,80 @@ public class Location {
 
     private double plantPresent;
 
+    private double weightFactorWealth;
+
+    private double weightFactorDensity;
+
+    private double weightFactorTechPref;
+
+    private double weightFactorCompensation;
+
+    private double courtChance;
+
+    private double effectivenessCompensation;
+
+    public double getEffectivenessCompensation() {
+        return effectivenessCompensation;
+    }
+
+    public void setEffectivenessCompensation(double effectivenessCompensation) {
+        this.effectivenessCompensation = effectivenessCompensation;
+    }
+
+    public double getCourtChance() {
+        return courtChance;
+    }
+
+    public void setCourtChance(double courtChance) {
+        this.courtChance = courtChance;
+    }
+
+    public double getWeightFactorWealth() {
+        return weightFactorWealth;
+    }
+
+    public void setWeightFactorWealth(double weightFactorWealth) {
+        this.weightFactorWealth = weightFactorWealth;
+    }
+
+    public double getWeightFactorDensity() {
+        return weightFactorDensity;
+    }
+
+    public void setWeightFactorDensity(double weightFactorDensity) {
+        this.weightFactorDensity = weightFactorDensity;
+    }
+
+    public double getWeightFactorTechPref() {
+        return weightFactorTechPref;
+    }
+
+    public void setWeightFactorTechPref(double weightFactorTechPref) {
+        this.weightFactorTechPref = weightFactorTechPref;
+    }
+
+    public double getWeightFactorCompensation() {
+        return weightFactorCompensation;
+    }
+
+    public void setWeightFactorCompensation(double weightFactorCompensation) {
+        this.weightFactorCompensation = weightFactorCompensation;
+    }
+
     public double getPlantPresent() {
         return plantPresent;
     }
 
     public void setPlantPresent(double plantPresent) {
         this.plantPresent = plantPresent;
+    }
+
+    public String getProvince() {
+        return province;
+    }
+
+    public void setProvince(String province) {
+        this.province = province;
     }
 
     public boolean isFeedstockAvailabilityBiomass() {
