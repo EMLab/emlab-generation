@@ -5,8 +5,8 @@
 dir=$JOBNAME-$PBS_ARRAYID
 
 #delete database of possible previous run
-rm -rf $RAMDISK/$EMLABDB/$dir
-
+#rm -rf $RAMDISK/$EMLABDB/$dir
+rm -rf $RAMDISK/$EMLABDB
 #cd /var/tmp
 
 # make the directory, and make sure its empty
@@ -36,7 +36,7 @@ cp $PBS_O_WORKDIR/$JARNAME $TEMP/
 #cp $PBS_O_WORKDIR/$SCENARIO $TEMP/$dir
 fi
 
-RAMDU=$(du -sh rm -rf $RAMDISK)
+RAMDU=$(du -sh $RAMDISK)
 
 echo "Disk usage on Ramdisk: $RAMDU"
 
@@ -54,7 +54,7 @@ java -d64 -server -Xmx3072m -Drun.id=$JOBNAME-$PBS_ARRAYID -DSCENARIO_FOLDER=fil
 #Rename simulation.log
 mv simulation.log $JOBNAME-$PBS_ARRAYID.log
 #Make a dir for the data and copy it to that directory so we can access the data from the head node
-cp -r $TEMP/$dir/* $PBS_O_WORKDIR/$JOBNAME/
+cp -r $TEMP/$dir/* $PBS_O_WORKDIR/$RUNNAME/
 #fi
 
 #Delete folder and ramdisk.
