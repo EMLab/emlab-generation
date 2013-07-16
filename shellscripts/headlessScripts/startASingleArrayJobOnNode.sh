@@ -3,7 +3,7 @@
 # the job number
 # we get a directory name from the current job array id
 dir=$JOBNAME-$PBS_ARRAYID
-
+NEWJARNAME=$JOBNAME".jar"
 #delete database of possible previous run
 #rm -rf $RAMDISK/$EMLABDB/$dir
 rm -rf $RAMDISK/$EMLABDB
@@ -29,10 +29,22 @@ then
 	then
 	#if the MD5 sum is not the same as the one we started the main script with, copy it here
 	cp $PBS_O_WORKDIR/$JARNAME $TEMP/
+	mv $TEMP/$JARNAME $TEMP/$NEWJARNAME
+	fi
+elif [ -e $TEMP/$NEWJARNAME ];then
+	echo "check if it is the same md5"
+	testMD=`(md5sum $TEMP/$NEWJARNAME | sed 's/ /_/g')`
+	if [ $testMD != $MD ];
+	then
+	#if the MD5 sum is not the same as the one we started the main script with, copy it here
+	cp $PBS_O_WORKDIR/$JARNAME $TEMP/
+	mv $TEMP/$JARNAME $TEMP/$NEWJARNAME
+	echo "Copying over new JAR file."
 	fi
 else
 #if the jar is not here, copy it over
 cp $PBS_O_WORKDIR/$JARNAME $TEMP/
+mv $TEMP/$JARNAME $TEMP/$NEWJARNAME
 #cp $PBS_O_WORKDIR/$SCENARIO $TEMP/$dir
 fi
 
@@ -42,7 +54,7 @@ echo "Disk usage on Ramdisk: $RAMDU"
 
 #Execute the job 
 #java -Drun.id=$JOBNAME-$PBS_ARRAYID -Dresults.path=$TEMP/$dir -Dscenario.file=$SCENARIO -jar $PBS_O_WORKDIR/$JARNAME
-java -d64 -server -Xmx3072m -Drun.id=$JOBNAME-$PBS_ARRAYID -DSCENARIO_FOLDER=file://$NODESCENARIOFOLDER -Dresults.path=$TEMP/$dir -Dscenario.file=$SCENARIO -jar $TEMP/$JARNAME > $JOBNAME-$PBS_ARRAYID.elog
+java -d64 -server -Xmx3072m -Drun.id=$JOBNAME-$PBS_ARRAYID -DSCENARIO_FOLDER=file://$NODESCENARIOFOLDER -Dresults.path=$TEMP/$dir -Dscenario.file=$SCENARIO -jar $TEMP/$NEWJARNAME > $JOBNAME-$PBS_ARRAYID.elog
 
 
 #REMOVE JAR File
