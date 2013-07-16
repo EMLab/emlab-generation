@@ -32,7 +32,7 @@ def read_tableQuery_of_runid(path, runName, runId, tableName):
             resultDict[(headers[headerNumber]).encode("ascii")].append(content)
             headerNumber = headerNumber + 1
     line = json_data.readline()
-    while line:
+    while line and (line is not None) and isinstance(line, (list)):
         counter = 0
         tempJsonLine = json.loads(line[:-2], encoding="ascii")
         while counter < wrapperCounter:
