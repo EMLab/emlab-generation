@@ -73,11 +73,11 @@ Transmission capacity is assumed to be 3016 in both directions, based on maximum
 
 	<!-- PowerGrid -->
 	<bean id="gbNode" class="emlab.gen.domain.technology.PowerGridNode"
-	p:capacityMultiplicationFactor="1.0">
+	p:capacityMultiplicationFactor="1.0" p:name="gbNode">
 		<property name="zone" ref="gb" />
 	</bean>
 	<bean id="cweNode" class="emlab.gen.domain.technology.PowerGridNode"
-	p:capacityMultiplicationFactor="4.0">
+	p:capacityMultiplicationFactor="4.0" p:name="cweNode">
 		<property name="zone" ref="cwe" />
 	</bean>
 
