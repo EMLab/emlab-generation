@@ -36,6 +36,8 @@ public class Location {
 
     private String province;
 
+    private boolean offShore;
+
     private int populationDensity;
 
     private double utilityLocation;
@@ -81,6 +83,24 @@ public class Location {
     private double courtChance;
 
     private double effectivenessCompensation;
+
+    private double AverageUtility;
+
+    public double getAverageUtility() {
+        return AverageUtility;
+    }
+
+    public void setAverageUtility(double averageUtility) {
+        AverageUtility = averageUtility;
+    }
+
+    public boolean isOffShore() {
+        return offShore;
+    }
+
+    public void setOffShore(boolean offShore) {
+        this.offShore = offShore;
+    }
 
     public double getEffectivenessCompensation() {
         return effectivenessCompensation;

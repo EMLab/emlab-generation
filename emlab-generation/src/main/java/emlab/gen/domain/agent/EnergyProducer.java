@@ -54,6 +54,8 @@ public class EnergyProducer extends DecarbonizationAgent implements Agent {
 
     private double weightFactorFeedstock;
 
+    private double CompensationElectricityProducer;
+
     // Investment
     @SimulationParameter(label = "Investment horizon", from = 0, to = 15)
     private int investmentFutureTimeHorizon;
@@ -77,6 +79,14 @@ public class EnergyProducer extends DecarbonizationAgent implements Agent {
     private int dismantlingProlongingYearsAfterTechnicalLifetime;
     private double dismantlingRequiredOperatingProfit;
     private long pastTimeHorizon;
+
+    public double getCompensationElectricityProducer() {
+        return CompensationElectricityProducer;
+    }
+
+    public void setCompensationElectricityProducer(double compensationElectricityProducer) {
+        CompensationElectricityProducer = compensationElectricityProducer;
+    }
 
     public double getWeightFactorWealth() {
         return weightFactorWealth;

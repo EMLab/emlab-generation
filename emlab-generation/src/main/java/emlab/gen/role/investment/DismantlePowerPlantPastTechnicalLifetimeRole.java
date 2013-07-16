@@ -52,9 +52,11 @@ public class DismantlePowerPlantPastTechnicalLifetimeRole extends AbstractRole<E
             int prolongYearsOfDismantlng = producer.getDismantlingProlongingYearsAfterTechnicalLifetime();
             if (!plant.isWithinTechnicalLifetime(getCurrentTick() + prolongYearsOfDismantlng)) {
                 logger.info("       Dismantling power plant because the technical life time has passed: " + plant);
-                double currentnumberofplants = plant.getSiteLocation().getPlantPresent();
+                // double currentnumberofplants =
+                // plant.getSiteLocation().getPlantPresent();
 
-                plant.getSiteLocation().setPlantPresent(currentnumberofplants - 1);
+                // plant.getSiteLocation().setPlantPresent(currentnumberofplants
+                // - 1);
 
                 plant.dismantlePowerPlant(getCurrentTick());
 

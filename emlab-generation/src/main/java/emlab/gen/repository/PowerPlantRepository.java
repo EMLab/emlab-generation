@@ -25,6 +25,7 @@ import org.springframework.stereotype.Repository;
 
 import emlab.gen.domain.agent.EnergyProducer;
 import emlab.gen.domain.market.electricity.ElectricitySpotMarket;
+import emlab.gen.domain.sitelocation.Location;
 import emlab.gen.domain.technology.PowerGeneratingTechnology;
 import emlab.gen.domain.technology.PowerGridNode;
 import emlab.gen.domain.technology.PowerPlant;
@@ -132,6 +133,22 @@ public interface PowerPlantRepository extends GraphRepository<PowerPlant> {
 
     @Query(value = "g.v(owner).in('POWERPLANT_OWNER').as('x').out('TECHNOLOGY').filter{it.out('FUEL').count()>0}.back('x').filter{(it.dismantleTime > tick) && ((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick)}", type = QueryType.Gremlin)
     Iterable<PowerPlant> findOperationalPowerPlantsWithFuelsGreaterZeroByOwner(@Param("owner") EnergyProducer owner,
+            @Param("tick") long tick);
+
+    /**
+     * finds plants at a certain location.
+     * 
+     * @param location
+     *            of the plants
+     * 
+     * @param tick
+     *            at which operationality is checked
+     * 
+     * @return the list of plants
+     */
+
+    @Query(value = "g.v(siteLocation).in('SITELOCATION').filter{(it.dismantleTime > tick) && ((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick)}", type = QueryType.Gremlin)
+    Iterable<PowerPlant> findOperationalPowerPlantsByLocation(@Param("siteLocation") Location siteLocation,
             @Param("tick") long tick);
 
     /**
