@@ -6,7 +6,11 @@ dir=$JOBNAME-$PBS_ARRAYID
 NEWJARNAME=$JOBNAME".jar"
 #delete database of possible previous run
 #rm -rf $RAMDISK/$EMLABDB/$dir
-rm -rf $RAMDISK/$EMLABDB
+rm -rf $RAMDISK/$EMLABDB/$dir
+mkdir -p $RAMDISK/$EMLABDB
+chmod go+rxw $RAMDISK/
+chmod go+rxw $RAMDISK/$EMLABDB
+
 #cd /var/tmp
 
 # make the directory, and make sure its empty
