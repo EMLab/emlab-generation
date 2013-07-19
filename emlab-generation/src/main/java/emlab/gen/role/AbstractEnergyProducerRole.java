@@ -550,7 +550,7 @@ public abstract class AbstractEnergyProducerRole<T extends EnergyProducer> exten
         if(i>1){
             expectedCO2Price = sr.predict(futureTimePoint);
             expectedCO2Price = Math.max(0, expectedCO2Price);
-            expectedCO2Price = Math.min(expectedCO2Price, government.getCo2Penalty());
+            expectedCO2Price = Math.min(expectedCO2Price, government.getCo2Penalty(futureTimePoint));
         }else{
             expectedCO2Price = lastPrice;
         }

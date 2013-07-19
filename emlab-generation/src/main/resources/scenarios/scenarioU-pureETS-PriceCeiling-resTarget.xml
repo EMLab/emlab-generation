@@ -1236,6 +1236,9 @@ Transmission capacity is assumed to be 3016 in both directions, based on maximum
 	<bean id="minCo2PriceTrendGB" class="emlab.gen.trend.StepTrend" p:start="0"
 		p:duration="1" p:increment="0"
 		p:minValue="0" />
+		
+	<bean id="co2PriceCeilingTrend" class="emlab.gen.trend.StepTrend" p:start="60"
+	p:duration="1" p:increment="2" />
 
 	<!-- Government -->
 	<bean id="government" class="emlab.gen.domain.agent.Government"
@@ -1243,6 +1246,7 @@ Transmission capacity is assumed to be 3016 in both directions, based on maximum
 		<property name="co2TaxTrend" ref="co2TaxTrend" />
 		<property name="co2CapTrend" ref="co2CapTrend" />
 		<property name="minCo2PriceTrend" ref="minCo2PriceTrend" />
+		<property name="co2PriceCeilingTrend" ref="co2PriceCeilingTrend" />
 	</bean>
 	
 	<bean id="governmentCWE" class="emlab.gen.domain.agent.NationalGovernment"

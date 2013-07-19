@@ -138,10 +138,11 @@ public abstract class AbstractClearElectricitySpotMarketRole<T extends Decarboni
             // equal to the minimum co2 price
             co2SecantSearch.stable = true;
             return co2SecantSearch;
-        } else if (co2SecantSearch.co2Price >= government.getCo2Penalty() && co2SecantSearch.co2Emissions >= co2Cap) {
+        } else if (co2SecantSearch.co2Price >= government.getCo2Penalty(getCurrentTick())
+                && co2SecantSearch.co2Emissions >= co2Cap) {
             // Only if above the cap...
             // logger.warn("CO2 price ceiling reached {}", co2SecantSearch.co2Price);
-            co2SecantSearch.co2Price = government.getCo2Penalty();
+            co2SecantSearch.co2Price = government.getCo2Penalty(getCurrentTick());
             co2SecantSearch.stable = true;
             return co2SecantSearch;
         }
@@ -187,8 +188,9 @@ public abstract class AbstractClearElectricitySpotMarketRole<T extends Decarboni
 
                 if (co2SecantSearch.tooLowEmissionsPair == null) {
                     co2SecantSearch.co2Price = (co2SecantSearch.co2Price != 0d) ? ((co2SecantSearch.co2Price * 2 < government
-                            .getCo2Penalty()) ? (co2SecantSearch.co2Price * 2) : government.getCo2Penalty()) : 5d;
-                    // logger.warn("New doubled CO2 search price {}", co2SecantSearch.co2Price);
+                            .getCo2Penalty(getCurrentTick())) ? (co2SecantSearch.co2Price * 2) : government
+                            .getCo2Penalty(getCurrentTick())) : 5d;
+                            // logger.warn("New doubled CO2 search price {}", co2SecantSearch.co2Price);
                 } else {
                     double p2 = co2SecantSearch.tooHighEmissionsPair.price;
                     double p1 = co2SecantSearch.tooLowEmissionsPair.price;
@@ -438,7 +440,7 @@ public abstract class AbstractClearElectricitySpotMarketRole<T extends Decarboni
             double emissionIntensity = plan.getPowerPlant().calculateEmissionIntensity();
             double hours = plan.getSegment().getLengthInHours();
             totalEmissions += operationalCapacity * emissionIntensity * hours;
-        //    counter++;
+            //    counter++;
         }
         // logger.warn("Total emissions: {} based on {} power plant dispatch plans", totalEmissions, counter);
         return totalEmissions;
@@ -460,7 +462,7 @@ public abstract class AbstractClearElectricitySpotMarketRole<T extends Decarboni
 
         double co2Cap = government.getCo2Cap(getCurrentTick());
         double minimumCo2Price = government.getMinCo2Price(getCurrentTick());
-        double co2Penalty = government.getCo2Penalty();
+        double co2Penalty = government.getCo2Penalty(getCurrentTick());
         double iterationSpeedCriterion = model.getIterationSpeedCriterion();
         double capDeviationCriterion = model.getCapDeviationCriterion();
 
