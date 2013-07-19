@@ -74,7 +74,7 @@ addSupplyRatios <- function(df){
   operationalCapacityVariables=names(df)[grepl("TotalOperationalCapacityPerZoneInMW_", names(df))]
   countries=strsplit(operationalCapacityVariables,"_")
   for(i in seq(1:length(countries))){
-    supplyRatio <- df[[paste("TotalOperationalCapacityPerZoneInMW_",countries[[i]][2],"_Capacity", sep="")]] / df[[paste("PeakDemandPerZoneInMW_",countries[[i]][2], sep="")]]
+    supplyRatio <- df[[paste("TotalOperationalCapacityPerZoneInMW_",countries[[i]][2], sep="")]] / df[[paste("PeakDemandPerZoneInMW_",countries[[i]][2], sep="")]]
     oldNames<-names(df)
     df<-cbind(df, supplyRatio)
     names(df)<-c(oldNames,paste("SupplyRatio_",countries[[i]][2], sep=""))
