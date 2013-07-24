@@ -61,6 +61,8 @@ public class ElectricityProducerFactory implements InitializingBean {
 
     private List<Location> biomasslocations;
 
+    private List<Location> windOffShoreLoctions;
+
     static final Logger logger = LoggerFactory.getLogger(ElectricityProducerFactory.class);
 
     @Override
@@ -178,6 +180,11 @@ public class ElectricityProducerFactory implements InitializingBean {
 
                     siteLocation = LocationWind;
 
+                } else if (technology.getFeedstockID().equals("OffShoreWind")) {
+                    Location locationWindOffShore = getRandomWindOffShoreLocation(windOffShoreLoctions);
+
+                    siteLocation = locationWindOffShore;
+
                 } else if (technology.getFeedstockID().equals("Sun")) {
                     Location LocationSun = getRandomSunLocation(sunlocations);
 
@@ -189,7 +196,8 @@ public class ElectricityProducerFactory implements InitializingBean {
                     siteLocation = LocationBiomass;
 
                 }
-                siteLocation.setPlantPresent(siteLocation.getPlantPresent() + 1);
+                // siteLocation.setPlantPresent(siteLocation.getPlantPresent() +
+                // 1);
 
                 PowerPlant plant = createPowerPlant(technology, energyProducer, getNodeForZone(market.getZone()),
                         siteLocation);
@@ -243,6 +251,15 @@ public class ElectricityProducerFactory implements InitializingBean {
             int size = windlocations.size();
             int index = getRandomIndexFromList(size);
             return windlocations.get(index);
+        }
+        return null;
+    }
+
+    private Location getRandomWindOffShoreLocation(List<Location> windOffShoreLoctions) {
+        if (windOffShoreLoctions.size() > 0) {
+            int size = windOffShoreLoctions.size();
+            int index = getRandomIndexFromList(size);
+            return windOffShoreLoctions.get(index);
         }
         return null;
     }
@@ -324,6 +341,14 @@ public class ElectricityProducerFactory implements InitializingBean {
 
     public void setBiomasslocations(List<Location> biomasslocations) {
         this.biomasslocations = biomasslocations;
+    }
+
+    public List<Location> getWindOffShoreLoctions() {
+        return windOffShoreLoctions;
+    }
+
+    public void setWindOffShoreLoctions(List<Location> windOffShoreLoctions) {
+        this.windOffShoreLoctions = windOffShoreLoctions;
     }
 
     public double getCapacityMargin() {

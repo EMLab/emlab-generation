@@ -31,8 +31,18 @@ public class PowerGridNode {
 
     @RelatedTo(type = "HOURLYDEMAND", elementClass = HourlyCSVTimeSeries.class, direction = Direction.OUTGOING)
     private HourlyCSVTimeSeries hourlyDemand;
-    
-	private double capacityMultiplicationFactor;
+
+    private double capacityMultiplicationFactor;
+
+    private double maximumCcsInNode;
+
+    public double getMaximumCcsInNode() {
+        return maximumCcsInNode;
+    }
+
+    public void setMaximumCcsInNode(double maximumCcsInNode) {
+        this.maximumCcsInNode = maximumCcsInNode;
+    }
 
     public HourlyCSVTimeSeries getHourlyDemand() {
         return hourlyDemand;
@@ -50,13 +60,13 @@ public class PowerGridNode {
         return zone;
     }
 
-	@Value("1.0")
-	public double getCapacityMultiplicationFactor() {
-		return capacityMultiplicationFactor;
-	}
+    @Value("1.0")
+    public double getCapacityMultiplicationFactor() {
+        return capacityMultiplicationFactor;
+    }
 
-	public void setCapacityMultiplicationFactor(double capacityMultiplicationFactor) {
-		this.capacityMultiplicationFactor = capacityMultiplicationFactor;
-	}
+    public void setCapacityMultiplicationFactor(double capacityMultiplicationFactor) {
+        this.capacityMultiplicationFactor = capacityMultiplicationFactor;
+    }
 
 }
