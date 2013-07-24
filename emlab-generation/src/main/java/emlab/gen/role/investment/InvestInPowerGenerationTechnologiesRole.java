@@ -202,8 +202,9 @@ public class InvestInPowerGenerationTechnologiesRole<T extends EnergyProducer> e
             // logger.warn("Agent {} total capacity of own " +
             // expectedOwnedTotalCapacityInMarket2);
 
-            double expectedownercapacity = reps.powerPlantRepository
-                    .calculateCapacityOfExpectedOperationalPowerPlantsInMarketByOwner(market, futureTimePoint, agent);
+            // double expectedownercapacity = reps.powerPlantRepository
+            // .calculateCapacityOfExpectedOperationalPowerPlantsInMarketByOwner(market,
+            // futureTimePoint, agent);
             // double ownermarketshare =
             // reps.powerPlantRepository.owneramountofplants(agent, technology);
             // double owneramountofplants =
@@ -231,6 +232,7 @@ public class InvestInPowerGenerationTechnologiesRole<T extends EnergyProducer> e
             } else if (plant.getLocation().getMaximumCcsInNode() - getPlacesLeftForCCS(technology) <= 0) {
                 logger.warn(agent + "will not invest in {} technology because there is no more capacity for CCS",
                         technology);
+                setLocationFailureTimer(technology);
 
             } else if (expectedOwnedCapacityInMarketOfThisTechnology > expectedOwnedTotalCapacityInMarket
                     * technology.getMaximumInstalledCapacityFractionPerAgent()) {
@@ -448,7 +450,7 @@ public class InvestInPowerGenerationTechnologiesRole<T extends EnergyProducer> e
                     if (siteLocation.isFeedstockAvailabilityCoal() == false) {
                         logger.warn("location {} is not suitable for technology {}" + siteLocation, bestTechnology);
                     } else if (siteLocation.getPossiblePlants()
-                            - calculateNumberOfPlantsAtLocation(siteLocation, getCurrentTick()) == 0) {
+                            - calculateNumberOfPlantsAtLocation(siteLocation, getCurrentTick()) <= 0) {
                         logger.warn("location {} is not suitable for technology {}" + siteLocation, bestTechnology);
                     } else if (bestTechnology.getName().equals("coalPscCSS")) {
                         if (siteLocation.isCarbonCaptureStorageAvailability() == false) {
@@ -456,12 +458,7 @@ public class InvestInPowerGenerationTechnologiesRole<T extends EnergyProducer> e
                                     + siteLocation, bestTechnology);
                         }
                     } else {
-                        siteLocation.setUtilityLocation((((siteLocation.getPopulationDensity() - 6131) / 6110) * -1
-                                * agent.getWeightFactorDensity() + (((siteLocation.getWealth() - 23.2) / 12.4) * -1)
-                                * agent.getWeightFactorWealth() + (((siteLocation.getDistanceGrid() - 0) / 1))
-                                * agent.getWeightFactorDistance() + ((siteLocation.getCapacityGrid() - 0) / 1)
-                                * agent.getWeightFactorCapacity() + ((siteLocation.getQualityWater() - 1) / 2)
-                                * agent.getWeightFactorFeedstock()));
+                        siteLocation.setUtilityLocation(calculateAndSetUtilityLocation(agent, siteLocation));
                     }
                 }
 
@@ -469,15 +466,10 @@ public class InvestInPowerGenerationTechnologiesRole<T extends EnergyProducer> e
                     if (siteLocation.isFeedstockAvailabilityCoal() == false) {
                         logger.warn("location {} is not suitable for technology {}" + siteLocation, bestTechnology);
                     } else if (siteLocation.getPossiblePlants()
-                            - calculateNumberOfPlantsAtLocation(siteLocation, getCurrentTick()) == 0) {
+                            - calculateNumberOfPlantsAtLocation(siteLocation, getCurrentTick()) <= 0) {
                         logger.warn("location {} is not suitable for technology {}" + siteLocation, bestTechnology);
                     } else {
-                        siteLocation.setUtilityLocation((((siteLocation.getPopulationDensity() - 6131) / 6110) * -1
-                                * agent.getWeightFactorDensity() + (((siteLocation.getWealth() - 23.2) / 12.4) * -1)
-                                * agent.getWeightFactorWealth() + (((siteLocation.getDistanceGrid() - 0) / 1))
-                                * agent.getWeightFactorDistance() + ((siteLocation.getCapacityGrid() - 0) / 1)
-                                * agent.getWeightFactorCapacity() + ((siteLocation.getQualityWater() - 1) / 2)
-                                * agent.getWeightFactorFeedstock()));
+                        siteLocation.setUtilityLocation(calculateAndSetUtilityLocation(agent, siteLocation));
                     }
                 }
                 if (bestTechnology.getName().equals("IGCC") || bestTechnology.getName().equals("IgccCCS")
@@ -486,7 +478,7 @@ public class InvestInPowerGenerationTechnologiesRole<T extends EnergyProducer> e
                     if (siteLocation.isFeedstockAvailabilityGas() == false) {
                         logger.warn("location {} is not suitable for technology {}" + siteLocation, bestTechnology);
                     } else if (siteLocation.getPossiblePlants()
-                            - calculateNumberOfPlantsAtLocation(siteLocation, getCurrentTick()) == 0) {
+                            - calculateNumberOfPlantsAtLocation(siteLocation, getCurrentTick()) <= 0) {
                         logger.warn("location {} is not suitable for technology {}" + siteLocation, bestTechnology);
                     } else if (bestTechnology.getName().equals("IgccCCS") || bestTechnology.getName().equals("CcgtCCS")) {
                         if (siteLocation.isCarbonCaptureStorageAvailability() == false) {
@@ -494,73 +486,48 @@ public class InvestInPowerGenerationTechnologiesRole<T extends EnergyProducer> e
                                     + siteLocation, bestTechnology);
                         }
                     } else {
-                        siteLocation.setUtilityLocation((((siteLocation.getPopulationDensity() - 6131) / 6110) * -1
-                                * agent.getWeightFactorDensity() + (((siteLocation.getWealth() - 23.2) / 12.4) * -1)
-                                * agent.getWeightFactorWealth() + (((siteLocation.getDistanceGrid() - 0) / 1))
-                                * agent.getWeightFactorDistance() + ((siteLocation.getCapacityGrid() - 0) / 1)
-                                * agent.getWeightFactorCapacity() + ((siteLocation.getQualityWater() - 1) / 2)
-                                * agent.getWeightFactorFeedstock()));
+                        siteLocation.setUtilityLocation(calculateAndSetUtilityLocation(agent, siteLocation));
                     }
                 }
                 if (bestTechnology.getName().equals("Wind")) {
                     if (siteLocation.isFeedstockAvailabilityWind() == false) {
                         logger.warn("location {} is not suitable for technology {}" + siteLocation, bestTechnology);
                     } else if (siteLocation.getPossiblePlants()
-                            - calculateNumberOfPlantsAtLocation(siteLocation, getCurrentTick()) == 0) {
+                            - calculateNumberOfPlantsAtLocation(siteLocation, getCurrentTick()) <= 0) {
                         logger.warn("location {} is not suitable for technology {}" + siteLocation, bestTechnology);
                     } else {
-                        siteLocation.setUtilityLocation((((siteLocation.getPopulationDensity() - 6131) / 6110) * -1
-                                * agent.getWeightFactorDensity() + (((siteLocation.getWealth() - 23.2) / 12.4) * -1)
-                                * agent.getWeightFactorWealth() + (((siteLocation.getDistanceGrid() - 0) / 1))
-                                * agent.getWeightFactorDistance() + ((siteLocation.getCapacityGrid() - 0) / 1)
-                                * agent.getWeightFactorCapacity() + ((siteLocation.getWindPower() - 3.5) / 2.5)
-                                * agent.getWeightFactorFeedstock()));
+                        siteLocation.setUtilityLocation(calculateAndSetUtilityLocationWind(agent, siteLocation));
                     }
                 }
                 if (bestTechnology.getName().equals("WindOffshore")) {
                     if (siteLocation.isFeedstockAvailabilityWind() == false && siteLocation.isOffShore() == false) {
                         logger.warn("location {} is not suitable for technology {}" + siteLocation, bestTechnology);
                     } else if (siteLocation.getPossiblePlants()
-                            - calculateNumberOfPlantsAtLocation(siteLocation, getCurrentTick()) == 0) {
+                            - calculateNumberOfPlantsAtLocation(siteLocation, getCurrentTick()) <= 0) {
                         logger.warn("location {} is not suitable for technology {}" + siteLocation, bestTechnology);
                     } else {
-                        siteLocation.setUtilityLocation((((siteLocation.getPopulationDensity() - 6131) / 6110) * -1
-                                * agent.getWeightFactorDensity() + (((siteLocation.getWealth() - 23.2) / 12.4) * -1)
-                                * agent.getWeightFactorWealth() + (((siteLocation.getDistanceGrid() - 0) / 1))
-                                * agent.getWeightFactorDistance() + ((siteLocation.getCapacityGrid() - 0) / 1)
-                                * agent.getWeightFactorCapacity() + ((siteLocation.getWindPower() - 3.5) / 2.5)
-                                * agent.getWeightFactorFeedstock()));
+                        siteLocation.setUtilityLocation(calculateAndSetUtilityLocationWind(agent, siteLocation));
                     }
                 }
                 if (bestTechnology.getName().equals("Photovoltaic")) {
                     if (siteLocation.isFeedstockAvailabilitySun() == false) {
                         logger.warn("location {} is not suitable for technology {}" + siteLocation, bestTechnology);
                     } else if (siteLocation.getPossiblePlants()
-                            - calculateNumberOfPlantsAtLocation(siteLocation, getCurrentTick()) == 0) {
+                            - calculateNumberOfPlantsAtLocation(siteLocation, getCurrentTick()) <= 0) {
                         logger.warn("location {} is not suitable for technology {}" + siteLocation, bestTechnology);
                     } else {
-                        siteLocation.setUtilityLocation((((siteLocation.getPopulationDensity() - 6131) / 6110) * -1
-                                * agent.getWeightFactorDensity() + (((siteLocation.getWealth() - 23.2) / 12.4) * -1)
-                                * agent.getWeightFactorWealth() + (((siteLocation.getDistanceGrid() - 0) / 1))
-                                * agent.getWeightFactorDistance() + ((siteLocation.getCapacityGrid() - 0) / 1)
-                                * agent.getWeightFactorCapacity() + ((siteLocation.getSunHours() - 1500) / 300)
-                                * agent.getWeightFactorFeedstock()));
+                        siteLocation.setUtilityLocation(calculateAndSetUtilityLocationSun(agent, siteLocation));
                     }
                 }
                 if (bestTechnology.getName().equals("Nuclear")) {
                     if (siteLocation.isFeedstockAvailabilityNuclear() == false) {
                         logger.warn("location {} is not suitable for technology {}" + siteLocation, bestTechnology);
                     } else if (siteLocation.getPossiblePlants()
-                            - calculateNumberOfPlantsAtLocation(siteLocation, getCurrentTick()) == 0) {
+                            - calculateNumberOfPlantsAtLocation(siteLocation, getCurrentTick()) <= 0) {
                         logger.warn("location {} is not suitable for technology {}" + siteLocation, bestTechnology);
                     } else {
-                        // to add distance and min grid and capacity
-                        siteLocation.setUtilityLocation((((siteLocation.getPopulationDensity() - 6131) / 6110) * -1
-                                * agent.getWeightFactorDensity() + (((siteLocation.getWealth() - 23.2) / 12.4) * -1)
-                                * agent.getWeightFactorWealth() + (((siteLocation.getDistanceGrid() - 0) / 1))
-                                * agent.getWeightFactorDistance() + ((siteLocation.getCapacityGrid() - 0) / 1)
-                                * agent.getWeightFactorCapacity() + ((siteLocation.getQualityWater() - 1) / 2)
-                                * agent.getWeightFactorFeedstock()));
+
+                        siteLocation.setUtilityLocation(calculateAndSetUtilityLocation(agent, siteLocation));
                     }
                 }
             }
@@ -595,14 +562,17 @@ public class InvestInPowerGenerationTechnologiesRole<T extends EnergyProducer> e
 
         // TODO still to add weightfactors!!!
         // create empty chosen location
+
         Location ChosenLocation = null;
         if (locationrank1 != null) {
+            logger.warn(agent + "started permit negotiation for technology {}", bestTechnology);
             while (LocationChosen = false) {
                 // create variables for the utility functions
-                double CompensationGovernment = 0d;
-                double CompensationLocals = 0d;
-                double CompensationElectricityProducer = 0d;
-                double UtilityElectricityProducer = 0d;
+                double compensationGovernment = 0d;
+                double compensationLocals = 0d;
+                double compensationElectricityProducer = 0d;
+                double utilityElectricityProducer = 0d;
+                logger.warn(agent + "started permit negotiation for technology {}", bestTechnology);
 
                 // empty authorized government
                 LocalGovernment AuthorizedGovernment = null;
@@ -620,31 +590,21 @@ public class InvestInPowerGenerationTechnologiesRole<T extends EnergyProducer> e
 
                 // Environmental compensation to Local government
 
-                double UtilityGovernment = (((bestTechnology.getEnvironmentalCosts() - 0.16) / (24.14)) * -1
-                        * AuthorizedGovernment.getWeightEnvironment()
-                        + ((bestTechnology.getEmployment() - 0.379) / 2.843)
-                        * AuthorizedGovernment.getWeightEmployment() + ((plantsOfTechnology - 0) / 20) * -1
-                        * AuthorizedGovernment.getWeightPrevious() + (CompensationGovernment / (bestTechnology
-                        .getInvestmentCost(getCurrentTick()) * bestTechnology.getCapacity() * 0.1))
-                        * AuthorizedGovernment.getWeightCompensation());
+                double UtilityGovernment = calculateAndSetUtilityGovernment(AuthorizedGovernment, bestTechnology,
+                        compensationGovernment, plantsOfTechnology);
                 // compensation payments until local government is no worse off
                 // than when nothing would have been build
                 while (UtilityGovernment <= 0) {
-                    CompensationGovernment = CompensationGovernment + 10000;
-                    CompensationElectricityProducer = CompensationElectricityProducer - 10000;
-                    UtilityGovernment = (((bestTechnology.getEnvironmentalCosts() - 0.16) / (24.14)) * -1
-                            * AuthorizedGovernment.getWeightEnvironment()
-                            + ((bestTechnology.getEmployment() - 0.379) / 2.843)
-                            * AuthorizedGovernment.getWeightEmployment() + ((plantsOfTechnology - 0) / 20) * -1
-                            * AuthorizedGovernment.getWeightPrevious() + (CompensationGovernment / (bestTechnology
-                            .getInvestmentCost(getCurrentTick()) * bestTechnology.getCapacity() * 0.1))
-                            * AuthorizedGovernment.getWeightCompensation());
-                    UtilityElectricityProducer = (bestTechnology.getNpv() - CompensationElectricityProducer);
+                    compensationGovernment = compensationGovernment + 10000;
+                    compensationElectricityProducer = compensationElectricityProducer - 10000;
+                    UtilityGovernment = calculateAndSetUtilityGovernment(AuthorizedGovernment, bestTechnology,
+                            compensationGovernment, plantsOfTechnology);
+                    utilityElectricityProducer = (bestTechnology.getNpv() - compensationElectricityProducer);
                 }
 
                 // delete all old local parties from previous negotiations
                 // (Review this with expert!)
-                reps.locationLocalPartiesRepository.deleteAll();
+                // reps.locationLocalPartiesRepository.deleteAll();
 
                 // generate random number of inhabitants based on normal
                 // distribution and environmental factors
@@ -657,7 +617,7 @@ public class InvestInPowerGenerationTechnologiesRole<T extends EnergyProducer> e
                 ArrayList<LocationLocalParties> listLocals = new ArrayList<LocationLocalParties>();
                 // create local parties
 
-                double InvestmentCost = bestTechnology.getInvestmentCost(getCurrentTick())
+                double investmentCost = bestTechnology.getInvestmentCost(getCurrentTick())
                         * bestTechnology.getCapacity();
 
                 // Utility compensation for locals will be based on s function
@@ -667,22 +627,13 @@ public class InvestInPowerGenerationTechnologiesRole<T extends EnergyProducer> e
                 for (int i = 0; i < AmountOfLocals; i++) {
                     LocationLocalParties local = new LocationLocalParties();
                     local.setName("Party" + i);
-                    local.setUtilityLocalParty(((locationrank1.getPopulationDensity() - 21) / 6110)
-                            * -1
-                            * locationrank1.getWeightFactorDensity()
-                            + ((locationrank1.getWealth() - 10.8) / 12.4)
-                            * -1
-                            * locationrank1.getWeightFactorWealth()
-                            + ((bestTechnology.getTechnologyPreference() - 61) / 57)
-                            * -1
-                            * locationrank1.getWeightFactorTechPref()
-                            + ((100 / (1 + Math.exp(-(((CompensationLocals) / (InvestmentCost * 0.05)) * 20) - 10))) * locationrank1
-                                    .getWeightFactorCompensation()));
+                    local.setUtilityLocalParty(calculateAndSetUtilityLocalParty(bestTechnology, locationrank1,
+                            compensationLocals, investmentCost));
                     listLocals.add(local);
                 }
                 // reduce ArrayList to the amount of objects in there, in the
                 // case there are less than 10 spots
-                listLocals.trimToSize();
+                // listLocals.trimToSize(); not needed according to Emile
 
                 // Average utility of local parties to get impression of risk
                 // and attitude of the group
@@ -691,7 +642,7 @@ public class InvestInPowerGenerationTechnologiesRole<T extends EnergyProducer> e
                 double averageUtility = 0d;
                 LocationLocalParties minLocalUtility = null;
 
-                while (UtilityElectricityProducer > 0 || agent.getRiskAcceptance() <= averageUtility) {
+                while (utilityElectricityProducer > 0 || agent.getRiskAcceptance() <= averageUtility) {
                     for (LocationLocalParties local : listLocals) {
                         if (minLocalUtility != null) {
                             if (local.getUtilityLocalParty() <= minLocalUtility.getUtilityLocalParty()) {
@@ -705,23 +656,14 @@ public class InvestInPowerGenerationTechnologiesRole<T extends EnergyProducer> e
                     }
 
                     minLocalUtility.setCompensationLocalParty(minLocalUtility.getCompensationLocalParty() + 1000);
-                    CompensationElectricityProducer = CompensationElectricityProducer - 1000;
-                    minLocalUtility
-                            .setUtilityLocalParty((((locationrank1.getPopulationDensity() - 21) / 6110)
-                                    * locationrank1.getWeightFactorDensity() * -1
-                                    + ((locationrank1.getWealth() - 10.8) / 12.4)
-                                    * locationrank1.getWeightFactorWealth() * -1 + ((bestTechnology
-                                    .getTechnologyPreference() - 61) / 57))
-                                    * locationrank1.getWeightFactorTechPref()
-                                    * -1
-                                    + ((100 / (1 + Math
-                                            .exp(-(((CompensationLocals) / (InvestmentCost * 0.05)) * 20) - 10))) * locationrank1
-                                            .getWeightFactorCompensation()));
+                    compensationElectricityProducer = compensationElectricityProducer - 1000;
+                    minLocalUtility.setUtilityLocalParty(calculateAndSetUtilityLocalParty(bestTechnology,
+                            locationrank1, compensationLocals, investmentCost));
                     listLocals.add(minLocalUtility);
 
                     // update utility function electricity producer, based on
                     // npv from technology and maximum delay possible
-                    UtilityElectricityProducer = (((bestTechnology.getNpv() - CompensationElectricityProducer)
+                    utilityElectricityProducer = (((bestTechnology.getNpv() - compensationElectricityProducer)
                             - (bestTechnology.getNpv() - (averageUtilityLocals * (locationrank1.getCourtChance() * bestTechnology
                                     .getNpvDelay()))) - 0) / (bestTechnology.getNpv()));
                     // test iterator!!!
@@ -741,10 +683,10 @@ public class InvestInPowerGenerationTechnologiesRole<T extends EnergyProducer> e
                     }
                     averageUtility = averageUtilityLocals / listLocals.size();
                     locationrank1.setAverageUtility(averageUtility);
-                    agent.setCompensationElectricityProducer(CompensationElectricityProducer);
+                    agent.setCompensationElectricityProducer(compensationElectricityProducer);
 
                 }
-                if (UtilityElectricityProducer > 0) {
+                if (utilityElectricityProducer > 0) {
                     LocationChosen = true;
                     ChosenLocation = locationrank1;
                 } else {
@@ -785,11 +727,11 @@ public class InvestInPowerGenerationTechnologiesRole<T extends EnergyProducer> e
                 }
             }
             double chanceOnDelay = Math.random();
-            if (chanceOnDelay > (ChosenLocation.getAverageUtility() / 100)) {
+            if (chanceOnDelay > ((ChosenLocation.getAverageUtility() / 100) * -1)) {
                 chanceOnDelay = 0;
             }
 
-            double AdditionalCostPermit = chanceOnDelay * bestTechnology.getNpvDelay()
+            double AdditionalCostPermit = chanceOnDelay * (bestTechnology.getNpv() - bestTechnology.getNpvDelay())
                     + agent.getCompensationElectricityProducer();
 
             double investmentCostPayedByEquity = (plant.getActualInvestedCapital() + AdditionalCostPermit)
@@ -953,6 +895,66 @@ public class InvestInPowerGenerationTechnologiesRole<T extends EnergyProducer> e
         }
 
         return ccsPlants;
+    }
+
+    public double calculateAndSetUtilityLocation(EnergyProducer agent, Location siteLocation) {
+        double utilityLocationUpForValuation = (((siteLocation.getPopulationDensity() - 6131) / 6110) * -1
+                * agent.getWeightFactorDensity() + (((siteLocation.getWealth() - 23.2) / 12.4) * -1)
+                * agent.getWeightFactorWealth() + (((siteLocation.getDistanceGrid() - 0) / 69) * -1)
+                * agent.getWeightFactorDistance() + ((siteLocation.getQualityWater() - 1) / 2)
+                * agent.getWeightFactorFeedstock());
+        return utilityLocationUpForValuation;
+    }
+
+    public double calculateAndSetUtilityLocationWind(EnergyProducer agent, Location siteLocation) {
+        double utilityLocationUpForValuation = (((siteLocation.getPopulationDensity() - 6131) / 6110) * -1
+                * agent.getWeightFactorDensity() + (((siteLocation.getWealth() - 23.2) / 12.4) * -1)
+                * agent.getWeightFactorWealth() + (((siteLocation.getDistanceGrid() - 0) / 69) * -1)
+                * agent.getWeightFactorDistance() + ((siteLocation.getWindPower() - 3.5) / 2.5)
+                * agent.getWeightFactorFeedstock());
+        return utilityLocationUpForValuation;
+    }
+
+    // still to use or not decision to be made...
+    public double calculateAndSetUtilityLocationWindOffShore(EnergyProducer agent, Location siteLocation) {
+        double utilityLocationUpForValuation = (((siteLocation.getPopulationDensity() - 6131) / 6110) * -1
+                * agent.getWeightFactorDensity() + (((siteLocation.getWealth() - 23.2) / 12.4) * -1)
+                * agent.getWeightFactorWealth() + (((siteLocation.getDistanceGrid() - 0) / 69) * -1)
+                * agent.getWeightFactorDistance() + ((siteLocation.getWindPower() - 3.5) / 2.5)
+                * agent.getWeightFactorFeedstock());
+        return utilityLocationUpForValuation;
+    }
+
+    public double calculateAndSetUtilityLocationSun(EnergyProducer agent, Location siteLocation) {
+        double utilityLocationUpForValuation = (((siteLocation.getPopulationDensity() - 6131) / 6110) * -1
+                * agent.getWeightFactorDensity() + (((siteLocation.getWealth() - 23.2) / 12.4) * -1)
+                * agent.getWeightFactorWealth() + (((siteLocation.getDistanceGrid() - 0) / 69) * -1)
+                * agent.getWeightFactorDistance() + ((siteLocation.getSunHours() - 1500) / 300)
+                * agent.getWeightFactorFeedstock());
+        return utilityLocationUpForValuation;
+    }
+
+    public double calculateAndSetUtilityGovernment(LocalGovernment AuthorizedGovernment,
+            PowerGeneratingTechnology bestTechnology, double compensationGovernment, int plantsOfTechnology) {
+        double utilityGovernment = (((bestTechnology.getEnvironmentalCosts() - 0.16) / (24.14)) * -1
+                * AuthorizedGovernment.getWeightEnvironment() + ((bestTechnology.getEmployment() - 0.379) / 2.843)
+                * AuthorizedGovernment.getWeightEmployment() + ((plantsOfTechnology - 0) / 20) * -1
+                * AuthorizedGovernment.getWeightPrevious() + (compensationGovernment / (bestTechnology
+                .getInvestmentCost(getCurrentTick()) * bestTechnology.getCapacity() * 0.1))
+                * AuthorizedGovernment.getWeightCompensation());
+        return utilityGovernment;
+    }
+
+    public double calculateAndSetUtilityLocalParty(PowerGeneratingTechnology tech, Location site,
+            double compensationLocals, double investmentCost) {
+        Random randomnumber = new Random();
+        double utilityLocals = Math.abs(0.25 * randomnumber.nextGaussian() + 1)
+                * (((site.getPopulationDensity() - 21) / 6110) * -1 * site.getWeightFactorDensity()
+                        + ((site.getWealth() - 10.8) / 12.4) * -1 * site.getWeightFactorWealth()
+                        + ((tech.getTechnologyPreference() - 61) / 57) * -1 * site.getWeightFactorTechPref() + ((100 / (1 + Math
+                        .exp(-(((compensationLocals) / (investmentCost * 0.05)) * 20) - 10))) * site
+                        .getWeightFactorCompensation()));
+        return utilityLocals;
     }
 
     public int getAmountofPlantsinProvinceforTechnology(LocalGovernment AuthorizedGovernment,
