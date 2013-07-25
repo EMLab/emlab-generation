@@ -31,6 +31,10 @@ public class Location {
 
     private String name;
 
+    private double depthWater;
+
+    private double distanceShore;
+
     @SimulationParameter(label = "Number of Plants possible at Location", from = 0, to = 10)
     private int possiblePlants;
 
@@ -85,6 +89,22 @@ public class Location {
     private double effectivenessCompensation;
 
     private double AverageUtility;
+
+    public double getDepthWater() {
+        return depthWater;
+    }
+
+    public void setDepthWater(double depthWater) {
+        this.depthWater = depthWater;
+    }
+
+    public double getDistanceShore() {
+        return distanceShore;
+    }
+
+    public void setDistanceShore(double distanceShore) {
+        this.distanceShore = distanceShore;
+    }
 
     public double getAverageUtility() {
         return AverageUtility;

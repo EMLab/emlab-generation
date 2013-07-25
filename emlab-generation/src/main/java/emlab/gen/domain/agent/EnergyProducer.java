@@ -48,6 +48,12 @@ public class EnergyProducer extends DecarbonizationAgent implements Agent {
 
     private double weightFactorDensity;
 
+    private double weightFactorWindPower;
+
+    private double weightFactorDistanceShore;
+
+    private double weightFactorDepthWater;
+
     private double weightFactorCapacity;
 
     private double weightFactorDistance;
@@ -106,6 +112,30 @@ public class EnergyProducer extends DecarbonizationAgent implements Agent {
 
     public double getWeightFactorCapacity() {
         return weightFactorCapacity;
+    }
+
+    public double getWeightFactorWindPower() {
+        return weightFactorWindPower;
+    }
+
+    public void setWeightFactorWindPower(double weightFactorWindPower) {
+        this.weightFactorWindPower = weightFactorWindPower;
+    }
+
+    public double getWeightFactorDistanceShore() {
+        return weightFactorDistanceShore;
+    }
+
+    public void setWeightFactorDistanceShore(double weightFactorDistanceShore) {
+        this.weightFactorDistanceShore = weightFactorDistanceShore;
+    }
+
+    public double getWeightFactorDepthWater() {
+        return weightFactorDepthWater;
+    }
+
+    public void setWeightFactorDepthWater(double weightFactorDepthWater) {
+        this.weightFactorDepthWater = weightFactorDepthWater;
     }
 
     public double getRiskAcceptance() {
