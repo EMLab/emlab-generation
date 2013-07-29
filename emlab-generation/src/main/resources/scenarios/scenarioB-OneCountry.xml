@@ -530,11 +530,11 @@
 		</property>
 		<property name="windOffShoreLoctions" >
 			<list>
-				<ref bean="IJmuiden" />
-				<ref bean="BorseleoffShore" />
+				<ref bean="Amalia" />
+				<ref bean="EgmondAanZee" />
 			</list>
 		</property>
-		<property name="windloctions" >
+		<property name="windlocations" >
 			<list>
 				<ref bean="Amsterdam" />
 				<ref bean="Amsterdam" />
@@ -621,13 +621,6 @@
 	
 	<bean id="NoordHolland" class="emlab.gen.domain.agent.LocalGovernment"
 		p:name="Noord Holland"
-		p:numberccs="0"
-		p:numberCoal="0"
-		p:numberSolar="0"
-		p:numberWind="0"
-		p:numberGas="0"
-		p:numberNuclear="0"
-		p:numberBiomass="0"
 		p:weightEnvironment="1"
 		p:weightEmployment="1"
 		p:weightCompensation="1"
@@ -637,13 +630,6 @@
 	</bean>
 	<bean id="ZuidHolland" class="emlab.gen.domain.agent.LocalGovernment"
 		p:name="Zuid Holland"
-		p:numberccs="0"
-		p:numberCoal="0"
-		p:numberSolar="0"
-		p:numberWind="0"
-		p:numberGas="0"
-		p:numberNuclear="0"
-		p:numberBiomass="0"
 		p:weightEnvironment="1"
 		p:weightEmployment="1"
 		p:weightCompensation="1"
@@ -653,13 +639,6 @@
 	</bean>
 	<bean id="Utrecht" class="emlab.gen.domain.agent.LocalGovernment"
 		p:name="Utrecht"
-		p:numberccs="0"
-		p:numberCoal="0"
-		p:numberSolar="0"
-		p:numberWind="0"
-		p:numberGas="0"
-		p:numberNuclear="0"
-		p:numberBiomass="0"
 		p:weightEnvironment="1"
 		p:weightEmployment="1"
 		p:weightCompensation="1"
@@ -669,13 +648,6 @@
 	</bean>
 	<bean id="Gelderland" class="emlab.gen.domain.agent.LocalGovernment"
 		p:name="Gelderland"
-		p:numberccs="0"
-		p:numberCoal="0"
-		p:numberSolar="0"
-		p:numberWind="0"
-		p:numberGas="0"
-		p:numberNuclear="0"
-		p:numberBiomass="0"
 		p:weightEnvironment="1"
 		p:weightEmployment="1"
 		p:weightCompensation="1"
@@ -685,13 +657,6 @@
 	</bean>
 	<bean id="Zeeland" class="emlab.gen.domain.agent.LocalGovernment"
 		p:name="Zeeland"
-		p:numberccs="0"
-		p:numberCoal="0"
-		p:numberSolar="0"
-		p:numberWind="0"
-		p:numberGas="0"
-		p:numberNuclear="0"
-		p:numberBiomass="0"
 		p:weightEnvironment="1"
 		p:weightEmployment="1"
 		p:weightCompensation="1"
@@ -701,13 +666,6 @@
 	</bean>
 	<bean id="NoordBrabant" class="emlab.gen.domain.agent.LocalGovernment"
 		p:name="Noord Brabant"
-		p:numberccs="0"
-		p:numberCoal="0"
-		p:numberSolar="0"
-		p:numberWind="0"
-		p:numberGas="0"
-		p:numberNuclear="0"
-		p:numberBiomass="0"
 		p:weightEnvironment="1"
 		p:weightEmployment="1"
 		p:weightCompensation="1"
@@ -717,13 +675,6 @@
 	</bean>
 	<bean id="Limburg" class="emlab.gen.domain.agent.LocalGovernment"
 		p:name="Limburg"
-		p:numberccs="0"
-		p:numberCoal="0"
-		p:numberSolar="0"
-		p:numberWind="0"
-		p:numberGas="0"
-		p:numberNuclear="0"
-		p:numberBiomass="0"
 		p:weightEnvironment="1"
 		p:weightEmployment="1"
 		p:weightCompensation="1"
@@ -733,13 +684,6 @@
 	</bean>
 	<bean id="Overijssel" class="emlab.gen.domain.agent.LocalGovernment"
 		p:name="Overijssel"
-		p:numberccs="0"
-		p:numberCoal="0"
-		p:numberSolar="0"
-		p:numberWind="0"
-		p:numberGas="0"
-		p:numberNuclear="0"
-		p:numberBiomass="0"
 		p:weightEnvironment="1"
 		p:weightEmployment="1"
 		p:weightCompensation="1"
@@ -749,13 +693,6 @@
 	</bean>
 	<bean id="Drenthe" class="emlab.gen.domain.agent.LocalGovernment"
 		p:name="Drenthe"
-		p:numberccs="0"
-		p:numberCoal="0"
-		p:numberSolar="0"
-		p:numberWind="0"
-		p:numberGas="0"
-		p:numberNuclear="0"
-		p:numberBiomass="0"
 		p:weightEnvironment="1"
 		p:weightEmployment="1"
 		p:weightCompensation="1"
@@ -765,13 +702,6 @@
 	</bean>
 	<bean id="Friesland" class="emlab.gen.domain.agent.LocalGovernment"
 		p:name="Friesland"
-		p:numberccs="0"
-		p:numberCoal="0"
-		p:numberSolar="0"
-		p:numberWind="0"
-		p:numberGas="0"
-		p:numberNuclear="0"
-		p:numberBiomass="0"
 		p:weightEnvironment="1"
 		p:weightEmployment="1"
 		p:weightCompensation="1"
@@ -781,13 +711,6 @@
 	</bean>
 	<bean id="Groningen" class="emlab.gen.domain.agent.LocalGovernment"
 		p:name="Groningen"
-		p:numberccs="0"
-		p:numberCoal="0"
-		p:numberSolar="0"
-		p:numberWind="0"
-		p:numberGas="0"
-		p:numberNuclear="0"
-		p:numberBiomass="0"
 		p:weightEnvironment="1"
 		p:weightEmployment="1"
 		p:weightCompensation="1"
@@ -797,13 +720,6 @@
 	</bean>
 	<bean id="Flevoland" class="emlab.gen.domain.agent.LocalGovernment"
 		p:name="Flevoland"
-		p:numberccs="0"
-		p:numberCoal="0"
-		p:numberSolar="0"
-		p:numberWind="0"
-		p:numberGas="0"
-		p:numberNuclear="0"
-		p:numberBiomass="0"
 		p:weightEnvironment="1"
 		p:weightEmployment="1"
 		p:weightCompensation="1"
@@ -3775,8 +3691,8 @@
 		p:courtChance="0.5"
 		p:effectivenessCompensation="0.05">
 	</bean>
-	<bean id="Westwout" class="emlab.gen.domain.sitelocation.Location"
-		p:name="Westwout" p:possiblePlants="1"
+	<bean id="Westwoud" class="emlab.gen.domain.sitelocation.Location"
+		p:name="Westwoud" p:possiblePlants="1"
 		p:plantPresent="0"
 		p:populationDensity="327"
 		p:wealth="14.9"

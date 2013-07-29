@@ -62,8 +62,9 @@ public interface PowerPlantRepository extends GraphRepository<PowerPlant> {
      * @return number of plants
      */
 
-    @Query("start owner=node({technology}) match (technology)<-[:TECHNOLOGY]-(plant) return count(plant)")
-    public long countPowerPlantsBytechnology(@Param("technology") PowerGeneratingTechnology technology);
+    // @Query("start owner=node({technology}) match (technology)<-[:TECHNOLOGY]-(plant) return count(plant)")
+    // public long countPowerPlantsBytechnology(@Param("technology")
+    // PowerGeneratingTechnology technology);
 
     /**
      * powerplants per tech per owner
