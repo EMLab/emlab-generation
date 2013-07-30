@@ -5,15 +5,15 @@ library(grid)
 source("AgentSpringHeadlessReader.R")
 source("TimeSeriesSummariser.R")
 
-technologyPalette=c("CoalPSC" = "black", "Biomass" = "darkgreen", "Nuclear" = "purple", "Lignite" = "saddlebrown",
+technologyPalette=c("CoalPSC" = "black", "Biomass" = "darkgreen", "Biogas"="darkolivegreen3", "Nuclear" = "purple", "Lignite" = "saddlebrown",
                     "OCGT" = "darkred", "CCGT" = "blue", "PV" = "yellow", "Wind" = "chartreuse4",
-                    "CoalPSCCCS" = "darkgray", "IGCC" = "orange", "IgccCCS"="orangered", "CcgtCCS" = "red",
-                    "WindOffshore" = "navyblue")
+                    "CoalPscCCS" = "darkgray", "IGCC" = "orange", "IgccCCS"="orangered", "CcgtCCS" = "red",
+                    "WindOffshore" = "navyblue", "HydroPower" = "skyblue3")
 
-technologyOrder=c("Nuclear","Lignite","CoalPSC","CoalCCS","IGCC","IgccCCS","CCGT","CcgtCCS","OCGT","Biomass",
+technologyOrder=c("Nuclear","Lignite","CoalPSC","CoalPscCCS","IGCC","IgccCCS","CCGT","CcgtCCS","OCGT","HydroPower","Biomass","Biogas",
                   "Wind","WindOffshore","PV")
 
-renamerList=list(list("CoalPulverizedCSS","CoalCCS"),list("Photovoltaic","PV"))
+renamerList=list(list("CoalPscCSS","CoalPscCCS"),list("Photovoltaic","PV"))
 
 
 # Generic Data Preparation -------------------------------------------------
@@ -82,6 +82,18 @@ addSupplyRatios <- function(df){
   return(df)
 }
 
+addProducerCashBalanceForAll <- function(df){
+  energyProducers=names(df)[grepl("ProducerCash_Energy.", names(df))]
+  producerCash<-0
+  for(i in seq(1:length(energyProducers))){
+    producerCash <- producerCash + df[[energyProducers]]
+    oldNames<-names(df)
+    df<-cbind(df, producerCash)
+    names(df)<-c(oldNames,"TotalEnergyProducerCash")
+  }
+  return(df)
+}
+
 
 # Generic Plotting Functions over Time ------------------------------------
 
@@ -96,7 +108,7 @@ plotStackedDiagram <- function(moltenVariable, ylabel, legendName, absolute=TRUE
   else
     position="fill"
   p<-ggplot(moltenVariable, aes_string(x="tick", y=value))+
-    stat_summary(aes_string(fill=variable,order= -as.numeric(moltenVariable[[variable]])), fun.y=summaryFunction, geom="area", position=position)+
+    stat_summary(aes_string(fill=variable,order= desc(moltenCapacities[["variable"]])), fun.y=summaryFunction, geom="area", position=position)+
     facet_wrap( ~ modelRun)+
     xlab("Time [a]")+
     ylab(ylabel)+
@@ -111,10 +123,10 @@ plotStackedDiagram <- function(moltenVariable, ylabel, legendName, absolute=TRUE
 }
 
 
-plotTimeSeriesWithConfidenceIntervalByFacettedGroup <- function(df, variable, ylabel){
+plotTimeSeriesWithConfidenceIntervalByFacettedGroup <- function(df, variable, ylabel, fun.data="median_hilow", conf.int=0.5, conf.int2=0.95){
   g<-ggplot(df, aes_string(x="tick", y=variable))+ #colour=modelRun, fill=modelRun,
-    stat_summary(aes_string(fill="modelRun"), fun.data="median_hilow", conf.int=.5, geom="smooth") +
-    stat_summary(fun.data="median_hilow", conf.int=.95, geom="smooth")+
+    stat_summary(aes_string(fill="modelRun"), fun.data=fun.data, conf.int=conf.int, geom="smooth") +
+    stat_summary(fun.data=fun.data, conf.int=conf.int2, geom="smooth")+
     #facet_grid(. ~ modelRun)+
     facet_wrap(~ modelRun)+
     theme(legend.position="none")+
@@ -184,6 +196,7 @@ plotMoltenVariableFacettedByVariable <- function(moltenDF, ylabel, facet_wrap=T)
 
 
 plotStackedTechnologyDiagram <- function(moltenVariable, ylabel, absolute=TRUE, ...){
+  moltenVariable$variable<-factor(moltenVariable$variable, levels=technologyOrder)
   return(plotStackedDiagram(moltenVariable, ylabel, legendName="Technology", manuelPalette=technologyPalette, absolute=absolute, ...))
 }
 

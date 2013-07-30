@@ -14,10 +14,10 @@ plotPowerPlantDispatchForTickAndMarket <- function(tick, market, segmentID, simp
   yMax=max(max(data$price), 200)
   p<-ggplot(data) +
     geom_rect(aes(xmin = volumePrev, xmax = volume, ymin = -2, ymax = price, fill=technology, alpha=status))+
-    scale_fill_manual("Technologies", values=c("CoalPSC" = "black", "Biomass" = "darkgreen", "Nuclear" = "purple", "Lignite" = "saddlebrown",
-                                               "OCGT" = "darkred", "CCGT" = "blue", "Photovoltaic" = "yellow", "Wind" = "chartreuse4",
-                                               "CoalPscCSS" = "darkgray", "IGCC" = "orange", "IgccCCS"="gold", "CcgtCCS" = "red",
-                                               "WindOffshore" = "navyblue"), drop=FALSE)+
+    scale_fill_manual("Technologies", values=c("CoalPSC" = "black", "Biomass" = "darkgreen", "Biogas"="darkolivegreen3", "Nuclear" = "purple", "Lignite" = "saddlebrown",
+                                                "OCGT" = "darkred", "CCGT" = "blue", "PV" = "yellow", "Wind" = "chartreuse4",
+                                                "CoalPscCCS" = "darkgray", "IGCC" = "orange", "IgccCCS"="orangered", "CcgtCCS" = "red",
+                                                "WindOffshore" = "navyblue", "HydroPower" = "skyblue3"), drop=FALSE)+
     scale_alpha_manual("Status", values = c("-1" = 0.5, "2"=0.75, "3"=1), drop=FALSE, guide="none")+
     geom_rect(aes(xmin = volumePrev, xmax = volume, ymin = bidWithoutCO2-0.5, ymax = bidWithoutCO2+0.5), fill="white", alpha=0.8)+
     xlim(0,xMax)+
