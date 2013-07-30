@@ -216,7 +216,7 @@ implements Role<DecarbonizationModel> {
                 // updatePowerDispatchPlansAfterTwoCountryClearingIsComplete(segment);
 
                 reps.clearingPointRepositoryOld.createOrUpdateSegmentClearingPoint(segment, market, marginalPlantMarginalCost,
- supplyInThisMarket * segment.getLengthInHours(), getCurrentTick());
+                        supplyInThisMarket * segment.getLengthInHours(), getCurrentTick());
                 logger.info("Stored a system-uniform price for market " + market + " / segment " + segment + " -- supply "
                         + supplyInThisMarket + " -- price: " + marginalPlantMarginalCost);
             }
@@ -288,7 +288,7 @@ implements Role<DecarbonizationModel> {
             // }
             for (ElectricitySpotMarket market : markets) {
                 reps.clearingPointRepositoryOld.createOrUpdateSegmentClearingPoint(segment, market, marketOutcomes.prices.get(market),
-                        marketOutcomes.supplies.get(market), getCurrentTick());
+                        marketOutcomes.supplies.get(market) * segment.getLengthInHours(), getCurrentTick());
                 // logger.warn("Stored a market specific price for market " +
                 // market + " / segment " + segment + " -- supply "
                 // + marketOutcomes.supplies.get(market) + " -- demand: " +

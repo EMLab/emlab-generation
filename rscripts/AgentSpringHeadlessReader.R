@@ -35,6 +35,25 @@ getDataFrameForModelRunsInFolder <- function(outPutFolder, ignoredHeaders="", on
   return(df)
 }
 
+getDataFrameForModelRunsInFolderWithFilePattern <- function(outPutFolder, pattern, ignoredHeaders="", onlyTakeCommonColumns=T){
+  csvFiles=Sys.glob(paste(outPutFolder,pattern,sep=""))
+  df<-read.csv(csvFiles[1])
+  df<-cbind(runId=df$runId, tick=df$tick, subset(df, select=-c(tick, runId)))
+  name=gsub(pattern=outPutFolder,"",gsub(pattern=".csv","",csvFiles[1]))
+  df<-cbind(modelRun=rep.int(name, dim(df)[1]), df)
+  for(csvFile in csvFiles[-1]){
+    df2<-read.csv(csvFile)
+    df2<-cbind(runId=df2$runId, tick=df2$tick, subset(df2, select=-c(tick, runId)))
+    name=gsub(pattern=outPutFolder,"",gsub(pattern=".csv","",csvFile))
+    df2<-cbind(modelRun=rep.int(name, dim(df2)[1]), df2)
+    if(onlyTakeCommonColumns==T)
+      df<-rbind(df[,intersect(names(df), names(df2))], df2[,intersect(names(df), names(df2))])
+    else
+      df<-rbind(df,df2)
+  }
+  return(df)
+}
+
 getTableForRunId <- function(outputFolder, modelRun, runId, tableName){
   if(!file.exists(paste(outputFolder,runId,"-",tableName,".csv", sep=""))){
     setwd(outputFolder)
