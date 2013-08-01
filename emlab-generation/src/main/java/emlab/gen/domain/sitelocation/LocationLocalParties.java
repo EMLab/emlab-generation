@@ -33,6 +33,16 @@ public class LocationLocalParties {
 
     private double CompensationLocalParty;
 
+    private double factorRandomParty;
+
+    public double getFactorRandomParty() {
+        return factorRandomParty;
+    }
+
+    public void setFactorRandomParty(double factorRandomParty) {
+        this.factorRandomParty = factorRandomParty;
+    }
+
     public double getUtilityLocalParty() {
         return UtilityLocalParty;
     }

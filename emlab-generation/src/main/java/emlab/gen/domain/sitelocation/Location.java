@@ -42,13 +42,13 @@ public class Location {
 
     private boolean offShore;
 
-    private int populationDensity;
+    private double populationDensity;
 
     private double utilityLocation;
 
     private double wealth;
 
-    private int qualityWater;
+    private double qualityWater;
 
     private double distanceGrid;
 
@@ -234,11 +234,11 @@ public class Location {
         this.possiblePlants = possiblePlants;
     }
 
-    public int getPopulationDensity() {
+    public double getPopulationDensity() {
         return populationDensity;
     }
 
-    public void setPopulationDensity(int populationDensity) {
+    public void setPopulationDensity(double populationDensity) {
         this.populationDensity = populationDensity;
     }
 
@@ -258,11 +258,11 @@ public class Location {
         this.wealth = wealth;
     }
 
-    public int getQualityWater() {
+    public double getQualityWater() {
         return qualityWater;
     }
 
-    public void setQualityWater(int qualityWater) {
+    public void setQualityWater(double qualityWater) {
         this.qualityWater = qualityWater;
     }
 

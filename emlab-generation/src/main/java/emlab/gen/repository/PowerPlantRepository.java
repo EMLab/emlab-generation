@@ -164,6 +164,10 @@ public interface PowerPlantRepository extends GraphRepository<PowerPlant> {
     Iterable<PowerPlant> findOperationalPowerPlantsByLocation(@Param("siteLocation") Location siteLocation,
             @Param("tick") long tick);
 
+    @Query(value = "g.v(siteLocation).in('SITELOCATION').filter{(it.dismantleTime > tick)}", type = QueryType.Gremlin)
+    Iterable<PowerPlant> findNonDismantledPowerPlantsByLocation(@Param("siteLocation") Location siteLocation,
+            @Param("tick") long tick);
+
     /**
      * Finds plants by owner and selects only operational plants.
      * 

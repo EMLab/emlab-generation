@@ -76,6 +76,8 @@ public class PowerGeneratingTechnology {
 
     private int expectedPermittime2;
 
+    private double previousPermitExperience;
+
     private double npv;
 
     private double npvDelay;
@@ -95,6 +97,14 @@ public class PowerGeneratingTechnology {
     private boolean intermittent;
 
     private String FeedstockID;
+
+    public double getPreviousPermitExperience() {
+        return previousPermitExperience;
+    }
+
+    public void setPreviousPermitExperience(double previousPermitExperience) {
+        this.previousPermitExperience = previousPermitExperience;
+    }
 
     public double getNpv() {
         return npv;

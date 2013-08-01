@@ -619,7 +619,7 @@
 		<property name="governedZone" ref="nl" />
 	</bean>
 	
-	<bean id="NoordHolland" class="emlab.gen.domain.agent.LocalGovernment"
+	<bean id="NoordHolland" class="emlab.gen.domain.sitelocation.LocalGovernment"
 		p:name="Noord Holland"
 		p:weightEnvironment="1"
 		p:weightEmployment="1"
@@ -628,7 +628,7 @@
 		p:effectivenessCompensationGov="0.1"
 		>
 	</bean>
-	<bean id="ZuidHolland" class="emlab.gen.domain.agent.LocalGovernment"
+	<bean id="ZuidHolland" class="emlab.gen.domain.sitelocation.LocalGovernment"
 		p:name="Zuid Holland"
 		p:weightEnvironment="1"
 		p:weightEmployment="1"
@@ -637,7 +637,7 @@
 		p:effectivenessCompensationGov="0.1"
 		>
 	</bean>
-	<bean id="Utrecht" class="emlab.gen.domain.agent.LocalGovernment"
+	<bean id="Utrecht" class="emlab.gen.domain.sitelocation.LocalGovernment"
 		p:name="Utrecht"
 		p:weightEnvironment="1"
 		p:weightEmployment="1"
@@ -646,7 +646,7 @@
 		p:effectivenessCompensationGov="0.1"
 		>
 	</bean>
-	<bean id="Gelderland" class="emlab.gen.domain.agent.LocalGovernment"
+	<bean id="Gelderland" class="emlab.gen.domain.sitelocation.LocalGovernment"
 		p:name="Gelderland"
 		p:weightEnvironment="1"
 		p:weightEmployment="1"
@@ -655,7 +655,7 @@
 		p:effectivenessCompensationGov="0.1"
 		>
 	</bean>
-	<bean id="Zeeland" class="emlab.gen.domain.agent.LocalGovernment"
+	<bean id="Zeeland" class="emlab.gen.domain.sitelocation.LocalGovernment"
 		p:name="Zeeland"
 		p:weightEnvironment="1"
 		p:weightEmployment="1"
@@ -664,7 +664,7 @@
 		p:effectivenessCompensationGov="0.1"
 		>
 	</bean>
-	<bean id="NoordBrabant" class="emlab.gen.domain.agent.LocalGovernment"
+	<bean id="NoordBrabant" class="emlab.gen.domain.sitelocation.LocalGovernment"
 		p:name="Noord Brabant"
 		p:weightEnvironment="1"
 		p:weightEmployment="1"
@@ -673,7 +673,7 @@
 		p:effectivenessCompensationGov="0.1"
 		>
 	</bean>
-	<bean id="Limburg" class="emlab.gen.domain.agent.LocalGovernment"
+	<bean id="Limburg" class="emlab.gen.domain.sitelocation.LocalGovernment"
 		p:name="Limburg"
 		p:weightEnvironment="1"
 		p:weightEmployment="1"
@@ -682,7 +682,7 @@
 		p:effectivenessCompensationGov="0.1"
 		>
 	</bean>
-	<bean id="Overijssel" class="emlab.gen.domain.agent.LocalGovernment"
+	<bean id="Overijssel" class="emlab.gen.domain.sitelocation.LocalGovernment"
 		p:name="Overijssel"
 		p:weightEnvironment="1"
 		p:weightEmployment="1"
@@ -691,7 +691,7 @@
 		p:effectivenessCompensationGov="0.1"
 		>
 	</bean>
-	<bean id="Drenthe" class="emlab.gen.domain.agent.LocalGovernment"
+	<bean id="Drenthe" class="emlab.gen.domain.sitelocation.LocalGovernment"
 		p:name="Drenthe"
 		p:weightEnvironment="1"
 		p:weightEmployment="1"
@@ -700,7 +700,7 @@
 		p:effectivenessCompensationGov="0.1"
 		>
 	</bean>
-	<bean id="Friesland" class="emlab.gen.domain.agent.LocalGovernment"
+	<bean id="Friesland" class="emlab.gen.domain.sitelocation.LocalGovernment"
 		p:name="Friesland"
 		p:weightEnvironment="1"
 		p:weightEmployment="1"
@@ -709,7 +709,7 @@
 		p:effectivenessCompensationGov="0.1"
 		>
 	</bean>
-	<bean id="Groningen" class="emlab.gen.domain.agent.LocalGovernment"
+	<bean id="Groningen" class="emlab.gen.domain.sitelocation.LocalGovernment"
 		p:name="Groningen"
 		p:weightEnvironment="1"
 		p:weightEmployment="1"
@@ -718,7 +718,7 @@
 		p:effectivenessCompensationGov="0.1"
 		>
 	</bean>
-	<bean id="Flevoland" class="emlab.gen.domain.agent.LocalGovernment"
+	<bean id="Flevoland" class="emlab.gen.domain.sitelocation.LocalGovernment"
 		p:name="Flevoland"
 		p:weightEnvironment="1"
 		p:weightEmployment="1"
@@ -1159,7 +1159,7 @@
 		p:peakSegmentDependentAvailability="1"
 		p:applicableForLongTermContract="true"
 		p:intermittent="false"
-		p:environmentalCosts="2"
+		p:environmentalCosts="7"
 		p:technologyPreference="11"
 		p:employment="0.615"
 		p:locationFailure="1"
