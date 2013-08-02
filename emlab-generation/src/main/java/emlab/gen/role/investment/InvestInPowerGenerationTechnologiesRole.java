@@ -884,6 +884,16 @@ public class InvestInPowerGenerationTechnologiesRole<T extends EnergyProducer> e
                         ChosenLocation.getName());
 
                 PowerPlant plant = new PowerPlant();
+
+                double chanceOnDelay = Math.random();
+                if (chanceOnDelay > ((ChosenLocation.getAverageUtility()) * -1)) {
+                    chanceOnDelay = 0;
+                } else {
+                    chanceOnDelay = 1;
+                }
+
+                plant.setActualLeadtime(plant.getActualLeadtime() + (long) chanceOnDelay
+                        * (plant.getActualLeadtime2() - plant.getActualLeadtime()));
                 plant.specifyAndPersist(getCurrentTick(), agent, getNodeForZone(market.getZone()), bestTechnology,
                         ChosenLocation);
                 PowerPlantManufacturer manufacturer = reps.genericRepository.findFirst(PowerPlantManufacturer.class);
@@ -897,13 +907,12 @@ public class InvestInPowerGenerationTechnologiesRole<T extends EnergyProducer> e
                 // 1);
                 // }
                 // }
-                double chanceOnDelay = Math.random();
-                if (chanceOnDelay > ((ChosenLocation.getAverageUtility()) * -1)) {
-                    chanceOnDelay = 0;
-                }
 
-                double additionalCostPermit = chanceOnDelay * (bestTechnology.getNpv() - bestTechnology.getNpvDelay())
-                        + agent.getCompensationElectricityProducer();
+                // double additionalCostPermit = chanceOnDelay *
+                // (bestTechnology.getNpv() - bestTechnology.getNpvDelay())
+                // + agent.getCompensationElectricityProducer();
+
+                double additionalCostPermit = agent.getCompensationElectricityProducer();
 
                 double investmentCostPayedByEquity = (plant.getActualInvestedCapital() + additionalCostPermit)
                         * (1 - agent.getDebtRatioOfInvestments());
