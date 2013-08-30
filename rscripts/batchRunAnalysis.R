@@ -62,6 +62,21 @@ addSumOfVariablesByPrefixToDF<-function(df, prefix, newColumnName=NULL){
   return(df)
 }
 
+diffExpenditures<-function(df, nameOfOriginalVariable, nameOfNewVariable){
+  df[[nameOfNewVariable]]<-diff(c(0,df[[nameOfOriginalVariable]]))
+  return(df)
+}
+
+diffExpenditures2<-function(df, list, zeroValue){
+  for(pair in list){
+    df[[pair[2]]]<-diff(c(zeroValue,df[[pair[1]]]))
+  }
+  return(df)
+}
+
+functionOfVariablePerRunId<-function(df,FUN,variableName) FUN(df[,variableName])
+
+functionOfVariablePerRunIdSpecificPerkWh<-function(df,FUN,variableName){FUN(df[,variableName])/(sum(df[,"Total_DemandinMWh_Country.B"])+sum(df[,"Total_DemandinMWh_Country.A"]))}
 
 # Purpose-specific data preparation ---------------------------------------
 
@@ -165,7 +180,7 @@ plotSpaghettiTimeSeries <- function(df, variable, ylabel, xlabel="Time [a]", yli
       geom_line(aes_string(group="runId", linestyle="runId"), alpha=I(0.2))+
       stat_summary(aes_string(fill="modelRun"), fun.data="median_hilow", conf.int=.5, geom="smooth") +
       #stat_summary(fun.data="median_hilow", conf.int=.95, geom="smooth")+
-      facet_grid(. ~ modelRun)+
+      facet_wrap( ~ modelRun)+
       ylab(ylabel)+
       xlab(xlabel)+
       theme_grey(base_size=basesize)+
