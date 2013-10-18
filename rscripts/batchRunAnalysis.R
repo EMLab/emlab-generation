@@ -2,6 +2,7 @@ library(ggplot2)
 library(plyr)
 library(reshape)
 library(grid)
+library(ggthemes)
 source("AgentSpringHeadlessReader.R")
 source("TimeSeriesSummariser.R")
 
@@ -38,7 +39,7 @@ meltPrefixVariables <- function(df, variablePrefix, renamerList=NULL, factor=TRU
   return(moltenVariable)
 }
 
-applyFunToColumnInDF<- function(df=df, column=column, fun=fun) fun(df[,column])
+applyFunToColumnInDF<- function(df=df, column=column, fun=fun, ...) fun(df[,column], ...)
 sdPerRunId<-function(df,variableName) sd(df[,variableName])
 
 quantilesOfStandardDeviationOverModelRun <- function(df, variableName){
@@ -78,6 +79,7 @@ functionOfVariablePerRunId<-function(df,FUN,variableName) FUN(df[,variableName])
 
 functionOfVariablePerRunIdSpecificPerkWh<-function(df,FUN,variableName){FUN(df[,variableName])/(sum(df[,"Total_DemandinMWh_Country.B"])+sum(df[,"Total_DemandinMWh_Country.A"]))}
 
+functionOfVariablePerRunIdSpecificPerkWhAndCountry<-function(df,FUN,variableName,demandInCountryName){FUN(df[,variableName])/(sum(df[,demandInCountryName]))}
 # Purpose-specific data preparation ---------------------------------------
 
 
@@ -113,7 +115,7 @@ addProducerCashBalanceForAll <- function(df){
 
 # Generic Plotting Functions over Time ------------------------------------
 
-plotStackedDiagram <- function(moltenVariable, ylabel, legendName, absolute=TRUE, variable="variable", value="value", xlabel="Time [a]", manuelPalette=NULL, summaryFunction=median){
+plotStackedDiagram <- function(moltenVariable, ylabel, legendName, absolute=TRUE, variable="variable", value="value", xlabel="Time [a]", manuelPalette=NULL, summaryFunction=median, nrow=NULL){
   ## This function can plot stacked diagrams of variables over time, and is set to accept the standard
   ## output of the melt (reshape) function. the absolute parameter can be used to switch between absolute
   ## and relative plotting (e.g. 20GW installed capacity vs 20% of a total of 100GW)
@@ -124,8 +126,8 @@ plotStackedDiagram <- function(moltenVariable, ylabel, legendName, absolute=TRUE
   else
     position="fill"
   p<-ggplot(moltenVariable, aes_string(x="tick", y=value))+
-    stat_summary(aes_string(fill=variable,order= desc(moltenCapacities[["variable"]])), fun.y=summaryFunction, geom="area", position=position)+
-    facet_wrap( ~ modelRun)+
+    stat_summary(aes_string(fill=variable,order="-desc(variable)"), fun.y=summaryFunction, geom="area", position=position)+
+    facet_wrap( ~ modelRun, nrow=nrow)+
     xlab("Time [a]")+
     ylab(ylabel)+
     theme_grey(base_size=14)+
@@ -139,23 +141,24 @@ plotStackedDiagram <- function(moltenVariable, ylabel, legendName, absolute=TRUE
 }
 
 
-plotTimeSeriesWithConfidenceIntervalByFacettedGroup <- function(df, variable, ylabel, fun.data="median_hilow", conf.int=0.5, conf.int2=0.95){
+plotTimeSeriesWithConfidenceIntervalByFacettedGroup <- function(df, variable, ylabel, fun.data="median_hilow", conf.int=0.5, conf.int2=0.95, nrow=NULL){
   g<-ggplot(df, aes_string(x="tick", y=variable))+ #colour=modelRun, fill=modelRun,
-    stat_summary(aes_string(fill="modelRun"), fun.data=fun.data, conf.int=conf.int, geom="smooth") +
-    stat_summary(fun.data=fun.data, conf.int=conf.int2, geom="smooth")+
+    #stat_summary(aes_string(fill="modelRun"), fun.data=fun.data, conf.int=conf.int, geom="smooth") +
+    stat_summary(fun.data=fun.data, conf.int=conf.int, geom="smooth", colour="black") +
+    stat_summary(fun.data=fun.data, conf.int=conf.int2, geom="smooth", colour="black")+
     #facet_grid(. ~ modelRun)+
-    facet_wrap(~ modelRun)+
+    facet_wrap(~ modelRun, nrow=nrow)+
     theme(legend.position="none")+
     xlab("Time [a]")+
     ylab(ylabel)
 }
 
 
-plotTimeSeriesWithOnly50PerConfidenceIntervalByFacettedGroup <- function(df, variable, ylabel){
+plotTimeSeriesWithOnly50PerConfidenceIntervalByFacettedGroup <- function(df, variable, ylabel, nrow=NULL){
   g<-ggplot(df, aes_string(x="tick", y=variable))+ #colour=run, fill=run,
     stat_summary(aes_string(fill="modelRun"), fun.data="median_hilow", conf.int=.5, geom="smooth") +
     #facet_grid(. ~ run)+
-    facet_wrap(~ run)+
+    facet_wrap(~ run, nrow=nrow)+
     theme(legend.position="none")+
     xlab("Time [a]")+
     ylab(ylabel)
@@ -175,12 +178,12 @@ plotTimeSeriesWithConfidenceIntervalGroupedInOnePlot <- function(df, variable, y
 }
 
 
-plotSpaghettiTimeSeries <- function(df, variable, ylabel, xlabel="Time [a]", ylim=NULL, basesize=8){
+plotSpaghettiTimeSeries <- function(df, variable, ylabel, xlabel="Time [a]", ylim=NULL, basesize=8, nrow=NULL){
   p<- ggplot(df, aes_string(x="tick", y=variable))+
       geom_line(aes_string(group="runId", linestyle="runId"), alpha=I(0.2))+
       stat_summary(aes_string(fill="modelRun"), fun.data="median_hilow", conf.int=.5, geom="smooth") +
       #stat_summary(fun.data="median_hilow", conf.int=.95, geom="smooth")+
-      facet_wrap( ~ modelRun)+
+      facet_wrap( ~ modelRun, nrow=nrow)+
       ylab(ylabel)+
       xlab(xlabel)+
       theme_grey(base_size=basesize)+
@@ -195,13 +198,33 @@ plotMoltenVariableFacettedByVariable <- function(moltenDF, ylabel, facet_wrap=T)
   if(!facet_wrap)
     facet_wrap_option =facet_grid(variable ~ .)
   g<-ggplot(moltenDF, aes_string(x="tick", y="value", colour="modelRun", fill="modelRun"))+ #colour=modelRun, fill=modelRun,
-    stat_summary(aes_string(colour="modelRun", fill="modelRun", group="modelRun"), fun.data="median_hilow", conf.int=.5, geom="smooth") +
-    stat_summary(aes_string(colour="modelRun", fill="modelRun", group="modelRun"), fun.data="median_hilow", conf.int=.95, geom="smooth")+
+    stat_summary(aes_string(colour="modelRun", fill="modelRun", group="modelRun"), fun.y="mean", geom="line", linetype=1)+
+    stat_summary(data=moltenDF[moltenDF$tick%%5==0 | moltenDF$tick==39,],aes_string(group="modelRun",shape="modelRun"), fun.y="mean", geom="point", size=1.5)+
+    #stat_summary(aes_string(colour="modelRun", fill="modelRun", group="modelRun"), fun.data="median_hilow", conf.int=.5, geom="smooth") +
+    #stat_summary(aes_string(colour="modelRun", fill="modelRun", group="modelRun"), fun.data="median_hilow", conf.int=.95, geom="smooth")+
     facet_wrap_option+
     #facet_wrap(~ modelRun)+
     theme(legend.position="bottom")+
-    scale_color_discrete(name="Model Run")+
-    scale_fill_discrete(name="Model Run")+
+    scale_color_discrete(name="Scenario")+
+    scale_fill_discrete(name="Scenario")+
+    scale_shape_discrete(name="Scenario")+
+    xlab("Time [a]")+
+    ylab(ylabel)
+  return(g)
+}
+
+plotBlackAndWhiteMoltenVariableFacettedByVariable <- function(moltenDF, ylabel, facet_wrap=T){
+  facet_wrap_option = facet_wrap(~ variable, scales="free_y")
+  if(!facet_wrap)
+    facet_wrap_option =facet_grid(variable ~ .)
+  g<-ggplot(moltenDF, aes_string(x="tick", y="value"))+ #colour=modelRun, fill=modelRun,
+    stat_summary(aes_string(group="modelRun",linetype="modelRun"), fun.y="mean", geom="line")+
+    stat_summary(data=moltenDF[moltenDF$tick%%5==0 | moltenDF$tick==39,],aes_string(group="modelRun",shape="modelRun"), fun.y="mean", geom="point", size=1.5)+
+    facet_wrap_option+
+    #facet_wrap(~ modelRun)+
+    theme(legend.position="bottom")+
+    scale_linetype_discrete(name="Scenario")+
+    scale_shape_discrete(name="Scenario")+
     xlab("Time [a]")+
     ylab(ylabel)
   return(g)
@@ -242,4 +265,20 @@ renamer <- function(x, pattern, replace) {
   for (i in seq_along(pattern))
     x <- gsub(pattern[i], replace[i], x)
   x
+}
+
+theme_publication<-function(base_size=11, base_family="serif", ticks=TRUE){
+  ret<-theme_tufte(base_size=base_size)+
+    theme(legend.margin=unit(-1, "cm"), plot.margin=unit(x=c(1,2,1,1),units="mm"),#axis.line=element_line(),axis.line.x=element_line(),axis.line.y=element_line(),
+          panel.background = element_rect(fill = "white", colour = NA), 
+          panel.border = element_rect(fill = NA, 
+                                      colour = "black"), 
+          panel.grid = element_line(colour = "grey98", size = 0.2),
+          #panel.grid.major = element_line(colour = "grey98", size = 0.2),
+          panel.grid.minor=element_blank(),
+          #panel.grid.minor.y = element_line(colour = "grey98", size = 0.5),
+          axis.ticks = element_line(colour = "black")
+          #strip.background = element_rect(fill = "grey80", colour = "grey50"), 
+    )
+  ret
 }

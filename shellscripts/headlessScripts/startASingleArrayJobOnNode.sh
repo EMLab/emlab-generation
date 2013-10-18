@@ -1,5 +1,18 @@
 #!/bin/bash
 
+#Make sure that the variables exist, otherwise deletes whole directory.
+if [ ! $JOBNAME ];then
+    exit
+fi
+
+if [ ! $TEMP ];then
+    exit
+fi
+
+if [ ! $RAMDISK ];then
+    exit
+fi
+
 # the job number
 # we get a directory name from the current job array id
 dir=$JOBNAME-$PBS_ARRAYID
@@ -25,30 +38,20 @@ cp $INPUTPARAMETERFOLDER/$SCENARIO $NODESCENARIOFOLDER
 cp $INPUTPARAMETERFOLDER/$PARAMETERFILE $NODESCENARIOFOLDER
 
 #FIXME should also test presence of other simulation files and if they match in md5
-if [ -e $TEMP/$JARNAME ]; 
-then
-	#check if it is the same md5 	
-	testMD=`(md5sum $TEMP/$JARNAME | sed 's/ /_/g')`
-	if [ $testMD != $MD ];
-	then
-	#if the MD5 sum is not the same as the one we started the main script with, copy it here
-	cp $PBS_O_WORKDIR/$JARNAME $TEMP/
-	mv $TEMP/$JARNAME $TEMP/$NEWJARNAME
-	fi
-elif [ -e $TEMP/$NEWJARNAME ];then
+if [ -e $TEMP/$NEWJARNAME ];then
 	echo "check if it is the same md5"
-	testMD=`(md5sum $TEMP/$NEWJARNAME | sed 's/ /_/g')`
+	testMD=$(md5sum $TEMP/$NEWJARNAME | sed 's/\([a-z0-9]*\) .*/\1/g')
 	if [ $testMD != $MD ];
 	then
 	#if the MD5 sum is not the same as the one we started the main script with, copy it here
-	cp $PBS_O_WORKDIR/$JARNAME $TEMP/
-	mv $TEMP/$JARNAME $TEMP/$NEWJARNAME
+	cp $PBS_O_WORKDIR/$JARNAME $TEMP/$NEWJARNAME
+	#mv $TEMP/$JARNAME $TEMP/$NEWJARNAME
 	echo "Copying over new JAR file."
 	fi
 else
 #if the jar is not here, copy it over
-cp $PBS_O_WORKDIR/$JARNAME $TEMP/
-mv $TEMP/$JARNAME $TEMP/$NEWJARNAME
+cp $PBS_O_WORKDIR/$JARNAME $TEMP/$NEWJARNAME
+#mv $TEMP/$JARNAME $TEMP/$NEWJARNAME
 #cp $PBS_O_WORKDIR/$SCENARIO $TEMP/$dir
 fi
 

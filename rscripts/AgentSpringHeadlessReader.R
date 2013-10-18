@@ -14,7 +14,7 @@ getDataFrameForModelRun <- function(outPutFolder, modelRun, name, ignoredHeaders
     ignoredHeaderString<-paste(ignoredHeaderString, header)
   }
   if(!file.exists(paste(outPutFolder,modelRun,".csv", sep=""))){
-    system(paste('python ',rscriptFolder,"asHeadlessQueryReader.py ", outPutFolder, " ", modelRun, ignoredHeaderString, sep=""))
+    system(paste('python ',headlessFolder,"asHeadlessQueryReader.py ", outPutFolder, " ", modelRun, ignoredHeaderString, sep=""))
   }
   df<-read.csv(paste(outPutFolder,modelRun,".csv", sep=""))
   df<-cbind(runId=df$runId, tick=df$tick, subset(df, select=-c(tick, runId)))
@@ -57,7 +57,7 @@ getDataFrameForModelRunsInFolderWithFilePattern <- function(outPutFolder, patter
 getTableForRunId <- function(outputFolder, modelRun, runId, tableName){
   if(!file.exists(paste(outputFolder,runId,"-",tableName,".csv", sep=""))){
     setwd(outputFolder)
-    system(paste('python ',rscriptFolder,"asHeadlessTableReader.py ", outputFolder, " ", modelRun, " ", runId, " ",  tableName, sep=""))
+    system(paste('python ',headlessFolder,"asHeadlessTableReader.py ", outputFolder, " ", modelRun, " ", runId, " ",  tableName, sep=""))
   }
   df<-read.csv(paste(outputFolder,runId,"-",tableName,".csv", sep=""))
   return(df)

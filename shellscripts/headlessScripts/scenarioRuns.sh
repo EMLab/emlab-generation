@@ -24,5 +24,5 @@ for i in $(eval echo "{$START..$END}")
 do
     SCENARIO=$SCENARIONAME"-$i"
     $REMOTEHPCSCRIPTS/hpcArrayRun.sh $RUNNAME $RUNNAME"-$i" $SCENARIO".xml" $NUMBERROFRUNSPERSCENARIO $WALLTIME
-    sleep $6
+    sleep $PAUSE
 done
