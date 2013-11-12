@@ -240,4 +240,12 @@ public interface PowerPlantRepository extends GraphRepository<PowerPlant> {
     public double calculateCapacityOfPowerPlantsByMarketInPipeline(@Param("market") ElectricitySpotMarket market,
             @Param("tick") long tick);
 
+    @Query(value = "g.v(market).out('ZONE').in('REGION').in('LOCATION').filter{it.__type__=='emlab.gen.domain.technology.PowerPlant'}.as('plant').filter{((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick) && (it.dismantleTime > tick)}.sort{-it.ageFraction}_()", type = QueryType.Gremlin)
+    public Iterable<PowerPlant> findOperationalPowerPlantsByDescendingAgeFactorAndMarket(
+            @Param("market") ElectricitySpotMarket market, @Param("tick") long tick);
+
+    @Query(value = "g.v(market).out('ZONE').in('REGION').in('LOCATION').filter{it.__type__=='emlab.gen.domain.technology.PowerPlant'}.as('plant').filter{((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick) && (it.dismantleTime > tick)}.sort{it.profitability}_()", type = QueryType.Gremlin)
+    public Iterable<PowerPlant> findOperationalPowerPlantsByAscendingProfitabilityAndMarket(
+            @Param("market") ElectricitySpotMarket market, @Param("tick") long tick);
+
 }

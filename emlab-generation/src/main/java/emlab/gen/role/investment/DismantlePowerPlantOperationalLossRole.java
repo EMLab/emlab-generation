@@ -91,15 +91,15 @@ public class DismantlePowerPlantOperationalLossRole extends AbstractEnergyProduc
 
                 // Calculate profitability for past n years.
                 long yearIterator = 0;
-
+                double profitability = 0;
+                double cost = 0;
+                double revenue = 0;
                 for (yearIterator = 0; yearIterator < lookback; yearIterator++) {
 
                     for (CashFlow cf : reps.cashFlowRepository.findAllCashFlowsForForTime(getCurrentTick()
                             - yearIterator)) {
 
                         if (cf.getRegardingPowerPlant().getNodeId() == plant.getNodeId()) {
-                            double cost = 0;
-                            double revenue = 0;
 
                             if (cf.getType() == 3 || cf.getType() == 4 || cf.getType() == 5 || cf.getType() == 6) {
                                 cost = cost + cf.getMoney();
@@ -109,10 +109,11 @@ public class DismantlePowerPlantOperationalLossRole extends AbstractEnergyProduc
                                 revenue = cost + cf.getMoney();
                             }
 
-                            plant.setProfitability(revenue - cost);
                         }
-                    }
+                        profitability = profitability + revenue - cost;
 
+                    }
+                    plant.setProfitability(profitability);
                 }
 
             }
@@ -131,7 +132,7 @@ public class DismantlePowerPlantOperationalLossRole extends AbstractEnergyProduc
             // Sort in descending order by age fraction and dismantle by age &
             // peak availability
 
-            for (PowerPlant plant : reps.powerPlantRepository.findPowerPlantsInDescendingOrderAgeFractionByMarket(
+            for (PowerPlant plant : reps.powerPlantRepository.findOperationalPowerPlantsByDescendingAgeFactorAndMarket(
                     market, getCurrentTick())) {
                 if (plant.ageFraction >= 0 && availableFutureCapacity - peakLoadforMarket > 0) {
                     plant.dismantlePowerPlant(getCurrentTick());
@@ -146,8 +147,8 @@ public class DismantlePowerPlantOperationalLossRole extends AbstractEnergyProduc
             }
 
             if (availableFutureCapacity - peakLoadforMarket > 0) {
-                for (PowerPlant plant : reps.powerPlantRepository.findPowerPlantsSortedByProfitability(market,
-                        getCurrentTick())) {
+                for (PowerPlant plant : reps.powerPlantRepository
+                        .findOperationalPowerPlantsByAscendingProfitabilityAndMarket(market, getCurrentTick())) {
                     if (plant.getProfitability() <= 0)
                         plant.dismantlePowerPlant(getCurrentTick());
                     availableFutureCapacity = availableFutureCapacity
