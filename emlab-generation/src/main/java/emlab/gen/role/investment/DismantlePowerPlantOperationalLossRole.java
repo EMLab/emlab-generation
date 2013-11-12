@@ -15,8 +15,6 @@
  ******************************************************************************/
 package emlab.gen.role.investment;
 
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -25,7 +23,9 @@ import org.springframework.data.annotation.Transient;
 
 import agentspring.role.Role;
 import agentspring.role.RoleComponent;
+import agentspring.simulation.SimulationParameter;
 import emlab.gen.domain.agent.EnergyProducer;
+import emlab.gen.domain.contract.CashFlow;
 import emlab.gen.domain.market.electricity.ElectricitySpotMarket;
 import emlab.gen.domain.technology.PowerPlant;
 import emlab.gen.repository.Reps;
@@ -40,8 +40,6 @@ import emlab.gen.role.AbstractEnergyProducerRole;
  * 
  */
 
-// Forecast Peak demand and supply for the next year store supply margin in
-// variable.
 // If supply is higher than demand, for each power plant check age.
 // Sort by age/expectedLife in descending order and If this value is greater
 // than one, plant is past technical life dismantle it and check supply margin.
@@ -57,7 +55,10 @@ public class DismantlePowerPlantOperationalLossRole extends AbstractEnergyProduc
     Reps reps;
 
     @Transient
-    Map<PowerPlant, Double> ageInfoMap = new HashMap<PowerPlant, Double>();
+    Map<PowerPlant, Double> ageInfoMap = new TreeMap<PowerPlant, Double>();
+
+    @SimulationParameter(label = "Lookback for dismantling", from = 0, to = 10)
+    private long lookback;
 
     public Reps getReps() {
         return reps;
@@ -65,11 +66,15 @@ public class DismantlePowerPlantOperationalLossRole extends AbstractEnergyProduc
 
     public void act(EnergyProducer producer) {
 
-        double reserveMargin;
+        double availableFutureCapacity = 0;
 
         for (ElectricitySpotMarket market : reps.marketRepository.findAllElectricitySpotMarketsAsList()) {
 
-            double peakLoadforMarketNOtrend = reps.segmentLoadRepository.peakLoadbyZoneMarketandTime(zone, market);
+            // Forecast Peak demand and supply for the next year store supply
+            // margin in variable.
+
+            double peakLoadforMarketNOtrend = reps.segmentLoadRepository.peakLoadbyZoneMarketandTime(market.getZone(),
+                    market);
 
             double trend = market.getDemandGrowthTrend().getValue(getCurrentTick());
 
@@ -78,55 +83,80 @@ public class DismantlePowerPlantOperationalLossRole extends AbstractEnergyProduc
             for (PowerPlant plant : reps.powerPlantRepository.findOperationalPowerPlantsInMarket(market,
                     getCurrentTick())) {
 
-                double age = plant.getActualLifetime() / plant.getExpectedEndOfLife();
+                // Calculate AgeFraction and set it for each plant.
 
-                if (age <= 0) {
-                    ageInfoMap.put(plant, age);
+                double age = plant.getActualLifetime() / plant.getTechnology().getExpectedLifetime();
+
+                plant.setAgeFraction(age);
+
+                // Calculate profitability for past n years.
+                long yearIterator = 0;
+
+                for (yearIterator = 0; yearIterator < lookback; yearIterator++) {
+
+                    for (CashFlow cf : reps.cashFlowRepository.findAllCashFlowsForForTime(getCurrentTick()
+                            - yearIterator)) {
+
+                        if (cf.getRegardingPowerPlant().getNodeId() == plant.getNodeId()) {
+                            double cost = 0;
+                            double revenue = 0;
+
+                            if (cf.getType() == 3 || cf.getType() == 4 || cf.getType() == 5 || cf.getType() == 6) {
+                                cost = cost + cf.getMoney();
+                            }
+
+                            else if (cf.getType() == 10 || cf.getType() == 1) {
+                                revenue = cost + cf.getMoney();
+                            }
+
+                            plant.setProfitability(revenue - cost);
+                        }
+                    }
+
                 }
+
             }
 
-            MyComparator comp = new MyComparator(ageInfoMap);
+            // Calculate availableFutureCapacity for the next year at peak
 
-            Map<PowerPlant, Double> sortedAge = new TreeMap(comp);
-            sortedAge.putAll(ageInfoMap);
+            for (PowerPlant futurePlant : reps.powerPlantRepository.findExpectedOperationalPowerPlantsInMarket(market,
+                    getCurrentTick() + 1)) {
 
+                double plantCapacity = futurePlant.getActualNominalCapacity()
+                        * futurePlant.getTechnology().getPeakSegmentDependentAvailability();
+                availableFutureCapacity = availableFutureCapacity + plantCapacity;
+
+            }
+
+            // Sort in descending order by age fraction and dismantle by age &
+            // peak availability
+
+            for (PowerPlant plant : reps.powerPlantRepository.findPowerPlantsInDescendingOrderAgeFractionByMarket(
+                    market, getCurrentTick())) {
+                if (plant.ageFraction >= 0 && availableFutureCapacity - peakLoadforMarket > 0) {
+                    plant.dismantlePowerPlant(getCurrentTick());
+                    availableFutureCapacity = availableFutureCapacity
+                            - ((plant.getTechnology().getCapacity()) * plant.getTechnology()
+                                    .getPeakSegmentDependentAvailability());
+                }
+
+                // Dismantle by profitability until last plant is profitable or
+                // capacity margin goes to zero.
+
+            }
+
+            if (availableFutureCapacity - peakLoadforMarket > 0) {
+                for (PowerPlant plant : reps.powerPlantRepository.findPowerPlantsSortedByProfitability(market,
+                        getCurrentTick())) {
+                    if (plant.getProfitability() <= 0)
+                        plant.dismantlePowerPlant(getCurrentTick());
+                    availableFutureCapacity = availableFutureCapacity
+                            - ((plant.getTechnology().getCapacity()) * plant.getTechnology()
+                                    .getPeakSegmentDependentAvailability());
+                }
+
+            }
         }
     }
 
-    class MyComparator implements Comparator {
-
-        Map map;
-
-        public MyComparator(Map map) {
-            this.map = map;
-        }
-
-        public int compare(Object o1, Object o2) {
-
-            return ((Double) map.get(o2)).compareTo((Double) map.get(o1));
-
-        }
-    }
 }
-// public void act(EnergyProducer producer) {
-
-// logger.info("Dismantling plants if out of merit");
-
-// dis-mantle plants when passed technical lifetime.
-// for (PowerPlant plant :
-// reps.powerPlantRepository.findOperationalPowerPlantsByOwner(producer,
-// getCurrentTick())) {
-// long horizon = producer.getPastTimeHorizon();
-
-// double requiredProfit = producer.getDismantlingRequiredOperatingProfit();
-// if (calculateAveragePastOperatingProfit(plant, horizon) < requiredProfit) {
-// logger.info("Dismantling power plant because it has had an operating loss (incl O&M cost) on average in the last "
-// + horizon + " years: " + plant);
-
-// plant.dismantlePowerPlant(getCurrentTick());
-//
-// }
-// }
-// }
-
-// }
