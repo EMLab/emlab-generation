@@ -90,7 +90,7 @@ public class DismantlePowerPlantOperationalLossRole extends AbstractRole<Electri
 
                     for (CashFlow cf : reps.cashFlowRepository.findAllCashFlowsForForTime(getCurrentTick()
                             - yearIterator)) {
-
+                        logger.warn("enters loop " + cf.getRegardingPowerPlant().getNodeId() + " " + plant.getNodeId());
                         if (cf.getRegardingPowerPlant().equals(plant)) {
 
                             if (cf.getType() == 3 || cf.getType() == 4 || cf.getType() == 5 || cf.getType() == 6) {
