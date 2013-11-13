@@ -15,28 +15,18 @@
  ******************************************************************************/
 package emlab.gen.role.investment;
 
-import java.util.Map;
-import java.util.TreeMap;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.annotation.Transient;
+import org.springframework.transaction.annotation.Transactional;
 
-import agentspring.role.Role;
+import agentspring.role.AbstractRole;
 import agentspring.role.RoleComponent;
-import agentspring.simulation.SimulationParameter;
-import emlab.gen.domain.agent.EnergyProducer;
 import emlab.gen.domain.contract.CashFlow;
 import emlab.gen.domain.market.electricity.ElectricitySpotMarket;
 import emlab.gen.domain.technology.PowerPlant;
 import emlab.gen.repository.Reps;
-import emlab.gen.role.AbstractEnergyProducerRole;
 
 /**
- * {@link EnergyProducer}s dismantle {@link PowerPlant}s that are out of merit
- * 
- * @author <a href="mailto:E.J.L.Chappin@tudelft.nl">Emile Chappin</a> @author
- *         <a href="mailto:A.Chmieliauskas@tudelft.nl">Alfredas
- *         Chmieliauskas</a>
+ * @author pradyumnabhagwat
  * 
  */
 
@@ -49,22 +39,17 @@ import emlab.gen.role.AbstractEnergyProducerRole;
 // variable, till all plants are dismantled or zero reached
 
 @RoleComponent
-public class DismantlePowerPlantOperationalLossRole extends AbstractEnergyProducerRole implements Role<EnergyProducer> {
+public class DismantlePowerPlantOperationalLossRole extends AbstractRole {
 
     @Autowired
     Reps reps;
-
-    @Transient
-    Map<PowerPlant, Double> ageInfoMap = new TreeMap<PowerPlant, Double>();
-
-    @SimulationParameter(label = "Lookback for dismantling", from = 0, to = 10)
-    private long lookback;
 
     public Reps getReps() {
         return reps;
     }
 
-    public void act(EnergyProducer producer) {
+    @Transactional
+    public void act() {
 
         double availableFutureCapacity = 0;
 
@@ -84,8 +69,8 @@ public class DismantlePowerPlantOperationalLossRole extends AbstractEnergyProduc
                     getCurrentTick())) {
 
                 // Calculate AgeFraction and set it for each plant.
-
-                double age = plant.getActualLifetime() / plant.getTechnology().getExpectedLifetime();
+                double age = 0;
+                age = (double) (plant.getActualLifetime()) / (double) (plant.getTechnology().getExpectedLifetime());
 
                 plant.setAgeFraction(age);
 
@@ -94,7 +79,7 @@ public class DismantlePowerPlantOperationalLossRole extends AbstractEnergyProduc
                 double profitability = 0;
                 double cost = 0;
                 double revenue = 0;
-                for (yearIterator = 0; yearIterator < lookback; yearIterator++) {
+                for (yearIterator = 0; yearIterator < plant.getOwner().getLookback(); yearIterator++) {
 
                     for (CashFlow cf : reps.cashFlowRepository.findAllCashFlowsForForTime(getCurrentTick()
                             - yearIterator)) {
@@ -103,28 +88,33 @@ public class DismantlePowerPlantOperationalLossRole extends AbstractEnergyProduc
 
                             if (cf.getType() == 3 || cf.getType() == 4 || cf.getType() == 5 || cf.getType() == 6) {
                                 cost = cost + cf.getMoney();
+
                             }
 
-                            else if (cf.getType() == 10 || cf.getType() == 1) {
-                                revenue = cost + cf.getMoney();
+                            if (cf.getType() == 1 || cf.getType() == 10) {
+                                revenue = revenue + cf.getMoney();
+
                             }
 
                         }
-                        profitability = profitability + revenue - cost;
 
                     }
+
+                    profitability = profitability + revenue - cost;
                     plant.setProfitability(profitability);
+
                 }
 
             }
 
             // Calculate availableFutureCapacity for the next year at peak
+            availableFutureCapacity = 0;
+            for (PowerPlant futurePlant : reps.powerPlantRepository
+                    .findExpectedOperationalPowerPlantsInMarketWithoutDismantling(market, getCurrentTick() + 1)) {
 
-            for (PowerPlant futurePlant : reps.powerPlantRepository.findExpectedOperationalPowerPlantsInMarket(market,
-                    getCurrentTick() + 1)) {
+                double plantCapacity = (double) (futurePlant.getTechnology().getCapacity())
+                        * (double) (futurePlant.getTechnology().getPeakSegmentDependentAvailability());
 
-                double plantCapacity = futurePlant.getActualNominalCapacity()
-                        * futurePlant.getTechnology().getPeakSegmentDependentAvailability();
                 availableFutureCapacity = availableFutureCapacity + plantCapacity;
 
             }
@@ -134,8 +124,11 @@ public class DismantlePowerPlantOperationalLossRole extends AbstractEnergyProduc
 
             for (PowerPlant plant : reps.powerPlantRepository.findOperationalPowerPlantsByDescendingAgeFactorAndMarket(
                     market, getCurrentTick())) {
-                if (plant.ageFraction >= 0 && availableFutureCapacity - peakLoadforMarket > 0) {
+
+                if (plant.getAgeFraction() >= 1 && availableFutureCapacity - peakLoadforMarket > 0) {
+
                     plant.dismantlePowerPlant(getCurrentTick());
+
                     availableFutureCapacity = availableFutureCapacity
                             - ((plant.getTechnology().getCapacity()) * plant.getTechnology()
                                     .getPeakSegmentDependentAvailability());
@@ -147,16 +140,23 @@ public class DismantlePowerPlantOperationalLossRole extends AbstractEnergyProduc
             }
 
             if (availableFutureCapacity - peakLoadforMarket > 0) {
+
                 for (PowerPlant plant : reps.powerPlantRepository
                         .findOperationalPowerPlantsByAscendingProfitabilityAndMarket(market, getCurrentTick())) {
-                    if (plant.getProfitability() <= 0)
+
+                    if (plant.getProfitability() <= 0 && availableFutureCapacity - peakLoadforMarket > 0) {
+
                         plant.dismantlePowerPlant(getCurrentTick());
-                    availableFutureCapacity = availableFutureCapacity
-                            - ((plant.getTechnology().getCapacity()) * plant.getTechnology()
-                                    .getPeakSegmentDependentAvailability());
+                        availableFutureCapacity = availableFutureCapacity
+                                - ((plant.getTechnology().getCapacity()) * plant.getTechnology()
+                                        .getPeakSegmentDependentAvailability());
+
+                    }
                 }
 
             }
+
+            logger.warn("enters loop " + (availableFutureCapacity) + " " + peakLoadforMarket);
         }
     }
 

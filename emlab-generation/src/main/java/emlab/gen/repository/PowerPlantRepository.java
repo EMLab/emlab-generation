@@ -248,4 +248,8 @@ public interface PowerPlantRepository extends GraphRepository<PowerPlant> {
     public Iterable<PowerPlant> findOperationalPowerPlantsByAscendingProfitabilityAndMarket(
             @Param("market") ElectricitySpotMarket market, @Param("tick") long tick);
 
+    @Query(value = "g.v(market).out('ZONE').in('REGION').in('LOCATION').filter{it.__type__=='emlab.gen.domain.technology.PowerPlant'}.filter{((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick)}", type = QueryType.Gremlin)
+    public Iterable<PowerPlant> findExpectedOperationalPowerPlantsInMarketWithoutDismantling(
+            @Param("market") ElectricitySpotMarket market, @Param("tick") long tick);
+
 }
