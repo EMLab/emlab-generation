@@ -63,16 +63,6 @@ public class EnergyProducer extends DecarbonizationAgent implements Agent {
     private int dismantlingProlongingYearsAfterTechnicalLifetime;
     private double dismantlingRequiredOperatingProfit;
     private long pastTimeHorizon;
-    @SimulationParameter(label = "Lookback for dismantling", from = 0, to = 10)
-    private long lookback;
-
-    public long getLookback() {
-        return lookback;
-    }
-
-    public void setLookback(long lookback) {
-        this.lookback = lookback;
-    }
 
     public boolean isWillingToInvest() {
         return willingToInvest;
