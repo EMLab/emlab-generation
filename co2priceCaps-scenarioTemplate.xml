@@ -21,7 +21,7 @@ Node limits are set for lignite, nuclear and hydro and correspond to the maximum
 Nuclear, where Germany is distracted, due to the nuclear phase out, and hydro where maximum values from 
 Roadmap 2050 were taken.
 
-Transmission capacity is assumed to be 3016 in both directions, based on maximum NTC data provided by ENTSOE in 2012-->
+Transmission capacity is assumed to be 3000 in both directions, based on maximum NTC data provided by ENTSOE in 2012-->
 
 
 <beans xmlns="http://www.springframework.org/schema/beans"
