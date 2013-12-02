@@ -13,7 +13,7 @@ microScenarioLength=120
 
 coalPriceScenario=c("Coal.Medium","Coal.Low","Coal.High")
 gasPriceScenario=c("NaturalGas.Medium","NaturalGas.Low","NaturalGas.High")
-fuelPriceScenarios = c("DeccCentral","DeccHigh","DeccLow")
+fuelPriceScenarios = c("DeccCentral","DeccLow","DeccHigh")
 demandGrowthScenarios = c("demandCentral")
 microScenarioNo<-seq(1,microScenarioLength)
 
