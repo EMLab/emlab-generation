@@ -28,39 +28,43 @@ import agentspring.trend.TimeSeries;
 @NodeEntity
 public class TimeSeriesImpl implements TimeSeries {
 
-	/**
-	 * Index of double array corresponds to the tick, unless a
-	 * {@link startingYear} is defined to shift the index.
-	 */
-	private double[] timeSeries;
+    /**
+     * Index of double array corresponds to the tick, unless a
+     * {@link startingYear} is defined to shift the index.
+     */
+    private double[] timeSeries;
 
-	/**
-	 * Gives the starting year of the time series (probably a negative number) ,
-	 * is relevant for all implementations with an array.
-	 */
-	private double startingYear;
+    /**
+     * Gives the starting year of the time series (probably a negative number) ,
+     * is relevant for all implementations with an array.
+     */
+    private double startingYear;
 
-	@Override
-	public double getValue(long time) {
-		return timeSeries[(int) time - (int) startingYear];
-	}
+    @Override
+    public double getValue(long time) {
+        return timeSeries[(int) time - (int) startingYear];
+    }
 
-	public double[] getTimeSeries() {
-		return timeSeries;
-	}
+    public void setValue(long time, double value) {
+        timeSeries[(int) time - (int) startingYear] = value;
+    }
 
-	public void setTimeSeries(double[] timeSeries) {
-		this.timeSeries = timeSeries;
-	}
+    public double[] getTimeSeries() {
+        return timeSeries;
+    }
 
-	public double getStartingYear() {
-		return startingYear;
-	}
+    public void setTimeSeries(double[] timeSeries) {
+        this.timeSeries = timeSeries;
+    }
 
-	public void setStartingYear(double startingYear) {
-		this.startingYear = startingYear;
-	}
-	
+    public double getStartingYear() {
+        return startingYear;
+    }
+
+    public void setStartingYear(double startingYear) {
+        this.startingYear = startingYear;
+    }
+
 
 
 }

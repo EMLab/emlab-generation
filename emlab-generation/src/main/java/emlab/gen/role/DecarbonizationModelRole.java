@@ -27,6 +27,7 @@ import emlab.gen.domain.agent.CommoditySupplier;
 import emlab.gen.domain.agent.DecarbonizationModel;
 import emlab.gen.domain.agent.EnergyConsumer;
 import emlab.gen.domain.agent.EnergyProducer;
+import emlab.gen.domain.agent.Government;
 import emlab.gen.domain.agent.StrategicReserveOperator;
 import emlab.gen.domain.agent.TargetInvestor;
 import emlab.gen.domain.market.CommodityMarket;
@@ -34,6 +35,7 @@ import emlab.gen.domain.market.electricity.ElectricitySpotMarket;
 import emlab.gen.repository.Reps;
 import emlab.gen.role.capacitymechanisms.ProcessAcceptedPowerPlantDispatchRoleinSR;
 import emlab.gen.role.capacitymechanisms.StrategicReserveOperatorRole;
+import emlab.gen.role.co2policy.RenewableAdaptiveCO2CapRole;
 import emlab.gen.role.investment.DismantlePowerPlantPastTechnicalLifetimeRole;
 import emlab.gen.role.investment.GenericInvestmentRole;
 import emlab.gen.role.market.ClearCommodityMarketRole;
@@ -102,6 +104,8 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
     private StrategicReserveOperatorRole strategicReserveOperatorRole;
     @Autowired
     private ProcessAcceptedPowerPlantDispatchRoleinSR acceptedPowerPlantDispatchRoleinSR;
+    @Autowired
+    private RenewableAdaptiveCO2CapRole renewableAdaptiveCO2CapRole;
 
     @Autowired
     Reps reps;
@@ -190,6 +194,12 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
         for (StrategicReserveOperator strategicReserveOperator : reps.strategicReserveOperatorRepository.findAll()) {
             logger.warn("  3a. Contracting Strategic Reserve in " + strategicReserveOperator.getZone().getName());
             strategicReserveOperatorRole.act(strategicReserveOperator);
+        }
+
+        Government government = template.findAll(Government.class).iterator().next();
+        if (getCurrentTick() > 0 && government.getCo2CapTrend() != null && government.isActivelyAdjustingTheCO2Cap()) {
+            logger.warn("Lowering cap according to RES installations");
+            renewableAdaptiveCO2CapRole.act(government);
         }
 
         timerMarket.reset();
