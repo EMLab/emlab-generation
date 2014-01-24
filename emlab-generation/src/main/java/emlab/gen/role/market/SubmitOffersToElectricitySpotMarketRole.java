@@ -15,7 +15,9 @@
  ******************************************************************************/
 package emlab.gen.role.market;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -44,7 +46,8 @@ import emlab.gen.role.AbstractEnergyProducerRole;
  * 
  */
 @RoleComponent
-public class SubmitOffersToElectricitySpotMarketRole extends AbstractEnergyProducerRole implements Role<EnergyProducer> {
+public class SubmitOffersToElectricitySpotMarketRole extends AbstractEnergyProducerRole<EnergyProducer> implements
+Role<EnergyProducer> {
 
     @Autowired
     Reps reps;
@@ -53,29 +56,53 @@ public class SubmitOffersToElectricitySpotMarketRole extends AbstractEnergyProdu
     @Transactional
     public void act(EnergyProducer producer) {
 
+        createOffersForElectricitySpotMarket(producer, getCurrentTick(), true, false, null);
+    }
+
+
+    public List<PowerPlantDispatchPlan> createOffersForElectricitySpotMarket(EnergyProducer producer, long tick,
+            boolean persistPPDP, boolean forecast, Map<Substance, Double> forecastedFuelPrices) {
+        List<PowerPlantDispatchPlan> ppdpList = new ArrayList<PowerPlantDispatchPlan>();
+
         long numberOfSegments = reps.segmentRepository.count();
         ElectricitySpotMarket market = producer.getInvestorMarket();
 
-        // find all my operating power plants
-        for (PowerPlant plant : reps.powerPlantRepository.findOperationalPowerPlantsByOwner(producer, getCurrentTick())) {
+        Iterable<PowerPlant> powerPlants = forecast ? reps.powerPlantRepository
+                .findExpectedOperationalPowerPlantsInMarketByOwner(market, tick, producer) : reps.powerPlantRepository
+                .findOperationalPowerPlantsByOwner(producer, tick);
+
+                // find all my operating power plants
+                for (PowerPlant plant : powerPlants) {
 
             // get market for the plant by zone
             // ElectricitySpotMarket market =
             // reps.marketRepository.findElectricitySpotMarketForZone(plant.getLocation().getZone());
-
-            double mc = calculateMarginalCostExclCO2MarketCost(plant);
-            double price = mc * producer.getPriceMarkUp();
+            double mc;
+            double price;
+            if (!forecast) {
+                mc = calculateMarginalCostExclCO2MarketCost(plant, tick);
+                price = mc * producer.getPriceMarkUp();
+            } else {
+                mc = calculateExpectedMarginalCostExclCO2MarketCost(plant, forecastedFuelPrices, tick);
+                price = mc * producer.getPriceMarkUp();
+            }
 
             logger.info("Submitting offers for {} with technology {}", plant.getName(), plant.getTechnology().getName());
 
             for (SegmentLoad segmentload : market.getLoadDurationCurve()) {
 
                 Segment segment = segmentload.getSegment();
-                double capacity = plant.getAvailableCapacity(getCurrentTick(), segment, numberOfSegments);
+                double capacity;
+                if (tick == getCurrentTick()) {
+                    capacity = plant.getAvailableCapacity(tick, segment, numberOfSegments);
+                } else {
+                    capacity = plant.getExpectedAvailableCapacity(tick, segment, numberOfSegments);
+                }
+
                 logger.info("I bid capacity: {} and price: {}", capacity, mc);
 
                 PowerPlantDispatchPlan plan = reps.powerPlantDispatchPlanRepository
-                        .findOnePowerPlantDispatchPlanForPowerPlantForSegmentForTime(plant, segment, getCurrentTick());
+                        .findOnePowerPlantDispatchPlanForPowerPlantForSegmentForTime(plant, segment, tick);
                 // TODO: handle exception
 
                 // plan =
@@ -88,9 +115,13 @@ public class SubmitOffersToElectricitySpotMarketRole extends AbstractEnergyProdu
                 // segment, getCurrentTick());
 
                 if (plan == null) {
-                    plan = new PowerPlantDispatchPlan().persist();
-                    // plan.specifyNotPersist(plant, producer, market, segment, time, price, bidWithoutCO2, spotMarketCapacity, longTermContractCapacity, status);
-                    plan.specifyNotPersist(plant, producer, market, segment, getCurrentTick(), price, price, capacity, 0, Bid.SUBMITTED);
+                    if (persistPPDP)
+                        plan = new PowerPlantDispatchPlan().persist();
+                    // plan.specifyNotPersist(plant, producer, market, segment,
+                    // time, price, bidWithoutCO2, spotMarketCapacity,
+                    // longTermContractCapacity, status);
+                    plan.specifyNotPersist(plant, producer, market, segment, tick, price, price, capacity, 0,
+                            Bid.SUBMITTED);
                 } else {
                     // plan = plans.iterator().next();
                     plan.setBidder(producer);
@@ -100,16 +131,20 @@ public class SubmitOffersToElectricitySpotMarketRole extends AbstractEnergyProdu
                     plan.setAmount(capacity);
                     plan.setCapacityLongTermContract(0d);
                     plan.setStatus(Bid.SUBMITTED);
+                    plan.setForecast(forecast);
                 }
-
-                logger.info("Submitted {} for iteration {} to electricity spot market", plan);
+                ppdpList.add(plan);
 
             }
-        }
+
+                }
+
+                return ppdpList;
     }
 
     @Transactional
-    void updateMarginalCostInclCO2AfterFuelMixChange(double co2Price, Map<ElectricitySpotMarket, Double> nationalMinCo2Prices) {
+    void updateMarginalCostInclCO2AfterFuelMixChange(double co2Price,
+            Map<ElectricitySpotMarket, Double> nationalMinCo2Prices, long tick) {
 
         int i = 0;
         int j = 0;
@@ -136,7 +171,7 @@ public class SubmitOffersToElectricitySpotMarketRole extends AbstractEnergyProdu
                 Set<SubstanceShareInFuelMix> fuelMix = calculateFuelMix(plan.getPowerPlant(), substancePriceMap,
                         government.getCO2Tax(getCurrentTick()) + co2Price);
                 plan.getPowerPlant().setFuelMix(fuelMix);
-                double mc = calculateMarginalCostExclCO2MarketCost(plan.getPowerPlant());
+                double mc = calculateMarginalCostExclCO2MarketCost(plan.getPowerPlant(), tick);
                 if (mc != oldmc) {
                     plan.setBidWithoutCO2(mc);
                     i++;

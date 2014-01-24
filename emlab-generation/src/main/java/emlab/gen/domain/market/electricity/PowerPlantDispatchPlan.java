@@ -49,6 +49,8 @@ public class PowerPlantDispatchPlan extends Bid {
     public static int PARTLY_CONTRACTED = -10;
     public static int NOT_CONTRACTED = -9;
 
+    private boolean forecast;
+
     /**
      * Is set to always true, since it the power plant dispatch plan is only for supply bids to the spot market.
      */
@@ -181,6 +183,14 @@ public class PowerPlantDispatchPlan extends Bid {
     @Transactional
     public void updateCapacitySpotMarket(double capacity) {
         this.setAmount(capacity);
+    }
+
+    public boolean isForecast() {
+        return forecast;
+    }
+
+    public void setForecast(boolean forecast) {
+        this.forecast = forecast;
     }
 
 }

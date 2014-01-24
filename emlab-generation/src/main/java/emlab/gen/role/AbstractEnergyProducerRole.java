@@ -42,7 +42,6 @@ import emlab.gen.domain.market.CO2Auction;
 import emlab.gen.domain.market.ClearingPoint;
 import emlab.gen.domain.market.DecarbonizationMarket;
 import emlab.gen.domain.market.electricity.ElectricitySpotMarket;
-import emlab.gen.domain.technology.PowerGeneratingTechnology;
 import emlab.gen.domain.technology.PowerPlant;
 import emlab.gen.domain.technology.Substance;
 import emlab.gen.domain.technology.SubstanceShareInFuelMix;
@@ -53,95 +52,29 @@ public abstract class AbstractEnergyProducerRole<T extends EnergyProducer> exten
     @Autowired
     Reps reps;
 
-    public double calculateMarketCapacity(PowerGeneratingTechnology technology, long time) {
-        double capacity = 0d;
-        for (PowerPlant plant : reps.powerPlantRepository.findOperationalPowerPlantsByTechnology(technology, time)) {
-            capacity += plant.getAvailableCapacity(getCurrentTick());
-        }
-        logger.info("Capacity for technology {} is {}", technology.getName(), capacity);
-        return capacity;
-    }
-
-    public double calculateMarketCapacity(ElectricitySpotMarket market, PowerGeneratingTechnology technology, long time) {
-        double capacity = 0d;
-        for (PowerPlant plant : reps.powerPlantRepository.findOperationalPowerPlantsByTechnology(technology, time)) {
-            if (plant.getLocation().getZone().equals(market.getZone())) {
-                capacity += plant.getAvailableCapacity(time);
-            }
-        }
-        logger.info("Capacity for technology {} is {}", technology.getName(), capacity);
-        return capacity;
-    }
-
-    public double calculateOwnerCapacityOfType(ElectricitySpotMarket market, PowerGeneratingTechnology technology, long time,
-            T owner) {
-        double capacity = 0d;
-        for (PowerPlant plant : reps.powerPlantRepository.findOperationalPowerPlantsByTechnology(technology, time)) {
-            if (plant.getLocation().getZone().equals(market.getZone()) && plant.getOwner().equals(owner)) {
-                capacity += plant.getAvailableCapacity(time);
-            }
-        }
-        logger.info("Capacity for technology {} is {}", technology.getName(), capacity);
-        return capacity;
-    }
-
-    public double calculateTotalOwnerCapacity(ElectricitySpotMarket market, long time, T owner) {
-        double capacity = 0d;
-        reps.powerPlantRepository.findOperationalPowerPlantsByOwnerAndMarket(
-                owner, market, time);
-        for (PowerPlant plant : reps.powerPlantRepository.findOperationalPowerPlantsByOwnerAndMarket(owner, market,
-                time)) {
-            capacity += plant.getAvailableCapacity(time);
-        }
-        logger.info("Capacity for owner {} is {}", owner, capacity);
-        return capacity;
-    }
-
-    public double calculateTotalOwnerCapacityInPipeline(ElectricitySpotMarket market, long time, T owner) {
-        double capacity = 0d;
-        for (PowerPlant plant : reps.powerPlantRepository.findPowerPlantsByOwnerAndMarketInPipeline(owner, market,
-                getCurrentTick())) {
-            capacity += plant.getAvailableCapacity(time);
-        }
-        logger.info("Capacity in pipeline for owner {} is {}", owner, capacity);
-        return capacity;
-    }
-
-    public double calculateMarketCapacityEverInstalledUpToGivenTime(PowerGeneratingTechnology technology, long time) {
-        double capacity = 0d;
-
-        for (PowerPlant plant : reps.powerPlantRepository.findPowerPlantsByTechnology(technology)) {
-            if (plant.getConstructionStartTime() <= time) {
-                capacity += plant.getAvailableCapacity(getCurrentTick());
-            }
-        }
-        logger.info("Capacity for technology {} is {}", technology.getName(), capacity);
-        return capacity;
-    }
-
-    public double calculateMarginalCost(PowerPlant powerPlant) {
+    public double calculateMarginalCO2Cost(PowerPlant powerPlant, long tick) {
         double mc = 0d;
         // fuel cost
-        mc += calculateMarginalCostExclCO2MarketCost(powerPlant);
-        mc += calculateCO2MarketMarginalCost(powerPlant);
+        mc += calculateCO2TaxMarginalCost(powerPlant, tick);
+        mc += calculateCO2MarketMarginalCost(powerPlant, tick);
         logger.info("Margincal cost for plant {} is {}", powerPlant.getName(), mc);
         return mc;
     }
 
-    public double calculateMarginalCO2Cost(PowerPlant powerPlant) {
-        double mc = 0d;
-        // fuel cost
-        mc += calculateCO2TaxMarginalCost(powerPlant);
-        mc += calculateCO2MarketMarginalCost(powerPlant);
-        logger.info("Margincal cost for plant {} is {}", powerPlant.getName(), mc);
-        return mc;
-    }
-
-    public double calculateMarginalCostExclCO2MarketCost(PowerPlant powerPlant) {
+    public double calculateMarginalCostExclCO2MarketCost(PowerPlant powerPlant, long tick) {
         double mc = 0d;
         // fuel cost
         mc += calculateMarginalFuelCost(powerPlant);
-        mc += calculateCO2TaxMarginalCost(powerPlant);
+        mc += calculateCO2TaxMarginalCost(powerPlant, tick);
+        logger.info("Margincal cost excluding CO2 auction/market cost for plant {} is {}", powerPlant.getName(), mc);
+        return mc;
+    }
+
+    public double calculateExpectedMarginalCostExclCO2MarketCost(PowerPlant powerPlant,
+            Map<Substance, Double> forecastedFuelPrices, long tick) {
+        double mc = 0d;
+        mc += calculateExpectedMarginalFuelCost(powerPlant, forecastedFuelPrices);
+        mc += calculateCO2TaxMarginalCost(powerPlant, tick);
         logger.info("Margincal cost excluding CO2 auction/market cost for plant {} is {}", powerPlant.getName(), mc);
         return mc;
     }
@@ -154,6 +87,21 @@ public abstract class AbstractEnergyProducerRole<T extends EnergyProducer> exten
             double amount = mix.getShare();
             logger.info("Calculating need for fuel: {} units of {}", mix.getShare(), mix.getSubstance().getName());
             double fuelPrice = findLastKnownPriceForSubstance(mix.getSubstance());
+            fc += amount * fuelPrice;
+            logger.info("Calculating marginal cost and found a fuel price which is {} per unit of fuel", fuelPrice);
+        }
+
+        return fc;
+    }
+
+    public double calculateExpectedMarginalFuelCost(PowerPlant powerPlant, Map<Substance, Double> forecastedFuelPrices) {
+        double fc = 0d;
+        // fuel cost for each fuel
+        for (SubstanceShareInFuelMix mix : powerPlant.getFuelMix()) {
+
+            double amount = mix.getShare();
+            logger.info("Calculating need for fuel: {} units of {}", mix.getShare(), mix.getSubstance().getName());
+            double fuelPrice = forecastedFuelPrices.get(mix.getSubstance());
             fc += amount * fuelPrice;
             logger.info("Calculating marginal cost and found a fuel price which is {} per unit of fuel", fuelPrice);
         }
@@ -243,10 +191,18 @@ public abstract class AbstractEnergyProducerRole<T extends EnergyProducer> exten
         return null;
     }
 
-    public double calculateCO2MarketMarginalCost(PowerPlant powerPlant) {
+    public double calculateCO2MarketMarginalCost(PowerPlant powerPlant, long tick) {
         double co2Intensity = powerPlant.calculateEmissionIntensity();
         CO2Auction auction = reps.genericRepository.findFirst(CO2Auction.class);
-        double co2Price = findLastKnownPriceOnMarket(auction);
+        double co2Price;
+        try{
+            co2Price = reps.clearingPointRepository.findClearingPointForMarketAndTime(auction, tick).getPrice();
+        } catch (Exception e) {
+            logger.warn("Couldn't find clearing point for tick {} and market {}", tick, auction);
+            co2Price = findLastKnownCO2Price();
+        }
+
+
         return co2Intensity * co2Price;
     }
 
@@ -279,10 +235,10 @@ public abstract class AbstractEnergyProducerRole<T extends EnergyProducer> exten
         return co2Intensity * paymentEffectivePartOfNationalCO2 * electricityOutput;
     }
 
-    public double calculateCO2TaxMarginalCost(PowerPlant powerPlant) {
+    public double calculateCO2TaxMarginalCost(PowerPlant powerPlant, long tick) {
         double co2Intensity = powerPlant.calculateEmissionIntensity();
         Government government = reps.genericRepository.findFirst(Government.class);
-        double co2Tax = government.getCO2Tax(getCurrentTick());
+        double co2Tax = government.getCO2Tax(tick);
         return co2Intensity * co2Tax;
     }
 
@@ -317,14 +273,6 @@ public abstract class AbstractEnergyProducerRole<T extends EnergyProducer> exten
 
         double currentCost = trend.getValue(getCurrentTick() - (timeConstructed + lifetime));
         return currentCost;
-    }
-
-    public double calculateAverageEnergyDensityInOperation(PowerPlant powerPlant) {
-        double energyDensity = 0d;
-        for (SubstanceShareInFuelMix share : powerPlant.getFuelMix()) {
-            energyDensity += share.getSubstance().getEnergyDensity() * share.getShare();
-        }
-        return energyDensity;
     }
 
     public double calculateAveragePastOperatingProfit(PowerPlant pp, long horizon) {
