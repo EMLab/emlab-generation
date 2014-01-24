@@ -15,6 +15,8 @@
  ******************************************************************************/
 package emlab.gen.role;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.neo4j.support.Neo4jTemplate;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +33,7 @@ import emlab.gen.domain.agent.StrategicReserveOperator;
 import emlab.gen.domain.agent.TargetInvestor;
 import emlab.gen.domain.market.CommodityMarket;
 import emlab.gen.domain.market.electricity.ElectricitySpotMarket;
+import emlab.gen.domain.technology.Substance;
 import emlab.gen.repository.Reps;
 import emlab.gen.role.capacitymechanisms.ProcessAcceptedPowerPlantDispatchRoleinSR;
 import emlab.gen.role.capacitymechanisms.StrategicReserveOperatorRole;
@@ -191,6 +194,25 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
             logger.warn("  3a. Contracting Strategic Reserve in " + strategicReserveOperator.getZone().getName());
             strategicReserveOperatorRole.act(strategicReserveOperator);
         }
+
+        timerMarket.reset();
+        timerMarket.start();
+        logger.warn("  4a. Creating market forecast");
+
+        Map<Substance, Double> forecastedFuelPrices = clearIterativeCO2AndElectricitySpotMarketTwoCountryRole
+                .predictFuelPrices(3, getCurrentTick() + 3);
+        submitOffersToElectricitySpotMarketRole.createOffersForElectricitySpotMarket(null, getCurrentTick() + 3,
+ true,
+                true, forecastedFuelPrices);
+
+        clearIterativeCO2AndElectricitySpotMarketTwoCountryRole
+        .clearIterativeCO2AndElectricitySpotMarketTwoCountryForTimestepAndFuelPrices(getCurrentTick() + 3,
+                        forecastedFuelPrices, model);
+        // model.act(clearIterativeCO2AndElectricitySpotMarketTwoCountryRole);
+        timerMarket.stop();
+        logger.warn("        took: {} seconds.", timerMarket.seconds());
+
+        timerMarket.reset();
 
         timerMarket.reset();
         timerMarket.start();

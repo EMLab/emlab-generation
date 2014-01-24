@@ -65,18 +65,28 @@ Role<EnergyProducer> {
         List<PowerPlantDispatchPlan> ppdpList = new ArrayList<PowerPlantDispatchPlan>();
 
         long numberOfSegments = reps.segmentRepository.count();
-        ElectricitySpotMarket market = producer.getInvestorMarket();
+        ElectricitySpotMarket market = null;
+        if (producer != null)
+            market = producer.getInvestorMarket();
 
-        Iterable<PowerPlant> powerPlants = forecast ? reps.powerPlantRepository
-                .findExpectedOperationalPowerPlantsInMarketByOwner(market, tick, producer) : reps.powerPlantRepository
-                .findOperationalPowerPlantsByOwner(producer, tick);
+        Iterable<PowerPlant> powerPlants;
+        if (producer != null) {
+            powerPlants = forecast ? reps.powerPlantRepository
+                    .findExpectedOperationalPowerPlantsInMarketByOwner(market, tick, producer) : reps.powerPlantRepository
+                    .findOperationalPowerPlantsByOwner(producer, tick);
+        } else {
+            logger.warn("SEEE it is not dead code!");
+            powerPlants = forecast ? reps.powerPlantRepository.findExpectedOperationalPowerPlants(tick)
+                    : reps.powerPlantRepository.findOperationalPowerPlants(tick);
+        }
+        // find all my operating power plants
+        for (PowerPlant plant : powerPlants) {
 
-                // find all my operating power plants
-                for (PowerPlant plant : powerPlants) {
+            if (producer == null) {
+                market = reps.marketRepository.findElectricitySpotMarketForZone(plant.getLocation().getZone());
+                producer = plant.getOwner();
+            }
 
-            // get market for the plant by zone
-            // ElectricitySpotMarket market =
-            // reps.marketRepository.findElectricitySpotMarketForZone(plant.getLocation().getZone());
             double mc;
             double price;
             if (!forecast) {
@@ -137,20 +147,21 @@ Role<EnergyProducer> {
 
             }
 
-                }
+        }
 
-                return ppdpList;
+        return ppdpList;
     }
 
     @Transactional
     void updateMarginalCostInclCO2AfterFuelMixChange(double co2Price,
-            Map<ElectricitySpotMarket, Double> nationalMinCo2Prices, long tick) {
+            Map<ElectricitySpotMarket, Double> nationalMinCo2Prices, long clearingTick) {
 
         int i = 0;
         int j = 0;
 
         Government government = reps.template.findAll(Government.class).iterator().next();
-        for (PowerPlantDispatchPlan plan : reps.powerPlantDispatchPlanRepository.findAllPowerPlantDispatchPlansForTime(getCurrentTick())) {
+        for (PowerPlantDispatchPlan plan : reps.powerPlantDispatchPlanRepository
+                .findAllPowerPlantDispatchPlansForTime(clearingTick)) {
             j++;
 
             double capacity = plan.getAmount();
@@ -169,9 +180,9 @@ Role<EnergyProducer> {
                     substancePriceMap.put(substance, findLastKnownPriceForSubstance(substance));
                 }
                 Set<SubstanceShareInFuelMix> fuelMix = calculateFuelMix(plan.getPowerPlant(), substancePriceMap,
-                        government.getCO2Tax(getCurrentTick()) + co2Price);
+                        government.getCO2Tax(clearingTick) + co2Price);
                 plan.getPowerPlant().setFuelMix(fuelMix);
-                double mc = calculateMarginalCostExclCO2MarketCost(plan.getPowerPlant(), tick);
+                double mc = calculateMarginalCostExclCO2MarketCost(plan.getPowerPlant(), clearingTick);
                 if (mc != oldmc) {
                     plan.setBidWithoutCO2(mc);
                     i++;

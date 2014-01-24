@@ -46,6 +46,7 @@ import emlab.gen.domain.technology.PowerPlant;
 import emlab.gen.domain.technology.Substance;
 import emlab.gen.domain.technology.SubstanceShareInFuelMix;
 import emlab.gen.repository.Reps;
+import emlab.gen.util.GeometricTrendRegression;
 
 public abstract class AbstractEnergyProducerRole<T extends EnergyProducer> extends AbstractRole<T> {
 
@@ -517,6 +518,41 @@ public abstract class AbstractEnergyProducerRole<T extends EnergyProducer> exten
             co2Prices.put(esm, Double.valueOf(co2PriceInCountry));
         }
         return co2Prices;
+    }
+
+    /**
+     * Predicts fuel prices for {@link futureTimePoint} using a geometric trend
+     * regression forecast. Only predicts fuels that are traded on a commodity
+     * market.
+     * 
+     * @param agent
+     * @param futureTimePoint
+     * @return Map<Substance, Double> of predicted prices.
+     */
+    public Map<Substance, Double> predictFuelPrices(int numberOfYearsBacklookingForForecasting, long futureTimePoint) {
+        // Fuel Prices
+        Map<Substance, Double> expectedFuelPrices = new HashMap<Substance, Double>();
+        for (Substance substance : reps.substanceRepository.findAllSubstancesTradedOnCommodityMarkets()) {
+            // Find Clearing Points for the last 5 years (counting current year
+            // as one of the last 5 years).
+            Iterable<ClearingPoint> cps = reps.clearingPointRepository
+                    .findAllClearingPointsForSubstanceTradedOnCommodityMarkesAndTimeRange(substance, getCurrentTick()
+                            - (numberOfYearsBacklookingForForecasting - 1), getCurrentTick());
+            // logger.warn("{}, {}",
+            // getCurrentTick()-(agent.getNumberOfYearsBacklookingForForecasting()-1),
+            // getCurrentTick());
+            // Create regression object
+            GeometricTrendRegression gtr = new GeometricTrendRegression();
+            for (ClearingPoint clearingPoint : cps) {
+                // logger.warn("CP {}: {} , in" + clearingPoint.getTime(),
+                // substance.getName(), clearingPoint.getPrice());
+                gtr.addData(clearingPoint.getTime(), clearingPoint.getPrice());
+            }
+            expectedFuelPrices.put(substance, gtr.predict(futureTimePoint));
+            // logger.warn("Forecast {}: {}, in Step " + futureTimePoint,
+            // substance, expectedFuelPrices.get(substance));
+        }
+        return expectedFuelPrices;
     }
 
 }

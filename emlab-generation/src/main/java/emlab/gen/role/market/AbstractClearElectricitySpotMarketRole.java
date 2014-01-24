@@ -40,6 +40,7 @@ import emlab.gen.domain.market.electricity.Segment;
 import emlab.gen.domain.technology.PowerPlant;
 import emlab.gen.domain.technology.Substance;
 import emlab.gen.repository.Reps;
+import emlab.gen.util.GeometricTrendRegression;
 
 /**
  * Creates and clears the {@link ElectricitySpotMarket} for two {@link Zone}s. The market is divided into {@link Segment}s and cleared for each segment. A global CO2 emissions market is cleared. The
@@ -189,7 +190,7 @@ public abstract class AbstractClearElectricitySpotMarketRole<T extends Decarboni
                 if (co2SecantSearch.tooLowEmissionsPair == null) {
                     co2SecantSearch.co2Price = (co2SecantSearch.co2Price != 0d) ? ((co2SecantSearch.co2Price * 2 < government
                             .getCo2Penalty(getCurrentTick())) ? (co2SecantSearch.co2Price * 2) : government
-                            .getCo2Penalty(getCurrentTick())) : 5d;
+                                    .getCo2Penalty(getCurrentTick())) : 5d;
                             // logger.warn("New doubled CO2 search price {}", co2SecantSearch.co2Price);
                 } else {
                     double p2 = co2SecantSearch.tooHighEmissionsPair.price;
@@ -614,6 +615,32 @@ public abstract class AbstractClearElectricitySpotMarketRole<T extends Decarboni
 
     public Reps getReps() {
         return reps;
+    }
+
+    public Map<Substance, Double> predictFuelPrices(int numberOfYearsBacklookingForForecasting, long futureTimePoint) {
+        // Fuel Prices
+        Map<Substance, Double> expectedFuelPrices = new HashMap<Substance, Double>();
+        for (Substance substance : reps.substanceRepository.findAllSubstancesTradedOnCommodityMarkets()) {
+            // Find Clearing Points for the last 5 years (counting current year
+            // as one of the last 5 years).
+            Iterable<ClearingPoint> cps = reps.clearingPointRepository
+                    .findAllClearingPointsForSubstanceTradedOnCommodityMarkesAndTimeRange(substance, getCurrentTick()
+                            - (numberOfYearsBacklookingForForecasting - 1), getCurrentTick());
+            // logger.warn("{}, {}",
+            // getCurrentTick()-(agent.getNumberOfYearsBacklookingForForecasting()-1),
+            // getCurrentTick());
+            // Create regression object
+            GeometricTrendRegression gtr = new GeometricTrendRegression();
+            for (ClearingPoint clearingPoint : cps) {
+                // logger.warn("CP {}: {} , in" + clearingPoint.getTime(),
+                // substance.getName(), clearingPoint.getPrice());
+                gtr.addData(clearingPoint.getTime(), clearingPoint.getPrice());
+            }
+            expectedFuelPrices.put(substance, gtr.predict(futureTimePoint));
+            // logger.warn("Forecast {}: {}, in Step " + futureTimePoint,
+            // substance, expectedFuelPrices.get(substance));
+        }
+        return expectedFuelPrices;
     }
 
     @Transactional

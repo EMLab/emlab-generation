@@ -66,6 +66,9 @@ public interface PowerPlantRepository extends GraphRepository<PowerPlant> {
     @Query(value = "g.idx('__types__')[[className:'emlab.gen.domain.technology.PowerPlant']].filter{(it.dismantleTime > tick) && ((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick)}", type = QueryType.Gremlin)
     Iterable<PowerPlant> findOperationalPowerPlants(@Param("tick") long tick);
 
+    @Query(value = "g.idx('__types__')[[className:'emlab.gen.domain.technology.PowerPlant']].filter{((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick) && (it.expectedEndOfLife > tick)}", type = QueryType.Gremlin)
+    public Iterable<PowerPlant> findExpectedOperationalPowerPlants(@Param("tick") long tick);
+
     @Query(value = "g.idx('__types__')[[className:'emlab.gen.domain.technology.PowerPlant']].as('x').out('TECHNOLOGY').filter{(it.dismantleTime > tick) && ((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick)}", type = QueryType.Gremlin)
     Iterable<PowerPlant> findOperationalPowerPlantsWithFuelsGreaterZero(@Param("tick") long tick);
 

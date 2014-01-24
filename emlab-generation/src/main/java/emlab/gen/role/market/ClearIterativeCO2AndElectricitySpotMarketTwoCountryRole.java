@@ -79,6 +79,9 @@ implements Role<DecarbonizationModel> {
     public void clearIterativeCO2AndElectricitySpotMarketTwoCountryForTimestepAndFuelPrices(long clearingTick,
             Map<Substance, Double> fuelPriceMap, DecarbonizationModel model) {
 
+        if (fuelPriceMap==null)
+            fuelPriceMap = predictFuelPrices(5, clearingTick);
+
         if (model == null)
             model = template.findAll(DecarbonizationModel.class).iterator().next();
 
