@@ -35,6 +35,7 @@ public class ClearingPoint {
     private double price;
     private double volume;
     private long time;
+    private boolean forecast;
 
     public double getPrice() {
         return price;
@@ -68,6 +69,7 @@ public class ClearingPoint {
         this.abstractMarket = abstractMarket;
     }
 
+    @Override
     public String toString() {
         return " market: " + abstractMarket + ", price " + price + ", volume " + volume + ", time " + time;
     }
@@ -75,5 +77,13 @@ public class ClearingPoint {
     @Transactional
     public void updateAbstractMarket(DecarbonizationMarket market) {
         setAbstractMarket(market);
+    }
+
+    public boolean isForecast() {
+        return forecast;
+    }
+
+    public void setForecast(boolean forecast) {
+        this.forecast = forecast;
     }
 }

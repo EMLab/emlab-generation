@@ -113,12 +113,13 @@ public abstract class AbstractClearElectricitySpotMarketRole<T extends Decarboni
         public double emission;
     }
 
-    CO2SecantSearch co2PriceSecantSearchUpdate(CO2SecantSearch co2SecantSearch, DecarbonizationModel model, Government government) {
+    CO2SecantSearch co2PriceSecantSearchUpdate(CO2SecantSearch co2SecantSearch, DecarbonizationModel model,
+            Government government, boolean forecast) {
 
         co2SecantSearch.stable = false;
         double capDeviationCriterion = model.getCapDeviationCriterion();
         double co2Cap = government.getCo2Cap(getCurrentTick());
-        co2SecantSearch.co2Emissions = determineTotalEmissionsBasedOnPowerPlantDispatchPlan();
+        co2SecantSearch.co2Emissions = determineTotalEmissionsBasedOnPowerPlantDispatchPlan(forecast);
 
         double deviation = (co2SecantSearch.co2Emissions - co2Cap) / co2Cap;
 
@@ -248,12 +249,13 @@ public abstract class AbstractClearElectricitySpotMarketRole<T extends Decarboni
      * @return
      */
 
-    double clearGlobalMarketWithNoCapacityConstraints(Segment segment, GlobalSegmentClearingOutcome globalOutcome) {
+    double clearGlobalMarketWithNoCapacityConstraints(Segment segment, GlobalSegmentClearingOutcome globalOutcome,
+            boolean forecast) {
 
         double marginalPlantMarginalCost = Double.MAX_VALUE;
 
         for (PowerPlantDispatchPlan plan : reps.powerPlantDispatchPlanRepository.findSortedPowerPlantDispatchPlansForSegmentForTime(
-                segment, getCurrentTick())) {
+                segment, getCurrentTick(), forecast)) {
             ElectricitySpotMarket myMarket = (ElectricitySpotMarket) plan.getBiddingMarket();
 
             // Make it produce as long as there is load.
@@ -285,7 +287,7 @@ public abstract class AbstractClearElectricitySpotMarketRole<T extends Decarboni
      *            the marginal cost (including Co2 cost)
      */
     @Transactional
-    void determineCommitmentOfPowerPlantsOnTheBasisOfLongTermContracts(List<Segment> segments) {
+    void determineCommitmentOfPowerPlantsOnTheBasisOfLongTermContracts(List<Segment> segments, boolean forecast) {
 
         for (EnergyProducer producer : reps.genericRepository.findAll(EnergyProducer.class)) {
 
@@ -302,7 +304,8 @@ public abstract class AbstractClearElectricitySpotMarketRole<T extends Decarboni
 
                 // for all power plants in the sorted marginal cost map
                 for (PowerPlantDispatchPlan plan : reps.powerPlantDispatchPlanRepository
-                        .findAllPowerPlantDispatchPlansForEnergyProducerForTimeAndSegment(segment, producer, getCurrentTick())) {
+                        .findAllPowerPlantDispatchPlansForEnergyProducerForTimeAndSegment(segment, producer,
+                                getCurrentTick(), forecast)) {
                     PowerPlant plant = plan.getPowerPlant();
 
                     double availableCapacity = plant.getAvailableCapacity(getCurrentTick(), segment, segments.size());
@@ -433,10 +436,11 @@ public abstract class AbstractClearElectricitySpotMarketRole<T extends Decarboni
      * 
      * @return the total CO2 emissions
      */
-    double determineTotalEmissionsBasedOnPowerPlantDispatchPlan() {
+    double determineTotalEmissionsBasedOnPowerPlantDispatchPlan(boolean forecast) {
         double totalEmissions = 0d;
         //int counter = 0;
-        for (PowerPlantDispatchPlan plan : reps.powerPlantDispatchPlanRepository.findAllPowerPlantDispatchPlansForTime(getCurrentTick())) {
+        for (PowerPlantDispatchPlan plan : reps.powerPlantDispatchPlanRepository.findAllPowerPlantDispatchPlansForTime(
+                getCurrentTick(), forecast)) {
             double operationalCapacity = plan.getCapacityLongTermContract() + plan.getAcceptedAmount();
             double emissionIntensity = plan.getPowerPlant().calculateEmissionIntensity();
             double hours = plan.getSegment().getLengthInHours();
@@ -459,7 +463,7 @@ public abstract class AbstractClearElectricitySpotMarketRole<T extends Decarboni
      * @return the co2PriceStability object with possibly adjustments in the CO2 price, emissions, stability and direction of the change
      */
     CO2PriceStability determineStabilityOfCO2andElectricityPricesAndAdjustIfNecessary(CO2PriceStability co2PriceStability,
-            DecarbonizationModel model, Government government) {
+            DecarbonizationModel model, Government government, boolean forecast) {
 
         double co2Cap = government.getCo2Cap(getCurrentTick());
         double minimumCo2Price = government.getMinCo2Price(getCurrentTick());
@@ -467,7 +471,7 @@ public abstract class AbstractClearElectricitySpotMarketRole<T extends Decarboni
         double iterationSpeedCriterion = model.getIterationSpeedCriterion();
         double capDeviationCriterion = model.getCapDeviationCriterion();
 
-        co2PriceStability.co2Emissions = determineTotalEmissionsBasedOnPowerPlantDispatchPlan();
+        co2PriceStability.co2Emissions = determineTotalEmissionsBasedOnPowerPlantDispatchPlan(forecast);
         double deviation = (co2PriceStability.co2Emissions - co2Cap) / co2Cap;
 
         // Determine the deviation from the cap.
@@ -560,7 +564,7 @@ public abstract class AbstractClearElectricitySpotMarketRole<T extends Decarboni
      */
     double findLastKnownPriceOnMarket(DecarbonizationMarket market) {
         Double average = calculateAverageMarketPriceBasedOnClearingPoints(reps.clearingPointRepositoryOld
-                .findClearingPointsForMarketAndTime(market, getCurrentTick()));
+                .findClearingPointsForMarketAndTime(market, getCurrentTick(), false));
         Substance substance = market.getSubstance();
 
         if (average != null) {
@@ -569,7 +573,7 @@ public abstract class AbstractClearElectricitySpotMarketRole<T extends Decarboni
         }
 
         average = calculateAverageMarketPriceBasedOnClearingPoints(reps.clearingPointRepositoryOld.findClearingPointsForMarketAndTime(
-                market, getCurrentTick() - 1));
+                market, getCurrentTick() - 1, false));
         if (average != null) {
             logger.info("Average price found on market for previous tick for {}", substance.getName());
             return average;
@@ -636,7 +640,13 @@ public abstract class AbstractClearElectricitySpotMarketRole<T extends Decarboni
                 // substance.getName(), clearingPoint.getPrice());
                 gtr.addData(clearingPoint.getTime(), clearingPoint.getPrice());
             }
-            expectedFuelPrices.put(substance, gtr.predict(futureTimePoint));
+            double forecast = gtr.predict(futureTimePoint);
+            if (Double.isNaN(forecast)) {
+                expectedFuelPrices.put(substance, findLastKnownPriceForSubstance(substance));
+            } else {
+                expectedFuelPrices.put(substance, forecast);
+            }
+
             // logger.warn("Forecast {}: {}, in Step " + futureTimePoint,
             // substance, expectedFuelPrices.get(substance));
         }
@@ -644,8 +654,10 @@ public abstract class AbstractClearElectricitySpotMarketRole<T extends Decarboni
     }
 
     @Transactional
-    void updatePowerPlanDispatchPlansWithNewCO2Prices(double co2Price, Map<ElectricitySpotMarket, Double> nationalMinCo2Prices) {
-        for (PowerPlantDispatchPlan plan : reps.powerPlantDispatchPlanRepository.findAllPowerPlantDispatchPlansForTime(getCurrentTick())) {
+    void updatePowerPlanDispatchPlansWithNewCO2Prices(double co2Price,
+            Map<ElectricitySpotMarket, Double> nationalMinCo2Prices, long clearingTick, boolean forecast) {
+        for (PowerPlantDispatchPlan plan : reps.powerPlantDispatchPlanRepository.findAllPowerPlantDispatchPlansForTime(
+                getCurrentTick(), forecast)) {
             if (nationalMinCo2Prices.get(plan.getBiddingMarket()) > co2Price) {
                 plan.setPrice(plan.getBidWithoutCO2()
                         + (nationalMinCo2Prices.get(plan.getBiddingMarket()) * plan.getPowerPlant().calculateEmissionIntensity()));

@@ -25,6 +25,7 @@ import com.tinkerpop.blueprints.pgm.Vertex;
 import com.tinkerpop.gremlin.pipes.filter.PropertyFilterPipe;
 import com.tinkerpop.pipes.Pipe;
 import com.tinkerpop.pipes.filter.FilterPipe;
+import com.tinkerpop.pipes.filter.FilterPipe.Filter;
 import com.tinkerpop.pipes.util.Pipeline;
 
 import emlab.gen.domain.market.ClearingPoint;
@@ -58,30 +59,37 @@ public class ClearingPointRepositoryOld extends AbstractRepository<ClearingPoint
         return findAllByPipe(segment, clearingPoint);
     }
 
-    public ClearingPoint findClearingPointForMarketAndTime(DecarbonizationMarket market, long time) {
 
-        Iterator<ClearingPoint> i = findClearingPointsForMarketAndTime(market, time).iterator();
+    public ClearingPoint findClearingPointForMarketAndTime(DecarbonizationMarket market, long time, boolean forecast) {
+
+        Iterator<ClearingPoint> i = findClearingPointsForMarketAndTime(market, time, forecast).iterator();
         if (i.hasNext()) {
             return i.next();
         }
         return null;
     }
 
-    public Iterable<ClearingPoint> findClearingPointsForMarketAndTime(DecarbonizationMarket market, long time) {
+
+    public Iterable<ClearingPoint> findClearingPointsForMarketAndTime(DecarbonizationMarket market, long time,
+            boolean forecast) {
         // TODO: test this
         Pipe<Vertex, Vertex> clearingPoints = new LabeledEdgePipe("MARKET_POINT", LabeledEdgePipe.Step.IN_OUT);
         // filter by time
         Pipe<Vertex, Vertex> timeFilter = new PropertyFilterPipe<Vertex, Long>("time", time, FilterPipe.Filter.EQUAL);
-        Pipeline<Vertex, Vertex> clearingPoint = new Pipeline<Vertex, Vertex>(clearingPoints, timeFilter);
+        Pipe<Vertex, Vertex> forecastFilter = new PropertyFilterPipe<Vertex, Boolean>("forecast", forecast,
+                Filter.EQUAL);
+        Pipeline<Vertex, Vertex> clearingPoint = new Pipeline<Vertex, Vertex>(clearingPoints, timeFilter,
+                forecastFilter);
 
         return findAllByPipe(market, clearingPoint);
     }
 
     @Transactional
-    public ClearingPoint createOrUpdateClearingPoint(DecarbonizationMarket abstractMarket, double price, double volume, long time) {
+    public ClearingPoint createOrUpdateClearingPoint(DecarbonizationMarket abstractMarket, double price, double volume,
+            long time, boolean forecast) {
         ClearingPoint point = null;
-        if (findClearingPointsForMarketAndTime(abstractMarket, time).iterator().hasNext()) {
-            point = findClearingPointsForMarketAndTime(abstractMarket, time).iterator().next();
+        if (findClearingPointsForMarketAndTime(abstractMarket, time, forecast).iterator().hasNext()) {
+            point = findClearingPointsForMarketAndTime(abstractMarket, time, forecast).iterator().next();
         } else {
             point = new ClearingPoint().persist();
         }
@@ -89,15 +97,17 @@ public class ClearingPointRepositoryOld extends AbstractRepository<ClearingPoint
         point.setPrice(price);
         point.setTime(time);
         point.setVolume(volume);
+        point.setForecast(forecast);
         return point;
     }
 
     @Transactional
     public SegmentClearingPoint createOrUpdateSegmentClearingPoint(Segment segment, DecarbonizationMarket abstractMarket, double price,
-            double volume, long time) {
+            double volume, long time, boolean forecast) {
         SegmentClearingPoint point = null;
         // TODO make this a pipe
-        List<SegmentClearingPoint> points = Utils.asCastedList(findClearingPointsForMarketAndTime(abstractMarket, time));
+        List<SegmentClearingPoint> points = Utils.asCastedList(findClearingPointsForMarketAndTime(abstractMarket, time,
+                forecast));
         for (SegmentClearingPoint onepoint : points) {
             if (onepoint.getSegment().equals(segment)) {
                 point = onepoint;
@@ -111,6 +121,7 @@ public class ClearingPointRepositoryOld extends AbstractRepository<ClearingPoint
         point.setTime(time);
         point.setVolume(volume);
         point.setSegment(segment);
+        point.setForecast(forecast);
         return point;
     }
 

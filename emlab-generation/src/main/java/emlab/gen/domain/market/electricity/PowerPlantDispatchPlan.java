@@ -135,7 +135,8 @@ public class PowerPlantDispatchPlan extends Bid {
     @Override
     public String toString() {
         return "for " + getBidder() + " power plant: " + getPowerPlant() + " in segment " + segment + " plans to sell long term: "
-                + getCapacityLongTermContract() + " plans to sell capacity spot: " + getAmount();
+ + getCapacityLongTermContract() + " plans to sell capacity spot: "
+                + getAmount() + "for price: " + getPrice();
     }
 
     public double getBidWithoutCO2() {
@@ -152,7 +153,8 @@ public class PowerPlantDispatchPlan extends Bid {
     }
 
     public void specifyNotPersist(PowerPlant plant, EnergyProducer producer, ElectricitySpotMarket market, Segment segment, long time,
-            double price, double bidWithoutCO2, double spotMarketCapacity, double longTermContractCapacity, int status) {
+            double price, double bidWithoutCO2, double spotMarketCapacity,
+            double longTermContractCapacity, int status, boolean forecast) {
         this.setPowerPlant(plant);
         this.setSegment(segment);
         this.setTime(time);
@@ -163,15 +165,16 @@ public class PowerPlantDispatchPlan extends Bid {
         this.setAmount(spotMarketCapacity);
         this.setCapacityLongTermContract(longTermContractCapacity);
         this.setStatus(status);
+        this.setForecast(forecast);
     }
 
     // All transactional methods below are signified by starting with update
     @Transactional
     public void specifyAndPersist(PowerPlant plant, EnergyProducer producer, ElectricitySpotMarket market, Segment segment, long time,
-            double price, double bidWithoutCO2, double spotMarketCapacity, double longTermContractCapacity, int status) {
+            double price, double bidWithoutCO2, double spotMarketCapacity, double longTermContractCapacity, int status, boolean forecast) {
         this.persist();
         this.specifyNotPersist(plant, producer, market, segment, time, price, bidWithoutCO2, spotMarketCapacity, longTermContractCapacity,
-                status);
+                status, forecast);
 
     }
 

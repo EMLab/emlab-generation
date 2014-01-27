@@ -53,6 +53,7 @@ public class ProcessAcceptedBidsRole extends AbstractMarketRole<DecarbonizationM
         return reps;
     }
 
+    @Override
     @Transactional
     public void act(DecarbonizationMarket market) {
 
@@ -74,7 +75,8 @@ public class ProcessAcceptedBidsRole extends AbstractMarketRole<DecarbonizationM
 
         // Assuming only one price on this market for this time step and
         // iteration.
-        ClearingPoint clearingPoint = reps.clearingPointRepositoryOld.findClearingPointForMarketAndTime(market, getCurrentTick());
+        ClearingPoint clearingPoint = reps.clearingPointRepositoryOld.findClearingPointForMarketAndTime(market,
+                getCurrentTick(), false);
 
         for (Bid bid : acceptedSupplyBids) {
             // if (bid.getStatus() >= Bid.PARTLY_ACCEPTED) {

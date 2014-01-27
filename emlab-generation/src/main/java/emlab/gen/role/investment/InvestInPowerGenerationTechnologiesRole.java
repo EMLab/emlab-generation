@@ -79,7 +79,7 @@ NodeBacked {
     StrategicReserveOperatorRepository strategicReserveOperatorRepository;
 
     // market expectations
-	@Transient
+    @Transient
     Map<ElectricitySpotMarket, MarketInformation> marketInfoMap = new HashMap<ElectricitySpotMarket, MarketInformation>();
 
     @Override
@@ -94,7 +94,7 @@ NodeBacked {
 
         // CO2
         Map<ElectricitySpotMarket, Double> expectedCO2Price = determineExpectedCO2PriceInclTax(futureTimePoint,
-                agent.getNumberOfYearsBacklookingForForecasting());
+                agent.getNumberOfYearsBacklookingForForecasting(), getCurrentTick());
 
         // logger.warn(expectedCO2Price.toString());
 
@@ -237,7 +237,7 @@ NodeBacked {
                     // technology, runningHours);
                 } else {
 
-                    double fixedOMCost = calculateFixedOperatingCost(plant);// /
+                    double fixedOMCost = calculateFixedOperatingCost(plant, getCurrentTick());// /
                     // plant.getActualNominalCapacity();
 
                     double operatingProfit = expectedGrossProfit - fixedOMCost;
@@ -273,37 +273,37 @@ NodeBacked {
 
                     double discountedOpProfit = npv(discountedProjectCashInflow, wacc);
 
-                        // logger.warn("Agent {}  found that the projected discounted inflows for technology {} to be "
-                        // + discountedOpProfit,
-                        // agent, technology);
+                    // logger.warn("Agent {}  found that the projected discounted inflows for technology {} to be "
+                    // + discountedOpProfit,
+                    // agent, technology);
 
-                        double projectValue = discountedOpProfit + discountedCapitalCosts;
+                    double projectValue = discountedOpProfit + discountedCapitalCosts;
 
-                        // logger.warn(
-                        // "Agent {}  found the project value for technology {} to be "
-                        // + Math.round(projectValue /
-						// plant.getActualNominalCapacity()) +
-                        // " EUR/kW (running hours: "
-                        // + runningHours + "", agent, technology);
+                    // logger.warn(
+                    // "Agent {}  found the project value for technology {} to be "
+                    // + Math.round(projectValue /
+                    // plant.getActualNominalCapacity()) +
+                    // " EUR/kW (running hours: "
+                    // + runningHours + "", agent, technology);
 
-                        // double projectTotalValue = projectValuePerMW *
-						// plant.getActualNominalCapacity();
+                    // double projectTotalValue = projectValuePerMW *
+                    // plant.getActualNominalCapacity();
 
-                        // double projectReturnOnInvestment = discountedOpProfit
-                        // / (-discountedCapitalCosts);
+                    // double projectReturnOnInvestment = discountedOpProfit
+                    // / (-discountedCapitalCosts);
 
-                        /*
-                         * Divide by capacity, in order not to favour large power plants (which have the single largest NPV
-                         */
+                    /*
+                     * Divide by capacity, in order not to favour large power plants (which have the single largest NPV
+                     */
 
-						if (projectValue > 0 && projectValue / plant.getActualNominalCapacity() > highestValue) {
-							highestValue = projectValue / plant.getActualNominalCapacity();
-                            bestTechnology = plant.getTechnology();
-                        }
+                    if (projectValue > 0 && projectValue / plant.getActualNominalCapacity() > highestValue) {
+                        highestValue = projectValue / plant.getActualNominalCapacity();
+                        bestTechnology = plant.getTechnology();
                     }
-
                 }
+
             }
+        }
 
         if (bestTechnology != null) {
             // logger.warn("Agent {} invested in technology {} at tick " + getCurrentTick(), agent, bestTechnology);

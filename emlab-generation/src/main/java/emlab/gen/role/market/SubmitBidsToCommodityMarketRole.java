@@ -43,6 +43,7 @@ public class SubmitBidsToCommodityMarketRole extends AbstractEnergyProducerRole 
     @Autowired
     Reps reps;
 
+    @Override
     @Transactional
     public void act(EnergyProducer producer) {
 
@@ -52,7 +53,7 @@ public class SubmitBidsToCommodityMarketRole extends AbstractEnergyProducerRole 
 
         for (PowerPlant plant : reps.powerPlantRepository.findOperationalPowerPlantsByOwner(producer, getCurrentTick())) {
 
-            double totalSupply = plant.calculateElectricityOutputAtTime(getCurrentTick());
+            double totalSupply = plant.calculateElectricityOutputAtTime(getCurrentTick(), false);
 
             for (SubstanceShareInFuelMix share : plant.getFuelMix()) {
 

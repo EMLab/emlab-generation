@@ -72,12 +72,12 @@ implements Role<DecarbonizationModel> {
         }
 
         clearIterativeCO2AndElectricitySpotMarketTwoCountryForTimestepAndFuelPrices(getCurrentTick(), fuelPriceMap,
-                model);
+                model, false);
 
     }
 
     public void clearIterativeCO2AndElectricitySpotMarketTwoCountryForTimestepAndFuelPrices(long clearingTick,
-            Map<Substance, Double> fuelPriceMap, DecarbonizationModel model) {
+            Map<Substance, Double> fuelPriceMap, DecarbonizationModel model, boolean forecast) {
 
         if (fuelPriceMap==null)
             fuelPriceMap = predictFuelPrices(5, clearingTick);
@@ -135,7 +135,7 @@ implements Role<DecarbonizationModel> {
             // Change Iteration algorithm here, and a few lines below...
 
             ClearingPoint lastClearingPointOfCo2Market = reps.clearingPointRepositoryOld.findClearingPointForMarketAndTime(co2Auction,
-                    getCurrentTick() - 1);
+                    getCurrentTick() - 1, false);
             if (lastClearingPointOfCo2Market != null) {
                 co2SecantSearch.co2Emissions = lastClearingPointOfCo2Market.getVolume();
             } else {
@@ -154,31 +154,31 @@ implements Role<DecarbonizationModel> {
 
                 //updatePowerPlanDispatchPlansWithNewCO2Prices(co2SecantSearch.co2Price, nationalMinCo2Prices);
                 submitOffersToElectricitySpotMarketRole.updateMarginalCostInclCO2AfterFuelMixChange(
-                        co2SecantSearch.co2Price, nationalMinCo2Prices, clearingTick);
+                        co2SecantSearch.co2Price, nationalMinCo2Prices, clearingTick, forecast);
 
                 if (model.isLongTermContractsImplemented())
-                    determineCommitmentOfPowerPlantsOnTheBasisOfLongTermContracts(segments);
+                    determineCommitmentOfPowerPlantsOnTheBasisOfLongTermContracts(segments, forecast);
 
                 for (Segment segment : segments) {
                     clearOneOrTwoConnectedElectricityMarketsAtAGivenCO2PriceForOneSegment(interconnector.getCapacity(),
-                            segment, government, clearingTick);
+                            segment, government, clearingTick, forecast);
                 }
 
                 // Change Iteration algorithm here
                 // co2PriceStability = determineStabilityOfCO2andElectricityPricesAndAdjustIfNecessary(co2PriceStability, model, government);
-                co2SecantSearch = co2PriceSecantSearchUpdate(co2SecantSearch, model, government);
+                co2SecantSearch = co2PriceSecantSearchUpdate(co2SecantSearch, model, government, forecast);
                 breakOffIterator++;
 
             }
 
             reps.clearingPointRepositoryOld.createOrUpdateClearingPoint(co2Auction, co2SecantSearch.co2Price, co2SecantSearch.co2Emissions,
-                    clearingTick);
+                    clearingTick, forecast);
         } else {
             if (model.isLongTermContractsImplemented())
-                determineCommitmentOfPowerPlantsOnTheBasisOfLongTermContracts(segments);
+                determineCommitmentOfPowerPlantsOnTheBasisOfLongTermContracts(segments, forecast);
             for (Segment segment : segments) {
                 clearOneOrTwoConnectedElectricityMarketsAtAGivenCO2PriceForOneSegment(interconnector.getCapacity(),
-                        segment, government, clearingTick);
+                        segment, government, clearingTick, forecast);
             }
         }
 
@@ -194,7 +194,7 @@ implements Role<DecarbonizationModel> {
      */
     @Transactional
     void clearOneOrTwoConnectedElectricityMarketsAtAGivenCO2PriceForOneSegment(double interconnectorCapacity, Segment segment,
-            Government government, long clearingTick) {
+            Government government, long clearingTick, boolean forecast) {
 
         GlobalSegmentClearingOutcome globalOutcome = new GlobalSegmentClearingOutcome();
 
@@ -208,7 +208,7 @@ implements Role<DecarbonizationModel> {
         }
 
         // empty list of plants that are supplying.
-        double marginalPlantMarginalCost = clearGlobalMarketWithNoCapacityConstraints(segment, globalOutcome);
+        double marginalPlantMarginalCost = clearGlobalMarketWithNoCapacityConstraints(segment, globalOutcome, forecast);
 
         // For each plant in the cost-ordered list
 
@@ -240,7 +240,8 @@ implements Role<DecarbonizationModel> {
                 // updatePowerDispatchPlansAfterTwoCountryClearingIsComplete(segment);
 
                 reps.clearingPointRepositoryOld.createOrUpdateSegmentClearingPoint(segment, market, globalOutcome.globalPrice,
-                        supplyInThisMarket * segment.getLengthInHours(), clearingTick);
+                        supplyInThisMarket * segment.getLengthInHours(), clearingTick,
+                        forecast);
                 logger.info("Stored a system-uniform price for market " + market + " / segment " + segment + " -- supply "
                         + supplyInThisMarket + " -- price: " + globalOutcome.globalPrice);
             }
@@ -278,7 +279,8 @@ implements Role<DecarbonizationModel> {
 
             // For each plant in the cost-ordered list
 
-            clearTwoInterconnectedMarketsGivenAnInterconnectorAdjustedLoad(segment, marketOutcomes, clearingTick);
+            clearTwoInterconnectedMarketsGivenAnInterconnectorAdjustedLoad(segment, marketOutcomes, clearingTick,
+                    forecast);
 
             // updatePowerDispatchPlansAfterTwoCountryClearingIsComplete(segment);
 
@@ -312,7 +314,7 @@ implements Role<DecarbonizationModel> {
             // }
             for (ElectricitySpotMarket market : reps.marketRepository.findAllElectricitySpotMarkets()) {
                 reps.clearingPointRepositoryOld.createOrUpdateSegmentClearingPoint(segment, market, marketOutcomes.prices.get(market),
-                        marketOutcomes.supplies.get(market) * segment.getLengthInHours(), clearingTick);
+                        marketOutcomes.supplies.get(market) * segment.getLengthInHours(), clearingTick, forecast);
                 // logger.warn("Stored a market specific price for market " +
                 // market + " / segment " + segment + " -- supply "
                 // + marketOutcomes.supplies.get(market) + " -- demand: " +
@@ -326,10 +328,10 @@ implements Role<DecarbonizationModel> {
     }
 
     void clearTwoInterconnectedMarketsGivenAnInterconnectorAdjustedLoad(Segment segment,
-            MarketSegmentClearingOutcome marketOutcomes, long clearingTick) {
+            MarketSegmentClearingOutcome marketOutcomes, long clearingTick, boolean forecast) {
 
         for (PowerPlantDispatchPlan plan : reps.powerPlantDispatchPlanRepository.findSortedPowerPlantDispatchPlansForSegmentForTime(
-                segment, clearingTick)) {
+                segment, clearingTick, forecast)) {
 
             ElectricitySpotMarket myMarket = (ElectricitySpotMarket) plan.getBiddingMarket();
 

@@ -46,6 +46,7 @@ public class ReceiveLongTermContractPowerRevenuesRole extends AbstractEnergyProd
     @Autowired
     Reps reps;
 
+    @Override
     @Transactional
     public void act(EnergyProducer producer) {
 
@@ -60,13 +61,13 @@ public class ReceiveLongTermContractPowerRevenuesRole extends AbstractEnergyProd
                 double basePrice = longTermContract.getCapacity() * longTermContract.getPricePerUnit() * segment.getLengthInHours();
                 double co2PassThrough = longTermContract.getCo2PassThroughFactor();
                 double co2PriceStart = longTermContract.getCo2PriceStart();
-                double currentCo2Price = findLastKnownCO2Price();
+                double currentCo2Price = findLastKnownCO2Price(getCurrentTick());
                 double fuelPassThrough = longTermContract.getFuelPassThroughFactor();
                 double fuelPriceStart = longTermContract.getFuelPriceStart();
                 double currentFuelPrice = 0d;
                 Substance mainFuel = longTermContract.getMainFuel();
                 if (mainFuel != null) {
-                    currentFuelPrice = findLastKnownPriceForSubstance(mainFuel);
+                    currentFuelPrice = findLastKnownPriceForSubstance(mainFuel, getCurrentTick());
                 }
 
                 // prevent dividing by 0

@@ -202,12 +202,12 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
         Map<Substance, Double> forecastedFuelPrices = clearIterativeCO2AndElectricitySpotMarketTwoCountryRole
                 .predictFuelPrices(3, getCurrentTick() + 3);
         submitOffersToElectricitySpotMarketRole.createOffersForElectricitySpotMarket(null, getCurrentTick() + 3,
- true,
+                true,
                 true, forecastedFuelPrices);
 
         clearIterativeCO2AndElectricitySpotMarketTwoCountryRole
         .clearIterativeCO2AndElectricitySpotMarketTwoCountryForTimestepAndFuelPrices(getCurrentTick() + 3,
-                        forecastedFuelPrices, model);
+                forecastedFuelPrices, model, true);
         // model.act(clearIterativeCO2AndElectricitySpotMarketTwoCountryRole);
         timerMarket.stop();
         logger.warn("        took: {} seconds.", timerMarket.seconds());

@@ -53,13 +53,12 @@ Role<EnergyProducer> {
     Reps reps;
 
     @Override
-    @Transactional
     public void act(EnergyProducer producer) {
 
         createOffersForElectricitySpotMarket(producer, getCurrentTick(), true, false, null);
     }
 
-
+    @Transactional
     public List<PowerPlantDispatchPlan> createOffersForElectricitySpotMarket(EnergyProducer producer, long tick,
             boolean persistPPDP, boolean forecast, Map<Substance, Double> forecastedFuelPrices) {
         List<PowerPlantDispatchPlan> ppdpList = new ArrayList<PowerPlantDispatchPlan>();
@@ -112,7 +111,7 @@ Role<EnergyProducer> {
                 logger.info("I bid capacity: {} and price: {}", capacity, mc);
 
                 PowerPlantDispatchPlan plan = reps.powerPlantDispatchPlanRepository
-                        .findOnePowerPlantDispatchPlanForPowerPlantForSegmentForTime(plant, segment, tick);
+                        .findOnePowerPlantDispatchPlanForPowerPlantForSegmentForTime(plant, segment, tick, forecast);
                 // TODO: handle exception
 
                 // plan =
@@ -131,7 +130,7 @@ Role<EnergyProducer> {
                     // time, price, bidWithoutCO2, spotMarketCapacity,
                     // longTermContractCapacity, status);
                     plan.specifyNotPersist(plant, producer, market, segment, tick, price, price, capacity, 0,
-                            Bid.SUBMITTED);
+                            Bid.SUBMITTED, forecast);
                 } else {
                     // plan = plans.iterator().next();
                     plan.setBidder(producer);
@@ -154,14 +153,15 @@ Role<EnergyProducer> {
 
     @Transactional
     void updateMarginalCostInclCO2AfterFuelMixChange(double co2Price,
-            Map<ElectricitySpotMarket, Double> nationalMinCo2Prices, long clearingTick) {
+            Map<ElectricitySpotMarket, Double> nationalMinCo2Prices, long clearingTick, boolean forecast) {
 
         int i = 0;
         int j = 0;
 
         Government government = reps.template.findAll(Government.class).iterator().next();
         for (PowerPlantDispatchPlan plan : reps.powerPlantDispatchPlanRepository
-                .findAllPowerPlantDispatchPlansForTime(clearingTick)) {
+                .findAllPowerPlantDispatchPlansForTime(
+                        clearingTick, forecast)) {
             j++;
 
             double capacity = plan.getAmount();
@@ -177,7 +177,7 @@ Role<EnergyProducer> {
                 Map<Substance, Double> substancePriceMap = new HashMap<Substance, Double>();
 
                 for (Substance substance : possibleFuels) {
-                    substancePriceMap.put(substance, findLastKnownPriceForSubstance(substance));
+                    substancePriceMap.put(substance, findLastKnownPriceForSubstance(substance, getCurrentTick()));
                 }
                 Set<SubstanceShareInFuelMix> fuelMix = calculateFuelMix(plan.getPowerPlant(), substancePriceMap,
                         government.getCO2Tax(clearingTick) + co2Price);

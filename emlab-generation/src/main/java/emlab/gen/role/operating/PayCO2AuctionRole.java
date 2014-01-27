@@ -43,6 +43,7 @@ public class PayCO2AuctionRole extends AbstractEnergyProducerRole implements Rol
         return reps;
     }
 
+    @Override
     @Transactional
     public void act(EnergyProducer producer) {
         logger.info("Pay for the CO2 credits");
@@ -50,11 +51,11 @@ public class PayCO2AuctionRole extends AbstractEnergyProducerRole implements Rol
         Government government = reps.genericRepository.findFirst(Government.class);
 
         for (PowerPlant plant : reps.powerPlantRepository.findOperationalPowerPlantsByOwner(producer, getCurrentTick())) {
-            double money = calculateCO2MarketCost(plant);
+            double money = calculateCO2MarketCost(plant, false, getCurrentTick());
             CashFlow cf = reps.nonTransactionalCreateRepository.createCashFlow(producer, government, money, CashFlow.CO2AUCTION,
                     getCurrentTick(), plant);
             logger.info("Cash flow created: {}", cf);
-            double minCO2Money = calculatePaymentEffictiveCO2NationalMinimumPriceCost(plant);
+            double minCO2Money = calculatePaymentEffictiveCO2NationalMinimumPriceCost(plant, false, getCurrentTick());
             NationalGovernment nationalGovernment = reps.nationalGovernmentRepository.findNationalGovernmentByPowerPlant(plant);
             CashFlow cf2 = reps.nonTransactionalCreateRepository.createCashFlow(producer, nationalGovernment, minCO2Money,
                     CashFlow.NATIONALMINCO2, getCurrentTick(), plant);

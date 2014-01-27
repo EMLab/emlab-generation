@@ -78,10 +78,10 @@ AbstractEnergyProducerRole implements Role<EnergyProducer> {
                 if (!plant.getFuelMix().isEmpty()) {
                     mainFuel = plant.getFuelMix().iterator().next()
                             .getSubstance();
-                    fuelPriceStart = findLastKnownPriceForSubstance(mainFuel);
+                    fuelPriceStart = findLastKnownPriceForSubstance(mainFuel, getCurrentTick());
                 }
 
-                double co2PriceStart = findLastKnownCO2Price();
+                double co2PriceStart = findLastKnownCO2Price(getCurrentTick());
 
                 for (LongTermContractType type : reps.genericRepository
                         .findAll(LongTermContractType.class)) {
@@ -217,7 +217,7 @@ AbstractEnergyProducerRole implements Role<EnergyProducer> {
      * @return
      */
     private double determineTotalAverageCost(PowerPlant plant, double hours) {
-        double fixedOMCost = calculateFixedOperatingCost(plant)
+        double fixedOMCost = calculateFixedOperatingCost(plant, getCurrentTick())
                 / plant.getAvailableCapacity(getCurrentTick());
         double fixedcapitalCost = plant.getActualInvestedCapital() //Doesn't consider the cost of capital, but just the overall invested capital
                 / plant.getTechnology().getDepreciationTime()/ plant.getAvailableCapacity(getCurrentTick());
@@ -230,6 +230,6 @@ AbstractEnergyProducerRole implements Role<EnergyProducer> {
     }
 
     private double determineFuelCost(PowerPlant plant) {
-        return calculateMarginalFuelCost(plant);
+        return calculateMarginalFuelCost(plant, getCurrentTick());
     }
 }

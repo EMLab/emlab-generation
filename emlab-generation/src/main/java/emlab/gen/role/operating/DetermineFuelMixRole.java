@@ -55,6 +55,7 @@ public class DetermineFuelMixRole extends AbstractEnergyProducerRole implements 
         return reps;
     }
 
+    @Override
     @Transactional
     public void act(EnergyProducer producer) {
 
@@ -85,7 +86,7 @@ public class DetermineFuelMixRole extends AbstractEnergyProducerRole implements 
             Map<Substance, Double> substancePriceMap = new HashMap<Substance, Double>();
 
             for (Substance substance : possibleFuels) {
-                substancePriceMap.put(substance, findLastKnownPriceForSubstance(substance));
+                substancePriceMap.put(substance, findLastKnownPriceForSubstance(substance, getCurrentTick()));
             }
             Set<SubstanceShareInFuelMix> fuelMix = calculateFuelMix(plant, substancePriceMap,
                     expectedCO2Prices.get(reps.marketRepository.findElectricitySpotMarketByPowerPlant(plant)));
@@ -95,14 +96,15 @@ public class DetermineFuelMixRole extends AbstractEnergyProducerRole implements 
     }
 
     @Transactional
-    public void updateDuringCo2MarketClearing(double co2AuctionPrice) {
+    public void updateDuringCo2MarketClearing(double co2AuctionPrice, boolean forecast) {
 
         Government government = template.findAll(Government.class).iterator().next();
 
         int i = 0;
         int j = 0;
 
-        for (PowerPlantDispatchPlan plan : reps.powerPlantDispatchPlanRepository.findAllPowerPlantDispatchPlansForTime(getCurrentTick())) {
+        for (PowerPlantDispatchPlan plan : reps.powerPlantDispatchPlanRepository.findAllPowerPlantDispatchPlansForTime(
+                getCurrentTick(), forecast)) {
             j++;
 
             if (plan.getPowerPlant().getTechnology().getFuels().size() > 1) {
@@ -113,7 +115,7 @@ public class DetermineFuelMixRole extends AbstractEnergyProducerRole implements 
                 Map<Substance, Double> substancePriceMap = new HashMap<Substance, Double>();
 
                 for (Substance substance : possibleFuels) {
-                    substancePriceMap.put(substance, findLastKnownPriceForSubstance(substance));
+                    substancePriceMap.put(substance, findLastKnownPriceForSubstance(substance, getCurrentTick()));
                 }
                 Set<SubstanceShareInFuelMix> fuelMix = calculateFuelMix(plan.getPowerPlant(), substancePriceMap,
                         government.getCO2Tax(getCurrentTick()) + co2AuctionPrice);
