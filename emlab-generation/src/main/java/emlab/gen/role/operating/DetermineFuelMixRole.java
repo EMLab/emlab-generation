@@ -27,6 +27,7 @@ import agentspring.role.Role;
 import agentspring.role.RoleComponent;
 import emlab.gen.domain.agent.EnergyProducer;
 import emlab.gen.domain.agent.Government;
+import emlab.gen.domain.market.CO2Auction;
 import emlab.gen.domain.market.electricity.ElectricitySpotMarket;
 import emlab.gen.domain.market.electricity.PowerPlantDispatchPlan;
 import emlab.gen.domain.technology.PowerPlant;
@@ -93,6 +94,51 @@ public class DetermineFuelMixRole extends AbstractEnergyProducerRole implements 
             plant.setFuelMix(fuelMix);
 
         }
+    }
+
+    @Transactional
+    public void determineFuelMixForecastForYearAndFuelPriceMap(long clearingTick,
+            Map<Substance, Double> substancePriceMap, Map<ElectricitySpotMarket, Double> nationalMinCo2Prices) {
+
+        CO2Auction co2Auction = template.findAll(CO2Auction.class).iterator().next();
+        double lastCO2Price;
+        try {
+            lastCO2Price = reps.clearingPointRepositoryOld.findClearingPointForMarketAndTime(co2Auction,
+                    getCurrentTick() - 1, false).getPrice();
+        } catch (NullPointerException e) {
+            lastCO2Price = 0;
+        }
+
+        Government government = reps.genericRepository.findFirst(Government.class);
+        // double co2TaxLevel = government.getCO2Tax(getCurrentTick());
+
+        for (ElectricitySpotMarket market : reps.marketRepository.findAllElectricitySpotMarkets()) {
+            for (PowerPlant plant : reps.powerPlantRepository.findExpectedOperationalPowerPlantsInMarket(market,
+                    clearingTick)) {
+                logger.info("Found operational power plant {} ", plant.getTechnology());
+
+                double effectiveCO2Price;
+
+                if (nationalMinCo2Prices.get(market) > lastCO2Price)
+                    effectiveCO2Price = nationalMinCo2Prices.get(market);
+                else
+                    effectiveCO2Price = lastCO2Price;
+
+                effectiveCO2Price += government.getCO2Tax(clearingTick);
+                // Fuels
+                Set<Substance> possibleFuels = plant.getTechnology().getFuels();
+                Map<Substance, Double> substancePriceMap1 = new HashMap<Substance, Double>();
+
+                for (Substance substance : possibleFuels) {
+                    substancePriceMap1.put(substance, findLastKnownPriceForSubstance(substance, getCurrentTick()));
+                }
+                Set<SubstanceShareInFuelMix> fuelMix = calculateFuelMix(plant, substancePriceMap1,
+                        effectiveCO2Price);
+                plant.setFuelMix(fuelMix);
+
+            }
+        }
+
     }
 
     @Transactional

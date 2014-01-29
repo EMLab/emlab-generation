@@ -15,8 +15,6 @@
  ******************************************************************************/
 package emlab.gen.role;
 
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.neo4j.support.Neo4jTemplate;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,7 +31,6 @@ import emlab.gen.domain.agent.StrategicReserveOperator;
 import emlab.gen.domain.agent.TargetInvestor;
 import emlab.gen.domain.market.CommodityMarket;
 import emlab.gen.domain.market.electricity.ElectricitySpotMarket;
-import emlab.gen.domain.technology.Substance;
 import emlab.gen.repository.Reps;
 import emlab.gen.role.capacitymechanisms.ProcessAcceptedPowerPlantDispatchRoleinSR;
 import emlab.gen.role.capacitymechanisms.StrategicReserveOperatorRole;
@@ -159,7 +156,7 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
         if (model.isLongTermContractsImplemented()) {
             timerMarket.reset();
             timerMarket.start();
-            logger.warn("  2. Submit and select long-term electricity contracts");
+            logger.warn("  2a Submit and select long-term electricity contracts");
             for (EnergyProducer producer : reps.genericRepository.findAllAtRandom(EnergyProducer.class)) {
                 submitLongTermElectricityContractsRole.act(producer);
                 //                producer.act(submitLongTermElectricityContractsRole);
@@ -172,6 +169,17 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
             timerMarket.stop();
             logger.warn("        took: {} seconds.", timerMarket.seconds());
         }
+
+        timerMarket.reset();
+        timerMarket.start();
+        logger.warn("  2b. Creating market forecast");
+
+        clearIterativeCO2AndElectricitySpotMarketTwoCountryRole
+        .makeCentralElectricityMarketForecastForTimeStep(getCurrentTick() + 3);
+
+        logger.warn("        took: {} seconds.", timerMarket.seconds());
+
+        timerMarket.reset();
 
         /*
          * Clear electricity spot and CO2 markets and determine also the commitment of powerplants.
@@ -195,24 +203,7 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
             strategicReserveOperatorRole.act(strategicReserveOperator);
         }
 
-        timerMarket.reset();
-        timerMarket.start();
-        logger.warn("  4a. Creating market forecast");
 
-        Map<Substance, Double> forecastedFuelPrices = clearIterativeCO2AndElectricitySpotMarketTwoCountryRole
-                .predictFuelPrices(3, getCurrentTick() + 3);
-        submitOffersToElectricitySpotMarketRole.createOffersForElectricitySpotMarket(null, getCurrentTick() + 3,
-                true,
-                true, forecastedFuelPrices);
-
-        clearIterativeCO2AndElectricitySpotMarketTwoCountryRole
-        .clearIterativeCO2AndElectricitySpotMarketTwoCountryForTimestepAndFuelPrices(getCurrentTick() + 3,
-                forecastedFuelPrices, model, true);
-        // model.act(clearIterativeCO2AndElectricitySpotMarketTwoCountryRole);
-        timerMarket.stop();
-        logger.warn("        took: {} seconds.", timerMarket.seconds());
-
-        timerMarket.reset();
 
         timerMarket.reset();
         timerMarket.start();

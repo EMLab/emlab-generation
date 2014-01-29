@@ -113,7 +113,7 @@ public class PowerPlant {
         if (finishedConstruction <= time) {
             // finished construction
 
-            if (finishedConstruction + getTechnology().getExpectedLifetime() > time) {
+            if (getExpectedEndOfLife() > time) {
                 // Powerplant is not expected to be dismantled
                 return true;
             }
@@ -441,7 +441,7 @@ public class PowerPlant {
 
     public double calculateCO2EmissionsAtTime(long time, boolean forecast) {
         return this.calculateEmissionIntensity()
- * calculateElectricityOutputAtTime(time, forecast);
+                * calculateElectricityOutputAtTime(time, forecast);
     }
 
     @Transactional

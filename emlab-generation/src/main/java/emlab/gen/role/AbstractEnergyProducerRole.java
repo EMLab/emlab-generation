@@ -534,7 +534,7 @@ public abstract class AbstractEnergyProducerRole<T extends EnergyProducer> exten
      * @param futureTimePoint
      * @return Map<Substance, Double> of predicted prices.
      */
-    public Map<Substance, Double> predictFuelPrices(int numberOfYearsBacklookingForForecasting, long futureTimePoint,
+    public Map<Substance, Double> predictFuelPrices(long numberOfYearsBacklookingForForecasting, long futureTimePoint,
             long clearingTick) {
         // Fuel Prices
         Map<Substance, Double> expectedFuelPrices = new HashMap<Substance, Double>();
@@ -542,8 +542,8 @@ public abstract class AbstractEnergyProducerRole<T extends EnergyProducer> exten
             // Find Clearing Points for the last 5 years (counting current year
             // as one of the last 5 years).
             Iterable<ClearingPoint> cps = reps.clearingPointRepository
-                    .findAllClearingPointsForSubstanceTradedOnCommodityMarkesAndTimeRange(substance, clearingTick
-                            - (numberOfYearsBacklookingForForecasting - 1), clearingTick);
+                    .findAllClearingPointsForSubstanceTradedOnCommodityMarkesAndTimeRange(substance, getCurrentTick()
+                            - (numberOfYearsBacklookingForForecasting - 1), getCurrentTick());
             // logger.warn("{}, {}",
             // getCurrentTick()-(agent.getNumberOfYearsBacklookingForForecasting()-1),
             // getCurrentTick());
@@ -554,7 +554,17 @@ public abstract class AbstractEnergyProducerRole<T extends EnergyProducer> exten
                 // substance.getName(), clearingPoint.getPrice());
                 gtr.addData(clearingPoint.getTime(), clearingPoint.getPrice());
             }
-            expectedFuelPrices.put(substance, gtr.predict(futureTimePoint));
+            double forecast = gtr.predict(futureTimePoint);
+            if (Double.isNaN(forecast)) {
+                expectedFuelPrices.put(
+                        substance,
+                        reps.clearingPointRepositoryOld.findClearingPointForMarketAndTime(
+                                reps.marketRepository.findFirstMarketBySubstance(substance), getCurrentTick(), false)
+                                .getPrice());
+            } else {
+                expectedFuelPrices.put(substance, forecast);
+            }
+
             // logger.warn("Forecast {}: {}, in Step " + futureTimePoint,
             // substance, expectedFuelPrices.get(substance));
         }

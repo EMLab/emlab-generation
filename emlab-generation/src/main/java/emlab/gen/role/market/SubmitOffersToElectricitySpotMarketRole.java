@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import agentspring.role.Role;
 import agentspring.role.RoleComponent;
+import emlab.gen.domain.agent.DecarbonizationModel;
 import emlab.gen.domain.agent.EnergyProducer;
 import emlab.gen.domain.agent.Government;
 import emlab.gen.domain.market.Bid;
@@ -55,13 +56,22 @@ Role<EnergyProducer> {
     @Override
     public void act(EnergyProducer producer) {
 
-        createOffersForElectricitySpotMarket(producer, getCurrentTick(), true, false, null);
+        createOffersForElectricitySpotMarket(producer, getCurrentTick(), false, null);
     }
 
     @Transactional
     public List<PowerPlantDispatchPlan> createOffersForElectricitySpotMarket(EnergyProducer producer, long tick,
-            boolean persistPPDP, boolean forecast, Map<Substance, Double> forecastedFuelPrices) {
+            boolean forecast, Map<Substance, Double> forecastedFuelPrices) {
         List<PowerPlantDispatchPlan> ppdpList = new ArrayList<PowerPlantDispatchPlan>();
+
+        if (forecastedFuelPrices == null && !forecast) {
+            DecarbonizationModel model = reps.genericRepository.findFirst(DecarbonizationModel.class);
+            forecastedFuelPrices = new HashMap<Substance, Double>();
+            for (Substance substance : reps.substanceRepository.findAllSubstancesTradedOnCommodityMarkets()) {
+                forecastedFuelPrices.put(substance, findLastKnownPriceForSubstance(substance, getCurrentTick()));
+            }
+        }
+
 
         long numberOfSegments = reps.segmentRepository.count();
         ElectricitySpotMarket market = null;
@@ -74,14 +84,15 @@ Role<EnergyProducer> {
                     .findExpectedOperationalPowerPlantsInMarketByOwner(market, tick, producer) : reps.powerPlantRepository
                     .findOperationalPowerPlantsByOwner(producer, tick);
         } else {
-            logger.warn("SEEE it is not dead code!");
             powerPlants = forecast ? reps.powerPlantRepository.findExpectedOperationalPowerPlants(tick)
                     : reps.powerPlantRepository.findOperationalPowerPlants(tick);
         }
+
+        boolean producerIsNull = (producer == null) ? true : false;
         // find all my operating power plants
         for (PowerPlant plant : powerPlants) {
 
-            if (producer == null) {
+            if (producerIsNull) {
                 market = reps.marketRepository.findElectricitySpotMarketForZone(plant.getLocation().getZone());
                 producer = plant.getOwner();
             }
@@ -124,8 +135,7 @@ Role<EnergyProducer> {
                 // segment, getCurrentTick());
 
                 if (plan == null) {
-                    if (persistPPDP)
-                        plan = new PowerPlantDispatchPlan().persist();
+                    plan = new PowerPlantDispatchPlan().persist();
                     // plan.specifyNotPersist(plant, producer, market, segment,
                     // time, price, bidWithoutCO2, spotMarketCapacity,
                     // longTermContractCapacity, status);
@@ -164,9 +174,13 @@ Role<EnergyProducer> {
                         clearingTick, forecast)) {
             j++;
 
+            double effectiveCO2Price;
+
             double capacity = plan.getAmount();
             if (nationalMinCo2Prices.get(plan.getBiddingMarket()) > co2Price)
-                co2Price = nationalMinCo2Prices.get(plan.getBiddingMarket());
+                effectiveCO2Price = nationalMinCo2Prices.get(plan.getBiddingMarket());
+            else
+                effectiveCO2Price = co2Price;
 
             if (plan.getPowerPlant().getFuelMix().size() > 1) {
 
@@ -180,7 +194,7 @@ Role<EnergyProducer> {
                     substancePriceMap.put(substance, findLastKnownPriceForSubstance(substance, getCurrentTick()));
                 }
                 Set<SubstanceShareInFuelMix> fuelMix = calculateFuelMix(plan.getPowerPlant(), substancePriceMap,
-                        government.getCO2Tax(clearingTick) + co2Price);
+                        government.getCO2Tax(clearingTick) + effectiveCO2Price);
                 plan.getPowerPlant().setFuelMix(fuelMix);
                 double mc = calculateMarginalCostExclCO2MarketCost(plan.getPowerPlant(), clearingTick);
                 if (mc != oldmc) {

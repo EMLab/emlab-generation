@@ -59,6 +59,8 @@ public abstract class AbstractClearElectricitySpotMarketRole<T extends Decarboni
     @Autowired
     private Neo4jTemplate template;
 
+    protected final double epsilon = 1e-3;
+
     class MarketSegmentClearingOutcome {
         HashMap<ElectricitySpotMarket, Double> loads = new HashMap<ElectricitySpotMarket, Double>();
         HashMap<ElectricitySpotMarket, Double> prices = new HashMap<ElectricitySpotMarket, Double>();
@@ -250,12 +252,12 @@ public abstract class AbstractClearElectricitySpotMarketRole<T extends Decarboni
      */
 
     double clearGlobalMarketWithNoCapacityConstraints(Segment segment, GlobalSegmentClearingOutcome globalOutcome,
-            boolean forecast) {
+            boolean forecast, long clearingTick) {
 
         double marginalPlantMarginalCost = Double.MAX_VALUE;
 
         for (PowerPlantDispatchPlan plan : reps.powerPlantDispatchPlanRepository.findSortedPowerPlantDispatchPlansForSegmentForTime(
-                segment, getCurrentTick(), forecast)) {
+                segment, clearingTick, forecast)) {
             ElectricitySpotMarket myMarket = (ElectricitySpotMarket) plan.getBiddingMarket();
 
             // Make it produce as long as there is load.
@@ -343,19 +345,28 @@ public abstract class AbstractClearElectricitySpotMarketRole<T extends Decarboni
     }
 
     /**
-     * Determine demand in this segment for each market, based on the total load in this tick minus the load covered by LongTermContracts.
+     * Determine demand in this segment for each market, based on the total load
+     * in this tick minus the load covered by LongTermContracts. If now
+     * demandGrowthMap is supplied, assume current tick.
      * 
      * @param segment
      * @return the total demand
      */
-    Map<ElectricitySpotMarket, Double> determineActualDemandForSpotMarkets(Segment segment) {
+    Map<ElectricitySpotMarket, Double> determineActualDemandForSpotMarkets(Segment segment, Map<ElectricitySpotMarket,Double> demandGrowthMap) {
+
+        if (demandGrowthMap == null) {
+            demandGrowthMap = new HashMap<ElectricitySpotMarket, Double>();
+            for (ElectricitySpotMarket market : reps.marketRepository.findAllElectricitySpotMarkets()) {
+                demandGrowthMap.put(market, market.getDemandGrowthTrend().getValue(getCurrentTick()));
+            }
+        }
 
         Map<ElectricitySpotMarket, Double> loadInMarkets = new HashMap<ElectricitySpotMarket, Double>();
 
         for (ElectricitySpotMarket market : reps.marketRepository.findAllElectricitySpotMarkets()) {
             double baseLoad = reps.segmentLoadRepository.returnSegmentBaseLoadBySegmentAndMarket(segment, market);
-
-            double load = baseLoad * market.getDemandGrowthTrend().getValue(getCurrentTick());
+            double load;
+            load = baseLoad * demandGrowthMap.get(market);
 
             // Load may be covered by long term contracts.
             double loadCoveredByLTC = 0d;
@@ -621,36 +632,57 @@ public abstract class AbstractClearElectricitySpotMarketRole<T extends Decarboni
         return reps;
     }
 
-    public Map<Substance, Double> predictFuelPrices(int numberOfYearsBacklookingForForecasting, long futureTimePoint) {
+    public Map<Substance, Double> predictFuelPrices(long numberOfYearsBacklookingForForecasting, long futureTimePoint) {
         // Fuel Prices
         Map<Substance, Double> expectedFuelPrices = new HashMap<Substance, Double>();
         for (Substance substance : reps.substanceRepository.findAllSubstancesTradedOnCommodityMarkets()) {
             // Find Clearing Points for the last 5 years (counting current year
             // as one of the last 5 years).
-            Iterable<ClearingPoint> cps = reps.clearingPointRepository
-                    .findAllClearingPointsForSubstanceTradedOnCommodityMarkesAndTimeRange(substance, getCurrentTick()
-                            - (numberOfYearsBacklookingForForecasting - 1), getCurrentTick());
-            // logger.warn("{}, {}",
-            // getCurrentTick()-(agent.getNumberOfYearsBacklookingForForecasting()-1),
-            // getCurrentTick());
-            // Create regression object
-            GeometricTrendRegression gtr = new GeometricTrendRegression();
-            for (ClearingPoint clearingPoint : cps) {
-                // logger.warn("CP {}: {} , in" + clearingPoint.getTime(),
-                // substance.getName(), clearingPoint.getPrice());
-                gtr.addData(clearingPoint.getTime(), clearingPoint.getPrice());
-            }
-            double forecast = gtr.predict(futureTimePoint);
-            if (Double.isNaN(forecast)) {
-                expectedFuelPrices.put(substance, findLastKnownPriceForSubstance(substance));
-            } else {
-                expectedFuelPrices.put(substance, forecast);
-            }
 
+            if (getCurrentTick() < 1) {
+                Iterable<ClearingPoint> cps = reps.clearingPointRepository
+                        .findAllClearingPointsForSubstanceTradedOnCommodityMarkesAndTimeRange(substance, getCurrentTick()
+                                - (numberOfYearsBacklookingForForecasting - 1), getCurrentTick());
+                // logger.warn("{}, {}",
+                // getCurrentTick()-(agent.getNumberOfYearsBacklookingForForecasting()-1),
+                // getCurrentTick());
+                // Create regression object
+                GeometricTrendRegression gtr = new GeometricTrendRegression();
+                for (ClearingPoint clearingPoint : cps) {
+                    // logger.warn("CP {}: {} , in" + clearingPoint.getTime(),
+                    // substance.getName(), clearingPoint.getPrice());
+                    gtr.addData(clearingPoint.getTime(), clearingPoint.getPrice());
+                }
+                double forecast = gtr.predict(futureTimePoint);
+                if (Double.isNaN(forecast)) {
+                    expectedFuelPrices.put(substance, findLastKnownPriceForSubstance(substance));
+                } else {
+                    expectedFuelPrices.put(substance, forecast);
+                }
+            } else {
+                expectedFuelPrices.put(substance, findLastKnownPriceForSubstance(substance));
+            }
             // logger.warn("Forecast {}: {}, in Step " + futureTimePoint,
             // substance, expectedFuelPrices.get(substance));
         }
         return expectedFuelPrices;
+    }
+
+    public Map<ElectricitySpotMarket, Double> predictDemand(long numberOfYearsBacklookingForForecasting,
+            long futureTimePoint) {
+        Map<ElectricitySpotMarket, Double> expectedDemand = new HashMap<ElectricitySpotMarket, Double>();
+        for (ElectricitySpotMarket elm : reps.template.findAll(ElectricitySpotMarket.class)) {
+            GeometricTrendRegression gtr = new GeometricTrendRegression();
+            for (long time = getCurrentTick(); time > getCurrentTick() - numberOfYearsBacklookingForForecasting
+                    && time >= 0; time = time - 1) {
+                gtr.addData(time, elm.getDemandGrowthTrend().getValue(time));
+            }
+            double forecast = gtr.predict(futureTimePoint);
+            if (Double.isNaN(forecast))
+                forecast = elm.getDemandGrowthTrend().getValue(getCurrentTick());
+            expectedDemand.put(elm, forecast);
+        }
+        return expectedDemand;
     }
 
     @Transactional
