@@ -166,13 +166,7 @@ implements Role<DecarbonizationModel> {
         CO2Auction co2Auction = template.findAll(CO2Auction.class).iterator().next();
 
         if (model.isCo2TradingImplemented()) {
-            // Old Iteration
-            // CO2PriceStability co2PriceStability = new CO2PriceStability();
-            // co2PriceStability.stable = false;
-            // co2PriceStability.positive = false;
-            // co2PriceStability.iterationSpeedFactor = model.getIterationSpeedFactor();
-            // co2PriceStability.co2Price = findLastKnownPriceOnMarket(co2Auction);
-            // New Iteration
+
             CO2SecantSearch co2SecantSearch = new CO2SecantSearch();
             co2SecantSearch.stable = false;
             co2SecantSearch.twoPricesExistWithBelowAboveEmissions = false;
@@ -288,8 +282,6 @@ implements Role<DecarbonizationModel> {
                     globalOutcome.globalPrice = market.getValueOfLostLoad();
                 }
 
-                // updatePowerDispatchPlansAfterTwoCountryClearingIsComplete(segment);
-
                 reps.clearingPointRepositoryOld.createOrUpdateSegmentClearingPoint(segment, market, globalOutcome.globalPrice,
                         supplyInThisMarket * segment.getLengthInHours(), clearingTick,
                         forecast);
@@ -342,28 +334,6 @@ implements Role<DecarbonizationModel> {
                 }
             }
 
-            // Only for debugging purposes
-            // logger.warn("Outcomes: {}", marketOutcomes);
-            // for (ElectricitySpotMarket market : markets) {
-            // logger.warn(
-            // "Segment " + segment.getSegmentID() +
-            // ": PPD capacity: {} MW, PP capacity: {}, Peak-Query: "
-            // +
-            // reps.powerPlantRepository.calculatePeakCapacityOfOperationalPowerPlantsInMarket(market,
-            // getCurrentTick()),
-            // determineCapacityInMarketBasedOnTreemapAndDispatchPlans(marginalCostMap,
-            // segment, market, markets),
-            // determinePeakCapacityInMarketBasedOnTreemapAndPowerPlants(marginalCostMap,
-            // segment, market, markets)
-            // + "Normal Capacity: "
-            // +
-            // determineCapacityInMarketBasedOnTreemapAndPowerPlants(marginalCostMap,
-            // market, markets)
-            // + "Query Capacity: "
-            // +
-            // reps.powerPlantRepository.calculateCapacityOfOperationalPowerPlantsInMarket(market,
-            // getCurrentTick()));
-            // }
             for (ElectricitySpotMarket market : reps.marketRepository.findAllElectricitySpotMarkets()) {
                 reps.clearingPointRepositoryOld.createOrUpdateSegmentClearingPoint(segment, market, marketOutcomes.prices.get(market),
                         marketOutcomes.supplies.get(market) * segment.getLengthInHours(), clearingTick, forecast);
