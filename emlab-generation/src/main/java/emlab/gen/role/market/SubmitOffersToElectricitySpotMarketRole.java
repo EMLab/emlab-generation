@@ -163,7 +163,8 @@ Role<EnergyProducer> {
 
     @Transactional
     void updateMarginalCostInclCO2AfterFuelMixChange(double co2Price,
-            Map<ElectricitySpotMarket, Double> nationalMinCo2Prices, long clearingTick, boolean forecast) {
+            Map<ElectricitySpotMarket, Double> nationalMinCo2Prices, long clearingTick, boolean forecast,
+            Map<Substance, Double> fuelPriceMap) {
 
         int i = 0;
         int j = 0;
@@ -191,7 +192,7 @@ Role<EnergyProducer> {
                 Map<Substance, Double> substancePriceMap = new HashMap<Substance, Double>();
 
                 for (Substance substance : possibleFuels) {
-                    substancePriceMap.put(substance, findLastKnownPriceForSubstance(substance, getCurrentTick()));
+                    substancePriceMap.put(substance, fuelPriceMap.get(substance));
                 }
                 Set<SubstanceShareInFuelMix> fuelMix = calculateFuelMix(plan.getPowerPlant(), substancePriceMap,
                         government.getCO2Tax(clearingTick) + effectiveCO2Price);

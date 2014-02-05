@@ -196,7 +196,7 @@ implements Role<DecarbonizationModel> {
 
                 //updatePowerPlanDispatchPlansWithNewCO2Prices(co2SecantSearch.co2Price, nationalMinCo2Prices);
                 submitOffersToElectricitySpotMarketRole.updateMarginalCostInclCO2AfterFuelMixChange(
-                        co2SecantSearch.co2Price, nationalMinCo2Prices, clearingTick, forecast);
+                        co2SecantSearch.co2Price, nationalMinCo2Prices, clearingTick, forecast, fuelPriceMap);
 
                 if (model.isLongTermContractsImplemented())
                     determineCommitmentOfPowerPlantsOnTheBasisOfLongTermContracts(segments, forecast);
@@ -208,7 +208,7 @@ implements Role<DecarbonizationModel> {
 
                 // Change Iteration algorithm here
                 // co2PriceStability = determineStabilityOfCO2andElectricityPricesAndAdjustIfNecessary(co2PriceStability, model, government);
-                co2SecantSearch = co2PriceSecantSearchUpdate(co2SecantSearch, model, government, forecast);
+                co2SecantSearch = co2PriceSecantSearchUpdate(co2SecantSearch, model, government, forecast, clearingTick);
                 breakOffIterator++;
 
             }

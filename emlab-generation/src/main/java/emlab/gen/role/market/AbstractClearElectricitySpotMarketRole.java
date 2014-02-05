@@ -116,12 +116,12 @@ public abstract class AbstractClearElectricitySpotMarketRole<T extends Decarboni
     }
 
     CO2SecantSearch co2PriceSecantSearchUpdate(CO2SecantSearch co2SecantSearch, DecarbonizationModel model,
-            Government government, boolean forecast) {
+            Government government, boolean forecast, long clearingTick) {
 
         co2SecantSearch.stable = false;
         double capDeviationCriterion = model.getCapDeviationCriterion();
-        double co2Cap = government.getCo2Cap(getCurrentTick());
-        co2SecantSearch.co2Emissions = determineTotalEmissionsBasedOnPowerPlantDispatchPlan(forecast);
+        double co2Cap = government.getCo2Cap(clearingTick);
+        co2SecantSearch.co2Emissions = determineTotalEmissionsBasedOnPowerPlantDispatchPlan(forecast, clearingTick);
 
         double deviation = (co2SecantSearch.co2Emissions - co2Cap) / co2Cap;
 
@@ -136,17 +136,18 @@ public abstract class AbstractClearElectricitySpotMarketRole<T extends Decarboni
 
         if (co2SecantSearch.tooHighEmissionsPair != null && co2SecantSearch.tooLowEmissionsPair != null) {
             co2SecantSearch.twoPricesExistWithBelowAboveEmissions = true;
-        } else if (co2SecantSearch.co2Price == government.getMinCo2Price(getCurrentTick()) && co2SecantSearch.co2Emissions < co2Cap) {
+        } else if (co2SecantSearch.co2Price == government.getMinCo2Price(clearingTick)
+                && co2SecantSearch.co2Emissions < co2Cap) {
             // logger.warn("Deviation CO2 price has reached minimum");
             // check if stable enough --> 2. Cap is met with a co2Price
             // equal to the minimum co2 price
             co2SecantSearch.stable = true;
             return co2SecantSearch;
-        } else if (co2SecantSearch.co2Price >= government.getCo2Penalty(getCurrentTick())
+        } else if (co2SecantSearch.co2Price >= government.getCo2Penalty(clearingTick)
                 && co2SecantSearch.co2Emissions >= co2Cap) {
             // Only if above the cap...
             // logger.warn("CO2 price ceiling reached {}", co2SecantSearch.co2Price);
-            co2SecantSearch.co2Price = government.getCo2Penalty(getCurrentTick());
+            co2SecantSearch.co2Price = government.getCo2Penalty(clearingTick);
             co2SecantSearch.stable = true;
             return co2SecantSearch;
         }
@@ -192,8 +193,8 @@ public abstract class AbstractClearElectricitySpotMarketRole<T extends Decarboni
 
                 if (co2SecantSearch.tooLowEmissionsPair == null) {
                     co2SecantSearch.co2Price = (co2SecantSearch.co2Price != 0d) ? ((co2SecantSearch.co2Price * 2 < government
-                            .getCo2Penalty(getCurrentTick())) ? (co2SecantSearch.co2Price * 2) : government
-                                    .getCo2Penalty(getCurrentTick())) : 5d;
+                            .getCo2Penalty(clearingTick)) ? (co2SecantSearch.co2Price * 2) : government
+                                    .getCo2Penalty(clearingTick)) : 5d;
                             // logger.warn("New doubled CO2 search price {}", co2SecantSearch.co2Price);
                 } else {
                     double p2 = co2SecantSearch.tooHighEmissionsPair.price;
@@ -229,8 +230,9 @@ public abstract class AbstractClearElectricitySpotMarketRole<T extends Decarboni
 
                 }
 
-                if (co2SecantSearch.co2Price < 0.5 || co2SecantSearch.co2Price - government.getMinCo2Price(getCurrentTick()) < 0.5) {
-                    co2SecantSearch.co2Price = government.getMinCo2Price(getCurrentTick());
+                if (co2SecantSearch.co2Price < 0.5
+                        || co2SecantSearch.co2Price - government.getMinCo2Price(clearingTick) < 0.5) {
+                    co2SecantSearch.co2Price = government.getMinCo2Price(clearingTick);
                     co2SecantSearch.stable = true;
                 }
 
@@ -447,11 +449,11 @@ public abstract class AbstractClearElectricitySpotMarketRole<T extends Decarboni
      * 
      * @return the total CO2 emissions
      */
-    double determineTotalEmissionsBasedOnPowerPlantDispatchPlan(boolean forecast) {
+    double determineTotalEmissionsBasedOnPowerPlantDispatchPlan(boolean forecast, long clearingTick) {
         double totalEmissions = 0d;
         //int counter = 0;
         for (PowerPlantDispatchPlan plan : reps.powerPlantDispatchPlanRepository.findAllPowerPlantDispatchPlansForTime(
-                getCurrentTick(), forecast)) {
+                clearingTick, forecast)) {
             double operationalCapacity = plan.getCapacityLongTermContract() + plan.getAcceptedAmount();
             double emissionIntensity = plan.getPowerPlant().calculateEmissionIntensity();
             double hours = plan.getSegment().getLengthInHours();
@@ -474,20 +476,21 @@ public abstract class AbstractClearElectricitySpotMarketRole<T extends Decarboni
      * @return the co2PriceStability object with possibly adjustments in the CO2 price, emissions, stability and direction of the change
      */
     CO2PriceStability determineStabilityOfCO2andElectricityPricesAndAdjustIfNecessary(CO2PriceStability co2PriceStability,
-            DecarbonizationModel model, Government government, boolean forecast) {
+            DecarbonizationModel model, Government government, boolean forecast,
+            long clearingTick) {
 
-        double co2Cap = government.getCo2Cap(getCurrentTick());
-        double minimumCo2Price = government.getMinCo2Price(getCurrentTick());
-        double co2Penalty = government.getCo2Penalty(getCurrentTick());
+        double co2Cap = government.getCo2Cap(clearingTick);
+        double minimumCo2Price = government.getMinCo2Price(clearingTick);
+        double co2Penalty = government.getCo2Penalty(clearingTick);
         double iterationSpeedCriterion = model.getIterationSpeedCriterion();
         double capDeviationCriterion = model.getCapDeviationCriterion();
 
-        co2PriceStability.co2Emissions = determineTotalEmissionsBasedOnPowerPlantDispatchPlan(forecast);
+        co2PriceStability.co2Emissions = determineTotalEmissionsBasedOnPowerPlantDispatchPlan(forecast, clearingTick);
         double deviation = (co2PriceStability.co2Emissions - co2Cap) / co2Cap;
 
         // Determine the deviation from the cap.
         logger.warn("Cap {} (euro/ton) vs emissions {} (euro/ton)", co2Cap, co2PriceStability.co2Emissions);
-        logger.warn("Tick {} Deviation: {} %", getCurrentTick(), deviation * 100);
+        logger.warn("Tick {} Deviation: {} %", clearingTick, deviation * 100);
 
         // check if the deviation is smaller then the criterion --> 1.
         // Close to the cap or almost stopped moving
@@ -689,7 +692,7 @@ public abstract class AbstractClearElectricitySpotMarketRole<T extends Decarboni
     void updatePowerPlanDispatchPlansWithNewCO2Prices(double co2Price,
             Map<ElectricitySpotMarket, Double> nationalMinCo2Prices, long clearingTick, boolean forecast) {
         for (PowerPlantDispatchPlan plan : reps.powerPlantDispatchPlanRepository.findAllPowerPlantDispatchPlansForTime(
-                getCurrentTick(), forecast)) {
+                clearingTick, forecast)) {
             if (nationalMinCo2Prices.get(plan.getBiddingMarket()) > co2Price) {
                 plan.setPrice(plan.getBidWithoutCO2()
                         + (nationalMinCo2Prices.get(plan.getBiddingMarket()) * plan.getPowerPlant().calculateEmissionIntensity()));
