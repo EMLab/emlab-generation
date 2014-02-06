@@ -77,7 +77,8 @@ public abstract class AbstractMarketRole<T extends DecarbonizationMarket> extend
                 if (demand < totalOfferAmount + amount) {
                     if (demand == 0) {
                         if (getCurrentTick() > 0) {
-                            ClearingPoint cp = reps.clearingPointRepository.findClearingPointForMarketAndTime(market, getCurrentTick() - 1);
+                            ClearingPoint cp = reps.clearingPointRepository.findClearingPointForMarketAndTime(market,
+                                    getCurrentTick() - 1, false);
                             if (cp != null)
                                 previousPrice = cp.getPrice();
                         }

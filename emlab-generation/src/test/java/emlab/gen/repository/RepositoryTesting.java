@@ -15,8 +15,7 @@
  ******************************************************************************/
 package emlab.gen.repository;
 
-import static org.junit.Assert.*;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -38,9 +37,6 @@ import emlab.gen.domain.market.electricity.ElectricitySpotMarket;
 import emlab.gen.domain.policy.PowerGeneratingTechnologyTarget;
 import emlab.gen.domain.technology.PowerGeneratingTechnology;
 import emlab.gen.domain.technology.Substance;
-import emlab.gen.repository.ClearingPointRepository;
-import emlab.gen.repository.PowerGenerationTechnologyTargetRepository;
-import emlab.gen.repository.SubstanceRepository;
 
 /**
  * @author JCRichstein
@@ -50,105 +46,108 @@ import emlab.gen.repository.SubstanceRepository;
 @ContextConfiguration({"/emlab-gen-test-context.xml"})
 @Transactional
 public class RepositoryTesting {
-	
-	
-	Logger logger = Logger.getLogger(RepositoryTesting.class);
 
-	
-	//------- clearingPointRepository ---------
-	@Autowired ClearingPointRepository clearingPointRepository;
-	
-	@Test
-	public void testfindAllClearingPointsForSubstanceTradedOnCommodityMarkesAndTimeRange(){
-		double[][] input = {{0,1},{1,1.1},{2,1.21},{3,1.331},{4,1.4641}};
-		Substance substance = new Substance();
-		substance.persist();
-		CommodityMarket market = new CommodityMarket();
-		market.setSubstance(substance);
-		market.persist();
-		Map<Integer, Double> inputMap = new HashMap();
-		for (double[] d : input) {
-			ClearingPoint cp = new ClearingPoint();
-			cp.setTime((long) d[0]);
-			cp.setPrice(d[1]);
-			cp.setAbstractMarket(market);
-			cp.persist();
-			inputMap.put(new Integer((int) d[0]), d[1]);
-		}
 
-		//Testing selection of only first one, starting with negative value
-		Iterable<ClearingPoint> cps = clearingPointRepository.findAllClearingPointsForSubstanceTradedOnCommodityMarkesAndTimeRange(substance, -2l, 0l);
-		assertTrue(cps.iterator().next().getPrice() == 1);
-		
-		cps = clearingPointRepository.findAllClearingPointsForSubstanceTradedOnCommodityMarkesAndTimeRange(substance, -2l, 4l);
-		for(ClearingPoint cp : cps){
-			assertTrue(cp.getPrice() == inputMap.get(new Integer((int) cp.getTime())));
-			//logger.warn(new Double(cp.getPrice()).toString() + "==" + inputMap.get(new Integer((int) cp.getTime())).toString());
-		}
-	}
-	
-	//SubstanceRepository
-	@Autowired SubstanceRepository substanceRepository;
-	
-	@Test
-	public void testfindAllSubstancesTradedOnCommodityMarkets(){
-		Substance coal = new Substance();
-		coal.setName("Coal");
-		coal.persist();
-		Substance co2 = new Substance();
-		co2.persist();
-		CommodityMarket market = new CommodityMarket();
-		market.setSubstance(coal);
-		market.persist();
-		
-		Iterable<Substance> substancesInDB = substanceRepository.findAllSubstancesTradedOnCommodityMarkets();
-		int count = 0;
-		for(Substance substance : substancesInDB){
-			count++;
-			assertTrue(substance.getName().equals("Coal"));
-		}
-		assertTrue(count == 1);
-	}
-	
-	//PowerGenerationTechnologyTargetRepository
-	@Autowired PowerGenerationTechnologyTargetRepository powerGenerationTechnologyTargetRepository;
-	
-	@Test
-	public void testfindAllPowerGenerationTechnologyTargetsByMarket(){
-		PowerGeneratingTechnology wind = new PowerGeneratingTechnology();
-		wind.persist();
-		ElectricitySpotMarket marketA = new ElectricitySpotMarket();
-		marketA.persist();
-		ElectricitySpotMarket marketB = new ElectricitySpotMarket();
-		marketB.persist();
-		
-		
-		PowerGeneratingTechnologyTarget pgttWindA = new PowerGeneratingTechnologyTarget();
-		pgttWindA.setPowerGeneratingTechnology(wind);
-		pgttWindA.persist();
-		
-		PowerGeneratingTechnologyTarget pggtWindB = new PowerGeneratingTechnologyTarget();
-		pggtWindB.setPowerGeneratingTechnology(wind);
-		pggtWindB.persist();
-		
-		TargetInvestor rtiA = new TargetInvestor();
-		rtiA.setInvestorMarket(marketA);
-		Set<PowerGeneratingTechnologyTarget> powerGenerationTechnologyTargetsA = new HashSet<PowerGeneratingTechnologyTarget>();
-		powerGenerationTechnologyTargetsA.add(pgttWindA);
-		rtiA.setPowerGenerationTechnologyTargets(powerGenerationTechnologyTargetsA);
-		rtiA.persist();
-		
-		TargetInvestor rtiB = new TargetInvestor();
-		rtiB.setInvestorMarket(marketB);
-		Set<PowerGeneratingTechnologyTarget> powerGenerationTechnologyTargetsB = new HashSet<PowerGeneratingTechnologyTarget>();
-		powerGenerationTechnologyTargetsB.add(pggtWindB);
-		rtiB.setPowerGenerationTechnologyTargets(powerGenerationTechnologyTargetsB);
-		rtiB.persist();
-		
-		assertTrue(pgttWindA.getNodeId()==powerGenerationTechnologyTargetRepository.findAllByMarket(marketA).iterator().next().getNodeId());
-		
-	}
-	
-	
+    Logger logger = Logger.getLogger(RepositoryTesting.class);
+
+
+    //------- clearingPointRepository ---------
+    @Autowired ClearingPointRepository clearingPointRepository;
+
+    @Test
+    public void testfindAllClearingPointsForSubstanceTradedOnCommodityMarkesAndTimeRange(){
+        double[][] input = {{0,1},{1,1.1},{2,1.21},{3,1.331},{4,1.4641}};
+        Substance substance = new Substance();
+        substance.persist();
+        CommodityMarket market = new CommodityMarket();
+        market.setSubstance(substance);
+        market.persist();
+        Map<Integer, Double> inputMap = new HashMap();
+        for (double[] d : input) {
+            ClearingPoint cp = new ClearingPoint();
+            cp.setTime((long) d[0]);
+            cp.setPrice(d[1]);
+            cp.setAbstractMarket(market);
+            cp.setForecast(false);
+            cp.persist();
+            inputMap.put(new Integer((int) d[0]), d[1]);
+        }
+
+        //Testing selection of only first one, starting with negative value
+        Iterable<ClearingPoint> cps = clearingPointRepository
+                .findAllClearingPointsForSubstanceTradedOnCommodityMarkesAndTimeRange(substance, -2l, 0l, false);
+        assertTrue(cps.iterator().next().getPrice() == 1);
+
+        cps = clearingPointRepository.findAllClearingPointsForSubstanceTradedOnCommodityMarkesAndTimeRange(substance,
+                -2l, 4l, false);
+        for(ClearingPoint cp : cps){
+            assertTrue(cp.getPrice() == inputMap.get(new Integer((int) cp.getTime())));
+            //logger.warn(new Double(cp.getPrice()).toString() + "==" + inputMap.get(new Integer((int) cp.getTime())).toString());
+        }
+    }
+
+    //SubstanceRepository
+    @Autowired SubstanceRepository substanceRepository;
+
+    @Test
+    public void testfindAllSubstancesTradedOnCommodityMarkets(){
+        Substance coal = new Substance();
+        coal.setName("Coal");
+        coal.persist();
+        Substance co2 = new Substance();
+        co2.persist();
+        CommodityMarket market = new CommodityMarket();
+        market.setSubstance(coal);
+        market.persist();
+
+        Iterable<Substance> substancesInDB = substanceRepository.findAllSubstancesTradedOnCommodityMarkets();
+        int count = 0;
+        for(Substance substance : substancesInDB){
+            count++;
+            assertTrue(substance.getName().equals("Coal"));
+        }
+        assertTrue(count == 1);
+    }
+
+    //PowerGenerationTechnologyTargetRepository
+    @Autowired PowerGenerationTechnologyTargetRepository powerGenerationTechnologyTargetRepository;
+
+    @Test
+    public void testfindAllPowerGenerationTechnologyTargetsByMarket(){
+        PowerGeneratingTechnology wind = new PowerGeneratingTechnology();
+        wind.persist();
+        ElectricitySpotMarket marketA = new ElectricitySpotMarket();
+        marketA.persist();
+        ElectricitySpotMarket marketB = new ElectricitySpotMarket();
+        marketB.persist();
+
+
+        PowerGeneratingTechnologyTarget pgttWindA = new PowerGeneratingTechnologyTarget();
+        pgttWindA.setPowerGeneratingTechnology(wind);
+        pgttWindA.persist();
+
+        PowerGeneratingTechnologyTarget pggtWindB = new PowerGeneratingTechnologyTarget();
+        pggtWindB.setPowerGeneratingTechnology(wind);
+        pggtWindB.persist();
+
+        TargetInvestor rtiA = new TargetInvestor();
+        rtiA.setInvestorMarket(marketA);
+        Set<PowerGeneratingTechnologyTarget> powerGenerationTechnologyTargetsA = new HashSet<PowerGeneratingTechnologyTarget>();
+        powerGenerationTechnologyTargetsA.add(pgttWindA);
+        rtiA.setPowerGenerationTechnologyTargets(powerGenerationTechnologyTargetsA);
+        rtiA.persist();
+
+        TargetInvestor rtiB = new TargetInvestor();
+        rtiB.setInvestorMarket(marketB);
+        Set<PowerGeneratingTechnologyTarget> powerGenerationTechnologyTargetsB = new HashSet<PowerGeneratingTechnologyTarget>();
+        powerGenerationTechnologyTargetsB.add(pggtWindB);
+        rtiB.setPowerGenerationTechnologyTargets(powerGenerationTechnologyTargetsB);
+        rtiB.persist();
+
+        assertTrue(pgttWindA.getNodeId()==powerGenerationTechnologyTargetRepository.findAllByMarket(marketA).iterator().next().getNodeId());
+
+    }
+
+
 
 }

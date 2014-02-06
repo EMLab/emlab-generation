@@ -43,19 +43,22 @@ import emlab.gen.util.Utils;
 @Repository
 public class ClearingPointRepositoryOld extends AbstractRepository<ClearingPoint> {
 
-    public ClearingPoint findClearingPointForSegmentAndTime(Segment segment, long time) {
-        Iterator<ClearingPoint> i = findClearingPointsForSegmentAndTime(segment, time).iterator();
+    public ClearingPoint findClearingPointForSegmentAndTime(Segment segment, long time, boolean forecast) {
+        Iterator<ClearingPoint> i = findClearingPointsForSegmentAndTime(segment, time, forecast).iterator();
         if (i.hasNext()) {
             return i.next();
         }
         return null;
     }
 
-    public Iterable<ClearingPoint> findClearingPointsForSegmentAndTime(Segment segment, long time) {
+    public Iterable<ClearingPoint> findClearingPointsForSegmentAndTime(Segment segment, long time, boolean forecast) {
         Pipe<Vertex, Vertex> clearingPointsPipe2 = new LabeledEdgePipe("SEGMENT_POINT", LabeledEdgePipe.Step.IN_OUT);
         // filter by time
         Pipe<Vertex, Vertex> timeFilter = new PropertyFilterPipe<Vertex, Long>("time", time, FilterPipe.Filter.EQUAL);
-        Pipeline<Vertex, Vertex> clearingPoint = new Pipeline<Vertex, Vertex>(clearingPointsPipe2, timeFilter);
+        Pipe<Vertex, Vertex> forecastFilter = new PropertyFilterPipe<Vertex, Boolean>("forecast", forecast,
+                Filter.EQUAL);
+        Pipeline<Vertex, Vertex> clearingPoint = new Pipeline<Vertex, Vertex>(clearingPointsPipe2, timeFilter,
+                forecastFilter);
         return findAllByPipe(segment, clearingPoint);
     }
 

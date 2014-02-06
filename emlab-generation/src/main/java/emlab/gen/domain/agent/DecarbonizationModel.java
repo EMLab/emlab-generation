@@ -34,6 +34,8 @@ public class DecarbonizationModel extends AbstractAgent implements Agent {
 
     private long centralForecastBacklookingYears;
 
+    private long centralForecastingYear;
+
     @SimulationParameter(label = "Simulation Length", from = 0, to = 75)
     private double simulationLength;
 
@@ -175,6 +177,14 @@ public class DecarbonizationModel extends AbstractAgent implements Agent {
 
     public void setCentralForecastBacklookingYears(long centralForecastBacklookingYears) {
         this.centralForecastBacklookingYears = centralForecastBacklookingYears;
+    }
+
+    public long getCentralForecastingYear() {
+        return centralForecastingYear;
+    }
+
+    public void setCentralForecastingYear(long centralForecastingYear) {
+        this.centralForecastingYear = centralForecastingYear;
     }
 
 }

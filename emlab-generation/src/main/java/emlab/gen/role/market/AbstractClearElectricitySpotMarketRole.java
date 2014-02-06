@@ -645,7 +645,8 @@ public abstract class AbstractClearElectricitySpotMarketRole<T extends Decarboni
             if (getCurrentTick() < 1) {
                 Iterable<ClearingPoint> cps = reps.clearingPointRepository
                         .findAllClearingPointsForSubstanceTradedOnCommodityMarkesAndTimeRange(substance, getCurrentTick()
-                                - (numberOfYearsBacklookingForForecasting - 1), getCurrentTick());
+ - (numberOfYearsBacklookingForForecasting - 1), getCurrentTick(),
+                                false);
                 // logger.warn("{}, {}",
                 // getCurrentTick()-(agent.getNumberOfYearsBacklookingForForecasting()-1),
                 // getCurrentTick());

@@ -293,7 +293,8 @@ NodeBacked {
                     // / (-discountedCapitalCosts);
 
                     /*
-                     * Divide by capacity, in order not to favour large power plants (which have the single largest NPV
+                     * Divide by capacity, in order not to favour large power
+                     * plants (which have the single largest NPV
                      */
 
                     if (projectValue > 0 && projectValue / plant.getActualNominalCapacity() > highestValue) {
@@ -367,7 +368,9 @@ NodeBacked {
         Map<Substance, Double> expectedFuelPrices = new HashMap<Substance, Double>();
         for (Substance substance : reps.substanceRepository.findAllSubstancesTradedOnCommodityMarkets()) {
             //Find Clearing Points for the last 5 years (counting current year as one of the last 5 years).
-            Iterable<ClearingPoint> cps = reps.clearingPointRepository.findAllClearingPointsForSubstanceTradedOnCommodityMarkesAndTimeRange(substance, getCurrentTick()-(agent.getNumberOfYearsBacklookingForForecasting()-1), getCurrentTick());
+            Iterable<ClearingPoint> cps = reps.clearingPointRepository
+                    .findAllClearingPointsForSubstanceTradedOnCommodityMarkesAndTimeRange(substance, getCurrentTick()
+                            - (agent.getNumberOfYearsBacklookingForForecasting() - 1), getCurrentTick(), false);
             //logger.warn("{}, {}", getCurrentTick()-(agent.getNumberOfYearsBacklookingForForecasting()-1), getCurrentTick());
             //Create regression object
             GeometricTrendRegression gtr = new GeometricTrendRegression();

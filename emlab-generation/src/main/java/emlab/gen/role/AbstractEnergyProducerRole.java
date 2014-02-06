@@ -53,11 +53,11 @@ public abstract class AbstractEnergyProducerRole<T extends EnergyProducer> exten
     @Autowired
     Reps reps;
 
-    public double calculateMarginalCO2Cost(PowerPlant powerPlant, long tick) {
+    public double calculateMarginalCO2Cost(PowerPlant powerPlant, long tick, boolean forecast) {
         double mc = 0d;
         // fuel cost
         mc += calculateCO2TaxMarginalCost(powerPlant, tick);
-        mc += calculateCO2MarketMarginalCost(powerPlant, tick);
+        mc += calculateCO2MarketMarginalCost(powerPlant, tick, forecast);
         logger.info("Margincal cost for plant {} is {}", powerPlant.getName(), mc);
         return mc;
     }
@@ -192,12 +192,13 @@ public abstract class AbstractEnergyProducerRole<T extends EnergyProducer> exten
         return null;
     }
 
-    public double calculateCO2MarketMarginalCost(PowerPlant powerPlant, long clearingTick) {
+    public double calculateCO2MarketMarginalCost(PowerPlant powerPlant, long clearingTick, boolean forecast) {
         double co2Intensity = powerPlant.calculateEmissionIntensity();
         CO2Auction auction = reps.genericRepository.findFirst(CO2Auction.class);
         double co2Price;
         try{
-            co2Price = reps.clearingPointRepository.findClearingPointForMarketAndTime(auction, clearingTick).getPrice();
+            co2Price = reps.clearingPointRepository.findClearingPointForMarketAndTime(auction, clearingTick, forecast)
+                    .getPrice();
         } catch (Exception e) {
             logger.warn("Couldn't find clearing point for tick {} and market {}", clearingTick, auction);
             co2Price = findLastKnownCO2Price(clearingTick);
@@ -486,7 +487,7 @@ public abstract class AbstractEnergyProducerRole<T extends EnergyProducer> exten
         //Find Clearing Points for the last 5 years (counting current year as one of the last 5 years).
         Iterable<ClearingPoint> cps = reps.clearingPointRepository.findAllClearingPointsForMarketAndTimeRange(
                 co2Auction, clearingTick - yearsLookingBackForRegression + 1 - adjustmentForDetermineFuelMix,
-                clearingTick - adjustmentForDetermineFuelMix);
+                clearingTick - adjustmentForDetermineFuelMix, false);
         // Create regression object and calculate average
         SimpleRegression sr = new SimpleRegression();
         Government government = reps.template.findAll(Government.class).iterator().next();
@@ -543,7 +544,7 @@ public abstract class AbstractEnergyProducerRole<T extends EnergyProducer> exten
             // as one of the last 5 years).
             Iterable<ClearingPoint> cps = reps.clearingPointRepository
                     .findAllClearingPointsForSubstanceTradedOnCommodityMarkesAndTimeRange(substance, getCurrentTick()
-                            - (numberOfYearsBacklookingForForecasting - 1), getCurrentTick());
+                            - (numberOfYearsBacklookingForForecasting - 1), getCurrentTick(), false);
             // logger.warn("{}, {}",
             // getCurrentTick()-(agent.getNumberOfYearsBacklookingForForecasting()-1),
             // getCurrentTick());

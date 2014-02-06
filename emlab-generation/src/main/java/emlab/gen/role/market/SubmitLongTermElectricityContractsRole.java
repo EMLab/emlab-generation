@@ -185,7 +185,7 @@ AbstractEnergyProducerRole implements Role<EnergyProducer> {
                 // Try to find a price for this year
                 SegmentClearingPoint point = (SegmentClearingPoint) reps.clearingPointRepositoryOld
                         .findClearingPointForSegmentAndTime(s,
-                                getCurrentTick() + i);
+ getCurrentTick() + i, false);
 
                 // If there is a price, add it multiplied to the number of hours to the total.
                 if(point != null){
@@ -226,7 +226,7 @@ AbstractEnergyProducerRole implements Role<EnergyProducer> {
     }
 
     private double determineCO2Cost(PowerPlant plant) {
-        return calculateMarginalCO2Cost(plant, getCurrentTick());
+        return calculateMarginalCO2Cost(plant, getCurrentTick(), false);
     }
 
     private double determineFuelCost(PowerPlant plant) {
