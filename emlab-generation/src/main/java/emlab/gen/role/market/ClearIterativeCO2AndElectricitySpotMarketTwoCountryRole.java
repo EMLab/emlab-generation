@@ -75,8 +75,11 @@ implements Role<DecarbonizationModel> {
             fuelPriceMap.put(substance, findLastKnownPriceForSubstance(substance));
         }
 
-        clearIterativeCO2AndElectricitySpotMarketTwoCountryForTimestepAndFuelPrices(model, false, getCurrentTick(),
-                fuelPriceMap, null);
+        if (!model.isCo2BankingIsImplemented())
+            clearIterativeCO2AndElectricitySpotMarketTwoCountryForTimestepAndFuelPrices(model, false, getCurrentTick(),
+                    fuelPriceMap, null);
+        else
+            clearCO2AndElectricitySpotMarketTwoCountryWithBanking(model, false, getCurrentTick(), fuelPriceMap, null);
 
     }
 
@@ -197,16 +200,22 @@ implements Role<DecarbonizationModel> {
                 // Clear the electricity markets with the expected co2Price
 
                 //updatePowerPlanDispatchPlansWithNewCO2Prices(co2SecantSearch.co2Price, nationalMinCo2Prices);
-                submitOffersToElectricitySpotMarketRole.updateMarginalCostInclCO2AfterFuelMixChange(
-                        co2SecantSearch.co2Price, nationalMinCo2Prices, clearingTick, forecast, fuelPriceMap);
-
-                if (model.isLongTermContractsImplemented())
-                    determineCommitmentOfPowerPlantsOnTheBasisOfLongTermContracts(segments, forecast);
-
-                for (Segment segment : segments) {
-                    clearOneOrTwoConnectedElectricityMarketsAtAGivenCO2PriceForOneSegment(interconnector.getCapacity(),
-                            segment, government, clearingTick, forecast, demandGrowthMap);
-                }
+                // submitOffersToElectricitySpotMarketRole.updateMarginalCostInclCO2AfterFuelMixChange(
+                // co2SecantSearch.co2Price, nationalMinCo2Prices, clearingTick,
+                // forecast, fuelPriceMap);
+                //
+                // if (model.isLongTermContractsImplemented())
+                // determineCommitmentOfPowerPlantsOnTheBasisOfLongTermContracts(segments,
+                // forecast);
+                //
+                // for (Segment segment : segments) {
+                // clearOneOrTwoConnectedElectricityMarketsAtAGivenCO2PriceForOneSegment(interconnector.getCapacity(),
+                // segment, government, clearingTick, forecast,
+                // demandGrowthMap);
+                // }
+                clearOneOrTwoConnectedElectricityMarketsAtAGivenCO2PriceForSegments(government, clearingTick, forecast,
+                        demandGrowthMap, fuelPriceMap, co2SecantSearch.co2Price, nationalMinCo2Prices, segments,
+                        interconnector, model);
 
                 // Change Iteration algorithm here
                 // co2PriceStability = determineStabilityOfCO2andElectricityPricesAndAdjustIfNecessary(co2PriceStability, model, government);
@@ -349,6 +358,23 @@ implements Role<DecarbonizationModel> {
         }
     }
 
+    void clearOneOrTwoConnectedElectricityMarketsAtAGivenCO2PriceForSegments(Government government,
+            long clearingTick, boolean forecast, Map<ElectricitySpotMarket, Double> demandGrowthMap,  Map<Substance, Double> fuelPriceMap, double co2Price,
+            Map<ElectricitySpotMarket, Double> nationalMinCo2Prices, List<Segment> segments,
+            Interconnector interconnector, DecarbonizationModel model) {
+
+        submitOffersToElectricitySpotMarketRole.updateMarginalCostInclCO2AfterFuelMixChange(co2Price,
+                nationalMinCo2Prices, clearingTick, forecast, fuelPriceMap);
+
+        if (model.isLongTermContractsImplemented())
+            determineCommitmentOfPowerPlantsOnTheBasisOfLongTermContracts(segments, forecast);
+
+        for (Segment segment : segments) {
+            clearOneOrTwoConnectedElectricityMarketsAtAGivenCO2PriceForOneSegment(interconnector.getCapacity(),
+                    segment, government, clearingTick, forecast, demandGrowthMap);
+        }
+    }
+
     void clearTwoInterconnectedMarketsGivenAnInterconnectorAdjustedLoad(Segment segment,
             MarketSegmentClearingOutcome marketOutcomes, long clearingTick, boolean forecast) {
 
@@ -370,6 +396,106 @@ implements Role<DecarbonizationModel> {
             }
         }
 
+    }
+
+    void clearCO2AndElectricitySpotMarketTwoCountryWithBanking(DecarbonizationModel model, boolean forecast,
+            long clearingTick, Map<Substance, Double> fuelPriceMap, Map<ElectricitySpotMarket, Double> demandGrowthMap) {
+
+        // Check we are not in timestep 0
+        if (clearingTick < 1) {
+            clearIterativeCO2AndElectricitySpotMarketTwoCountryForTimestepAndFuelPrices(model, forecast, clearingTick,
+                    fuelPriceMap, demandGrowthMap);
+            return;
+        }
+
+        CO2Auction co2Auction = template.findAll(CO2Auction.class).iterator().next();
+        // find all interconnectors
+        Interconnector interconnector = template.findAll(Interconnector.class).iterator().next();
+
+        // find all segments
+        List<Segment> segments = Utils.asList(reps.segmentRepository.findAll());
+
+        // find the EU government
+        Government government = template.findAll(Government.class).iterator().next();
+
+        double fundamentalCO2Price = calculateFundamentalCO2Price(clearingTick, model, co2Auction);
+        logger.warn("Fundanmental price: {}", fundamentalCO2Price);
+
+        // find national minimum CO2 prices. Initial Map size is 2.
+        Map<ElectricitySpotMarket, Double> nationalMinCo2Prices = new HashMap<ElectricitySpotMarket, Double>(2);
+        Iterable<NationalGovernment> nationalGovernments = template.findAll(NationalGovernment.class);
+        for (NationalGovernment nG : nationalGovernments) {
+            if (model.isCo2TradingImplemented()) {
+                nationalMinCo2Prices.put(reps.marketRepository.findElectricitySpotMarketByNationalGovernment(nG), nG
+                        .getMinNationalCo2PriceTrend().getValue(clearingTick));
+            } else {
+                nationalMinCo2Prices.put(reps.marketRepository.findElectricitySpotMarketByNationalGovernment(nG), 0d);
+            }
+        }
+
+        clearOneOrTwoConnectedElectricityMarketsAtAGivenCO2PriceForSegments(government, clearingTick, forecast,
+                demandGrowthMap, fuelPriceMap, fundamentalCO2Price, nationalMinCo2Prices, segments,
+                interconnector, model);
+
+        double co2emissions = determineTotalEmissionsBasedOnPowerPlantDispatchPlan(forecast, clearingTick);
+
+        double bankedEmissionCertificates = government.getCo2Cap(clearingTick) - co2emissions;
+
+        reps.clearingPointRepositoryOld.createOrUpdateClearingPoint(co2Auction, fundamentalCO2Price, co2emissions,
+                clearingTick, forecast);
+
+
+
+
+
+    }
+
+    double[] interpolateLinearDiscountedPricesBetweenClearingPoints(ClearingPoint cp1, ClearingPoint cp2, double discountRate) {
+        int length = (int) Math.abs(cp1.getTime() - cp2.getTime());
+        ClearingPoint earlierCp = cp1.getTime() <= cp2.getTime() ? cp1 : cp2;
+        ClearingPoint laterCp= cp1.getTime() <= cp2.getTime() ? cp2 : cp1;
+        double[] priceInterpolation = new double[length];
+        for (int i = 0; i < length; i++) {
+            priceInterpolation[i] = earlierCp.getPrice() + ((double) i + 1) / (length)
+                    * (laterCp.getPrice() - earlierCp.getPrice()) / Math.pow((1 + discountRate), i);
+        }
+
+        return priceInterpolation;
+    }
+
+    double[] interpolateLinearVolumesBetweenClearingPoints(ClearingPoint cp1, ClearingPoint cp2) {
+        int length = (int) Math.abs(cp1.getTime() - cp2.getTime());
+        ClearingPoint earlierCp = cp1.getTime() <= cp2.getTime() ? cp1 : cp2;
+        ClearingPoint laterCp = cp1.getTime() <= cp2.getTime() ? cp2 : cp1;
+        double[] volumeInterpolation = new double[length];
+        for (int i = 0; i < length; i++) {
+            volumeInterpolation[i] = earlierCp.getVolume() + ((double) i + 1) / (length)
+                    * (laterCp.getVolume() - earlierCp.getVolume());
+        }
+
+        return volumeInterpolation;
+    }
+
+    double calculateFundamentalCO2Price(long clearingTick, DecarbonizationModel model, CO2Auction co2Auction) {
+
+        ClearingPoint forecastedCO2Clearing = reps.clearingPointRepository.findClearingPointForMarketAndTime(
+                co2Auction, clearingTick + model.getCentralForecastingYear(), true);
+        ClearingPoint lastCO2Clearing = reps.clearingPointRepository.findClearingPointForMarketAndTime(co2Auction,
+                clearingTick - 1, false);
+        double[] priceInterpolation = interpolateLinearDiscountedPricesBetweenClearingPoints(lastCO2Clearing,
+                forecastedCO2Clearing, model.getCentralPrivateDiscountingRate());
+        logger.warn("Price interpolation: {}", priceInterpolation);
+        double[] volumeInterpolation = interpolateLinearVolumesBetweenClearingPoints(lastCO2Clearing,
+                forecastedCO2Clearing);
+        logger.warn("Volume interpolation: {}", volumeInterpolation);
+        double totalEmissions = 0;
+        double fundamentalPrice = 0;
+        for (int i = 0; i < volumeInterpolation.length; i++) {
+            fundamentalPrice += priceInterpolation[i] * volumeInterpolation[i];
+            totalEmissions += volumeInterpolation[i];
+        }
+        fundamentalPrice = fundamentalPrice / totalEmissions;
+        return fundamentalPrice;
     }
 
     @Override

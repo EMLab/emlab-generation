@@ -36,6 +36,10 @@ public class DecarbonizationModel extends AbstractAgent implements Agent {
 
     private long centralForecastingYear;
 
+    private double centralPrivateDiscountingRate;
+
+    private boolean co2BankingIsImplemented;
+
     @SimulationParameter(label = "Simulation Length", from = 0, to = 75)
     private double simulationLength;
 
@@ -185,6 +189,22 @@ public class DecarbonizationModel extends AbstractAgent implements Agent {
 
     public void setCentralForecastingYear(long centralForecastingYear) {
         this.centralForecastingYear = centralForecastingYear;
+    }
+
+    public double getCentralPrivateDiscountingRate() {
+        return centralPrivateDiscountingRate;
+    }
+
+    public void setCentralPrivateDiscountingRate(double centralPrivateDiscountingRate) {
+        this.centralPrivateDiscountingRate = centralPrivateDiscountingRate;
+    }
+
+    public boolean isCo2BankingIsImplemented() {
+        return co2BankingIsImplemented;
+    }
+
+    public void setCo2BankingIsImplemented(boolean co2BankingIsImplemented) {
+        this.co2BankingIsImplemented = co2BankingIsImplemented;
     }
 
 }
