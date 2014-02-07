@@ -88,6 +88,8 @@ implements Role<DecarbonizationModel> {
         Map<Substance, Double> fuelPriceMap = predictFuelPrices(model.getCentralForecastBacklookingYears(),
                 clearingTick);
 
+        logger.warn("Fuel prices: {}", fuelPriceMap);
+
         Map<ElectricitySpotMarket, Double> demandGrowthMap = predictDemand(model.getCentralForecastBacklookingYears(),
                 clearingTick);
 

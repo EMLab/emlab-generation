@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.math.stat.regression.SimpleRegression;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.neo4j.support.Neo4jTemplate;
 import org.springframework.transaction.annotation.Transactional;
@@ -639,35 +640,24 @@ public abstract class AbstractClearElectricitySpotMarketRole<T extends Decarboni
         // Fuel Prices
         Map<Substance, Double> expectedFuelPrices = new HashMap<Substance, Double>();
         for (Substance substance : reps.substanceRepository.findAllSubstancesTradedOnCommodityMarkets()) {
-            // Find Clearing Points for the last 5 years (counting current year
-            // as one of the last 5 years).
 
-            if (getCurrentTick() < 1) {
-                Iterable<ClearingPoint> cps = reps.clearingPointRepository
-                        .findAllClearingPointsForSubstanceTradedOnCommodityMarkesAndTimeRange(substance, getCurrentTick()
- - (numberOfYearsBacklookingForForecasting - 1), getCurrentTick(),
-                                false);
-                // logger.warn("{}, {}",
-                // getCurrentTick()-(agent.getNumberOfYearsBacklookingForForecasting()-1),
-                // getCurrentTick());
-                // Create regression object
-                GeometricTrendRegression gtr = new GeometricTrendRegression();
-                for (ClearingPoint clearingPoint : cps) {
-                    // logger.warn("CP {}: {} , in" + clearingPoint.getTime(),
-                    // substance.getName(), clearingPoint.getPrice());
-                    gtr.addData(clearingPoint.getTime(), clearingPoint.getPrice());
-                }
-                double forecast = gtr.predict(futureTimePoint);
-                if (Double.isNaN(forecast)) {
-                    expectedFuelPrices.put(substance, findLastKnownPriceForSubstance(substance));
-                } else {
-                    expectedFuelPrices.put(substance, forecast);
-                }
-            } else {
-                expectedFuelPrices.put(substance, findLastKnownPriceForSubstance(substance));
+            Iterable<ClearingPoint> cps = reps.clearingPointRepository
+                    .findAllClearingPointsForSubstanceTradedOnCommodityMarkesAndTimeRange(substance, getCurrentTick()
+                            - (numberOfYearsBacklookingForForecasting - 1), getCurrentTick() - 1,
+                            false);
+
+            SimpleRegression gtr = new SimpleRegression();
+            for (ClearingPoint clearingPoint : cps) {
+
+                gtr.addData(clearingPoint.getTime(), clearingPoint.getPrice());
             }
-            // logger.warn("Forecast {}: {}, in Step " + futureTimePoint,
-            // substance, expectedFuelPrices.get(substance));
+            gtr.addData(getCurrentTick(), findLastKnownPriceForSubstance(substance));
+            double forecast = gtr.predict(futureTimePoint);
+            if (Double.isNaN(forecast)) {
+                expectedFuelPrices.put(substance, findLastKnownPriceForSubstance(substance));
+            } else {
+                expectedFuelPrices.put(substance, forecast);
+            }
         }
         return expectedFuelPrices;
     }

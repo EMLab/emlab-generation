@@ -29,7 +29,6 @@ import emlab.gen.domain.agent.EnergyProducer;
 import emlab.gen.domain.agent.Government;
 import emlab.gen.domain.market.CO2Auction;
 import emlab.gen.domain.market.electricity.ElectricitySpotMarket;
-import emlab.gen.domain.market.electricity.PowerPlantDispatchPlan;
 import emlab.gen.domain.technology.PowerPlant;
 import emlab.gen.domain.technology.Substance;
 import emlab.gen.domain.technology.SubstanceShareInFuelMix;
@@ -138,39 +137,6 @@ public class DetermineFuelMixRole extends AbstractEnergyProducerRole implements 
 
             }
         }
-
-    }
-
-    @Transactional
-    public void updateDuringCo2MarketClearing(double co2AuctionPrice, boolean forecast) {
-
-        Government government = template.findAll(Government.class).iterator().next();
-
-        int i = 0;
-        int j = 0;
-
-        for (PowerPlantDispatchPlan plan : reps.powerPlantDispatchPlanRepository.findAllPowerPlantDispatchPlansForTime(
-                getCurrentTick(), forecast)) {
-            j++;
-
-            if (plan.getPowerPlant().getTechnology().getFuels().size() > 1) {
-                i++;
-
-                // Fuels
-                Set<Substance> possibleFuels = plan.getPowerPlant().getTechnology().getFuels();
-                Map<Substance, Double> substancePriceMap = new HashMap<Substance, Double>();
-
-                for (Substance substance : possibleFuels) {
-                    substancePriceMap.put(substance, findLastKnownPriceForSubstance(substance, getCurrentTick()));
-                }
-                Set<SubstanceShareInFuelMix> fuelMix = calculateFuelMix(plan.getPowerPlant(), substancePriceMap,
-                        government.getCO2Tax(getCurrentTick()) + co2AuctionPrice);
-                plan.getPowerPlant().setFuelMix(fuelMix);
-            }
-
-        }
-
-        logger.warn("{} of {} power plant dispatch plans updated!", i, j);
 
     }
 
