@@ -426,7 +426,7 @@ public class ElectricityMarketSubmittingAndClearingTest {
 
         clearIterativeCO2AndElectricitySpotMarketTwoCountryRole
         .clearIterativeCO2AndElectricitySpotMarketTwoCountryForTimestepAndFuelPrices(model, false,
-                getCurrentTick(), null, null);
+                getCurrentTick(), null, null, 0);
 
         // ppdps = reps.powerPlantDispatchPlanRepository.findAll();
         // for (PowerPlantDispatchPlan ppdp : ppdps) {
@@ -527,10 +527,11 @@ public class ElectricityMarketSubmittingAndClearingTest {
     public void forecastedElectricityMarketTest() {
 
         DecarbonizationModel model = reps.genericRepository.findFirst(DecarbonizationModel.class);
+        model.setCentralForecastingYear(3);
 
 
         clearIterativeCO2AndElectricitySpotMarketTwoCountryRole
-        .makeCentralElectricityMarketForecastForTimeStep(getCurrentTick() + 3);
+                .makeCentralElectricityMarketForecastForTimeStep(getCurrentTick() + model.getCentralForecastingYear());
 
         Iterable<PowerPlantDispatchPlan> ppdps = reps.powerPlantDispatchPlanRepository.findAll();
         for (PowerPlantDispatchPlan ppdp : ppdps) {

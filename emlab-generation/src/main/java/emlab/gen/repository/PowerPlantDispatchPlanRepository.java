@@ -84,7 +84,7 @@ public interface PowerPlantDispatchPlanRepository extends GraphRepository<PowerP
     public Iterable<PowerPlantDispatchPlan> findAllPowerPlantDispatchPlansForEnergyProducerForTime(
             @Param("producer") EnergyProducer producer, @Param("time") long time, @Param("forecast") boolean forecast);
 
-    @Query(value = "g.v(producer).out('BIDDER').propertyFilter('time', FilterPipe.Filter.EQUAL, time).propertyFilter('status', FilterPipe.Filter.GREATER_THAN, 2).propertyFilter('forecast', FilterPipe.Filter.EQUAL, forecast)", type = QueryType.Gremlin)
+    @Query(value = "g.v(producer).out('BIDDER').propertyFilter('time', FilterPipe.Filter.EQUAL, time).propertyFilter('status', FilterPipe.Filter.GREATER_THAN_EQUAL , 2).propertyFilter('forecast', FilterPipe.Filter.EQUAL, forecast)", type = QueryType.Gremlin)
     public Iterable<PowerPlantDispatchPlan> findAllAcceptedPowerPlantDispatchPlansForEnergyProducerForTime(
             @Param("producer") EnergyProducer producer, @Param("time") long time, @Param("forecast") boolean forecast);
 
@@ -92,7 +92,7 @@ public interface PowerPlantDispatchPlanRepository extends GraphRepository<PowerP
     public Iterable<PowerPlantDispatchPlan> findAllPowerPlantDispatchPlansForEnergyProducerForTimeAndSegment(
             @Param("segment") Segment segment, @Param("producer") EnergyProducer producer, @Param("time") long time, @Param("forecast") boolean forecast);
 
-    @Query(value = "g.v(producer).out('BIDDER').propertyFilter('time', FilterPipe.Filter.EQUAL, time).propertyFilter('forecast', FilterPipe.Filter.EQUAL, forecast).propertyFilter('status', FilterPipe.Filter.GREATER_THAN, 2).as('x').out('SEGMENT_DISPATCHPLAN').idFilter(segment, FilterPipe.Filter.EQUAL).back('x')", type = QueryType.Gremlin)
+    @Query(value = "g.v(producer).out('BIDDER').propertyFilter('time', FilterPipe.Filter.EQUAL, time).propertyFilter('forecast', FilterPipe.Filter.EQUAL, forecast).propertyFilter('status', FilterPipe.Filter.GREATER_THAN_EQUAL, 2).as('x').out('SEGMENT_DISPATCHPLAN').idFilter(segment, FilterPipe.Filter.EQUAL).back('x')", type = QueryType.Gremlin)
     public Iterable<PowerPlantDispatchPlan> findAllAcceptedPowerPlantDispatchPlansForEnergyProducerForTimeAndSegment(
             @Param("segment") Segment segment, @Param("producer") EnergyProducer producer, @Param("time") long time, @Param("forecast") boolean forecast);
 
@@ -100,11 +100,11 @@ public interface PowerPlantDispatchPlanRepository extends GraphRepository<PowerP
     // public Iterable<PowerPlantDispatchPlan> findAllAcceptedPowerPlantDispatchPlansForMarketSegmentAndTime(
     // @Param("market") ElectricitySpotMarket esm, @Param("segment") Segment segment, @Param("time") long time);
 
-    @Query(value = "g.v(market).in('BIDDINGMARKET').propertyFilter('time', FilterPipe.Filter.EQUAL, time).propertyFilter('forecast', FilterPipe.Filter.EQUAL, forecast).propertyFilter('status', FilterPipe.Filter.GREATER_THAN, 2).as('x').out('SEGMENT_DISPATCHPLAN').idFilter(segment, FilterPipe.Filter.EQUAL).back('x')", type = QueryType.Gremlin)
+    @Query(value = "g.v(market).in('BIDDINGMARKET').propertyFilter('time', FilterPipe.Filter.EQUAL, time).propertyFilter('forecast', FilterPipe.Filter.EQUAL, forecast).propertyFilter('status', FilterPipe.Filter.GREATER_THAN_EQUAL, 2).as('x').out('SEGMENT_DISPATCHPLAN').idFilter(segment, FilterPipe.Filter.EQUAL).back('x')", type = QueryType.Gremlin)
     public Iterable<PowerPlantDispatchPlan> findAllAcceptedPowerPlantDispatchPlansForMarketSegmentAndTime(
             @Param("market") ElectricitySpotMarket esm, @Param("segment") Segment segment, @Param("time") long time, @Param("forecast") boolean forecast);
 
-    // @Query("START segment = node({segment} MATCH (segment)<-[:SEGMENT_DISPATCHPLAN]-(ppdp)<-[:BIDDER]-(node({producer})) WHERE (ppdp.time = {time}) AND (ppdp.status >=2) RETURN ppdp")
+    // @Query("START segment = node({segment} MATCH (segment)<-[:SEGMENT_DISPATCHPLAN]-(ppdp)<-[:BIDDER]-(node({producer})) WHERE (ppdp.time = {time}) AND (ppdp.status >=1) RETURN ppdp")
     // public Iterable<PowerPlantDispatchPlan> findAllAcceptedPowerPlantDispatchPlansForEnergyProducerForTimeAndSegment(
     // @Param("segment") Segment segment, @Param("producer") EnergyProducer producer, @Param("time") long time);
 }

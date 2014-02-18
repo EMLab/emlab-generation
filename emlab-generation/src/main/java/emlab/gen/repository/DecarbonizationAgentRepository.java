@@ -15,24 +15,18 @@
  ******************************************************************************/
 package emlab.gen.repository;
 
-import java.util.List;
-
 import org.springframework.data.neo4j.annotation.Query;
 import org.springframework.data.neo4j.annotation.QueryType;
 import org.springframework.data.neo4j.repository.GraphRepository;
 
-import emlab.gen.domain.agent.EnergyProducer;
+import emlab.gen.domain.agent.DecarbonizationAgent;
 
 /**
  * @author JCRichstein
  *
  */
-public interface EnergyProducerRepository extends
-GraphRepository<EnergyProducer> {
-
-    @Query(value="result = g.idx('__types__')[[className:'emlab.gen.domain.agent.EnergyProducer']].propertyFilter('__type__', FilterPipe.Filter.NOT_EQUAL, 'emlab.gen.domain.agent.TargetInvestor').toList();" +
-            "if(result == null){return null;} else {Collections.shuffle(result); return result;}", type=QueryType.Gremlin)
-    List<EnergyProducer> findAllEnergyProducersExceptForRenewableTargetInvestorsAtRandom();
+public interface DecarbonizationAgentRepository extends
+GraphRepository<DecarbonizationAgent> {
 
     @Query(value = "agents = g.idx('__types__')[[className:'emlab.gen.domain.agent.DecarbonizationAgent']];"
             + "co2Allowances=0;"

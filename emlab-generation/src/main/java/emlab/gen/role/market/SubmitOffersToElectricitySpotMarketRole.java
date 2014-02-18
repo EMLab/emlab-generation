@@ -148,6 +148,7 @@ Role<EnergyProducer> {
                     plan.setPrice(mc);
                     plan.setBidWithoutCO2(mc);
                     plan.setAmount(capacity);
+                    plan.setAcceptedAmount(0d);
                     plan.setCapacityLongTermContract(0d);
                     plan.setStatus(Bid.SUBMITTED);
                     plan.setForecast(forecast);
@@ -209,6 +210,7 @@ Role<EnergyProducer> {
 
             plan.setStatus(Bid.SUBMITTED);
             plan.setAmount(capacity);
+            plan.setAcceptedAmount(0d);
             plan.setCapacityLongTermContract(0d);
 
         }

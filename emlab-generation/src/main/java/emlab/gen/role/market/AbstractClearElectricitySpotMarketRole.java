@@ -108,6 +108,7 @@ public abstract class AbstractClearElectricitySpotMarketRole<T extends Decarboni
         public int iteration = 0;
         public PriceEmissionPair tooLowEmissionsPair;
         public PriceEmissionPair tooHighEmissionsPair;
+        public double bankingEffectiveMinimumPrice;
 
     }
 
@@ -117,11 +118,11 @@ public abstract class AbstractClearElectricitySpotMarketRole<T extends Decarboni
     }
 
     CO2SecantSearch co2PriceSecantSearchUpdate(CO2SecantSearch co2SecantSearch, DecarbonizationModel model,
-            Government government, boolean forecast, long clearingTick) {
+            Government government, boolean forecast, long clearingTick, double co2CapAdjustment) {
 
         co2SecantSearch.stable = false;
         double capDeviationCriterion = model.getCapDeviationCriterion();
-        double co2Cap = government.getCo2Cap(clearingTick);
+        double co2Cap = government.getCo2Cap(clearingTick) + co2CapAdjustment;
         co2SecantSearch.co2Emissions = determineTotalEmissionsBasedOnPowerPlantDispatchPlan(forecast, clearingTick);
 
         double deviation = (co2SecantSearch.co2Emissions - co2Cap) / co2Cap;
@@ -462,6 +463,29 @@ public abstract class AbstractClearElectricitySpotMarketRole<T extends Decarboni
             //    counter++;
         }
         // logger.warn("Total emissions: {} based on {} power plant dispatch plans", totalEmissions, counter);
+        return totalEmissions;
+    }
+
+    /**
+     * Determine the total CO2 emissions of EnergyProducer based on all current
+     * power plant dispatch plans.
+     * 
+     * @return the total CO2 emissions
+     */
+    double determineTotalEmissionsBasedOnPowerPlantDispatchPlanForEnergyProducer(boolean forecast, long clearingTick,
+            EnergyProducer producer) {
+        double totalEmissions = 0d;
+        // int counter = 0;
+        for (PowerPlantDispatchPlan plan : reps.powerPlantDispatchPlanRepository
+                .findAllAcceptedPowerPlantDispatchPlansForEnergyProducerForTime(producer, clearingTick, forecast)) {
+            double operationalCapacity = plan.getCapacityLongTermContract() + plan.getAcceptedAmount();
+            double emissionIntensity = plan.getPowerPlant().calculateEmissionIntensity();
+            double hours = plan.getSegment().getLengthInHours();
+            totalEmissions += operationalCapacity * emissionIntensity * hours;
+            // counter++;
+        }
+        // logger.warn("Total emissions: {} based on {} power plant dispatch plans",
+        // totalEmissions, counter);
         return totalEmissions;
     }
 
