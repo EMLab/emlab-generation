@@ -57,11 +57,17 @@ public interface SegmentLoadRepository extends GraphRepository<SegmentLoad> {
     @Query(value = "segID = g.v(segment).segmentID;"
             + "double baseLoad = g.v(market).out('SEGMENT_LOAD').as('x').out('SEGMENTLOAD_SEGMENT').filter{it.segmentID==segID}.back('x').baseLoad.next();"
             + "return baseLoad", type = QueryType.Gremlin)
-    public double returnSegmentBaseLoadBySegmentAndMarket(@Param("segment") Segment segment, @Param("market") ElectricitySpotMarket market);
+    public double returnSegmentBaseLoadBySegmentAndMarket(@Param("segment") Segment segment,
+            @Param("market") ElectricitySpotMarket market);
 
     // peak Load by Zone
 
     @Query(value = "g.v(zone).in('ZONE').filter{it.__type__=='emlab.gen.domain.market.electricity.ElectricitySpotMarket'}.outE('SEGMENT_LOAD').inV.max{it.baseLoad}.baseLoad", type = QueryType.Gremlin)
     double peakLoadbyZoneMarketandTime(@Param("zone") Zone zone, @Param("market") ElectricitySpotMarket market);
 
+    @Query(value = "topsegments = g.v(market).out('SEGMENT_LOAD').max{it.baseLoad}.baseLoad;"
+            + "try{growthfactors = g.v(market).out('DEMANDGROWTH_TREND').collect{f.getTrendValue(it, tick)}[0];} catch(Exception e){"
+            + "growthfactors=g.v(market).out('DEMANDGROWTH_TREND').timeSeries.next()[tick.toInteger()]};"
+            + "adjustedTopSegments = topsegments*growthfactors;" + "return[adjustedTopSegments]", type = QueryType.Gremlin)
+    double peakLoadbyMarketandTime(@Param("market") ElectricitySpotMarket market, @Param("tick") long tick);
 }
