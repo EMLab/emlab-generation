@@ -156,6 +156,8 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
         logger.warn("        took: {} seconds.", timerMarket.seconds());
 
         logger.warn("  1. Determining fuel mix");
+        timerMarket.reset();
+        timerMarket.start();
         for (EnergyProducer producer : reps.genericRepository.findAllAtRandom(EnergyProducer.class)) {
             determineFuelMixRole.act(producer);
             // producer.act(determineFuelMixRole);

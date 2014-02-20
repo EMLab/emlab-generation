@@ -257,7 +257,7 @@ public interface PowerPlantRepository extends GraphRepository<PowerPlant> {
             + "for (pp in powerplants) {" + "capacity = pp.actualNominalCapacity.next();"
             + "peak=pp.out('TECHNOLOGY').peakSegmentDependentAvailability.next();" + "result = capacity*peak;"
             + "counter = counter+result };" + "return counter", type = QueryType.Gremlin)
-    public double calculateCapacityOfPowerPlantsByMarketTime(@Param("market") ElectricitySpotMarket market,
+    public double calculatePeakCapacityOfPowerPlantsByMarketTime(@Param("market") ElectricitySpotMarket market,
             @Param("tick") long tick);
 
 }

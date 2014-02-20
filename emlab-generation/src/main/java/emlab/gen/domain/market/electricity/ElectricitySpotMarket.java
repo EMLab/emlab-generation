@@ -39,12 +39,23 @@ public class ElectricitySpotMarket extends DecarbonizationMarket {
     @SimulationParameter(label = "Lookback for dismantling", from = 0, to = 10)
     private long lookback;
 
+    @SimulationParameter(label = "Look back for demand forecasting", from = 0, to = 10)
+    private long backlookingForDemandForecastinginDismantling;
+
     public long getLookback() {
         return lookback;
     }
 
     public void setLookback(long lookback) {
         this.lookback = lookback;
+    }
+
+    public long getBacklookingForDemandForecastinginDismantling() {
+        return backlookingForDemandForecastinginDismantling;
+    }
+
+    public void setBacklookingForDemandForecastinginDismantling(long backlookingForDemandForecastinginDismantling) {
+        this.backlookingForDemandForecastinginDismantling = backlookingForDemandForecastinginDismantling;
     }
 
     public Set<SegmentLoad> getLoadDurationCurve() {

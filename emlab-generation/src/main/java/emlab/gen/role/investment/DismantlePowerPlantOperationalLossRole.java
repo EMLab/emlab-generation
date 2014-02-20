@@ -15,6 +15,7 @@
  ******************************************************************************/
 package emlab.gen.role.investment;
 
+import org.apache.commons.math.stat.regression.SimpleRegression;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,49 +51,31 @@ public class DismantlePowerPlantOperationalLossRole extends AbstractRole<Electri
 
     @Transactional
     public void act(ElectricitySpotMarket market) {
-        if (getCurrentTick() > market.getLookback()) {
+        if (getCurrentTick() > 0) {
 
             double availableFutureCapacity = 0d;
-            double plantCapacity = 0;
-            // for (ElectricitySpotMarket market :
-            // reps.marketRepository.findAllElectricitySpotMarketsAsList()) {
 
-            // Forecast Peak demand and supply for the next year store supply
-            // margin in variable.
+            // Demand
 
-            // double peakLoadforMarketNOtrend =
-            // reps.segmentLoadRepository.peakLoadbyZoneMarketandTime(market.getZone(),
-            // market);
+            SimpleRegression sr = new SimpleRegression();
+            for (long time = getCurrentTick() - 1; time >= getCurrentTick()
+                    - market.getBacklookingForDemandForecastinginDismantling()
+                    && time >= 0; time = time - 1) {
+                sr.addData(time, market.getDemandGrowthTrend().getValue(time));
+            }
 
             double peakLoadforMarketNOtrend = reps.segmentLoadRepository.peakLoadbyZoneMarketandTime(market.getZone(),
                     market);
 
-            double trend = market.getDemandGrowthTrend().getValue(getCurrentTick());
-
-            double peakLoadforMarket = trend * peakLoadforMarketNOtrend;
+            double peakLoadforMarket = sr.predict(getCurrentTick()) * peakLoadforMarketNOtrend;
 
             logger.warn("peakLoad " + peakLoadforMarket);
 
-            // Calculate availableFutureCapacity for the next year at peak
+            availableFutureCapacity = reps.powerPlantRepository.calculatePeakCapacityOfOperationalPowerPlantsInMarket(
+                    market, getCurrentTick());
 
-            // for (PowerPlant futurePlant : reps.powerPlantRepository
-            // .findExpectedOperationalPowerPlantsInMarketWithoutDismantling(market,
-            // getCurrentTick() + 1)) {
-
-            // plantCapacity = (double)
-            // (futurePlant.getTechnology().getCapacity())
-            // * (double)
-            // (futurePlant.getTechnology().getPeakSegmentDependentAvailability());
-
-            // availableFutureCapacity = availableFutureCapacity +
-            // plantCapacity;
-
-            // }
-
-            availableFutureCapacity = reps.powerPlantRepository.calculateCapacityOfPowerPlantsByMarketTime(market,
-                    getCurrentTick());
-
-            logger.warn("capacity" + (availableFutureCapacity - peakLoadforMarket) + "Future" + availableFutureCapacity);
+            // logger.warn("capacity" + (availableFutureCapacity -
+            // peakLoadforMarket) + "Future" + availableFutureCapacity);
 
             if ((availableFutureCapacity - peakLoadforMarket) > 0D) {
                 for (PowerPlant plant : reps.powerPlantRepository.findOperationalPowerPlantsInMarket(market,
@@ -116,31 +99,26 @@ public class DismantlePowerPlantOperationalLossRole extends AbstractRole<Electri
                     double profitability = 0;
                     double cost = 0;
                     double revenue = 0;
-                    for (yearIterator = 0; yearIterator <= market.getLookback(); yearIterator++) {
+                    for (yearIterator = 1; yearIterator <= market.getLookback() && yearIterator > 0; yearIterator++) {
 
-                        for (CashFlow cf : reps.cashFlowRepository.findAllCashFlowsForForTime(getCurrentTick()
-                                - yearIterator)) {
+                        for (CashFlow cf : reps.cashFlowRepository.findAllCashFlowsForPowerPlantForTime(plant,
+                                getCurrentTick() - yearIterator)) {
                             // logger.warn("enters for loop revenue" +
                             // cf.getRegardingPowerPlant().getNodeId() + " "
                             // + plant.getNodeId());
                             if (cf.getRegardingPowerPlant() != null) {
-                                // logger.warn("enters null loop " +
-                                // cf.getRegardingPowerPlant());
-                                if (cf.getRegardingPowerPlant().equals(plant)) {
-                                    // logger.warn("enters power plant loop" +
-                                    // plant.getLabel());
-                                    if (cf.getType() == 3 || cf.getType() == 4 || cf.getType() == 5
-                                            || cf.getType() == 6) {
-                                        cost = cost + cf.getMoney();
-                                        // logger.warn("enters loop cost" +
-                                        // cf.getType());
-                                    }
-                                    // logger.warn("enters loop revenue" +
-                                    // cf.getType());
-                                    if (cf.getType() == 1 || cf.getType() == 10) {
-                                        revenue = revenue + cf.getMoney();
 
-                                    }
+                                // logger.warn("enters power plant loop" +
+                                // plant.getLabel());
+                                if (cf.getType() == 3 || cf.getType() == 4 || cf.getType() == 5 || cf.getType() == 6) {
+                                    cost = cost + cf.getMoney();
+                                    // logger.warn("enters loop cost" +
+                                    // cf.getType());
+                                }
+                                // logger.warn("enters loop revenue" +
+                                // cf.getType());
+                                if (cf.getType() == 1 || cf.getType() == 10) {
+                                    revenue = revenue + cf.getMoney();
 
                                 }
                             }
@@ -169,25 +147,32 @@ public class DismantlePowerPlantOperationalLossRole extends AbstractRole<Electri
 
                         double dismantledPlantCapacity = ((plant.getTechnology().getCapacity()) * plant.getTechnology()
                                 .getPeakSegmentDependentAvailability());
+
                         if ((availableFutureCapacity - dismantledPlantCapacity) > peakLoadforMarket) {
 
                             if (plant.getAgeFraction() >= 1.00D) {
 
-                                // logger.warn("enters loop age dismantle" +
-                                // plant.getAgeFraction());
+                                logger.warn("enters loop age dismantle" + plant.getAgeFraction());
+
                                 plant.dismantlePowerPlant(getCurrentTick());
 
                                 availableFutureCapacity = (availableFutureCapacity - dismantledPlantCapacity);
                             }
                         }
-                        // Dismantle by profitability until last plant is
-                        // profitable
-                        // or
-                        // capacity margin goes to zero.
+
+                        // if (((availableFutureCapacity -
+                        // dismantledPlantCapacity) - peakLoadforMarket) <= 0)
+                        // break;
                     }
                 }
                 // logger.warn("capacity" + (availableFutureCapacity -
                 // peakLoadforMarket));
+
+                // Dismantle by profitability until last plant is
+                // profitable
+                // or
+                // capacity margin goes to zero.
+
                 if ((availableFutureCapacity - peakLoadforMarket) > 0D) {
 
                     for (PowerPlant plant : reps.powerPlantRepository
@@ -195,15 +180,25 @@ public class DismantlePowerPlantOperationalLossRole extends AbstractRole<Electri
 
                         double dismantledPlantCapacity = ((plant.getTechnology().getCapacity()) * plant.getTechnology()
                                 .getPeakSegmentDependentAvailability());
-                        if ((availableFutureCapacity - dismantledPlantCapacity) > peakLoadforMarket) {
-                            if (plant.getProfitability() <= 0D) {
+                        // logger.warn("Shortage "
+                        // + ((availableFutureCapacity -
+                        // dismantledPlantCapacity) - peakLoadforMarket));
 
-                                // logger.warn("enters loop age dismantle" +
+                        if ((availableFutureCapacity - dismantledPlantCapacity) > (peakLoadforMarket)) {
+                            if (plant.getProfitability() < 0) {
+
+                                // logger.warn("enters loop money dismantle" +
                                 // plant.getProfitability());
+
                                 plant.dismantlePowerPlant(getCurrentTick());
-                                availableFutureCapacity = availableFutureCapacity - dismantledPlantCapacity;
+
+                                availableFutureCapacity = (availableFutureCapacity - dismantledPlantCapacity);
                             }
                         }
+
+                        // if (((availableFutureCapacity -
+                        // dismantledPlantCapacity) - peakLoadforMarket) <= 0)
+                        // break;
                     }
                 }
             }
