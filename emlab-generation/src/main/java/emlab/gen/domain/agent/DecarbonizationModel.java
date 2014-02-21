@@ -38,6 +38,10 @@ public class DecarbonizationModel extends AbstractAgent implements Agent {
 
     private double centralPrivateDiscountingRate;
 
+    private double centralCO2BackSmoothingFactor;
+
+    private double centralCO2TargetReversionSpeedFactor;
+
     private boolean co2BankingIsImplemented;
 
     @SimulationParameter(label = "Simulation Length", from = 0, to = 75)
@@ -205,6 +209,22 @@ public class DecarbonizationModel extends AbstractAgent implements Agent {
 
     public void setCo2BankingIsImplemented(boolean co2BankingIsImplemented) {
         this.co2BankingIsImplemented = co2BankingIsImplemented;
+    }
+
+    public double getCentralCO2BackSmoothingFactor() {
+        return centralCO2BackSmoothingFactor;
+    }
+
+    public void setCentralCO2BackSmoothingFactor(double centralCO2BackSmoothingFactor) {
+        this.centralCO2BackSmoothingFactor = centralCO2BackSmoothingFactor;
+    }
+
+    public double getCentralCO2TargetReversionSpeedFactor() {
+        return centralCO2TargetReversionSpeedFactor;
+    }
+
+    public void setCentralCO2TargetReversionSpeedFactor(double centralCO2TargetReversionSpeedFactor) {
+        this.centralCO2TargetReversionSpeedFactor = centralCO2TargetReversionSpeedFactor;
     }
 
 }

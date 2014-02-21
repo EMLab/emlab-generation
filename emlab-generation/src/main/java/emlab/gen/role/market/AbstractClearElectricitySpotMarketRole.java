@@ -110,6 +110,17 @@ public abstract class AbstractClearElectricitySpotMarketRole<T extends Decarboni
         public PriceEmissionPair tooHighEmissionsPair;
         public double bankingEffectiveMinimumPrice;
 
+        /*
+         * (non-Javadoc)
+         * 
+         * @see java.lang.Object#toString()
+         */
+        @Override
+        public String toString() {
+            // TODO Auto-generated method stub
+            return "Stable: " + this.stable + ", co2Price: " + this.co2Price + ", co2Emissions: " + this.co2Emissions;
+        }
+
     }
 
     class PriceEmissionPair {

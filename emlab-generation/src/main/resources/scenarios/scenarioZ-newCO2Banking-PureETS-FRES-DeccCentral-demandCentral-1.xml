@@ -40,7 +40,7 @@ Transmission capacity is assumed to be 3016 in both directions, based on maximum
 		p:capDeviationCriterion="0.03" p:deletionOldPPDPBidsAndCashFlowsEnabled="true"
 		p:deletionAge="2" p:centralForecastBacklookingYears="5"
 		p:centralForecastingYear="3"
-		p:centralPrivateDiscountingRate="0.05"
+		p:centralPrivateDiscountingRate="0.05" p:centralCO2BackSmoothingFactor="0.2"
 		p:co2BankingIsImplemented="true">
 	</bean>
 
