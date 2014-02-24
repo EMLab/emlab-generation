@@ -39,6 +39,10 @@ import emlab.gen.repository.Reps;
 // start dismantling from highest negative value and updating supplyMargin
 // variable, till all plants are dismantled or zero reached
 
+// TODO: If shortage in market, check for capacity in interconnected market. If
+// capacity is present, check interconnector capacity and add the capacity in
+// peak supply.
+
 @RoleComponent
 public class DismantlePowerPlantOperationalLossRole extends AbstractRole<ElectricitySpotMarket> {
 
@@ -69,7 +73,7 @@ public class DismantlePowerPlantOperationalLossRole extends AbstractRole<Electri
 
             double peakLoadforMarket = sr.predict(getCurrentTick()) * peakLoadforMarketNOtrend;
 
-            logger.warn("peakLoad " + peakLoadforMarket);
+            // logger.warn("peakLoad " + peakLoadforMarket);
 
             availableFutureCapacity = reps.powerPlantRepository.calculatePeakCapacityOfOperationalPowerPlantsInMarket(
                     market, getCurrentTick());
