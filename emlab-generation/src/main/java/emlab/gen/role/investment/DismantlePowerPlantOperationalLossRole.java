@@ -58,21 +58,28 @@ public class DismantlePowerPlantOperationalLossRole extends AbstractRole<Electri
         if (getCurrentTick() > 0) {
 
             double availableFutureCapacity = 0d;
+            double peakLoadforMarket = 0d;
 
             // Demand
 
-            SimpleRegression sr = new SimpleRegression();
-            for (long time = getCurrentTick() - 1; time >= getCurrentTick()
-                    - market.getBacklookingForDemandForecastinginDismantling()
-                    && time >= 0; time = time - 1) {
-                sr.addData(time, market.getDemandGrowthTrend().getValue(time));
+            if (getCurrentTick() == 1) {
+                peakLoadforMarket = reps.segmentLoadRepository.peakLoadbyZoneMarketandTime(market.getZone(), market);
             }
 
-            double peakLoadforMarketNOtrend = reps.segmentLoadRepository.peakLoadbyZoneMarketandTime(market.getZone(),
-                    market);
+            if (getCurrentTick() > 1) {
+                SimpleRegression sr = new SimpleRegression();
+                for (long time = getCurrentTick() - 1; time >= getCurrentTick()
+                        - market.getBacklookingForDemandForecastinginDismantling()
+                        && time >= 0; time = time - 1) {
+                    sr.addData(time, market.getDemandGrowthTrend().getValue(time));
 
-            double peakLoadforMarket = sr.predict(getCurrentTick()) * peakLoadforMarketNOtrend;
+                }
+                double peakLoadforMarketNOtrend = reps.segmentLoadRepository.peakLoadbyZoneMarketandTime(
+                        market.getZone(), market);
 
+                peakLoadforMarket = sr.predict(getCurrentTick()) * peakLoadforMarketNOtrend;
+
+            }
             // logger.warn("peakLoad " + peakLoadforMarket);
 
             availableFutureCapacity = reps.powerPlantRepository.calculatePeakCapacityOfOperationalPowerPlantsInMarket(
