@@ -39,7 +39,7 @@ Transmission capacity is assumed to be 3016 in both directions, based on maximum
 		p:iterationSpeedFactor="3" p:iterationSpeedCriterion="0.005"
 		p:capDeviationCriterion="0.03" p:deletionOldPPDPBidsAndCashFlowsEnabled="true"
 		p:deletionAge="2" p:centralForecastBacklookingYears="5"
-		p:centralForecastingYear="3"
+		p:centralForecastingYear="3" p:centralCO2TargetReversionSpeedFactor="3"
 		p:centralPrivateDiscountingRate="0.05" p:centralCO2BackSmoothingFactor="0.2"
 		p:co2BankingIsImplemented="true">
 	</bean>
@@ -828,7 +828,7 @@ Transmission capacity is assumed to be 3016 in both directions, based on maximum
 		p:willingToInvest="true" p:priceMarkUp="${priceMarkUp}" 
 		p:numberOfYearsBacklookingForForecasting="5"
 		p:investorMarket-ref="gbElectricitySpotMarket"
-		p:co2Allowances="29850687.601992195"/>
+		p:co2Allowances="14925343.800996097"/>
 	<bean id="energyProducerB" class="emlab.gen.domain.agent.EnergyProducer"
 		p:name="Energy Producer B" p:cash="${startCashGB}"
 		p:investmentRole-ref="standardInvestmentRole"
@@ -841,7 +841,7 @@ Transmission capacity is assumed to be 3016 in both directions, based on maximum
 		p:willingToInvest="true" p:priceMarkUp="${priceMarkUp}" 
 		p:numberOfYearsBacklookingForForecasting="6"
 		p:investorMarket-ref="gbElectricitySpotMarket"
-		p:co2Allowances="29850687.601992195"/>
+		p:co2Allowances="14925343.800996097"/>
 	<bean id="energyProducerC" class="emlab.gen.domain.agent.EnergyProducer"
 		p:name="Energy Producer C" p:cash="${startCashGB}"
 		p:investmentRole-ref="standardInvestmentRole"
@@ -854,7 +854,7 @@ Transmission capacity is assumed to be 3016 in both directions, based on maximum
 		p:willingToInvest="true" p:priceMarkUp="${priceMarkUp}" 
 		p:numberOfYearsBacklookingForForecasting="4"
 		p:investorMarket-ref="gbElectricitySpotMarket"
-		p:co2Allowances="29850687.601992195"/>
+		p:co2Allowances="14925343.800996097"/>
 	<bean id="energyProducerD" class="emlab.gen.domain.agent.EnergyProducer"
 		p:name="Energy Producer D" p:cash="${startCashGB}"
 		p:investmentRole-ref="standardInvestmentRole"
@@ -867,7 +867,7 @@ Transmission capacity is assumed to be 3016 in both directions, based on maximum
 		p:willingToInvest="true" p:priceMarkUp="${priceMarkUp}" 
 		p:numberOfYearsBacklookingForForecasting="5"
 		p:investorMarket-ref="gbElectricitySpotMarket"
-		p:co2Allowances="29850687.601992195"/>
+		p:co2Allowances="14925343.800996097"/>
 	<bean id="energyProducerE" class="emlab.gen.domain.agent.EnergyProducer"
 		p:name="Energy Producer E" p:cash="${startCashCWE}"
 		p:investmentRole-ref="standardInvestmentRole"
@@ -879,7 +879,7 @@ Transmission capacity is assumed to be 3016 in both directions, based on maximum
 		p:dismantlingRequiredOperatingProfit="0" p:downpaymentFractionOfCash="0.5"
 		p:willingToInvest="true" p:priceMarkUp="${priceMarkUp}"  p:numberOfYearsBacklookingForForecasting="4"
 		p:investorMarket-ref="cweElectricitySpotMarket"
-		p:co2Allowances="81733433.592424007"/>
+		p:co2Allowances="40866716.796212003"/>
 	<bean id="energyProducerF" class="emlab.gen.domain.agent.EnergyProducer"
 		p:name="Energy Producer F" p:cash="${startCashCWE}"
 		p:investmentRole-ref="standardInvestmentRole"
@@ -891,7 +891,7 @@ Transmission capacity is assumed to be 3016 in both directions, based on maximum
 		p:dismantlingRequiredOperatingProfit="0" p:downpaymentFractionOfCash="0.5"
 		p:willingToInvest="true" p:priceMarkUp="${priceMarkUp}"  p:numberOfYearsBacklookingForForecasting="6"
 		p:investorMarket-ref="cweElectricitySpotMarket"
-		p:co2Allowances="81733433.592424007"/>
+		p:co2Allowances="40866716.796212003"/>
 	<bean id="energyProducerG" class="emlab.gen.domain.agent.EnergyProducer"
 		p:name="Energy Producer G" p:cash="${startCashCWE}"
 		p:investmentRole-ref="standardInvestmentRole"
@@ -904,7 +904,7 @@ Transmission capacity is assumed to be 3016 in both directions, based on maximum
 		p:willingToInvest="true" p:priceMarkUp="${priceMarkUp}" 
 		p:numberOfYearsBacklookingForForecasting="5"
 		p:investorMarket-ref="cweElectricitySpotMarket"
-		p:co2Allowances="81733433.592424007"/>
+		p:co2Allowances="40866716.796212003"/>
 	<bean id="energyProducerH" class="emlab.gen.domain.agent.EnergyProducer"
 		p:name="Energy Producer H" p:cash="${startCashCWE}"
 		p:investmentRole-ref="standardInvestmentRole"
@@ -917,7 +917,7 @@ Transmission capacity is assumed to be 3016 in both directions, based on maximum
 		p:willingToInvest="true" p:priceMarkUp="${priceMarkUp}"
 		p:numberOfYearsBacklookingForForecasting="5"
 		p:investorMarket-ref="cweElectricitySpotMarket"
-		p:co2Allowances="81733433.592424007"/>
+		p:co2Allowances="40866716.796212003"/>
 
 	<bean id="standardInvestmentRole" class="emlab.gen.role.investment.InvestInPowerGenerationTechnologiesWithCO2ForecastRole"/>
 	<bean id="targetInvestmentRole" class="emlab.gen.role.investment.TargetInvestmentRole"/>

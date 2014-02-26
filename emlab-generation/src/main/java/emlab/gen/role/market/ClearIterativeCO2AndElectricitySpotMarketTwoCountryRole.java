@@ -678,6 +678,12 @@ implements Role<DecarbonizationModel> {
                     interconnector, model);
             currentEmissions = determineTotalEmissionsBasedOnPowerPlantDispatchPlan(false, clearingTick);
 
+            // for (Substance substance : template.findAll(Substance.class)) {
+            // double sum =
+            // reps.powerPlantRepository.calculateSubstanceUsage(substance);
+            // logger.warn(substance.getName() + ": {}", sum);
+            // }
+
             deltaBankedEmissionCertificates = government.getCo2Cap(clearingTick) - currentEmissions;
 
             co2SecantSearch = co2PriceSecantSearchUpdateWithCO2Banking(co2SecantSearch, model, government,
