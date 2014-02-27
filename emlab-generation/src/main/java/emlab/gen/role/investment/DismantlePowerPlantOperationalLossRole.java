@@ -95,14 +95,22 @@ public class DismantlePowerPlantOperationalLossRole extends AbstractRole<Electri
                     // plant.getLabel());
                     // Calculate AgeFraction and set it for each plant.
                     double age = 0;
-                    double currentLiftime = 0;
-                    currentLiftime = ((double) plant.getActualLifetime()
-                            + (double) plant.getTechnology().getExpectedLeadtime() + (double) plant.getTechnology()
-                            .getExpectedPermittime());
+                    long currentLiftime = 0;
+                    currentLiftime = getCurrentTick() - plant.getConstructionStartTime()
+                            - plant.getTechnology().getExpectedLeadtime()
+                            - plant.getTechnology().getExpectedPermittime();
+                    // .getExpectedPermittime();
+                    plant.setActualLifetime(currentLiftime);
+                    // logger.warn("ActualLifeTime" +
+                    // plant.getActualLifetime());
+                    // currentLiftime = ((double) plant.getActualLifetime()
+                    // + (double) plant.getTechnology().getExpectedLeadtime() +
+                    // (double) plant.getTechnology()
+                    // .getExpectedPermittime());
 
-                    age = currentLiftime / ((double) (plant.getTechnology().getExpectedLifetime()));
+                    age = (double) plant.getActualLifetime() / (((double) plant.getTechnology().getExpectedLifetime()));
 
-                    plant.setAgeFraction(age);
+                    plant.setAgeFraction((double) age);
                     // logger.warn("enters loop Powerplant " +
                     // plant.getAgeFraction());
                     // Calculate profitability for past n years.
@@ -163,7 +171,8 @@ public class DismantlePowerPlantOperationalLossRole extends AbstractRole<Electri
 
                             if (plant.getAgeFraction() >= 1.00D) {
 
-                                logger.warn("enters loop age dismantle" + plant.getAgeFraction());
+                                // logger.warn("enters loop age dismantle" +
+                                // plant.getAgeFraction());
 
                                 plant.dismantlePowerPlant(getCurrentTick());
 
