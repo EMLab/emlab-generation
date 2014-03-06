@@ -206,7 +206,8 @@ Role<EnergyProducer> {
 
             }
 
-            plan.setPrice(plan.getBidWithoutCO2() + (co2Price * plan.getPowerPlant().calculateEmissionIntensity()));
+            plan.setPrice(plan.getBidWithoutCO2()
+                    + (effectiveCO2Price * plan.getPowerPlant().calculateEmissionIntensity()));
 
             plan.setStatus(Bid.SUBMITTED);
             plan.setAmount(capacity);
