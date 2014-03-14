@@ -98,7 +98,7 @@ public class DismantlePowerPlantOperationalLossRole extends AbstractRole<Electri
 
             if (interconnectorCapacity > 0) {
                 logger.warn("3 Enters interconnection exists  " + interconnectorCapacity);
-                if (getCurrentTick() > 3) {
+                if (getCurrentTick() > 1) {
                     for (ElectricitySpotMarket otherMarket : reps.marketRepository.findAllElectricitySpotMarkets()) {
                         logger.warn("4 Enters interconnector loop  " + otherMarket.getNodeId());
                         if (otherMarket.getNodeId().intValue() != market.getNodeId().intValue()) {
