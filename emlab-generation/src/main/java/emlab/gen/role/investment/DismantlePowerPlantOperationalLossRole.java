@@ -80,13 +80,81 @@ public class DismantlePowerPlantOperationalLossRole extends AbstractRole<Electri
                 peakLoadforMarket = sr.predict(getCurrentTick()) * peakLoadforMarketNOtrend;
 
             }
-            // logger.warn("peakLoad " + peakLoadforMarket);
+            logger.warn("1 peakLoad " + peakLoadforMarket);
 
             availableFutureCapacity = reps.powerPlantRepository.calculatePeakCapacityOfOperationalPowerPlantsInMarket(
                     market, getCurrentTick());
 
+            logger.warn("2 availableFutureCapacity " + availableFutureCapacity);
             // logger.warn("capacity" + (availableFutureCapacity -
             // peakLoadforMarket) + "Future" + availableFutureCapacity);
+
+            // Check interconnector capacity in other market
+
+            double interconnectorCapacity = reps.interconnectorRepository.findInterconnectorCapacity();
+            double peakCapacityotherMarket = 0;
+            double peakLoadotherMarket = 0;
+            double capacityMarginOtherMarket = 0;
+
+            if (interconnectorCapacity > 0) {
+                logger.warn("3 Enters interconnection exists  " + interconnectorCapacity);
+                if (getCurrentTick() > 3) {
+                    for (ElectricitySpotMarket otherMarket : reps.marketRepository.findAllElectricitySpotMarkets()) {
+                        logger.warn("4 Enters interconnector loop  " + otherMarket.getNodeId());
+                        if (otherMarket.getNodeId().intValue() != market.getNodeId().intValue()) {
+                            logger.warn("5 finds the other market " + otherMarket.getNodeId() + " My Market "
+                                    + market.getNodeId());
+                            SimpleRegression sr2 = new SimpleRegression();
+                            for (long time = getCurrentTick() - 1; time >= getCurrentTick()
+                                    - market.getBacklookingForDemandForecastinginDismantling()
+                                    && time >= 0; time = time - 1) {
+                                sr2.addData(time, reps.powerPlantRepository
+                                        .calculatePeakCapacityOfOperationalPowerPlantsInMarket(otherMarket, time));
+                            }
+
+                            peakCapacityotherMarket = sr2.predict(getCurrentTick());
+
+                            logger.warn("6 peakCapacity in other market" + peakCapacityotherMarket);
+
+                            logger.warn("7 Enters Load loop" + getCurrentTick());
+                            SimpleRegression sr1 = new SimpleRegression();
+                            for (long time = getCurrentTick() - 1; time >= getCurrentTick()
+                                    - market.getBacklookingForDemandForecastinginDismantling()
+                                    && time >= 0; time = time - 1) {
+                                sr1.addData(time, otherMarket.getDemandGrowthTrend().getValue(time));
+                            }
+
+                            double peakNoTrendsOtherMarket = reps.segmentLoadRepository.peakLoadbyZoneMarketandTime(
+                                    otherMarket.getZone(), otherMarket);
+
+                            peakLoadotherMarket = sr1.predict(getCurrentTick()) * peakNoTrendsOtherMarket;
+                            logger.warn("8 peakLoad" + peakLoadotherMarket);
+
+                            capacityMarginOtherMarket = peakCapacityotherMarket - peakLoadotherMarket;
+                            logger.warn("9 Capacity Margin " + capacityMarginOtherMarket);
+                        }
+                    }
+
+                    if (capacityMarginOtherMarket >= 0 && capacityMarginOtherMarket <= interconnectorCapacity) {
+                        logger.warn("10 Capacity Margin is higher " + capacityMarginOtherMarket);
+                        availableFutureCapacity = availableFutureCapacity + capacityMarginOtherMarket;
+                        logger.warn("11 Higher Available Capacity " + availableFutureCapacity);
+                    }
+
+                    else {
+                        availableFutureCapacity = availableFutureCapacity + interconnectorCapacity;
+                        logger.warn("12 interconnector added " + availableFutureCapacity);
+                    }
+
+                    if (capacityMarginOtherMarket < 0 && ((-1) * capacityMarginOtherMarket) <= interconnectorCapacity) {
+                        logger.warn("13 Capacity Margin is lower " + capacityMarginOtherMarket);
+                        peakLoadforMarket = peakLoadforMarket - capacityMarginOtherMarket;
+                        logger.warn("14 Higher Available Load " + peakLoadforMarket);
+                    } else {
+                        peakLoadforMarket = peakLoadforMarket + interconnectorCapacity;
+                    }
+                }
+            }
 
             if ((availableFutureCapacity - peakLoadforMarket) > 0D) {
                 for (PowerPlant plant : reps.powerPlantRepository.findOperationalPowerPlantsInMarket(market,

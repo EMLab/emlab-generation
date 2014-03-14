@@ -87,6 +87,9 @@ public class Reps {
     public PowerGeneratingTechnologyNodeLimitRepository powerGeneratingTechnologyNodeLimitRepository;
 
     @Autowired
+    public InterconnectorRepository interconnectorRepository;
+
+    @Autowired
     public StrategicReserveOperatorRepository strategicReserveOperatorRepository;
 
 }
