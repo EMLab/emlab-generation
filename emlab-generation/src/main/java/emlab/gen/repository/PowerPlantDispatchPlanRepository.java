@@ -41,67 +41,70 @@ public interface PowerPlantDispatchPlanRepository extends GraphRepository<PowerP
     // @Query(value = "g.V.filter{it.getProperty('__type__')=='emlab.gen.domain.market.electricity.PowerPlantDispatchPlan' && it.getProperty('time')==time}", type = QueryType.Gremlin)
     // public Iterable<PowerPlantDispatchPlan> findAllPowerPlantDispatchPlansForTime(@Param("time") long time);
 
-    @Query("START ppdp=node:__types__(\"className:emlab.gen.domain.market.electricity.PowerPlantDispatchPlan\") WHERE (ppdp.time={time}) RETURN ppdp")
-    public Iterable<PowerPlantDispatchPlan> findAllPowerPlantDispatchPlansForTime(@Param("time") long time);
+    @Query("START ppdp=node:__types__(\"className:emlab.gen.domain.market.electricity.PowerPlantDispatchPlan\") WHERE (ppdp.time={time} AND ppdp.forecast = {forecast}) RETURN ppdp")
+    public Iterable<PowerPlantDispatchPlan> findAllPowerPlantDispatchPlansForTime(@Param("time") long time,
+            @Param("forecast") boolean forecast);
 
-    @Query(value = "result = g.v(plant).in('POWERPLANT_DISPATCHPLAN').as('x').out('SEGMENT_DISPATCHPLAN').idFilter(segment, FilterPipe.Filter.EQUAL).back('x')", type = QueryType.Gremlin)
+    @Query(value = "result = g.v(plant).in('POWERPLANT_DISPATCHPLAN').as('x').propertyFilter('forecast', FilterPipe.Filter.EQUAL, forecast).out('SEGMENT_DISPATCHPLAN').idFilter(segment, FilterPipe.Filter.EQUAL).back('x')", type = QueryType.Gremlin)
     public Iterable<PowerPlantDispatchPlan> findAllPowerPlantDispatchPlanForPowerPlantForSegmentForTime(@Param("plant") PowerPlant plant,
-            @Param("segment") Segment segment, @Param("time") long time);
+            @Param("segment") Segment segment, @Param("time") long time,
+            @Param("forecast") boolean forecast);
 
-    @Query(value = "result = g.v(plant).in('POWERPLANT_DISPATCHPLAN').as('x').out('SEGMENT_DISPATCHPLAN').idFilter(segment, FilterPipe.Filter.EQUAL).back('x').propertyFilter('time', FilterPipe.Filter.EQUAL, time); if(!result.hasNext()){return null;} else{return result.next();}", type = QueryType.Gremlin)
+    @Query(value = "result = g.v(plant).in('POWERPLANT_DISPATCHPLAN').as('x').propertyFilter('forecast', FilterPipe.Filter.EQUAL, forecast).out('SEGMENT_DISPATCHPLAN').idFilter(segment, FilterPipe.Filter.EQUAL).back('x').propertyFilter('time', FilterPipe.Filter.EQUAL, time); if(!result.hasNext()){return null;} else{return result.next();}", type = QueryType.Gremlin)
     public PowerPlantDispatchPlan findOnePowerPlantDispatchPlanForPowerPlantForSegmentForTime(@Param("plant") PowerPlant plant,
-            @Param("segment") Segment segment, @Param("time") long time);
+            @Param("segment") Segment segment, @Param("time") long time,
+            @Param("forecast") boolean forecast);
 
     // @Query(value = "g.v(segment).in('SEGMENT_DISPATCHPLAN').propertyFilter('time', FilterPipe.Filter.EQUAL, time)", type = QueryType.Gremlin)
     // public Iterable<PowerPlantDispatchPlan> findAllPowerPlantDispatchPlansForSegmentForTime(@Param("segment") Segment segment,
     // @Param("time") long time);
 
-    @Query("START segment = node({segment}) MATCH (segment)<-[:SEGMENT_DISPATCHPLAN]-(ppdp) WHERE (ppdp.time = {time}) RETURN ppdp")
+    @Query("START segment = node({segment}) MATCH (segment)<-[:SEGMENT_DISPATCHPLAN]-(ppdp) WHERE (ppdp.time = {time} AND ppdp.forecast={forecast}) RETURN ppdp")
     public Iterable<PowerPlantDispatchPlan> findAllPowerPlantDispatchPlansForSegmentForTime(@Param("segment") Segment segment,
-            @Param("time") long time);
+            @Param("time") long time, @Param("forecast") boolean forecast);
 
     // @Query(value = "g.v(segment).in('SEGMENT_DISPATCHPLAN').propertyFilter('time', FilterPipe.Filter.EQUAL, time).sort{it.price}._()", type = QueryType.Gremlin)
     // public Iterable<PowerPlantDispatchPlan> findSortedPowerPlantDispatchPlansForSegmentForTime(@Param("segment") Segment segment,
     // @Param("time") long time);
 
-    @Query("START segment = node({segment}) MATCH (segment)<-[:SEGMENT_DISPATCHPLAN]-(ppdp) WHERE (ppdp.time = {time}) RETURN ppdp ORDER BY ppdp.price")
+    @Query("START segment = node({segment}) MATCH (segment)<-[:SEGMENT_DISPATCHPLAN]-(ppdp) WHERE (ppdp.time = {time} AND ppdp.forecast={forecast}) RETURN ppdp ORDER BY ppdp.price")
     public Iterable<PowerPlantDispatchPlan> findSortedPowerPlantDispatchPlansForSegmentForTime(@Param("segment") Segment segment,
-            @Param("time") long time);
+            @Param("time") long time, @Param("forecast") boolean forecast);
 
     // descending order
-    @Query("START segment = node({segment}) MATCH (segment)<-[:SEGMENT_DISPATCHPLAN]-(ppdp) WHERE (ppdp.time = {time}) RETURN ppdp ORDER BY ppdp.price desc")
+    @Query("START segment = node({segment}) MATCH (segment)<-[:SEGMENT_DISPATCHPLAN]-(ppdp) WHERE (ppdp.time = {time} AND ppdp.forecast={forecast}) RETURN ppdp ORDER BY ppdp.price desc")
     public Iterable<PowerPlantDispatchPlan> findDescendingSortedPowerPlantDispatchPlansForSegmentForTime(
-            @Param("segment") Segment segment, @Param("time") long time);
+            @Param("segment") Segment segment, @Param("time") long time, @Param("forecast") boolean forecast);
 
-    @Query(value = "g.v(plant).in('POWERPLANT_DISPATCHPLAN').propertyFilter('time', FilterPipe.Filter.EQUAL, time)", type = QueryType.Gremlin)
+    @Query(value = "g.v(plant).in('POWERPLANT_DISPATCHPLAN').propertyFilter('forecast', FilterPipe.Filter.EQUAL, forecast).propertyFilter('time', FilterPipe.Filter.EQUAL, time)", type = QueryType.Gremlin)
     public Iterable<PowerPlantDispatchPlan> findAllPowerPlantDispatchPlansForPowerPlantForTime(@Param("plant") PowerPlant plant,
-            @Param("time") long time);
+            @Param("time") long time, @Param("forecast") boolean forecast);
 
-    @Query(value = "g.v(producer).out('BIDDER').propertyFilter('time', FilterPipe.Filter.EQUAL, time)", type = QueryType.Gremlin)
+    @Query(value = "g.v(producer).out('BIDDER').propertyFilter('time', FilterPipe.Filter.EQUAL, time).propertyFilter('forecast', FilterPipe.Filter.EQUAL, forecast)", type = QueryType.Gremlin)
     public Iterable<PowerPlantDispatchPlan> findAllPowerPlantDispatchPlansForEnergyProducerForTime(
-            @Param("producer") EnergyProducer producer, @Param("time") long time);
+            @Param("producer") EnergyProducer producer, @Param("time") long time, @Param("forecast") boolean forecast);
 
-    @Query(value = "g.v(producer).out('BIDDER').propertyFilter('time', FilterPipe.Filter.EQUAL, time).propertyFilter('status', FilterPipe.Filter.GREATER_THAN, 2)", type = QueryType.Gremlin)
+    @Query(value = "g.v(producer).out('BIDDER').propertyFilter('time', FilterPipe.Filter.EQUAL, time).propertyFilter('status', FilterPipe.Filter.GREATER_THAN_EQUAL , 2).propertyFilter('forecast', FilterPipe.Filter.EQUAL, forecast)", type = QueryType.Gremlin)
     public Iterable<PowerPlantDispatchPlan> findAllAcceptedPowerPlantDispatchPlansForEnergyProducerForTime(
-            @Param("producer") EnergyProducer producer, @Param("time") long time);
+            @Param("producer") EnergyProducer producer, @Param("time") long time, @Param("forecast") boolean forecast);
 
-    @Query(value = "g.v(producer).out('BIDDER').propertyFilter('time', FilterPipe.Filter.EQUAL, time).as('x').out('SEGMENT_DISPATCHPLAN').idFilter(segment, FilterPipe.Filter.EQUAL).back('x')", type = QueryType.Gremlin)
+    @Query(value = "g.v(producer).out('BIDDER').propertyFilter('time', FilterPipe.Filter.EQUAL, time).propertyFilter('forecast', FilterPipe.Filter.EQUAL, forecast).as('x').out('SEGMENT_DISPATCHPLAN').idFilter(segment, FilterPipe.Filter.EQUAL).back('x')", type = QueryType.Gremlin)
     public Iterable<PowerPlantDispatchPlan> findAllPowerPlantDispatchPlansForEnergyProducerForTimeAndSegment(
-            @Param("segment") Segment segment, @Param("producer") EnergyProducer producer, @Param("time") long time);
+            @Param("segment") Segment segment, @Param("producer") EnergyProducer producer, @Param("time") long time, @Param("forecast") boolean forecast);
 
-    @Query(value = "g.v(producer).out('BIDDER').propertyFilter('time', FilterPipe.Filter.EQUAL, time).propertyFilter('status', FilterPipe.Filter.GREATER_THAN, 2).as('x').out('SEGMENT_DISPATCHPLAN').idFilter(segment, FilterPipe.Filter.EQUAL).back('x')", type = QueryType.Gremlin)
+    @Query(value = "g.v(producer).out('BIDDER').propertyFilter('time', FilterPipe.Filter.EQUAL, time).propertyFilter('forecast', FilterPipe.Filter.EQUAL, forecast).propertyFilter('status', FilterPipe.Filter.GREATER_THAN_EQUAL, 2).as('x').out('SEGMENT_DISPATCHPLAN').idFilter(segment, FilterPipe.Filter.EQUAL).back('x')", type = QueryType.Gremlin)
     public Iterable<PowerPlantDispatchPlan> findAllAcceptedPowerPlantDispatchPlansForEnergyProducerForTimeAndSegment(
-            @Param("segment") Segment segment, @Param("producer") EnergyProducer producer, @Param("time") long time);
+            @Param("segment") Segment segment, @Param("producer") EnergyProducer producer, @Param("time") long time, @Param("forecast") boolean forecast);
 
     // @Query("START segment = node({segment}), market=node({market}) MATCH (segment)<-[:SEGMENT_DISPATCHPLAN]-(ppdp)-[:BIDDINGMARKET]->(market) WHERE (ppdp.time = {time}) and (ppdp.status >= 2) RETURN ppdp")
     // public Iterable<PowerPlantDispatchPlan> findAllAcceptedPowerPlantDispatchPlansForMarketSegmentAndTime(
     // @Param("market") ElectricitySpotMarket esm, @Param("segment") Segment segment, @Param("time") long time);
 
-    @Query(value = "g.v(market).in('BIDDINGMARKET').propertyFilter('time', FilterPipe.Filter.EQUAL, time).propertyFilter('status', FilterPipe.Filter.GREATER_THAN, 2).as('x').out('SEGMENT_DISPATCHPLAN').idFilter(segment, FilterPipe.Filter.EQUAL).back('x')", type = QueryType.Gremlin)
+    @Query(value = "g.v(market).in('BIDDINGMARKET').propertyFilter('time', FilterPipe.Filter.EQUAL, time).propertyFilter('forecast', FilterPipe.Filter.EQUAL, forecast).propertyFilter('status', FilterPipe.Filter.GREATER_THAN_EQUAL, 2).as('x').out('SEGMENT_DISPATCHPLAN').idFilter(segment, FilterPipe.Filter.EQUAL).back('x')", type = QueryType.Gremlin)
     public Iterable<PowerPlantDispatchPlan> findAllAcceptedPowerPlantDispatchPlansForMarketSegmentAndTime(
-            @Param("market") ElectricitySpotMarket esm, @Param("segment") Segment segment, @Param("time") long time);
+            @Param("market") ElectricitySpotMarket esm, @Param("segment") Segment segment, @Param("time") long time, @Param("forecast") boolean forecast);
 
-    // @Query("START segment = node({segment} MATCH (segment)<-[:SEGMENT_DISPATCHPLAN]-(ppdp)<-[:BIDDER]-(node({producer})) WHERE (ppdp.time = {time}) AND (ppdp.status >=2) RETURN ppdp")
+    // @Query("START segment = node({segment} MATCH (segment)<-[:SEGMENT_DISPATCHPLAN]-(ppdp)<-[:BIDDER]-(node({producer})) WHERE (ppdp.time = {time}) AND (ppdp.status >=1) RETURN ppdp")
     // public Iterable<PowerPlantDispatchPlan> findAllAcceptedPowerPlantDispatchPlansForEnergyProducerForTimeAndSegment(
     // @Param("segment") Segment segment, @Param("producer") EnergyProducer producer, @Param("time") long time);
 }

@@ -44,6 +44,7 @@ public class FiltersImpl implements Filters {
 
     private Dummy dummy;
 
+    @Override
     public void init() {
         dummy = new Dummy();
     }
@@ -77,7 +78,7 @@ public class FiltersImpl implements Filters {
         if (!(entity instanceof PowerPlant))
             throw new RuntimeException("Vertex is not a Power plant");
         PowerPlant plant = (PowerPlant) entity;
-        return plant.calculateCO2EmissionsAtTime(tick);
+        return plant.calculateCO2EmissionsAtTime(tick, false);
     }
 
     public double getTrendValue(Object node, long tick) {
@@ -98,7 +99,7 @@ public class FiltersImpl implements Filters {
 
         // Emiliano stuff:
         Double average = calculateAverageMarketPriceBasedOnClearingPoints(reps.clearingPointRepositoryOld
-                .findClearingPointsForMarketAndTime(market, tick));
+                .findClearingPointsForMarketAndTime(market, tick, false));
         Substance substance = market.getSubstance();
 
         if (average != null) {
@@ -106,7 +107,7 @@ public class FiltersImpl implements Filters {
         }
 
         average = calculateAverageMarketPriceBasedOnClearingPoints(reps.clearingPointRepositoryOld.findClearingPointsForMarketAndTime(
-                market, tick - 1));
+                market, tick - 1, false));
         if (average != null) {
             return average;
         }

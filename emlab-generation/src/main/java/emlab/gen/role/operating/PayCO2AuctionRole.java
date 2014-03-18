@@ -24,6 +24,7 @@ import emlab.gen.domain.agent.EnergyProducer;
 import emlab.gen.domain.agent.Government;
 import emlab.gen.domain.agent.NationalGovernment;
 import emlab.gen.domain.contract.CashFlow;
+import emlab.gen.domain.market.CO2Auction;
 import emlab.gen.domain.technology.PowerPlant;
 import emlab.gen.repository.Reps;
 import emlab.gen.role.AbstractEnergyProducerRole;
@@ -43,6 +44,7 @@ public class PayCO2AuctionRole extends AbstractEnergyProducerRole implements Rol
         return reps;
     }
 
+    @Override
     @Transactional
     public void act(EnergyProducer producer) {
         logger.info("Pay for the CO2 credits");
@@ -50,17 +52,28 @@ public class PayCO2AuctionRole extends AbstractEnergyProducerRole implements Rol
         Government government = reps.genericRepository.findFirst(Government.class);
 
         for (PowerPlant plant : reps.powerPlantRepository.findOperationalPowerPlantsByOwner(producer, getCurrentTick())) {
-            double money = calculateCO2MarketCost(plant);
+            double money = calculateCO2MarketCost(plant, false, getCurrentTick());
             CashFlow cf = reps.nonTransactionalCreateRepository.createCashFlow(producer, government, money, CashFlow.CO2AUCTION,
                     getCurrentTick(), plant);
             logger.info("Cash flow created: {}", cf);
-            double minCO2Money = calculatePaymentEffictiveCO2NationalMinimumPriceCost(plant);
+            double minCO2Money = calculatePaymentEffictiveCO2NationalMinimumPriceCost(plant, false, getCurrentTick());
             NationalGovernment nationalGovernment = reps.nationalGovernmentRepository.findNationalGovernmentByPowerPlant(plant);
             CashFlow cf2 = reps.nonTransactionalCreateRepository.createCashFlow(producer, nationalGovernment, minCO2Money,
                     CashFlow.NATIONALMINCO2, getCurrentTick(), plant);
             logger.info("Cash flow created: {}", cf2);
         }
 
+        CO2Auction auction = reps.genericRepository.findFirst(CO2Auction.class);
+        double co2Price = findLastKnownPriceOnMarket(auction, getCurrentTick());
+        double deltaOfHedging = producer.getCo2Allowances() - producer.getLastYearsCo2Allowances();
+        double money = co2Price * deltaOfHedging;
+        if (money >= 0) {
+            CashFlow cf2 = reps.nonTransactionalCreateRepository.createCashFlow(producer, government, money,
+                    CashFlow.CO2HEDGING, getCurrentTick(), null);
+        } else {
+            CashFlow cf2 = reps.nonTransactionalCreateRepository.createCashFlow(government, producer, -money,
+                    CashFlow.CO2HEDGING, getCurrentTick(), null);
+        }
         // for (PowerPlantDispatchPlan plan : reps.powerPlantDispatchPlanRepository
         // .findAllAcceptedPowerPlantDispatchPlansForEnergyProducerForTime(producer, getCurrentTick())) {
         // double money = plan.getPrice() - plan.getBidWithoutCO2();

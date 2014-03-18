@@ -32,9 +32,15 @@ import emlab.gen.repository.Reps;
 import emlab.gen.role.AbstractEnergyProducerRole;
 
 /**
- * {@link EnergyProducer}s submit bids to the {@link CommodityMarket}. They buy fuel needed to fuel their {@link PowerPlant}s. Interesting twist with co-combustion and multiple fuels
+ * {@link EnergyProducer}s submit bids to the {@link CommodityMarket}. They buy
+ * fuel needed to fuel their {@link PowerPlant}s. Interesting twist with
+ * co-combustion and multiple fuels Pay attention that the fuel mix is set to
+ * the current mix, that is no forecast is done between electricity and
+ * commodity market clearing.
  * 
- * @author <a href="mailto:E.J.L.Chappin@tudelft.nl">Emile Chappin</a> @author <a href="mailto:A.Chmieliauskas@tudelft.nl">Alfredas Chmieliauskas</a>
+ * @author <a href="mailto:E.J.L.Chappin@tudelft.nl">Emile Chappin</a> @author
+ *         <a href="mailto:A.Chmieliauskas@tudelft.nl">Alfredas
+ *         Chmieliauskas</a>
  * 
  */
 @RoleComponent
@@ -43,6 +49,7 @@ public class SubmitBidsToCommodityMarketRole extends AbstractEnergyProducerRole 
     @Autowired
     Reps reps;
 
+    @Override
     @Transactional
     public void act(EnergyProducer producer) {
 
@@ -52,7 +59,7 @@ public class SubmitBidsToCommodityMarketRole extends AbstractEnergyProducerRole 
 
         for (PowerPlant plant : reps.powerPlantRepository.findOperationalPowerPlantsByOwner(producer, getCurrentTick())) {
 
-            double totalSupply = plant.calculateElectricityOutputAtTime(getCurrentTick());
+            double totalSupply = plant.calculateElectricityOutputAtTime(getCurrentTick(), false);
 
             for (SubstanceShareInFuelMix share : plant.getFuelMix()) {
 

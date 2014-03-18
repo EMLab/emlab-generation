@@ -262,6 +262,7 @@ public class StrategicReserveRoleTest {
         p1.setBidder(e1);
         p1.setStatus(3);
         p1.setAcceptedAmount(1500);
+        p1.setForecast(false);
         p1.persist();
 
         PowerPlantDispatchPlan p11 = new PowerPlantDispatchPlan();
@@ -274,6 +275,7 @@ public class StrategicReserveRoleTest {
         p11.setBidder(e2);
         p11.setStatus(3);
         p11.setAcceptedAmount(1000);
+        p11.setForecast(false);
         p11.persist();
 
         PowerPlantDispatchPlan p111 = new PowerPlantDispatchPlan();
@@ -286,6 +288,7 @@ public class StrategicReserveRoleTest {
         p111.setBidder(e3);
         p111.setStatus(3);
         p111.setAcceptedAmount(1200);
+        p111.setForecast(false);
         p111.persist();
 
         // For Zone 1 segment 2
@@ -299,6 +302,7 @@ public class StrategicReserveRoleTest {
         p1111.setBidder(e1);
         p1111.setStatus(3);
         p1111.setAcceptedAmount(1500);
+        p1111.setForecast(false);
         p1111.persist();
 
         PowerPlantDispatchPlan p11111 = new PowerPlantDispatchPlan();
@@ -311,6 +315,7 @@ public class StrategicReserveRoleTest {
         p11111.setBidder(e2);
         p11111.setStatus(-1);
         p11111.setAcceptedAmount(0);
+        p11111.setForecast(false);
         p11111.persist();
 
         PowerPlantDispatchPlan p111111 = new PowerPlantDispatchPlan();
@@ -323,6 +328,7 @@ public class StrategicReserveRoleTest {
         p111111.setBidder(e3);
         p111111.setStatus(2);
         p111111.setAcceptedAmount(1000);
+        p111111.setForecast(false);
         p111111.persist();
 
         // for Zone 2 Segment 1
@@ -406,6 +412,7 @@ public class StrategicReserveRoleTest {
         clearingPoint1.setAbstractMarket(market1);
         clearingPoint1.setPrice(25);
         clearingPoint1.setTime(0l);
+        clearingPoint1.setForecast(false);
 
         // SegmentClearingPoint clearingPoint11 = new SegmentClearingPoint();
         // clearingPoint11.setSegment(S1);
@@ -418,6 +425,7 @@ public class StrategicReserveRoleTest {
         clearingPoint111.setAbstractMarket(market1);
         clearingPoint111.setPrice(7);
         clearingPoint111.setTime(0l);
+        clearingPoint111.setForecast(false);
 
         // SegmentClearingPoint clearingPoint1111 = new SegmentClearingPoint();
         // clearingPoint1111.setSegment(S2);

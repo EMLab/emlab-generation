@@ -89,4 +89,7 @@ public class Reps {
     @Autowired
     public StrategicReserveOperatorRepository strategicReserveOperatorRepository;
 
+    @Autowired
+    public DecarbonizationAgentRepository decarbonizationAgentRepository;
+
 }

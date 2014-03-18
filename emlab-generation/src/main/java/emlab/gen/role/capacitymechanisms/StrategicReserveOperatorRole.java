@@ -116,7 +116,9 @@ public class StrategicReserveOperatorRole extends AbstractRole<StrategicReserveO
             //logger.warn("dispatchPrice " + dispatchPrice);
             //double reserveMargin = peakCapacityforMarket-peakLoadforMarket;
 
-            Iterable<PowerPlantDispatchPlan> sortedListofPPDP = plantDispatchPlanRepository.findDescendingSortedPowerPlantDispatchPlansForSegmentForTime(currentSegment, getCurrentTick());
+            Iterable<PowerPlantDispatchPlan> sortedListofPPDP = plantDispatchPlanRepository
+                    .findDescendingSortedPowerPlantDispatchPlansForSegmentForTime(currentSegment, getCurrentTick(),
+                            false);
 
             for (PowerPlantDispatchPlan currentPPDP: sortedListofPPDP){
 

@@ -113,7 +113,7 @@ public class PowerPlant {
         if (finishedConstruction <= time) {
             // finished construction
 
-            if (finishedConstruction + getTechnology().getExpectedLifetime() > time) {
+            if (getExpectedEndOfLife() > time) {
                 // Powerplant is not expected to be dismantled
                 return true;
             }
@@ -427,11 +427,11 @@ public class PowerPlant {
         return emission;
     }
 
-    public double calculateElectricityOutputAtTime(long time) {
+    public double calculateElectricityOutputAtTime(long time, boolean forecast) {
         // TODO This is in MWh (so hours of segment included!!)
         double amount = 0d;
         for (PowerPlantDispatchPlan plan : powerPlantDispatchPlanRepository
-                .findAllPowerPlantDispatchPlansForPowerPlantForTime(this, time)) {
+                .findAllPowerPlantDispatchPlansForPowerPlantForTime(this, time, forecast)) {
             amount += plan.getSegment().getLengthInHours()
                     * (plan.getCapacityLongTermContract() + plan
                             .getAcceptedAmount());
@@ -439,9 +439,9 @@ public class PowerPlant {
         return amount;
     }
 
-    public double calculateCO2EmissionsAtTime(long time) {
+    public double calculateCO2EmissionsAtTime(long time, boolean forecast) {
         return this.calculateEmissionIntensity()
-                * calculateElectricityOutputAtTime(time);
+                * calculateElectricityOutputAtTime(time, forecast);
     }
 
     @Transactional
