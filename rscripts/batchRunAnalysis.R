@@ -141,11 +141,11 @@ plotStackedDiagram <- function(moltenVariable, ylabel, legendName, absolute=TRUE
 }
 
 
-plotTimeSeriesWithConfidenceIntervalByFacettedGroup <- function(df, variable, ylabel, fun.data="median_hilow", conf.int=0.5, conf.int2=0.95, nrow=NULL){
+plotTimeSeriesWithConfidenceIntervalByFacettedGroup <- function(df, variable, ylabel, fun.data="median_hilow", conf.int=0.5, conf.int2=0.90, nrow=NULL){
   g<-ggplot(df, aes_string(x="tick", y=variable))+ #colour=modelRun, fill=modelRun,
     #stat_summary(aes_string(fill="modelRun"), fun.data=fun.data, conf.int=conf.int, geom="smooth") +
+    stat_summary(fun.data=fun.data, conf.int=conf.int2, geom="smooth", colour="gray")+
     stat_summary(fun.data=fun.data, conf.int=conf.int, geom="smooth", colour="black") +
-    stat_summary(fun.data=fun.data, conf.int=conf.int2, geom="smooth", colour="black")+
     #facet_grid(. ~ modelRun)+
     facet_wrap(~ modelRun, nrow=nrow)+
     theme(legend.position="none")+
