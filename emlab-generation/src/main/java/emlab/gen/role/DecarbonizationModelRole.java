@@ -27,6 +27,7 @@ import emlab.gen.domain.agent.CommoditySupplier;
 import emlab.gen.domain.agent.DecarbonizationModel;
 import emlab.gen.domain.agent.EnergyConsumer;
 import emlab.gen.domain.agent.EnergyProducer;
+import emlab.gen.domain.agent.Government;
 import emlab.gen.domain.agent.StrategicReserveOperator;
 import emlab.gen.domain.agent.TargetInvestor;
 import emlab.gen.domain.market.CommodityMarket;
@@ -34,6 +35,7 @@ import emlab.gen.domain.market.electricity.ElectricitySpotMarket;
 import emlab.gen.repository.Reps;
 import emlab.gen.role.capacitymechanisms.ProcessAcceptedPowerPlantDispatchRoleinSR;
 import emlab.gen.role.capacitymechanisms.StrategicReserveOperatorRole;
+import emlab.gen.role.co2policy.RenewableAdaptiveCO2CapRole;
 import emlab.gen.role.investment.DismantlePowerPlantPastTechnicalLifetimeRole;
 import emlab.gen.role.investment.GenericInvestmentRole;
 import emlab.gen.role.market.ClearCommodityMarketRole;
@@ -128,11 +130,6 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
         Timer timer = new Timer();
         timer.start();
 
-        for (EnergyProducer producer : reps.energyProducerRepository.findAll()) {
-            producer.setLastYearsCo2Allowances(producer.getCo2Allowances());
-
-        }
-
         logger.warn("  0. Dismantling & paying loans");
         for (EnergyProducer producer : reps.genericRepository.findAllAtRandom(EnergyProducer.class)) {
             dismantlePowerPlantRole.act(producer);
@@ -161,7 +158,7 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
         if (model.isLongTermContractsImplemented()) {
             timerMarket.reset();
             timerMarket.start();
-            logger.warn("  2a Submit and select long-term electricity contracts");
+            logger.warn("  2. Submit and select long-term electricity contracts");
             for (EnergyProducer producer : reps.genericRepository.findAllAtRandom(EnergyProducer.class)) {
                 submitLongTermElectricityContractsRole.act(producer);
                 //                producer.act(submitLongTermElectricityContractsRole);
@@ -209,7 +206,11 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
             strategicReserveOperatorRole.act(strategicReserveOperator);
         }
 
-
+        Government government = template.findAll(Government.class).iterator().next();
+        if (getCurrentTick() > 0 && government.getCo2CapTrend() != null && government.isActivelyAdjustingTheCO2Cap()) {
+            logger.warn("Lowering cap according to RES installations");
+            renewableAdaptiveCO2CapRole.act(government);
+        }
 
         timerMarket.reset();
         timerMarket.start();

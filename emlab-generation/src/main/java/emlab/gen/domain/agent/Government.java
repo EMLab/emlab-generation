@@ -37,6 +37,8 @@ public class Government extends DecarbonizationAgent implements Agent {
     @RelatedTo(type = "CO2_PRICECEILING_TREND", elementClass = TimeSeriesImpl.class, direction = Direction.OUTGOING)
     private TimeSeriesImpl co2PriceCeilingTrend;
 
+    private boolean activelyAdjustingTheCO2Cap;
+
     private double co2Penalty;
 
     private double stabilityReserve;
@@ -93,6 +95,14 @@ public class Government extends DecarbonizationAgent implements Agent {
 
     public void setCo2PriceCeilingTrend(TimeSeriesImpl co2PriceCeilingTrend) {
         this.co2PriceCeilingTrend = co2PriceCeilingTrend;
+    }
+
+    public boolean isActivelyAdjustingTheCO2Cap() {
+        return activelyAdjustingTheCO2Cap;
+    }
+
+    public void setActivelyAdjustingTheCO2Cap(boolean activelyAdjustingTheCO2Cap) {
+        this.activelyAdjustingTheCO2Cap = activelyAdjustingTheCO2Cap;
     }
 
     public double getStabilityReserve() {
