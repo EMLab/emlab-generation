@@ -34,4 +34,10 @@ GraphRepository<DecarbonizationAgent> {
             + "return co2Allowances;", type = QueryType.Gremlin)
     double determineTotallyBankedCO2Certificates();
 
+    @Query(value = "agents = g.idx('__types__')[[className:'emlab.gen.domain.agent.DecarbonizationAgent']];"
+            + "co2Allowances=0;"
+            + "for(agent in agents){if(agent.lastYearsCo2Allowances!=null) co2Allowances+=agent.lastYearsCo2Allowances};"
+            + "return co2Allowances;", type = QueryType.Gremlin)
+    double determinePreviouslyBankedCO2Certificates();
+
 }

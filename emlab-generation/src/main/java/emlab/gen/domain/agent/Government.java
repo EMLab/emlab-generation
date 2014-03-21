@@ -43,6 +43,16 @@ public class Government extends DecarbonizationAgent implements Agent {
 
     private double stabilityReserve;
 
+    private double stabilityReserveAddingThreshold;
+
+    private double stabilityReserveReleasingThreshold;
+
+    private double stabilityReserveAddingPercentage;
+
+    private double stabilityReserveAddingMinimum;
+
+    private double stabilityReserveReleaseQuantity;
+
     public double getCO2Tax(long time) {
         return co2TaxTrend.getValue(time);
     }
@@ -111,6 +121,46 @@ public class Government extends DecarbonizationAgent implements Agent {
 
     public void setStabilityReserve(double stabilityReserve) {
         this.stabilityReserve = stabilityReserve;
+    }
+
+    public double getStabilityReserveAddingThreshold() {
+        return stabilityReserveAddingThreshold;
+    }
+
+    public void setStabilityReserveAddingThreshold(double stabilityReserveAddingThreshold) {
+        this.stabilityReserveAddingThreshold = stabilityReserveAddingThreshold;
+    }
+
+    public double getStabilityReserveReleasingThreshold() {
+        return stabilityReserveReleasingThreshold;
+    }
+
+    public void setStabilityReserveReleasingThreshold(double stabilityReserveReleasingThreshold) {
+        this.stabilityReserveReleasingThreshold = stabilityReserveReleasingThreshold;
+    }
+
+    public double getStabilityReserveAddingPercentage() {
+        return stabilityReserveAddingPercentage;
+    }
+
+    public void setStabilityReserveAddingPercentage(double stabilityReserveAddingPercentage) {
+        this.stabilityReserveAddingPercentage = stabilityReserveAddingPercentage;
+    }
+
+    public double getStabilityReserveAddingMinimum() {
+        return stabilityReserveAddingMinimum;
+    }
+
+    public void setStabilityReserveAddingMinimum(double stabilityReserveAddingMinimum) {
+        this.stabilityReserveAddingMinimum = stabilityReserveAddingMinimum;
+    }
+
+    public double getStabilityReserveReleaseQuantity() {
+        return stabilityReserveReleaseQuantity;
+    }
+
+    public void setStabilityReserveReleaseQuantity(double stabilityReserveReleaseQuantity) {
+        this.stabilityReserveReleaseQuantity = stabilityReserveReleaseQuantity;
     }
 
 }

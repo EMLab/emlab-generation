@@ -35,6 +35,7 @@ import emlab.gen.domain.market.electricity.ElectricitySpotMarket;
 import emlab.gen.repository.Reps;
 import emlab.gen.role.capacitymechanisms.ProcessAcceptedPowerPlantDispatchRoleinSR;
 import emlab.gen.role.capacitymechanisms.StrategicReserveOperatorRole;
+import emlab.gen.role.co2policy.MarketStabilityReserveRole;
 import emlab.gen.role.co2policy.RenewableAdaptiveCO2CapRole;
 import emlab.gen.role.investment.DismantlePowerPlantPastTechnicalLifetimeRole;
 import emlab.gen.role.investment.GenericInvestmentRole;
@@ -104,6 +105,10 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
     private StrategicReserveOperatorRole strategicReserveOperatorRole;
     @Autowired
     private ProcessAcceptedPowerPlantDispatchRoleinSR acceptedPowerPlantDispatchRoleinSR;
+    @Autowired
+    private RenewableAdaptiveCO2CapRole renewableAdaptiveCO2CapRole;
+    @Autowired
+    MarketStabilityReserveRole marketStabilityReserveRole;
 
     @Autowired
     Reps reps;
@@ -210,6 +215,11 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
         if (getCurrentTick() > 0 && government.getCo2CapTrend() != null && government.isActivelyAdjustingTheCO2Cap()) {
             logger.warn("Lowering cap according to RES installations");
             renewableAdaptiveCO2CapRole.act(government);
+        }
+
+        if (getCurrentTick() > 9 && model.isStabilityReserveIsActive()) {
+            logger.warn("Lowering cap according to RES installations");
+            marketStabilityReserveRole.act(government);
         }
 
         timerMarket.reset();

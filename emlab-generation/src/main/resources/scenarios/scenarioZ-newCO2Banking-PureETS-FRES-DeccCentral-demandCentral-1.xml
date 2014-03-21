@@ -41,6 +41,7 @@ Transmission capacity is assumed to be 3016 in both directions, based on maximum
 		p:deletionAge="2" p:centralForecastBacklookingYears="5"
 		p:centralForecastingYear="3" p:centralCO2TargetReversionSpeedFactor="3"
 		p:centralPrivateDiscountingRate="0.05" p:centralCO2BackSmoothingFactor="0.2"
+		p:stabilityReserveIsActive="true"
 		p:co2BankingIsImplemented="true">
 	</bean>
 
@@ -1122,7 +1123,12 @@ Transmission capacity is assumed to be 3016 in both directions, based on maximum
 
 	<!-- Government -->
 	<bean id="government" class="emlab.gen.domain.agent.Government"
-		p:name="European Government" p:co2Penalty="500">
+		p:name="European Government" p:co2Penalty="500"
+		p:stabilityReserve="0" p:stabilityReserveAddingMinimum="100e6"
+		p:stabilityReserveAddingPercentage="0.12"
+		p:stabilityReserveReleaseQuantity="100e6"
+		p:stabilityReserveAddingThreshold="450"
+		p:stabilityReserveReleasingThreshold-ref="200"">
 		<property name="co2TaxTrend" ref="co2TaxTrend" />
 		<property name="co2CapTrend" ref="co2CapTrend" />
 		<property name="minCo2PriceTrend" ref="minCo2PriceTrend" />

@@ -63,7 +63,7 @@ public class RenewableAdaptiveCO2CapRole extends AbstractRole<Government> {
         CO2Auction co2Auction = template.findAll(CO2Auction.class).iterator().next();
 
         ClearingPoint lastClearingPointOfCo2Market = reps.clearingPointRepositoryOld.findClearingPointForMarketAndTime(
-                co2Auction, getCurrentTick() - 1);
+                co2Auction, getCurrentTick() - 1, false);
         if (lastClearingPointOfCo2Market != null) {
             co2Emissions = lastClearingPointOfCo2Market.getVolume();
         }
@@ -72,7 +72,7 @@ public class RenewableAdaptiveCO2CapRole extends AbstractRole<Government> {
 
         for (ElectricitySpotMarket esm : reps.marketRepository.findAllElectricitySpotMarkets()) {
             for (ClearingPoint cp : reps.clearingPointRepository.findAllClearingPointsForMarketAndTimeRange(esm,
-                    getCurrentTick() - 1, getCurrentTick() - 1)) {
+                    getCurrentTick() - 1, getCurrentTick() - 1, false)) {
                 totalProduction += cp.getVolume();
             }
         }
