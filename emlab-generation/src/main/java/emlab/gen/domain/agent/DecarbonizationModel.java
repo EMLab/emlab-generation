@@ -44,6 +44,9 @@ public class DecarbonizationModel extends AbstractAgent implements Agent {
 
     private boolean co2BankingIsImplemented;
 
+    private boolean stabilityReserveIsActive;
+
+
     @SimulationParameter(label = "Simulation Length", from = 0, to = 75)
     private double simulationLength;
 
@@ -225,6 +228,14 @@ public class DecarbonizationModel extends AbstractAgent implements Agent {
 
     public void setCentralCO2TargetReversionSpeedFactor(double centralCO2TargetReversionSpeedFactor) {
         this.centralCO2TargetReversionSpeedFactor = centralCO2TargetReversionSpeedFactor;
+    }
+
+    public boolean isStabilityReserveIsActive() {
+        return stabilityReserveIsActive;
+    }
+
+    public void setStabilityReserveIsActive(boolean stabilityReserveIsActive) {
+        this.stabilityReserveIsActive = stabilityReserveIsActive;
     }
 
 }

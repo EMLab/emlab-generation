@@ -39,6 +39,8 @@ public class Government extends DecarbonizationAgent implements Agent {
 
     private double co2Penalty;
 
+    private double stabilityReserve;
+
     public double getCO2Tax(long time) {
         return co2TaxTrend.getValue(time);
     }
@@ -91,6 +93,14 @@ public class Government extends DecarbonizationAgent implements Agent {
 
     public void setCo2PriceCeilingTrend(TimeSeriesImpl co2PriceCeilingTrend) {
         this.co2PriceCeilingTrend = co2PriceCeilingTrend;
+    }
+
+    public double getStabilityReserve() {
+        return stabilityReserve;
+    }
+
+    public void setStabilityReserve(double stabilityReserve) {
+        this.stabilityReserve = stabilityReserve;
     }
 
 }
