@@ -15,9 +15,9 @@
  ******************************************************************************/
 package emlab.gen.domain.market.electricity;
 
+import org.neo4j.graphdb.Direction;
 import org.springframework.data.neo4j.annotation.NodeEntity;
 import org.springframework.data.neo4j.annotation.RelatedTo;
-import org.neo4j.graphdb.Direction;
 
 import emlab.gen.domain.market.ClearingPoint;
 
@@ -33,5 +33,21 @@ public class SegmentClearingPoint extends ClearingPoint {
 
     public void setSegment(Segment segment) {
         this.segment = segment;
+    }
+
+    /**
+     * The interconnector flow is specified as a source of electricity from the
+     * point of view of the market that the segment clearing point belongs to. A
+     * positive value means that the market is importing electricity, a negative
+     * value mean that it is exporting it.
+     */
+    double interconnectorFlow;
+
+    public double getInterconnectorFlow() {
+        return interconnectorFlow;
+    }
+
+    public void setInterconnectorFlow(double interconnectorFlow) {
+        this.interconnectorFlow = interconnectorFlow;
     }
 }

@@ -324,8 +324,12 @@ implements Role<DecarbonizationModel> {
                     globalOutcome.globalPrice = market.getValueOfLostLoad();
                 }
 
+                double interconenctorFlowForCurrentMarket = market.equals(firstMarket) ? interconnectorFlow * (-1.0)
+                        : interconnectorFlow;
+
                 reps.clearingPointRepositoryOld.createOrUpdateSegmentClearingPoint(segment, market, globalOutcome.globalPrice,
-                        supplyInThisMarket * segment.getLengthInHours(), clearingTick,
+                        supplyInThisMarket * segment.getLengthInHours(),
+                        interconenctorFlowForCurrentMarket, clearingTick,
                         forecast);
                 logger.info("Stored a system-uniform price for market " + market + " / segment " + segment
                         + " -- supply "
@@ -376,9 +380,13 @@ implements Role<DecarbonizationModel> {
                 }
             }
 
+            double interconenctorFlowForCurrentMarket = firstImporting ? interconnectorCapacity
+                    : interconnectorCapacity * (-1.0);
+
             for (ElectricitySpotMarket market : reps.marketRepository.findAllElectricitySpotMarkets()) {
                 reps.clearingPointRepositoryOld.createOrUpdateSegmentClearingPoint(segment, market, marketOutcomes.prices.get(market),
-                        marketOutcomes.supplies.get(market) * segment.getLengthInHours(), clearingTick, forecast);
+                        marketOutcomes.supplies.get(market) * segment.getLengthInHours(),
+                        interconenctorFlowForCurrentMarket, clearingTick, forecast);
                 logger.info("Stored a market specific price for market " + market + " / segment " + segment
                         + " -- supply " + marketOutcomes.supplies.get(market) + " -- demand: "
                         + marketOutcomes.loads.get(market) + " -- price: " + marketOutcomes.prices.get(market));

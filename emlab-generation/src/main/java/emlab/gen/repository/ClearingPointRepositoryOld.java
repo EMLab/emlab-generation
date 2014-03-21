@@ -105,8 +105,9 @@ public class ClearingPointRepositoryOld extends AbstractRepository<ClearingPoint
     }
 
     @Transactional
-    public SegmentClearingPoint createOrUpdateSegmentClearingPoint(Segment segment, DecarbonizationMarket abstractMarket, double price,
-            double volume, long time, boolean forecast) {
+    public SegmentClearingPoint createOrUpdateSegmentClearingPoint(Segment segment,
+            DecarbonizationMarket abstractMarket, double price, double volume, double interconnectorFlow, long time,
+            boolean forecast) {
         SegmentClearingPoint point = null;
         // TODO make this a pipe
         List<SegmentClearingPoint> points = Utils.asCastedList(findClearingPointsForMarketAndTime(abstractMarket, time,
@@ -125,6 +126,7 @@ public class ClearingPointRepositoryOld extends AbstractRepository<ClearingPoint
         point.setVolume(volume);
         point.setSegment(segment);
         point.setForecast(forecast);
+        point.setInterconnectorFlow(interconnectorFlow);
         return point;
     }
 
