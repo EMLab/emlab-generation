@@ -41,7 +41,7 @@ Transmission capacity is assumed to be 3016 in both directions, based on maximum
 		p:deletionAge="2" p:centralForecastBacklookingYears="5"
 		p:centralForecastingYear="3" p:centralCO2TargetReversionSpeedFactor="3"
 		p:centralPrivateDiscountingRate="0.05" p:centralCO2BackSmoothingFactor="0.2"
-		p:co2BankingIsImplemented="true">
+		p:co2BankingIsImplemented="true" p:stabilityReserveIsActive="true">
 	</bean>
 
 	<bean id="demandGrowthTrendCWE" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/stochasticDemandCWEandGB/demand-1.csv" p:delimiter="," p:variableName="DemandCWE" />
@@ -1122,12 +1122,17 @@ Transmission capacity is assumed to be 3016 in both directions, based on maximum
 
 	<!-- Government -->
 	<bean id="government" class="emlab.gen.domain.agent.Government"
-		p:name="European Government" p:co2Penalty="500">
-		<property name="co2TaxTrend" ref="co2TaxTrend" />
-		<property name="co2CapTrend" ref="co2CapTrend" />
-		<property name="minCo2PriceTrend" ref="minCo2PriceTrend" />
-		<property name="co2PriceCeilingTrend" ref="co2PriceCeilingTrend" />
-	</bean>
+		p:name="European Government"
+		p:stabilityReserve="0"
+		p:stabilityReserveAddingMinimum="34727924"
+		p:stabilityReserveAddingPercentage="0.12"
+		p:stabilityReserveAddingThreshold="289283608"
+		p:stabilityReserveReleaseQuantity="34727924"
+		p:stabilityReserveReleasingThreshold="138911697"
+		p:co2TaxTrend-ref="co2TaxTrend"
+		p:co2CapTrend-ref="co2CapTrend"
+		p:minCo2PriceTrend-ref="minCo2PriceTrend"
+		p:co2PriceCeilingTrend-ref="co2PriceCeilingTrend" />
 	
 	<bean id="governmentCWE" class="emlab.gen.domain.agent.NationalGovernment"
 		p:name="CWE Government">

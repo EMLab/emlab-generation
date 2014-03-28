@@ -39,6 +39,7 @@ import emlab.gen.domain.market.electricity.Segment;
 import emlab.gen.domain.technology.Interconnector;
 import emlab.gen.domain.technology.Substance;
 import emlab.gen.repository.Reps;
+import emlab.gen.role.co2policy.MarketStabilityReserveRole;
 import emlab.gen.role.operating.DetermineFuelMixRole;
 import emlab.gen.util.Utils;
 
@@ -65,6 +66,9 @@ implements Role<DecarbonizationModel> {
 
     @Autowired
     DetermineFuelMixRole determineFuelMixRole;
+
+    @Autowired
+    MarketStabilityReserveRole marketStabilityReserveRole;
 
     @Autowired
     Neo4jTemplate template;
@@ -696,7 +700,8 @@ implements Role<DecarbonizationModel> {
 
             co2SecantSearch = co2PriceSecantSearchUpdateWithCO2Banking(co2SecantSearch, model, government,
                     clearingTick, -deltaBankedEmissionCertificateToReachBankingTarget, currentEmissions
-                    + futureEmissions);
+                    ,
+                    futureEmissions, previouslyBankedCertificates);
 
             logger.warn("Iteration: " + breakOffIterator + ": " + co2SecantSearch.toString() + ", Future: "
                     + futureCO2Price);
@@ -897,13 +902,17 @@ implements Role<DecarbonizationModel> {
     CO2SecantSearch co2PriceSecantSearchUpdateWithCO2Banking(CO2SecantSearch co2SecantSearch,
             DecarbonizationModel model, Government government, long clearingTick,
             double co2CapAdjustment,
-            double totalEmissions) {
+            double currentEmissions, double futureEmissions, double previouslyBankedCertificates) {
 
         co2SecantSearch.stable = false;
         double capDeviationCriterion = model.getCapDeviationCriterion();
-        double co2Cap = government.getCo2Cap(clearingTick)
-                + government.getCo2Cap(clearingTick + model.getCentralForecastingYear()) + co2CapAdjustment;
-        co2SecantSearch.co2Emissions = totalEmissions;
+        double currentCap = government.getCo2Cap(clearingTick);
+        double futureCap = government.getCo2Cap(clearingTick + model.getCentralForecastingYear());
+        double expectedBankedPermits = calculateExpectedBankedCertificates(currentEmissions, futureEmissions,
+                currentCap, futureCap, previouslyBankedCertificates, model.getCentralForecastingYear());
+        double effectiveCapInFuture = futureCap- marketStabilityReserveRole.calculateInflowToMarketReserveForTimeStep(expectedBankedPermits, government);
+        double co2Cap = currentCap + effectiveCapInFuture + co2CapAdjustment;
+        co2SecantSearch.co2Emissions = currentEmissions+futureEmissions;
 
         double deviation = (co2SecantSearch.co2Emissions - co2Cap) / co2Cap;
 
@@ -1039,6 +1048,16 @@ implements Role<DecarbonizationModel> {
         }
 
         return co2SecantSearch;
+
+    }
+
+    double calculateExpectedBankedCertificates(double currentEmissions, double futureEmissions, double currentCap,
+            double futureCap, double currentlyBankedEmissions, long centralForecastingYear) {
+        double expectedBankedCertificates = currentlyBankedEmissions + currentCap - currentEmissions + futureCap
+                - futureEmissions;
+        expectedBankedCertificates = (centralForecastingYear - 1) / centralForecastingYear * expectedBankedCertificates
+                + 1 / centralForecastingYear * currentlyBankedEmissions;
+        return expectedBankedCertificates;
 
     }
 

@@ -47,21 +47,25 @@ public class MarketStabilityReserveRole extends AbstractRole<Government> {
     @Transactional
     public void act(Government government) {
         double allowancesInCirculation = reps.decarbonizationAgentRepository.determineTotallyBankedCO2Certificates();
+        double inflowToMarketReserve = calculateInflowToMarketReserveForTimeStep(allowancesInCirculation, government);
+        government.setStabilityReserve(government.getStabilityReserve() + inflowToMarketReserve);
+        government.getCo2CapTrend().setValue(getCurrentTick(),
+                government.getCo2CapTrend().getValue(getCurrentTick()) - inflowToMarketReserve);
+    }
 
+    public double calculateInflowToMarketReserveForTimeStep(double bankedCertificatesInTick,
+            Government government) {
+        double allowancesInCirculation = bankedCertificatesInTick;
         if (allowancesInCirculation > government.getStabilityReserveAddingThreshold()) {
             double allowancesToBeAddedToReserve = Math.max(
                     allowancesInCirculation * government.getStabilityReserveAddingPercentage(),
                     government.getStabilityReserveAddingMinimum());
-            government.setStabilityReserve(government.getStabilityReserve() + allowancesToBeAddedToReserve);
-            government.getCo2CapTrend().setValue(getCurrentTick(),
-                    government.getCo2CapTrend().getValue(getCurrentTick()) - allowancesToBeAddedToReserve);
-        } else if(allowancesInCirculation < government.getStabilityReserveReleasingThreshold()){
+            return allowancesToBeAddedToReserve;
+        } else if (allowancesInCirculation < government.getStabilityReserveReleasingThreshold()) {
             double allowancesToBeReleased = Math.min(government.getStabilityReserve(),
                     government.getStabilityReserveReleaseQuantity());
-            government.setStabilityReserve(government.getStabilityReserve() - allowancesToBeReleased);
-            government.getCo2CapTrend().setValue(getCurrentTick(),
-                    government.getCo2CapTrend().getValue(getCurrentTick()) + allowancesToBeReleased);
+            return -allowancesToBeReleased;
         }
+        return 0;
     }
-
 }

@@ -217,8 +217,8 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
             renewableAdaptiveCO2CapRole.act(government);
         }
 
-        if (getCurrentTick() > 9 && model.isStabilityReserveIsActive()) {
-            logger.warn("Lowering cap according to RES installations");
+        if (getCurrentTick() > -1 && model.isStabilityReserveIsActive()) {
+            logger.warn("Checking Stability Reserve Status");
             marketStabilityReserveRole.act(government);
         }
 
