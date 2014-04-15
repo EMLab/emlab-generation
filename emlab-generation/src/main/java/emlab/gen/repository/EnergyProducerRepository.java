@@ -28,10 +28,16 @@ import emlab.gen.domain.agent.EnergyProducer;
  *
  */
 public interface EnergyProducerRepository extends
-		GraphRepository<EnergyProducer> {
-	
-	@Query(value="result = g.idx('__types__')[[className:'emlab.gen.domain.agent.EnergyProducer']].propertyFilter('__type__', FilterPipe.Filter.NOT_EQUAL, 'emlab.gen.domain.agent.TargetInvestor').toList();" +
-			"if(result == null){return null;} else {Collections.shuffle(result); return result;}", type=QueryType.Gremlin)
-	List<EnergyProducer> findAllEnergyProducersExceptForRenewableTargetInvestorsAtRandom();
-	
+GraphRepository<EnergyProducer> {
+
+    @Query(value="result = g.idx('__types__')[[className:'emlab.gen.domain.agent.EnergyProducer']].propertyFilter('__type__', FilterPipe.Filter.NOT_EQUAL, 'emlab.gen.domain.agent.TargetInvestor').toList();" +
+            "if(result == null){return null;} else {Collections.shuffle(result); return result;}", type=QueryType.Gremlin)
+    List<EnergyProducer> findAllEnergyProducersExceptForRenewableTargetInvestorsAtRandom();
+
+    @Query(value = "agents = g.idx('__types__')[[className:'emlab.gen.domain.agent.DecarbonizationAgent']];"
+            + "co2Allowances=0;"
+            + "for(agent in agents){if(agent.co2Allowances!=null) co2Allowances+=agent.co2Allowances};"
+            + "return co2Allowances;", type = QueryType.Gremlin)
+    double determineTotallyBankedCO2Certificates();
+
 }

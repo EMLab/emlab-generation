@@ -21,13 +21,17 @@ import org.springframework.data.neo4j.annotation.RelatedTo;
 
 import agentspring.agent.Agent;
 import agentspring.simulation.SimulationParameter;
+import emlab.gen.domain.market.electricity.ElectricitySpotMarket;
 import emlab.gen.role.investment.GenericInvestmentRole;
 
 @NodeEntity
 public class EnergyProducer extends DecarbonizationAgent implements Agent {
 
-	@RelatedTo(type = "PRODUCER_INVESTMENTROLE", elementClass = GenericInvestmentRole.class, direction = Direction.OUTGOING)
-	GenericInvestmentRole<EnergyProducer> investmentRole;
+    @RelatedTo(type = "PRODUCER_INVESTMENTROLE", elementClass = GenericInvestmentRole.class, direction = Direction.OUTGOING)
+    GenericInvestmentRole<EnergyProducer> investmentRole;
+
+    @RelatedTo(type = "INVESTOR_MARKET", elementClass = ElectricitySpotMarket.class, direction = Direction.OUTGOING)
+    private ElectricitySpotMarket investorMarket;
 
     @SimulationParameter(label = "Price Mark-Up for spotmarket (as multiplier)", from = 1, to = 2)
     private double priceMarkUp;
@@ -51,7 +55,7 @@ public class EnergyProducer extends DecarbonizationAgent implements Agent {
     // Loan
     @SimulationParameter(label = "Loan Interest Rate", from = 0, to = 1)
     private double loanInterestRate;
-    
+
     //Forecasting
     private int numberOfYearsBacklookingForForecasting;
 
@@ -93,14 +97,14 @@ public class EnergyProducer extends DecarbonizationAgent implements Agent {
     }
 
     public int getNumberOfYearsBacklookingForForecasting() {
-		return numberOfYearsBacklookingForForecasting;
-	}
+        return numberOfYearsBacklookingForForecasting;
+    }
 
-	public void setNumberOfYearsBacklookingForForecasting(int numberOfYearsBacklookingForForecasting) {
-		this.numberOfYearsBacklookingForForecasting = numberOfYearsBacklookingForForecasting;
-	}
+    public void setNumberOfYearsBacklookingForForecasting(int numberOfYearsBacklookingForForecasting) {
+        this.numberOfYearsBacklookingForForecasting = numberOfYearsBacklookingForForecasting;
+    }
 
-	public int getDismantlingProlongingYearsAfterTechnicalLifetime() {
+    public int getDismantlingProlongingYearsAfterTechnicalLifetime() {
         return dismantlingProlongingYearsAfterTechnicalLifetime;
     }
 
@@ -164,11 +168,19 @@ public class EnergyProducer extends DecarbonizationAgent implements Agent {
         this.priceMarkUp = priceMarkUp;
     }
 
-	public GenericInvestmentRole getInvestmentRole() {
-		return investmentRole;
-	}
+    public GenericInvestmentRole getInvestmentRole() {
+        return investmentRole;
+    }
 
-	public void setInvestmentRole(GenericInvestmentRole investmentRole) {
-		this.investmentRole = investmentRole;
-	}
+    public void setInvestmentRole(GenericInvestmentRole investmentRole) {
+        this.investmentRole = investmentRole;
+    }
+
+    public ElectricitySpotMarket getInvestorMarket() {
+        return investorMarket;
+    }
+
+    public void setInvestorMarket(ElectricitySpotMarket investorMarket) {
+        this.investorMarket = investorMarket;
+    }
 }

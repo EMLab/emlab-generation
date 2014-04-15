@@ -41,6 +41,7 @@ public class PayForLoansRole extends AbstractRole<EnergyProducer> implements Rol
     @Autowired
     Reps reps;
 
+    @Override
     @Transactional
     public void act(EnergyProducer producer) {
 
@@ -54,8 +55,8 @@ public class PayForLoansRole extends AbstractRole<EnergyProducer> implements Rol
                 if (loan.getNumberOfPaymentsDone() < loan.getTotalNumberOfPayments()) {
 
                     double payment = loan.getAmountPerPayment();
-                    reps.nonTransactionalCreateRepository.createCashFlow(producer, loan.getTo(), payment, CashFlow.LOAN, getCurrentTick(),
-                            loan.getRegardingPowerPlant());
+                    reps.nonTransactionalCreateRepository.createCashFlow(producer, loan.getTo(), payment,
+                            CashFlow.LOAN, getCurrentTick(), loan.getRegardingPowerPlant());
 
                     loan.setNumberOfPaymentsDone(loan.getNumberOfPaymentsDone() + 1);
 
@@ -64,7 +65,20 @@ public class PayForLoansRole extends AbstractRole<EnergyProducer> implements Rol
                             loan.getTotalNumberOfPayments());
                 }
             }
+            Loan downpayment = plant.getDownpayment();
+            if (downpayment != null) {
+                logger.info("Found downpayment");
+                if (downpayment.getNumberOfPaymentsDone() < downpayment.getTotalNumberOfPayments()) {
+                    double payment = downpayment.getAmountPerPayment();
+                    reps.nonTransactionalCreateRepository.createCashFlow(producer, downpayment.getTo(), payment,
+                            CashFlow.DOWNPAYMENT, getCurrentTick(),
+                            downpayment.getRegardingPowerPlant());
+                    downpayment.setNumberOfPaymentsDone(downpayment.getNumberOfPaymentsDone() + 1);
+                    logger.info("Paying {} (euro) for downpayment {}", payment, downpayment);
+                    logger.info("Number of payments done {}, total needed: {}", downpayment.getNumberOfPaymentsDone(),
+                            downpayment.getTotalNumberOfPayments());
+                }
+            }
         }
-
     }
 }

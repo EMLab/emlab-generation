@@ -25,16 +25,33 @@ import emlab.gen.trend.TimeSeriesImpl;
 @NodeEntity
 public class Government extends DecarbonizationAgent implements Agent {
 
-	@RelatedTo(type = "CO2TAX_TREND", elementClass = TimeSeriesImpl.class, direction = Direction.OUTGOING)
-	private TimeSeriesImpl co2TaxTrend;
+    @RelatedTo(type = "CO2TAX_TREND", elementClass = TimeSeriesImpl.class, direction = Direction.OUTGOING)
+    private TimeSeriesImpl co2TaxTrend;
 
-	@RelatedTo(type = "CO2CAP_TREND", elementClass = TimeSeriesImpl.class, direction = Direction.OUTGOING)
-	private TimeSeriesImpl co2CapTrend;
+    @RelatedTo(type = "CO2CAP_TREND", elementClass = TimeSeriesImpl.class, direction = Direction.OUTGOING)
+    private TimeSeriesImpl co2CapTrend;
 
-	@RelatedTo(type = "MINCO2PRICE_TREND", elementClass = TimeSeriesImpl.class, direction = Direction.OUTGOING)
-	private TimeSeriesImpl minCo2PriceTrend;
+    @RelatedTo(type = "MINCO2PRICE_TREND", elementClass = TimeSeriesImpl.class, direction = Direction.OUTGOING)
+    private TimeSeriesImpl minCo2PriceTrend;
+
+    @RelatedTo(type = "CO2_PRICECEILING_TREND", elementClass = TimeSeriesImpl.class, direction = Direction.OUTGOING)
+    private TimeSeriesImpl co2PriceCeilingTrend;
+
+    private boolean activelyAdjustingTheCO2Cap;
 
     private double co2Penalty;
+
+    private double stabilityReserve;
+
+    private double stabilityReserveAddingThreshold;
+
+    private double stabilityReserveReleasingThreshold;
+
+    private double stabilityReserveAddingPercentage;
+
+    private double stabilityReserveAddingMinimum;
+
+    private double stabilityReserveReleaseQuantity;
 
     public double getCO2Tax(long time) {
         return co2TaxTrend.getValue(time);
@@ -48,36 +65,102 @@ public class Government extends DecarbonizationAgent implements Agent {
         return co2CapTrend.getValue(time);
     }
 
-	public TimeSeriesImpl getCo2TaxTrend() {
+    public TimeSeriesImpl getCo2TaxTrend() {
         return co2TaxTrend;
     }
 
-	public void setCo2TaxTrend(TimeSeriesImpl co2TaxTrend) {
+    public void setCo2TaxTrend(TimeSeriesImpl co2TaxTrend) {
         this.co2TaxTrend = co2TaxTrend;
     }
 
-	public TimeSeriesImpl getCo2CapTrend() {
+    public TimeSeriesImpl getCo2CapTrend() {
         return co2CapTrend;
     }
 
-	public void setCo2CapTrend(TimeSeriesImpl co2CapTrend) {
+    public void setCo2CapTrend(TimeSeriesImpl co2CapTrend) {
         this.co2CapTrend = co2CapTrend;
     }
 
-	public TimeSeriesImpl getMinCo2PriceTrend() {
+    public TimeSeriesImpl getMinCo2PriceTrend() {
         return minCo2PriceTrend;
     }
 
-	public void setMinCo2PriceTrend(TimeSeriesImpl minCo2PriceTrend) {
+    public void setMinCo2PriceTrend(TimeSeriesImpl minCo2PriceTrend) {
         this.minCo2PriceTrend = minCo2PriceTrend;
     }
 
-    public double getCo2Penalty() {
+    public double getCo2Penalty(long time) {
+        if (getCo2PriceCeilingTrend() != null)
+            return getCo2PriceCeilingTrend().getValue(time);
         return co2Penalty;
     }
 
     public void setCo2Penalty(double co2Penalty) {
         this.co2Penalty = co2Penalty;
+    }
+
+    public TimeSeriesImpl getCo2PriceCeilingTrend() {
+        return co2PriceCeilingTrend;
+    }
+
+    public void setCo2PriceCeilingTrend(TimeSeriesImpl co2PriceCeilingTrend) {
+        this.co2PriceCeilingTrend = co2PriceCeilingTrend;
+    }
+
+    public boolean isActivelyAdjustingTheCO2Cap() {
+        return activelyAdjustingTheCO2Cap;
+    }
+
+    public void setActivelyAdjustingTheCO2Cap(boolean activelyAdjustingTheCO2Cap) {
+        this.activelyAdjustingTheCO2Cap = activelyAdjustingTheCO2Cap;
+    }
+
+    public double getStabilityReserve() {
+        return stabilityReserve;
+    }
+
+    public void setStabilityReserve(double stabilityReserve) {
+        this.stabilityReserve = stabilityReserve;
+    }
+
+    public double getStabilityReserveAddingThreshold() {
+        return stabilityReserveAddingThreshold;
+    }
+
+    public void setStabilityReserveAddingThreshold(double stabilityReserveAddingThreshold) {
+        this.stabilityReserveAddingThreshold = stabilityReserveAddingThreshold;
+    }
+
+    public double getStabilityReserveReleasingThreshold() {
+        return stabilityReserveReleasingThreshold;
+    }
+
+    public void setStabilityReserveReleasingThreshold(double stabilityReserveReleasingThreshold) {
+        this.stabilityReserveReleasingThreshold = stabilityReserveReleasingThreshold;
+    }
+
+    public double getStabilityReserveAddingPercentage() {
+        return stabilityReserveAddingPercentage;
+    }
+
+    public void setStabilityReserveAddingPercentage(double stabilityReserveAddingPercentage) {
+        this.stabilityReserveAddingPercentage = stabilityReserveAddingPercentage;
+    }
+
+    public double getStabilityReserveAddingMinimum() {
+        return stabilityReserveAddingMinimum;
+    }
+
+    public void setStabilityReserveAddingMinimum(double stabilityReserveAddingMinimum) {
+        this.stabilityReserveAddingMinimum = stabilityReserveAddingMinimum;
+    }
+
+    public double getStabilityReserveReleaseQuantity() {
+        return stabilityReserveReleaseQuantity;
+    }
+
+    public void setStabilityReserveReleaseQuantity(double stabilityReserveReleaseQuantity) {
+        this.stabilityReserveReleaseQuantity = stabilityReserveReleaseQuantity;
     }
 
 }

@@ -26,13 +26,23 @@ import emlab.gen.trend.HourlyCSVTimeSeries;
 @NodeEntity
 public class PowerGridNode {
 
+    String name;
+
     @RelatedTo(type = "REGION", elementClass = Zone.class, direction = Direction.OUTGOING)
     private Zone zone;
 
     @RelatedTo(type = "HOURLYDEMAND", elementClass = HourlyCSVTimeSeries.class, direction = Direction.OUTGOING)
     private HourlyCSVTimeSeries hourlyDemand;
-    
-	private double capacityMultiplicationFactor;
+
+    private double capacityMultiplicationFactor;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public HourlyCSVTimeSeries getHourlyDemand() {
         return hourlyDemand;
@@ -50,13 +60,13 @@ public class PowerGridNode {
         return zone;
     }
 
-	@Value("1.0")
-	public double getCapacityMultiplicationFactor() {
-		return capacityMultiplicationFactor;
-	}
+    @Value("1.0")
+    public double getCapacityMultiplicationFactor() {
+        return capacityMultiplicationFactor;
+    }
 
-	public void setCapacityMultiplicationFactor(double capacityMultiplicationFactor) {
-		this.capacityMultiplicationFactor = capacityMultiplicationFactor;
-	}
+    public void setCapacityMultiplicationFactor(double capacityMultiplicationFactor) {
+        this.capacityMultiplicationFactor = capacityMultiplicationFactor;
+    }
 
 }

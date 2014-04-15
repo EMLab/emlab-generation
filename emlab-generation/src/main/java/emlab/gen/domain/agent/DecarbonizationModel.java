@@ -32,6 +32,23 @@ public class DecarbonizationModel extends AbstractAgent implements Agent {
     private double capDeviationCriterion;
     private String name;
 
+    private long centralForecastBacklookingYears;
+
+    private long centralForecastingYear;
+
+    private double centralPrivateDiscountingRate;
+
+    private double centralCO2BackSmoothingFactor;
+
+    private double centralCO2TargetReversionSpeedFactor;
+
+    private boolean co2BankingIsImplemented;
+
+    private boolean stabilityReserveIsActive;
+
+    private long stabilityReserveFirstYearOfOperation;
+
+
     @SimulationParameter(label = "Simulation Length", from = 0, to = 75)
     private double simulationLength;
 
@@ -165,6 +182,70 @@ public class DecarbonizationModel extends AbstractAgent implements Agent {
 
     public void setExitSimulationAfterSimulationLength(boolean exitSimulationAfterSimulationLength) {
         this.exitSimulationAfterSimulationLength = exitSimulationAfterSimulationLength;
+    }
+
+    public long getCentralForecastBacklookingYears() {
+        return centralForecastBacklookingYears;
+    }
+
+    public void setCentralForecastBacklookingYears(long centralForecastBacklookingYears) {
+        this.centralForecastBacklookingYears = centralForecastBacklookingYears;
+    }
+
+    public long getCentralForecastingYear() {
+        return centralForecastingYear;
+    }
+
+    public void setCentralForecastingYear(long centralForecastingYear) {
+        this.centralForecastingYear = centralForecastingYear;
+    }
+
+    public double getCentralPrivateDiscountingRate() {
+        return centralPrivateDiscountingRate;
+    }
+
+    public void setCentralPrivateDiscountingRate(double centralPrivateDiscountingRate) {
+        this.centralPrivateDiscountingRate = centralPrivateDiscountingRate;
+    }
+
+    public boolean isCo2BankingIsImplemented() {
+        return co2BankingIsImplemented;
+    }
+
+    public void setCo2BankingIsImplemented(boolean co2BankingIsImplemented) {
+        this.co2BankingIsImplemented = co2BankingIsImplemented;
+    }
+
+    public double getCentralCO2BackSmoothingFactor() {
+        return centralCO2BackSmoothingFactor;
+    }
+
+    public void setCentralCO2BackSmoothingFactor(double centralCO2BackSmoothingFactor) {
+        this.centralCO2BackSmoothingFactor = centralCO2BackSmoothingFactor;
+    }
+
+    public double getCentralCO2TargetReversionSpeedFactor() {
+        return centralCO2TargetReversionSpeedFactor;
+    }
+
+    public void setCentralCO2TargetReversionSpeedFactor(double centralCO2TargetReversionSpeedFactor) {
+        this.centralCO2TargetReversionSpeedFactor = centralCO2TargetReversionSpeedFactor;
+    }
+
+    public boolean isStabilityReserveIsActive() {
+        return stabilityReserveIsActive;
+    }
+
+    public void setStabilityReserveIsActive(boolean stabilityReserveIsActive) {
+        this.stabilityReserveIsActive = stabilityReserveIsActive;
+    }
+
+    public long getStabilityReserveFirstYearOfOperation() {
+        return stabilityReserveFirstYearOfOperation;
+    }
+
+    public void setStabilityReserveFirstYearOfOperation(long stabilityReserveFirstYearOfOperation) {
+        this.stabilityReserveFirstYearOfOperation = stabilityReserveFirstYearOfOperation;
     }
 
 }

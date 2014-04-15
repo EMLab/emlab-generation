@@ -21,6 +21,7 @@ import org.springframework.data.neo4j.repository.GraphRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import emlab.gen.domain.gis.Zone;
 import emlab.gen.domain.market.electricity.ElectricitySpotMarket;
 import emlab.gen.domain.market.electricity.Segment;
 import emlab.gen.domain.market.electricity.SegmentLoad;
@@ -57,5 +58,10 @@ public interface SegmentLoadRepository extends GraphRepository<SegmentLoad> {
             + "double baseLoad = g.v(market).out('SEGMENT_LOAD').as('x').out('SEGMENTLOAD_SEGMENT').filter{it.segmentID==segID}.back('x').baseLoad.next();"
             + "return baseLoad", type = QueryType.Gremlin)
     public double returnSegmentBaseLoadBySegmentAndMarket(@Param("segment") Segment segment, @Param("market") ElectricitySpotMarket market);
+
+    // peak Load by Zone
+
+    @Query(value = "g.v(zone).in('ZONE').filter{it.__type__=='emlab.gen.domain.market.electricity.ElectricitySpotMarket'}.outE('SEGMENT_LOAD').inV.max{it.baseLoad}.baseLoad", type = QueryType.Gremlin)
+    double peakLoadbyZoneMarketandTime(@Param("zone") Zone zone, @Param("market") ElectricitySpotMarket market);
 
 }

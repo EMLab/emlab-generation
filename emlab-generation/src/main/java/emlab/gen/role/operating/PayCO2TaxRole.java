@@ -37,13 +37,14 @@ import emlab.gen.role.AbstractEnergyProducerRole;
 @RoleComponent
 public class PayCO2TaxRole extends AbstractEnergyProducerRole implements Role<EnergyProducer> {
 
-	@Autowired
+    @Autowired
     Reps reps;
 
     public Reps getReps() {
         return reps;
     }
-    
+
+    @Override
     @Transactional
     public void act(EnergyProducer producer) {
         logger.info("Pay the CO2 tax");
@@ -51,7 +52,7 @@ public class PayCO2TaxRole extends AbstractEnergyProducerRole implements Role<En
         Government government = reps.genericRepository.findFirst(Government.class);
 
         for (PowerPlant plant : reps.powerPlantRepository.findOperationalPowerPlantsByOwner(producer, getCurrentTick())) {
-            double money = calculateCO2Tax(plant);
+            double money = calculateCO2Tax(plant, false, getCurrentTick());
             CashFlow cf = reps.nonTransactionalCreateRepository.createCashFlow(producer, government, money, CashFlow.CO2TAX, getCurrentTick(), plant);
             logger.info("Cash flow created: {}", cf);
         }

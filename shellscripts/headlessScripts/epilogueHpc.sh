@@ -6,6 +6,8 @@
 # we get a directory name from the current job array id, and set other variables
 dir=$4
 
+echo $dir
+
 TEMP=/var/tmp
 EMLABDB=emlab.gen-db
 RAMDISK=/tmp/ramdisk

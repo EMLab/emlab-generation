@@ -13,5 +13,4 @@ Supported by:
 
 Please contact Emile Chappin (e.j.l.chappin@tudelft.nl) or Jörn C. Richstein (j.c.richstein@tudelft.nl) to get involved in this project.
 
-Installation instructions:
-Will follow soon
+Installation instructions: See https://github.com/EMLab/emlab-generation/wiki/EMLab-and-Github

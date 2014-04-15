@@ -143,7 +143,7 @@
 		p:contractWillingnessToPayFactor="1.2">
 		<property name="name" value="Energy consumer" />
 	</bean>
-
+	
 	<bean id="energyProducerA" class="emlab.gen.domain.agent.EnergyProducer"
 		p:name="Energy Producer A" p:cash="3e9"
 		p:investmentRole-ref="standardInvestmentRole"
@@ -154,7 +154,8 @@
 		p:dismantlingProlongingYearsAfterTechnicalLifetime="0"
 		p:dismantlingRequiredOperatingProfit="0" p:downpaymentFractionOfCash="0.5"
 		p:willingToInvest="true" p:priceMarkUp="1.0"
-		p:numberOfYearsBacklookingForForecasting="5" />
+		p:numberOfYearsBacklookingForForecasting="5"
+		p:investorMarket-ref="beneluxElectricitySpotMarket"/>
 	<bean id="energyProducerB" class="emlab.gen.domain.agent.EnergyProducer"
 		p:name="Energy Producer B" p:cash="3e9" 
 		p:investmentRole-ref="standardInvestmentRole"
@@ -165,7 +166,8 @@
 		p:dismantlingProlongingYearsAfterTechnicalLifetime="0"
 		p:dismantlingRequiredOperatingProfit="0" p:downpaymentFractionOfCash="0.5"
 		p:willingToInvest="true" p:priceMarkUp="1.0"
-		p:numberOfYearsBacklookingForForecasting="5" />
+		p:numberOfYearsBacklookingForForecasting="5"
+		p:investorMarket-ref="beneluxElectricitySpotMarket"/>
 		
 	<bean id="standardInvestmentRole" class="emlab.gen.role.investment.InvestInPowerGenerationTechnologiesRole"/>
 
@@ -189,7 +191,7 @@
 		<property name ="technology" ref="coalPulverizedSuperCritical"/>
 		<property name="owner" ref="energyProducerA"/>
 		<property name="location" ref="beneluxNode"/>
-		<property name="loan" ref="loanppCoalA1"/>
+		<property name="loan" ref="loanppCoalA2"/>
 	</bean>
 	
 	<bean id="ppCoalB1" class="emlab.gen.domain.technology.PowerPlant" p:label="Coal Power Plant B1"

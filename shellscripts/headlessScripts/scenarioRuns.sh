@@ -11,16 +11,18 @@ fi
 #Alternative way to define non sequential scenario runs.
 #RUNS=(14 21 26 32 38  72 84 108 111 120 132 156 160 162 164 168 180)
 
-JOBNAME=$1
+RUNNAME=$1
 SCENARIONAME=$2
 NUMBERROFRUNSPERSCENARIO=$3
 START=$4
 END=$5
+PAUSE=$6
+WALLTIME=$7
 
 #for i in "${RUNS[@]}"
 for i in $(eval echo "{$START..$END}")
 do
     SCENARIO=$SCENARIONAME"-$i"
-    $REMOTEHPCSCRIPTS/hpcArrayRun.sh $JOBNAME $SCENARIO".xml" $NUMBERROFRUNSPERSCENARIO
-    sleep 10
+    $REMOTEHPCSCRIPTS/hpcArrayRun.sh $RUNNAME $RUNNAME"-$i" $SCENARIO".xml" $NUMBERROFRUNSPERSCENARIO $WALLTIME
+    sleep $PAUSE
 done

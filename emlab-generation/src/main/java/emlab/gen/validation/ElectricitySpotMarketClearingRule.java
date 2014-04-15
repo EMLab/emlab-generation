@@ -39,7 +39,8 @@ public class ElectricitySpotMarketClearingRule extends AbstractValidationRule im
         for (ElectricitySpotMarket market : template.findAll(ElectricitySpotMarket.class)) {
             for (SegmentLoad segmentload : market.getLoadDurationCurve()) {
                 Segment segment = segmentload.getSegment();
-                ClearingPoint point = clearingPointRepositoryOld.findClearingPointForSegmentAndTime(segment, getCurrentTick());
+                ClearingPoint point = clearingPointRepositoryOld.findClearingPointForSegmentAndTime(segment,
+                        getCurrentTick(), false);
 
                 if (point == null) {
                     throw new ValidationException(market.toString() + " " + segment.toString() + " failed to clear");

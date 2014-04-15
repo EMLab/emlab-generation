@@ -33,14 +33,16 @@ public class ProcessAcceptedPowerPlantDispatchRole extends AbstractMarketRole<El
     @Autowired
     Reps reps;
 
+    @Override
     @Transactional
     public void act(ElectricitySpotMarket esm) {
 
         for (Segment segment : reps.segmentRepository.findAll()) {
             SegmentClearingPoint scp = reps.segmentClearingPointRepository.findOneSegmentClearingPointForMarketSegmentAndTime(
-                    getCurrentTick(), segment, esm);
+                    getCurrentTick(), segment, esm, false);
             for (PowerPlantDispatchPlan plan : reps.powerPlantDispatchPlanRepository
-                    .findAllAcceptedPowerPlantDispatchPlansForMarketSegmentAndTime(esm, segment, getCurrentTick())) {
+                    .findAllAcceptedPowerPlantDispatchPlansForMarketSegmentAndTime(esm, segment, getCurrentTick(),
+                            false)) {
 
                 reps.nonTransactionalCreateRepository.createCashFlow(esm, plan.getBidder(), plan.getAcceptedAmount() * scp.getPrice()
                         * segment.getLengthInHours(), CashFlow.ELECTRICITY_SPOT, getCurrentTick(), plan.getPowerPlant());

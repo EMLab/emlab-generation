@@ -16,6 +16,9 @@ TEMP="/var/tmp"
 RAMDISK="/tmp/ramdisk"
 EMLABDB="emlab.gen-db"
 
+chmod go+x $REMOTEHPCSCRIPTS
+chmod go+x $REMOTEHPCSCRIPTS/epilogueHpc.sh
+
 #Make sure your in the right directory
 cd $HOME
 
@@ -25,19 +28,23 @@ then
    exit 0
 fi 
 
-JOBNAME=$1
-SCENARIO=$2
-NROFRUNS=$3
+RUNNAME=$1
+JOBNAME=$2
+SCENARIO=$3
+NROFRUNS=$4
+WALLTIME=$5
 #######################
 #Creating output folders
-STREAMOUTPUT=$HOME/$JOBNAME/streamOutput
-INPUTPARAMETERFOLDER=$HOME/$JOBNAME/inputParameter
-mkdir $HOME/$JOBNAME
+STREAMOUTPUT=$HOME/$RUNNAME/streamOutput
+INPUTPARAMETERFOLDER=$HOME/$RUNNAME/inputParameter
+if [ ! -e $HOME/$RUNNAME ];then
+mkdir $HOME/$RUNNAME
 #mkdir $HOME/$JOBNAME/results
 mkdir $STREAMOUTPUT
 mkdir $INPUTPARAMETERFOLDER
 #cp $REMOTED13N/target/$JARFILE $HOME/
 #rm $JARFILE
+fi
 ######################
 cp $REMOTESCENARIOFOLDER/$SCENARIO $INPUTPARAMETERFOLDER/
 PARAMETERFILE=$(grep "classpath:scenarios" <$INPUTPARAMETERFOLDER/$SCENARIO | sed 's/[^:]*:scenarios\/\([^"]*\).*/\1/')
@@ -46,12 +53,16 @@ cp $REMOTESCENARIOFOLDER/$PARAMETERFILE $INPUTPARAMETERFOLDER/
 ######################
 #Starting Simulation
 
-MD=$(md5sum $HOME/$JARNAME | sed 's/ /_/g')
+MD=$(md5sum $HOME/$JARNAME | sed 's/\([a-z0-9]*\) .*/\1/g')
 
-echo "$MD"
+#echo "$MD"
 
    #Start the set of jobs.
-qsub -t 1-$NROFRUNS -N $JOBNAME -l nodes=1:ppn=8,mem=3000mb,walltime=03:00:01,epilogue=$REMOTEHPCSCRIPTS/epilogueHpc.sh -o $STREAMOUTPUT -e $STREAMOUTPUT -v JOBNAME=$JOBNAME,JARNAME=$JARNAME,SCENARIO=$SCENARIO,TEMP=$TEMP,RAMDISK=$RAMDISK,MD=$MD,HOME=$HOME,D13NDB=$D13NDB,INPUTPARAMETERFOLDER=$INPUTPARAMETERFOLDER,PARAMETER=$PARAMETER $REMOTEHPCSCRIPTS/startASingleArrayJobOnNode.sh
-   echo "Started all jobs."
-
-
+if [ $NROFRUNS -gt 1 ]
+then
+qsub -t 1-$NROFRUNS -N $JOBNAME -l nodes=1:ppn=2,mem=3000mb,walltime=$WALLTIME,epilogue=$REMOTEHPCSCRIPTS/epilogueHpc.sh -o $STREAMOUTPUT -e $STREAMOUTPUT -v JOBNAME=$JOBNAME,RUNNAME=$RUNNAME,JARNAME=$JARNAME,SCENARIO=$SCENARIO,TEMP=$TEMP,RAMDISK=$RAMDISK,EMLABDB=$EMLABDB,MD=$MD,HOME=$HOME,INPUTPARAMETERFOLDER=$INPUTPARAMETERFOLDER,PARAMETER=$PARAMETER $REMOTEHPCSCRIPTS/startASingleArrayJobOnNode.sh
+   echo "Started all job "$JOBNAME"."
+else
+qsub -N $JOBNAME -l nodes=1:ppn=2,mem=3000mb,walltime=$WALLTIME,epilogue=$REMOTEHPCSCRIPTS/epilogueHpc.sh -o $STREAMOUTPUT -e $STREAMOUTPUT -v JOBNAME=$JOBNAME,RUNNAME=$RUNNAME,JARNAME=$JARNAME,SCENARIO=$SCENARIO,TEMP=$TEMP,RAMDISK=$RAMDISK,EMLABDB=$EMLABDB,MD=$MD,HOME=$HOME,INPUTPARAMETERFOLDER=$INPUTPARAMETERFOLDER,PARAMETER=$PARAMETER $REMOTEHPCSCRIPTS/startASingleArrayJobOnNode.sh
+   echo "Started all job "$JOBNAME"."
+fi
