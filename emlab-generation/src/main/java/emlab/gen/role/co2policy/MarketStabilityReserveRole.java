@@ -46,7 +46,7 @@ public class MarketStabilityReserveRole extends AbstractRole<Government> {
 
     @Transactional
     public void act(Government government) {
-        double allowancesInCirculation = reps.decarbonizationAgentRepository.determineTotallyBankedCO2Certificates();
+        double allowancesInCirculation = reps.decarbonizationAgentRepository.determinePreviouslyBankedCO2Certificates();
         double inflowToMarketReserve = calculateInflowToMarketReserveForTimeStep(allowancesInCirculation, government);
         government.setStabilityReserve(government.getStabilityReserve() + inflowToMarketReserve);
         government.getCo2CapTrend().setValue(getCurrentTick(),

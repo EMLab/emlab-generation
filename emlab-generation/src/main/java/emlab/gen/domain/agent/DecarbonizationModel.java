@@ -46,6 +46,8 @@ public class DecarbonizationModel extends AbstractAgent implements Agent {
 
     private boolean stabilityReserveIsActive;
 
+    private long stabilityReserveFirstYearOfOperation;
+
 
     @SimulationParameter(label = "Simulation Length", from = 0, to = 75)
     private double simulationLength;
@@ -236,6 +238,14 @@ public class DecarbonizationModel extends AbstractAgent implements Agent {
 
     public void setStabilityReserveIsActive(boolean stabilityReserveIsActive) {
         this.stabilityReserveIsActive = stabilityReserveIsActive;
+    }
+
+    public long getStabilityReserveFirstYearOfOperation() {
+        return stabilityReserveFirstYearOfOperation;
+    }
+
+    public void setStabilityReserveFirstYearOfOperation(long stabilityReserveFirstYearOfOperation) {
+        this.stabilityReserveFirstYearOfOperation = stabilityReserveFirstYearOfOperation;
     }
 
 }

@@ -599,11 +599,12 @@ NodeBacked {
         } else {
             expectedRegressionCO2Price = lastPrice;
         }
-        expectedCO2Price = reps.clearingPointRepository.findClearingPointForMarketAndTime(
+        ClearingPoint expectedCO2ClearingPoint = reps.clearingPointRepository.findClearingPointForMarketAndTime(
                 co2Auction,
                 getCurrentTick()
                 + reps.genericRepository.findFirst(DecarbonizationModel.class).getCentralForecastingYear(),
-                true).getPrice();
+                true);
+        expectedCO2Price = (expectedCO2ClearingPoint == null) ? 0 : expectedCO2ClearingPoint.getPrice();
         expectedCO2Price = (expectedCO2Price + expectedRegressionCO2Price) / 2;
         for (ElectricitySpotMarket esm : reps.marketRepository.findAllElectricitySpotMarkets()) {
             double nationalCo2MinPriceinFutureTick = reps.nationalGovernmentRepository

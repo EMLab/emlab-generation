@@ -26,7 +26,7 @@ import emlab.gen.domain.technology.Substance;
 
 public interface ClearingPointRepository extends GraphRepository<ClearingPoint> {
 
-    @Query(value = "g.v(market).in('MARKET_POINT').filter{it.time==tick && it.forecast==forecast}.next()", type = QueryType.Gremlin)
+    @Query(value = "all = g.v(market).in('MARKET_POINT').filter{it.time==tick && it.forecast==forecast}; if(all.hasNext()){return all.next();} else{return []}", type = QueryType.Gremlin)
     ClearingPoint findClearingPointForMarketAndTime(@Param("market") DecarbonizationMarket market,
             @Param("tick") long tick, @Param("forecast") boolean forecast);
 

@@ -15,7 +15,11 @@ fi
 
 # the job number
 # we get a directory name from the current job array id
+if [ -n "$PBS_ARRAYID" ]; then
 dir=$JOBNAME-$PBS_ARRAYID
+else
+dir=$JOBNAME
+fi
 NEWJARNAME=$JOBNAME".jar"
 #delete database of possible previous run
 #rm -rf $RAMDISK/$EMLABDB/$dir
@@ -61,7 +65,11 @@ echo "Disk usage on Ramdisk: $RAMDU"
 
 #Execute the job 
 #java -Drun.id=$JOBNAME-$PBS_ARRAYID -Dresults.path=$TEMP/$dir -Dscenario.file=$SCENARIO -jar $PBS_O_WORKDIR/$JARNAME
+if [ -n "$PBS_ARRAYID" ]; then
 java -d64 -server -Xmx3072m -Drun.id=$JOBNAME-$PBS_ARRAYID -DSCENARIO_FOLDER=file://$NODESCENARIOFOLDER -Dresults.path=$TEMP/$dir -Dscenario.file=$SCENARIO -jar $TEMP/$NEWJARNAME > $JOBNAME-$PBS_ARRAYID.elog
+else
+java -d64 -server -Xmx3072m -Drun.id=$JOBNAME -DSCENARIO_FOLDER=file://$NODESCENARIOFOLDER -Dresults.path=$TEMP/$dir -Dscenario.file=$SCENARIO -jar $TEMP/$NEWJARNAME > $JOBNAME.elog
+fi
 
 
 #REMOVE JAR File
@@ -71,7 +79,13 @@ java -d64 -server -Xmx3072m -Drun.id=$JOBNAME-$PBS_ARRAYID -DSCENARIO_FOLDER=fil
 #if grep -Fq "WARN Stopping AgentSpring" $JOBNAME-$PBS_ARRAYID.elog
 #then
 #Rename simulation.log
+if [ -n "$PBS_ARRAYID" ]; then
 mv simulation.log $JOBNAME-$PBS_ARRAYID.log
+else
+mv simulation.log $JOBNAME.log
+fi
+
+
 #Make a dir for the data and copy it to that directory so we can access the data from the head node
 cp -r $TEMP/$dir/* $PBS_O_WORKDIR/$RUNNAME/
 #fi

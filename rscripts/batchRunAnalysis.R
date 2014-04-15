@@ -141,7 +141,7 @@ plotStackedDiagram <- function(moltenVariable, ylabel, legendName, absolute=TRUE
 }
 
 
-plotTimeSeriesWithConfidenceIntervalByFacettedGroup <- function(df, variable, ylabel, fun.data="median_hilow", conf.int=0.5, conf.int2=0.95, nrow=NULL){
+plotTimeSeriesWithConfidenceIntervalByFacettedGroup <- function(df, variable, ylabel, fun.data="median_hilow", conf.int=0.5, conf.int2=0.90, nrow=NULL){
   g<-ggplot(df, aes_string(x="tick", y=variable))+ #colour=modelRun, fill=modelRun,
     #stat_summary(aes_string(fill="modelRun"), fun.data=fun.data, conf.int=conf.int, geom="smooth") +
     stat_summary(fun.data=fun.data, conf.int=conf.int, geom="smooth", colour="black") +
@@ -169,7 +169,7 @@ plotTimeSeriesWithConfidenceIntervalGroupedInOnePlot <- function(df, variable, y
   g<-ggplot(df, aes_string(x="tick", y=variable, group="modelRun", colour="modelRun", linestyle="modelRun"))+ #colour=run, fill=run,
     stat_summary(aes_string(fill="modelRun", linestyle="modelRun"), fun.data="median_hilow", conf.int=.5, geom="errorbar") +
     stat_summary(aes_string(fill="modelRun", linestyle="modelRun"), fun.data="median_hilow", conf.int=.5, geom="line") +
-    #stat_summary(fun.data="median_hilow", conf.int=.95, geom="smooth")+
+    #stat_summary(fun.data="median_hilow", conf.int=.9, geom="smooth")+
     #facet_grid(. ~ run)+
     #facet_wrap(~ run)+
     theme(legend.position="bottom")+
@@ -182,7 +182,7 @@ plotSpaghettiTimeSeries <- function(df, variable, ylabel, xlabel="Time [a]", yli
   p<- ggplot(df, aes_string(x="tick", y=variable))+
       geom_line(aes_string(group="runId", linestyle="runId"), alpha=I(0.2))+
       stat_summary(aes_string(fill="modelRun"), fun.data="median_hilow", conf.int=.5, geom="smooth") +
-      #stat_summary(fun.data="median_hilow", conf.int=.95, geom="smooth")+
+      #stat_summary(fun.data="median_hilow", conf.int=.9, geom="smooth")+
       facet_wrap( ~ modelRun, nrow=nrow)+
       ylab(ylabel)+
       xlab(xlabel)+
@@ -201,7 +201,7 @@ plotMoltenVariableFacettedByVariable <- function(moltenDF, ylabel, facet_wrap=T)
     stat_summary(aes_string(colour="modelRun", fill="modelRun", group="modelRun"), fun.y="mean", geom="line", linetype=1)+
     stat_summary(data=moltenDF[moltenDF$tick%%5==0 | moltenDF$tick==39,],aes_string(group="modelRun",shape="modelRun"), fun.y="mean", geom="point", size=1.5)+
     #stat_summary(aes_string(colour="modelRun", fill="modelRun", group="modelRun"), fun.data="median_hilow", conf.int=.5, geom="smooth") +
-    #stat_summary(aes_string(colour="modelRun", fill="modelRun", group="modelRun"), fun.data="median_hilow", conf.int=.95, geom="smooth")+
+    #stat_summary(aes_string(colour="modelRun", fill="modelRun", group="modelRun"), fun.data="median_hilow", conf.int=.9, geom="smooth")+
     facet_wrap_option+
     #facet_wrap(~ modelRun)+
     theme(legend.position="bottom")+
