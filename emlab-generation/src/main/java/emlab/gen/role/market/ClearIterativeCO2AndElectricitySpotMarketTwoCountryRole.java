@@ -264,7 +264,8 @@ AbstractClearElectricitySpotMarketRole<DecarbonizationModel> implements Role<Dec
             if (model.isLongTermContractsImplemented())
                 determineCommitmentOfPowerPlantsOnTheBasisOfLongTermContracts(segments, forecast);
             for (Segment segment : segments) {
-                clearOneOrTwoConnectedElectricityMarketsAtAGivenCO2PriceForOneSegment(interconnector.getCapacity(),
+                clearOneOrTwoConnectedElectricityMarketsAtAGivenCO2PriceForOneSegment(
+                        interconnector.getCapacity(clearingTick),
                         segment, government, clearingTick, forecast, demandGrowthMap);
             }
 
@@ -388,7 +389,7 @@ AbstractClearElectricitySpotMarketRole<DecarbonizationModel> implements Role<Dec
             for (ElectricitySpotMarket market : reps.marketRepository.findAllElectricitySpotMarkets()) {
                 double interconenctorFlowForCurrentMarket = (market.equals(firstMarket) && firstImporting)
                         || (!market.equals(firstMarket) && !firstImporting) ? interconnectorCapacity
-                        : interconnectorCapacity * (-1.0);
+                                : interconnectorCapacity * (-1.0);
                 reps.clearingPointRepositoryOld.createOrUpdateSegmentClearingPoint(segment, market,
                         marketOutcomes.prices.get(market),
                         marketOutcomes.supplies.get(market) * segment.getLengthInHours(),
@@ -415,7 +416,8 @@ AbstractClearElectricitySpotMarketRole<DecarbonizationModel> implements Role<Dec
             determineCommitmentOfPowerPlantsOnTheBasisOfLongTermContracts(segments, forecast);
 
         for (Segment segment : segments) {
-            clearOneOrTwoConnectedElectricityMarketsAtAGivenCO2PriceForOneSegment(interconnector.getCapacity(),
+            clearOneOrTwoConnectedElectricityMarketsAtAGivenCO2PriceForOneSegment(
+                    interconnector.getCapacity(clearingTick),
                     segment, government, clearingTick, forecast, demandGrowthMap);
         }
     }
