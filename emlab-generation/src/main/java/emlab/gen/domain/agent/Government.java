@@ -43,15 +43,20 @@ public class Government extends DecarbonizationAgent implements Agent {
 
     private double stabilityReserve;
 
-    private double stabilityReserveAddingThreshold;
+    @RelatedTo(type = "STABILITY_RESERVE_UPPER_TRIGGER", elementClass = TimeSeriesImpl.class, direction = Direction.OUTGOING)
+    private TimeSeriesImpl stabilityReserveUpperTriggerTrend;
 
-    private double stabilityReserveReleasingThreshold;
+    @RelatedTo(type = "STABILITY_RESERVE_LOWER_TRIGGER", elementClass = TimeSeriesImpl.class, direction = Direction.OUTGOING)
+    private TimeSeriesImpl stabilityReserveLowerTriggerTrend;
 
-    private double stabilityReserveAddingPercentage;
+    @RelatedTo(type = "STABILITY_RESERVE_ADDING_PERCENTAGE", elementClass = TimeSeriesImpl.class, direction = Direction.OUTGOING)
+    private TimeSeriesImpl stabilityReserveAddingPercentageTrend;
 
-    private double stabilityReserveAddingMinimum;
+    @RelatedTo(type = "STABILITY_RESERVE_ADDING_MINIMUM", elementClass = TimeSeriesImpl.class, direction = Direction.OUTGOING)
+    private TimeSeriesImpl stabilityReserveAddingMinimumTrend;
 
-    private double stabilityReserveReleaseQuantity;
+    @RelatedTo(type = "STABILITY_RESERVE_RELEASE_MINIMUM", elementClass = TimeSeriesImpl.class, direction = Direction.OUTGOING)
+    private TimeSeriesImpl stabilityReserveReleaseQuantityTrend;
 
     public double getCO2Tax(long time) {
         return co2TaxTrend.getValue(time);
@@ -123,44 +128,44 @@ public class Government extends DecarbonizationAgent implements Agent {
         this.stabilityReserve = stabilityReserve;
     }
 
-    public double getStabilityReserveAddingThreshold() {
-        return stabilityReserveAddingThreshold;
+    public TimeSeriesImpl getStabilityReserveUpperTriggerTrend() {
+        return stabilityReserveUpperTriggerTrend;
     }
 
-    public void setStabilityReserveAddingThreshold(double stabilityReserveAddingThreshold) {
-        this.stabilityReserveAddingThreshold = stabilityReserveAddingThreshold;
+    public void setStabilityReserveUpperTriggerTrend(TimeSeriesImpl stabilityReserveUpperTriggerTrend) {
+        this.stabilityReserveUpperTriggerTrend = stabilityReserveUpperTriggerTrend;
     }
 
-    public double getStabilityReserveReleasingThreshold() {
-        return stabilityReserveReleasingThreshold;
+    public TimeSeriesImpl getStabilityReserveLowerTriggerTrend() {
+        return stabilityReserveLowerTriggerTrend;
     }
 
-    public void setStabilityReserveReleasingThreshold(double stabilityReserveReleasingThreshold) {
-        this.stabilityReserveReleasingThreshold = stabilityReserveReleasingThreshold;
+    public void setStabilityReserveLowerTriggerTrend(TimeSeriesImpl stabilityReserveLowerTriggerTrend) {
+        this.stabilityReserveLowerTriggerTrend = stabilityReserveLowerTriggerTrend;
     }
 
-    public double getStabilityReserveAddingPercentage() {
-        return stabilityReserveAddingPercentage;
+    public TimeSeriesImpl getStabilityReserveAddingPercentageTrend() {
+        return stabilityReserveAddingPercentageTrend;
     }
 
-    public void setStabilityReserveAddingPercentage(double stabilityReserveAddingPercentage) {
-        this.stabilityReserveAddingPercentage = stabilityReserveAddingPercentage;
+    public void setStabilityReserveAddingPercentageTrend(TimeSeriesImpl stabilityReserveAddingPercentageTrend) {
+        this.stabilityReserveAddingPercentageTrend = stabilityReserveAddingPercentageTrend;
     }
 
-    public double getStabilityReserveAddingMinimum() {
-        return stabilityReserveAddingMinimum;
+    public TimeSeriesImpl getStabilityReserveAddingMinimumTrend() {
+        return stabilityReserveAddingMinimumTrend;
     }
 
-    public void setStabilityReserveAddingMinimum(double stabilityReserveAddingMinimum) {
-        this.stabilityReserveAddingMinimum = stabilityReserveAddingMinimum;
+    public void setStabilityReserveAddingMinimumTrend(TimeSeriesImpl stabilityReserveAddingMinimumTrend) {
+        this.stabilityReserveAddingMinimumTrend = stabilityReserveAddingMinimumTrend;
     }
 
-    public double getStabilityReserveReleaseQuantity() {
-        return stabilityReserveReleaseQuantity;
+    public TimeSeriesImpl getStabilityReserveReleaseQuantityTrend() {
+        return stabilityReserveReleaseQuantityTrend;
     }
 
-    public void setStabilityReserveReleaseQuantity(double stabilityReserveReleaseQuantity) {
-        this.stabilityReserveReleaseQuantity = stabilityReserveReleaseQuantity;
+    public void setStabilityReserveReleaseQuantityTrend(TimeSeriesImpl stabilityReserveReleaseQuantityTrend) {
+        this.stabilityReserveReleaseQuantityTrend = stabilityReserveReleaseQuantityTrend;
     }
 
 }

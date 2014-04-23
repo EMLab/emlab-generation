@@ -48,6 +48,12 @@ public class DecarbonizationModel extends AbstractAgent implements Agent {
 
     private long stabilityReserveFirstYearOfOperation;
 
+    private double stabilityReserveBankingFirstYear;
+
+    private double stabilityReserveBankingSecondYear;
+
+    private double stabilityReserveBankingThirdYear;
+
 
     @SimulationParameter(label = "Simulation Length", from = 0, to = 75)
     private double simulationLength;
@@ -246,6 +252,30 @@ public class DecarbonizationModel extends AbstractAgent implements Agent {
 
     public void setStabilityReserveFirstYearOfOperation(long stabilityReserveFirstYearOfOperation) {
         this.stabilityReserveFirstYearOfOperation = stabilityReserveFirstYearOfOperation;
+    }
+
+    public double getStabilityReserveBankingFirstYear() {
+        return stabilityReserveBankingFirstYear;
+    }
+
+    public void setStabilityReserveBankingFirstYear(double stabilityReserveBankingFirstYear) {
+        this.stabilityReserveBankingFirstYear = stabilityReserveBankingFirstYear;
+    }
+
+    public double getStabilityReserveBankingSecondYear() {
+        return stabilityReserveBankingSecondYear;
+    }
+
+    public void setStabilityReserveBankingSecondYear(double stabilityReserveBankingSecondYear) {
+        this.stabilityReserveBankingSecondYear = stabilityReserveBankingSecondYear;
+    }
+
+    public double getStabilityReserveBankingThirdYear() {
+        return stabilityReserveBankingThirdYear;
+    }
+
+    public void setStabilityReserveBankingThirdYear(double stabilityReserveBankingThirdYear) {
+        this.stabilityReserveBankingThirdYear = stabilityReserveBankingThirdYear;
     }
 
 }
