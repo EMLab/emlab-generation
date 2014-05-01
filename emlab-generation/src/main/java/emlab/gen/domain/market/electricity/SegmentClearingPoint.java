@@ -21,6 +21,14 @@ import org.springframework.data.neo4j.annotation.RelatedTo;
 
 import emlab.gen.domain.market.ClearingPoint;
 
+/**
+ * The SegmentClearingPoint is used to store informationr regarding the clearing
+ * of national electricity markets. All volumes (including interconnector flows)
+ * are given in electrical MWh.
+ * 
+ * @author JCRichstein
+ * 
+ */
 @NodeEntity
 public class SegmentClearingPoint extends ClearingPoint {
 

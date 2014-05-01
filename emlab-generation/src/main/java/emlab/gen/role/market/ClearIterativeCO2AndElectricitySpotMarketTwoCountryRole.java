@@ -337,8 +337,9 @@ AbstractClearElectricitySpotMarketRole<DecarbonizationModel> implements Role<Dec
                         : interconnectorFlow;
 
                 reps.clearingPointRepositoryOld.createOrUpdateSegmentClearingPoint(segment, market,
-                        globalOutcome.globalPrice, supplyInThisMarket * segment.getLengthInHours(),
-                        interconenctorFlowForCurrentMarket, clearingTick, forecast);
+                        globalOutcome.globalPrice,
+                        (supplyInThisMarket + interconenctorFlowForCurrentMarket) * segment.getLengthInHours(),
+                        (interconenctorFlowForCurrentMarket * segment.getLengthInHours()), clearingTick, forecast);
                 logger.info("Stored a system-uniform price for market " + market + " / segment " + segment
                         + " -- supply " + supplyInThisMarket + " -- price: " + globalOutcome.globalPrice);
             }
@@ -392,8 +393,9 @@ AbstractClearElectricitySpotMarketRole<DecarbonizationModel> implements Role<Dec
                                 : interconnectorCapacity * (-1.0);
                 reps.clearingPointRepositoryOld.createOrUpdateSegmentClearingPoint(segment, market,
                         marketOutcomes.prices.get(market),
-                        marketOutcomes.supplies.get(market) * segment.getLengthInHours(),
-                        interconenctorFlowForCurrentMarket, clearingTick, forecast);
+                        (marketOutcomes.supplies.get(market) + interconenctorFlowForCurrentMarket)
+                        * segment.getLengthInHours(),
+                        (interconenctorFlowForCurrentMarket * segment.getLengthInHours()), clearingTick, forecast);
                 logger.info("Stored a market specific price for market " + market + " / segment " + segment
                         + " -- supply " + marketOutcomes.supplies.get(market) + " -- demand: "
                         + marketOutcomes.loads.get(market) + " -- price: " + marketOutcomes.prices.get(market));
