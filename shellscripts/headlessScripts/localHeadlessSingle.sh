@@ -13,6 +13,8 @@ else
     exit
 fi
 
+../makeRamdisk.sh
+
 ## the first parameter gives the jobname, the second the scenario-file including the xml file-ending
 ## Example sh localHeadless.sh example scenarioA-ToyModel.xml
 JOBNAME=$1
@@ -28,7 +30,7 @@ else
     QUERYCOMMAND=""
 fi
 
-java -d64 -server -Xmx3072m -Drun.id=$JOBNAME -DSCENARIO_FOLDER=$SCENARIOPATH -Dresults.path=$LOCALRESULTFOLDER/$JOBNAME -Dscenario.file=$SCENARIO".xml" $QUERYCOMMAND -jar $LOCALJARFILE >  $JOBNAME.log
+java -d64 -server -Xmx3072m -Drun.id=$JOBNAME -DSCENARIO_FOLDER=$SCENARIOPATH -Dresults.path=$LOCALRESULTFOLDER/$JOBNAME -Dscenario.file=$SCENARIO".xml" $QUERYCOMMAND -jar $LOCALJARFILE
 rm -rf /tmp/ramdisk/emlab.gen-db/$JOBNAME
 
-#mv simulation.log $JOBNAME.log
+mv simulation.log $JOBNAME.log

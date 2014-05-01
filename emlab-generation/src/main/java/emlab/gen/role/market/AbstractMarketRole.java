@@ -52,14 +52,14 @@ public abstract class AbstractMarketRole<T extends DecarbonizationMarket> extend
         double totalDemandForPrice = calculateTotalDemandForMarketForTimeForPrice(market, time, totalSupplyPrice);
         logger.info("total demand {} for price {}", totalDemandForPrice, totalSupplyPrice);
 
-		double minimumSupplyPrice = calculateMinimumSupplyPriceForMarketForTime(market, time);
-		double demandAtMinimumSupplyPrice = calculateTotalDemandForMarketForTimeForPrice(market, time, totalSupplyPrice);
+        double minimumSupplyPrice = calculateMinimumSupplyPriceForMarketForTime(market, time);
+        double demandAtMinimumSupplyPrice = calculateTotalDemandForMarketForTimeForPrice(market, time, totalSupplyPrice);
 
-		if (demandAtMinimumSupplyPrice <= 0) {
-			clearedPrice = minimumSupplyPrice;
-			clearedVolume = 0;
-		} else if (totalDemandForPrice > totalSupply) {
-			// Not enough to meet demand
+        if (demandAtMinimumSupplyPrice <= 0) {
+            clearedPrice = minimumSupplyPrice;
+            clearedVolume = 0;
+        } else if (totalDemandForPrice > totalSupply) {
+            // Not enough to meet demand
             clearedVolume = totalSupply;
             if (market.isAuction()) {
                 clearedPrice = calculateTotalDemandForMarketForTimeForPrice(market, time, 0d);
@@ -77,7 +77,8 @@ public abstract class AbstractMarketRole<T extends DecarbonizationMarket> extend
                 if (demand < totalOfferAmount + amount) {
                     if (demand == 0) {
                         if (getCurrentTick() > 0) {
-                            ClearingPoint cp = reps.clearingPointRepository.findClearingPointForMarketAndTime(market, getCurrentTick() - 1);
+                            ClearingPoint cp = reps.clearingPointRepository.findClearingPointForMarketAndTime(market,
+                                    getCurrentTick() - 1, false);
                             if (cp != null)
                                 previousPrice = cp.getPrice();
                         }
@@ -101,6 +102,7 @@ public abstract class AbstractMarketRole<T extends DecarbonizationMarket> extend
         point.setTime(time);
         point.setPrice(Math.max(0, clearedPrice));
         point.setVolume(clearedVolume);
+        point.setForecast(false);
 
         // set bids to accepted and check for partial acceptance
         // DEMAND
@@ -125,29 +127,29 @@ public abstract class AbstractMarketRole<T extends DecarbonizationMarket> extend
 
         Iterable<Bid> bids = isSupply ? reps.bidRepository.findOffersForMarketForTimeBelowPrice(market, time, clearedPrice) : market
                 .isAuction() ? reps.bidRepository.findDemandBidsForMarketForTime(market, time) : reps.bidRepository
-                .findDemandBidsForMarketForTimeAbovePrice(market, time, clearedPrice);
+                        .findDemandBidsForMarketForTimeAbovePrice(market, time, clearedPrice);
 
-        for (Bid bid : bids) {
-            double amount = bid.getAmount();
-            totalBidVolume += amount;
-            accpetedSamePriceVolume = bid.getPrice() == previousPrice ? accpetedSamePriceVolume + amount : amount;
-            if (totalBidVolume < clearedVolume) {
-                bid.setStatus(Bid.ACCEPTED);
-                bid.setAcceptedAmount(bid.getAmount());
-            } else {
-                double lastAvailableBidSize = clearedVolume - (totalBidVolume - accpetedSamePriceVolume);
-                double samePriceVolume = calculateBidsForMarketForTimeForPrice(market, time, bid.getPrice(), isSupply);
-                double adjustRatio = lastAvailableBidSize / samePriceVolume;
-                for (Bid partBid : isSupply ? reps.bidRepository.findOffersForMarketForTimeForPrice(market, time, bid.getPrice())
-                        : reps.bidRepository.findDemandBidsForMarketForTimeForPrice(market, time, bid.getPrice())) {
-                    partBid.setStatus(Bid.PARTLY_ACCEPTED);
-                    partBid.setAcceptedAmount(partBid.getAmount() * adjustRatio);
+                for (Bid bid : bids) {
+                    double amount = bid.getAmount();
+                    totalBidVolume += amount;
+                    accpetedSamePriceVolume = bid.getPrice() == previousPrice ? accpetedSamePriceVolume + amount : amount;
+                    if (totalBidVolume < clearedVolume) {
+                        bid.setStatus(Bid.ACCEPTED);
+                        bid.setAcceptedAmount(bid.getAmount());
+                    } else {
+                        double lastAvailableBidSize = clearedVolume - (totalBidVolume - accpetedSamePriceVolume);
+                        double samePriceVolume = calculateBidsForMarketForTimeForPrice(market, time, bid.getPrice(), isSupply);
+                        double adjustRatio = lastAvailableBidSize / samePriceVolume;
+                        for (Bid partBid : isSupply ? reps.bidRepository.findOffersForMarketForTimeForPrice(market, time, bid.getPrice())
+                                : reps.bidRepository.findDemandBidsForMarketForTimeForPrice(market, time, bid.getPrice())) {
+                            partBid.setStatus(Bid.PARTLY_ACCEPTED);
+                            partBid.setAcceptedAmount(partBid.getAmount() * adjustRatio);
+                        }
+                        break;
+                    }
+                    previousPrice = bid.getPrice();
                 }
-                break;
-            }
-            previousPrice = bid.getPrice();
-        }
-        return previousPrice;
+                return previousPrice;
     }
 
     private double calculateBidsForMarketForTimeForPrice(DecarbonizationMarket market, long time, double price, boolean isSupply) {
@@ -184,13 +186,13 @@ public abstract class AbstractMarketRole<T extends DecarbonizationMarket> extend
         return 0d;
     }
 
-	private double calculateMinimumSupplyPriceForMarketForTime(DecarbonizationMarket market, long time) {
-		try {
-			return reps.bidRepository.calculateMinimumSupplyPriceForMarketForTime(market, time);
-		} catch (NullPointerException e) {
-		}
-		return 0d;
-	}
+    private double calculateMinimumSupplyPriceForMarketForTime(DecarbonizationMarket market, long time) {
+        try {
+            return reps.bidRepository.calculateMinimumSupplyPriceForMarketForTime(market, time);
+        } catch (NullPointerException e) {
+        }
+        return 0d;
+    }
 
     public abstract Reps getReps();
 }

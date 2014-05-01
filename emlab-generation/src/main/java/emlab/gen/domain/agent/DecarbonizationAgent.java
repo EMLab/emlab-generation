@@ -25,11 +25,14 @@ public class DecarbonizationAgent extends AbstractAgent {
     private double cash;
     private double co2Allowances;
     private String name;
+    private double lastYearsCo2Allowances;
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public void setName(String name) {
         this.name = name;
     }
@@ -48,6 +51,14 @@ public class DecarbonizationAgent extends AbstractAgent {
 
     public void setCo2Allowances(double co2Allowances) {
         this.co2Allowances = co2Allowances;
+    }
+
+    public double getLastYearsCo2Allowances() {
+        return lastYearsCo2Allowances;
+    }
+
+    public void setLastYearsCo2Allowances(double lastYearsCo2Allowances) {
+        this.lastYearsCo2Allowances = lastYearsCo2Allowances;
     }
 
     @Override

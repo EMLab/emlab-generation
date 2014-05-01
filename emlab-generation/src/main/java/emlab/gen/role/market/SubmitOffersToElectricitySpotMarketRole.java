@@ -15,7 +15,9 @@
  ******************************************************************************/
 package emlab.gen.role.market;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -24,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import agentspring.role.Role;
 import agentspring.role.RoleComponent;
+import emlab.gen.domain.agent.DecarbonizationModel;
 import emlab.gen.domain.agent.EnergyProducer;
 import emlab.gen.domain.agent.Government;
 import emlab.gen.domain.market.Bid;
@@ -44,38 +47,82 @@ import emlab.gen.role.AbstractEnergyProducerRole;
  * 
  */
 @RoleComponent
-public class SubmitOffersToElectricitySpotMarketRole extends AbstractEnergyProducerRole implements Role<EnergyProducer> {
+public class SubmitOffersToElectricitySpotMarketRole extends AbstractEnergyProducerRole<EnergyProducer> implements
+Role<EnergyProducer> {
 
     @Autowired
     Reps reps;
 
     @Override
-    @Transactional
     public void act(EnergyProducer producer) {
 
+        createOffersForElectricitySpotMarket(producer, getCurrentTick(), false, null);
+    }
+
+    @Transactional
+    public List<PowerPlantDispatchPlan> createOffersForElectricitySpotMarket(EnergyProducer producer, long tick,
+            boolean forecast, Map<Substance, Double> forecastedFuelPrices) {
+        List<PowerPlantDispatchPlan> ppdpList = new ArrayList<PowerPlantDispatchPlan>();
+
+        if (forecastedFuelPrices == null && !forecast) {
+            DecarbonizationModel model = reps.genericRepository.findFirst(DecarbonizationModel.class);
+            forecastedFuelPrices = new HashMap<Substance, Double>();
+            for (Substance substance : reps.substanceRepository.findAllSubstancesTradedOnCommodityMarkets()) {
+                forecastedFuelPrices.put(substance, findLastKnownPriceForSubstance(substance, getCurrentTick()));
+            }
+        }
+
+
         long numberOfSegments = reps.segmentRepository.count();
-        ElectricitySpotMarket market = producer.getInvestorMarket();
+        ElectricitySpotMarket market = null;
+        if (producer != null)
+            market = producer.getInvestorMarket();
 
+        Iterable<PowerPlant> powerPlants;
+        if (producer != null) {
+            powerPlants = forecast ? reps.powerPlantRepository
+                    .findExpectedOperationalPowerPlantsInMarketByOwner(market, tick, producer) : reps.powerPlantRepository
+                    .findOperationalPowerPlantsByOwner(producer, tick);
+        } else {
+            powerPlants = forecast ? reps.powerPlantRepository.findExpectedOperationalPowerPlants(tick)
+                    : reps.powerPlantRepository.findOperationalPowerPlants(tick);
+        }
+
+        boolean producerIsNull = (producer == null) ? true : false;
         // find all my operating power plants
-        for (PowerPlant plant : reps.powerPlantRepository.findOperationalPowerPlantsByOwner(producer, getCurrentTick())) {
+        for (PowerPlant plant : powerPlants) {
 
-            // get market for the plant by zone
-            // ElectricitySpotMarket market =
-            // reps.marketRepository.findElectricitySpotMarketForZone(plant.getLocation().getZone());
+            if (producerIsNull) {
+                market = reps.marketRepository.findElectricitySpotMarketForZone(plant.getLocation().getZone());
+                producer = plant.getOwner();
+            }
 
-            double mc = calculateMarginalCostExclCO2MarketCost(plant);
-            double price = mc * producer.getPriceMarkUp();
+            double mc;
+            double price;
+            if (!forecast) {
+                mc = calculateMarginalCostExclCO2MarketCost(plant, tick);
+                price = mc * producer.getPriceMarkUp();
+            } else {
+                mc = calculateExpectedMarginalCostExclCO2MarketCost(plant, forecastedFuelPrices, tick);
+                price = mc * producer.getPriceMarkUp();
+            }
 
             logger.info("Submitting offers for {} with technology {}", plant.getName(), plant.getTechnology().getName());
 
             for (SegmentLoad segmentload : market.getLoadDurationCurve()) {
 
                 Segment segment = segmentload.getSegment();
-                double capacity = plant.getAvailableCapacity(getCurrentTick(), segment, numberOfSegments);
+                double capacity;
+                if (tick == getCurrentTick()) {
+                    capacity = plant.getAvailableCapacity(tick, segment, numberOfSegments);
+                } else {
+                    capacity = plant.getExpectedAvailableCapacity(tick, segment, numberOfSegments);
+                }
+
                 logger.info("I bid capacity: {} and price: {}", capacity, mc);
 
                 PowerPlantDispatchPlan plan = reps.powerPlantDispatchPlanRepository
-                        .findOnePowerPlantDispatchPlanForPowerPlantForSegmentForTime(plant, segment, getCurrentTick());
+                        .findOnePowerPlantDispatchPlanForPowerPlantForSegmentForTime(plant, segment, tick, forecast);
                 // TODO: handle exception
 
                 // plan =
@@ -89,8 +136,11 @@ public class SubmitOffersToElectricitySpotMarketRole extends AbstractEnergyProdu
 
                 if (plan == null) {
                     plan = new PowerPlantDispatchPlan().persist();
-                    // plan.specifyNotPersist(plant, producer, market, segment, time, price, bidWithoutCO2, spotMarketCapacity, longTermContractCapacity, status);
-                    plan.specifyNotPersist(plant, producer, market, segment, getCurrentTick(), price, price, capacity, 0, Bid.SUBMITTED);
+                    // plan.specifyNotPersist(plant, producer, market, segment,
+                    // time, price, bidWithoutCO2, spotMarketCapacity,
+                    // longTermContractCapacity, status);
+                    plan.specifyNotPersist(plant, producer, market, segment, tick, price, price, capacity, 0,
+                            Bid.SUBMITTED, forecast);
                 } else {
                     // plan = plans.iterator().next();
                     plan.setBidder(producer);
@@ -98,29 +148,41 @@ public class SubmitOffersToElectricitySpotMarketRole extends AbstractEnergyProdu
                     plan.setPrice(mc);
                     plan.setBidWithoutCO2(mc);
                     plan.setAmount(capacity);
+                    plan.setAcceptedAmount(0d);
                     plan.setCapacityLongTermContract(0d);
                     plan.setStatus(Bid.SUBMITTED);
+                    plan.setForecast(forecast);
                 }
-
-                logger.info("Submitted {} for iteration {} to electricity spot market", plan);
+                ppdpList.add(plan);
 
             }
+
         }
+
+        return ppdpList;
     }
 
     @Transactional
-    void updateMarginalCostInclCO2AfterFuelMixChange(double co2Price, Map<ElectricitySpotMarket, Double> nationalMinCo2Prices) {
+    void updateMarginalCostInclCO2AfterFuelMixChange(double co2Price,
+            Map<ElectricitySpotMarket, Double> nationalMinCo2Prices, long clearingTick, boolean forecast,
+            Map<Substance, Double> fuelPriceMap) {
 
         int i = 0;
         int j = 0;
 
         Government government = reps.template.findAll(Government.class).iterator().next();
-        for (PowerPlantDispatchPlan plan : reps.powerPlantDispatchPlanRepository.findAllPowerPlantDispatchPlansForTime(getCurrentTick())) {
+        for (PowerPlantDispatchPlan plan : reps.powerPlantDispatchPlanRepository
+                .findAllPowerPlantDispatchPlansForTime(
+                        clearingTick, forecast)) {
             j++;
+
+            double effectiveCO2Price;
 
             double capacity = plan.getAmount();
             if (nationalMinCo2Prices.get(plan.getBiddingMarket()) > co2Price)
-                co2Price = nationalMinCo2Prices.get(plan.getBiddingMarket());
+                effectiveCO2Price = nationalMinCo2Prices.get(plan.getBiddingMarket());
+            else
+                effectiveCO2Price = co2Price;
 
             if (plan.getPowerPlant().getFuelMix().size() > 1) {
 
@@ -131,12 +193,12 @@ public class SubmitOffersToElectricitySpotMarketRole extends AbstractEnergyProdu
                 Map<Substance, Double> substancePriceMap = new HashMap<Substance, Double>();
 
                 for (Substance substance : possibleFuels) {
-                    substancePriceMap.put(substance, findLastKnownPriceForSubstance(substance));
+                    substancePriceMap.put(substance, fuelPriceMap.get(substance));
                 }
                 Set<SubstanceShareInFuelMix> fuelMix = calculateFuelMix(plan.getPowerPlant(), substancePriceMap,
-                        government.getCO2Tax(getCurrentTick()) + co2Price);
+                        government.getCO2Tax(clearingTick) + effectiveCO2Price);
                 plan.getPowerPlant().setFuelMix(fuelMix);
-                double mc = calculateMarginalCostExclCO2MarketCost(plan.getPowerPlant());
+                double mc = calculateMarginalCostExclCO2MarketCost(plan.getPowerPlant(), clearingTick);
                 if (mc != oldmc) {
                     plan.setBidWithoutCO2(mc);
                     i++;
@@ -144,10 +206,12 @@ public class SubmitOffersToElectricitySpotMarketRole extends AbstractEnergyProdu
 
             }
 
-            plan.setPrice(plan.getBidWithoutCO2() + (co2Price * plan.getPowerPlant().calculateEmissionIntensity()));
+            plan.setPrice(plan.getBidWithoutCO2()
+                    + (effectiveCO2Price * plan.getPowerPlant().calculateEmissionIntensity()));
 
             plan.setStatus(Bid.SUBMITTED);
             plan.setAmount(capacity);
+            plan.setAcceptedAmount(0d);
             plan.setCapacityLongTermContract(0d);
 
         }

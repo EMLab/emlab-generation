@@ -26,8 +26,9 @@ import emlab.gen.domain.technology.Substance;
 
 public interface ClearingPointRepository extends GraphRepository<ClearingPoint> {
 
-    @Query(value = "g.v(market).in('MARKET_POINT').filter{it.time==tick}.next", type = QueryType.Gremlin)
-    ClearingPoint findClearingPointForMarketAndTime(@Param("market") DecarbonizationMarket market, @Param("tick") long tick);
+    @Query(value = "all = g.v(market).in('MARKET_POINT').filter{it.time==tick && it.forecast==forecast}; if(all.hasNext()){return all.next();} else{return []}", type = QueryType.Gremlin)
+    ClearingPoint findClearingPointForMarketAndTime(@Param("market") DecarbonizationMarket market,
+            @Param("tick") long tick, @Param("forecast") boolean forecast);
 
     // @Query("start market=node({market}) match (market)<-[:MARKET_POINT]-(point) where (point.time >= {timeFrom}) and (point.time <= {timeTo}) return avg(point.price)")
     // double
@@ -35,20 +36,22 @@ public interface ClearingPointRepository extends GraphRepository<ClearingPoint> 
     // DecarbonizationMarket market,
     // @Param("timeFrom") long timeFrom, @Param("timeTo") long timeTo);
 
-    @Query(value = "g.v(market).in('MARKET_POINT').filter{(it.time>=timeFrom) && (it.time<=timeTo)}.price.mean()", type = QueryType.Gremlin)
+    @Query(value = "g.v(market).in('MARKET_POINT').filter{(it.time>=timeFrom) && (it.time<=timeTo) && it.forecast==forecast}.price.mean()", type = QueryType.Gremlin)
     double calculateAverageClearingPriceForMarketAndTimeRange(@Param("market") DecarbonizationMarket market,
-            @Param("timeFrom") long timeFrom, @Param("timeTo") long timeTo);
+            @Param("timeFrom") long timeFrom, @Param("timeTo") long timeTo, @Param("forecast") boolean forecast);
 
-    @Query(value = "g.v(substance).in('SUBSTANCE_MARKET').in('MARKET_POINT').propertyFilter('time', FilterPipe.Filter.GREATER_THAN_EQUAL, timeFrom).propertyFilter('time', FilterPipe.Filter.LESS_THAN_EQUAL, timeTo)", type=QueryType.Gremlin)
+    @Query(value = "g.v(substance).in('SUBSTANCE_MARKET').in('MARKET_POINT').propertyFilter('time', FilterPipe.Filter.GREATER_THAN_EQUAL, timeFrom).propertyFilter('time', FilterPipe.Filter.LESS_THAN_EQUAL, timeTo).propertyFilter('forecast',FilterPipe.Filter.EQUAL,forecast)", type = QueryType.Gremlin)
     Iterable<ClearingPoint> findAllClearingPointsForSubstanceAndTimeRange(@Param("substance") Substance substance,
-            @Param("timeFrom") long timeFrom, @Param("timeTo") long timeTo);
+            @Param("timeFrom") long timeFrom, @Param("timeTo") long timeTo, @Param("forecast") boolean forecast);
 
-    @Query(value = "g.v(market).in('MARKET_POINT').propertyFilter('time', FilterPipe.Filter.GREATER_THAN_EQUAL, timeFrom).propertyFilter('time', FilterPipe.Filter.LESS_THAN_EQUAL, timeTo)", type=QueryType.Gremlin)
-    Iterable<ClearingPoint> findAllClearingPointsForMarketAndTimeRange(@Param("market") DecarbonizationMarket market, @Param("timeFrom") long timeFrom, @Param("timeTo") long timeTo);
+    @Query(value = "g.v(market).in('MARKET_POINT').propertyFilter('time', FilterPipe.Filter.GREATER_THAN_EQUAL, timeFrom).propertyFilter('time', FilterPipe.Filter.LESS_THAN_EQUAL, timeTo).propertyFilter('forecast',FilterPipe.Filter.EQUAL,forecast)", type = QueryType.Gremlin)
+    Iterable<ClearingPoint> findAllClearingPointsForMarketAndTimeRange(@Param("market") DecarbonizationMarket market,
+            @Param("timeFrom") long timeFrom, @Param("timeTo") long timeTo, @Param("forecast") boolean forecast);
 
-    
-    @Query(value = "g.v(substance).in('SUBSTANCE_MARKET').propertyFilter('__type__', FilterPipe.Filter.EQUAL, 'emlab.gen.domain.market.CommodityMarket').in('MARKET_POINT').propertyFilter('time', FilterPipe.Filter.GREATER_THAN_EQUAL, timeFrom).propertyFilter('time', FilterPipe.Filter.LESS_THAN_EQUAL, timeTo)", type=QueryType.Gremlin)
+
+    @Query(value = "g.v(substance).in('SUBSTANCE_MARKET').propertyFilter('__type__', FilterPipe.Filter.EQUAL, 'emlab.gen.domain.market.CommodityMarket').in('MARKET_POINT').propertyFilter('time', FilterPipe.Filter.GREATER_THAN_EQUAL, timeFrom).propertyFilter('time', FilterPipe.Filter.LESS_THAN_EQUAL, timeTo).propertyFilter('forecast',FilterPipe.Filter.EQUAL,forecast)", type = QueryType.Gremlin)
     Iterable<ClearingPoint> findAllClearingPointsForSubstanceTradedOnCommodityMarkesAndTimeRange(@Param("substance") Substance substance,
-            @Param("timeFrom") long timeFrom, @Param("timeTo") long timeTo);
-    
+            @Param("timeFrom") long timeFrom, @Param("timeTo") long timeTo,
+            @Param("forecast") boolean forecast);
+
 }

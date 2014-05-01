@@ -20,8 +20,9 @@ import java.util.Set;
 import org.neo4j.graphdb.Direction;
 import org.springframework.data.neo4j.annotation.NodeEntity;
 import org.springframework.data.neo4j.annotation.RelatedTo;
+import org.springframework.transaction.annotation.Transactional;
 
-import agentspring.simulation.SimulationParameter;
+import emlab.gen.trend.TimeSeriesImpl;
 
 @NodeEntity
 public class Interconnector {
@@ -30,8 +31,8 @@ public class Interconnector {
     // TODO: Limit the set to the size of two.
     private Set<PowerGridNode> connections;
 
-    @SimulationParameter(description = "Interconnector capacity MW", label = "Interconnector capacity MW", from = 0, to = 300000, step = 10000)
-    private double capacity;
+    @RelatedTo(type = "INTERCONNECTOR_CAPACITY_TREND", elementClass = TimeSeriesImpl.class, direction = Direction.OUTGOING)
+    private TimeSeriesImpl interconnectorCapacityTrend;
 
     public Set<PowerGridNode> getConnections() {
         return connections;
@@ -41,12 +42,38 @@ public class Interconnector {
         this.connections = connections;
     }
 
-    public double getCapacity() {
-        return capacity;
+    public void setInterconnectorCapacityTrend(TimeSeriesImpl interconnectorCapacityTrend) {
+        this.interconnectorCapacityTrend = interconnectorCapacityTrend;
     }
 
+    public TimeSeriesImpl getInterconnectorCapacityTrend() {
+        return this.interconnectorCapacityTrend;
+    }
+
+    public double getCapacity(long time) {
+        return getInterconnectorCapacityTrend().getValue(time);
+    }
+
+
+    public void setCapacity(long time, double capacity) {
+        interconnectorCapacityTrend.setValue(time, capacity);
+    }
+
+    @Transactional
+    public void updateCapacity(long time, double capacity) {
+        setCapacity(time, capacity);
+    }
+
+    @Transactional
     public void setCapacity(double capacity) {
-        this.capacity = capacity;
+        TimeSeriesImpl interconnectorCapacityTrend = new TimeSeriesImpl().persist();
+        interconnectorCapacityTrend.setStartingYear(0);
+        double[] interconnectorCapacityTrendTimeSeries = new double[300];
+        for (int i = 0; i < interconnectorCapacityTrendTimeSeries.length; i++) {
+            interconnectorCapacityTrendTimeSeries[i] = capacity;
+        }
+        interconnectorCapacityTrend.setTimeSeries(interconnectorCapacityTrendTimeSeries);
+        setInterconnectorCapacityTrend(interconnectorCapacityTrend);
     }
 
 }

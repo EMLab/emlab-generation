@@ -178,7 +178,7 @@ public class DismantlePowerPlantOperationalLossRole extends AbstractRole<Electri
                         if (getCurrentTick() == 1) {
                             peakOtherMarketClearingPoint = reps.segmentClearingPointRepository
                                     .findOneSegmentClearingPointForMarketSegmentAndTime(getCurrentTick() - 1, seg,
-                                            otherMarket).getPrice();
+                                            otherMarket, false).getPrice();
                         }
                         logger.warn("18 Finds peak price " + peakOtherMarketClearingPoint);
                         if (getCurrentTick() > 1) {
@@ -188,9 +188,11 @@ public class DismantlePowerPlantOperationalLossRole extends AbstractRole<Electri
                                     - market.getBacklookingForDemandForecastinginDismantling()
                                     && time >= 0; time = time - 1) {
 
-                                sr1.addData(time, reps.segmentClearingPointRepository
-                                        .findOneSegmentClearingPointForMarketSegmentAndTime(time, seg, otherMarket)
-                                        .getPrice());
+                                sr1.addData(
+                                        time,
+                                        reps.segmentClearingPointRepository
+                                                .findOneSegmentClearingPointForMarketSegmentAndTime(time, seg,
+                                                        otherMarket, false).getPrice());
                             }
 
                             peakOtherMarketClearingPoint = sr1.predict(getCurrentTick());
@@ -305,7 +307,7 @@ public class DismantlePowerPlantOperationalLossRole extends AbstractRole<Electri
 
                     double expectedPeakDispatchPrice = reps.powerPlantDispatchPlanRepository
                             .findOnePowerPlantDispatchPlanForPowerPlantForSegmentForTime(plant, seg1,
-                                    getCurrentTick() - 1).getPrice();
+                                    getCurrentTick() - 1, false).getPrice();
                     logger.warn("21 Finds peak price for power plant " + expectedPeakDispatchPrice);
 
                     if (peakOtherMarketClearingPoint < expectedPeakDispatchPrice) {

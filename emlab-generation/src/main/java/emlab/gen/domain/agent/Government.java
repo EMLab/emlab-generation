@@ -37,7 +37,26 @@ public class Government extends DecarbonizationAgent implements Agent {
     @RelatedTo(type = "CO2_PRICECEILING_TREND", elementClass = TimeSeriesImpl.class, direction = Direction.OUTGOING)
     private TimeSeriesImpl co2PriceCeilingTrend;
 
+    private boolean activelyAdjustingTheCO2Cap;
+
     private double co2Penalty;
+
+    private double stabilityReserve;
+
+    @RelatedTo(type = "STABILITY_RESERVE_UPPER_TRIGGER", elementClass = TimeSeriesImpl.class, direction = Direction.OUTGOING)
+    private TimeSeriesImpl stabilityReserveUpperTriggerTrend;
+
+    @RelatedTo(type = "STABILITY_RESERVE_LOWER_TRIGGER", elementClass = TimeSeriesImpl.class, direction = Direction.OUTGOING)
+    private TimeSeriesImpl stabilityReserveLowerTriggerTrend;
+
+    @RelatedTo(type = "STABILITY_RESERVE_ADDING_PERCENTAGE", elementClass = TimeSeriesImpl.class, direction = Direction.OUTGOING)
+    private TimeSeriesImpl stabilityReserveAddingPercentageTrend;
+
+    @RelatedTo(type = "STABILITY_RESERVE_ADDING_MINIMUM", elementClass = TimeSeriesImpl.class, direction = Direction.OUTGOING)
+    private TimeSeriesImpl stabilityReserveAddingMinimumTrend;
+
+    @RelatedTo(type = "STABILITY_RESERVE_RELEASE_MINIMUM", elementClass = TimeSeriesImpl.class, direction = Direction.OUTGOING)
+    private TimeSeriesImpl stabilityReserveReleaseQuantityTrend;
 
     public double getCO2Tax(long time) {
         return co2TaxTrend.getValue(time);
@@ -91,6 +110,62 @@ public class Government extends DecarbonizationAgent implements Agent {
 
     public void setCo2PriceCeilingTrend(TimeSeriesImpl co2PriceCeilingTrend) {
         this.co2PriceCeilingTrend = co2PriceCeilingTrend;
+    }
+
+    public boolean isActivelyAdjustingTheCO2Cap() {
+        return activelyAdjustingTheCO2Cap;
+    }
+
+    public void setActivelyAdjustingTheCO2Cap(boolean activelyAdjustingTheCO2Cap) {
+        this.activelyAdjustingTheCO2Cap = activelyAdjustingTheCO2Cap;
+    }
+
+    public double getStabilityReserve() {
+        return stabilityReserve;
+    }
+
+    public void setStabilityReserve(double stabilityReserve) {
+        this.stabilityReserve = stabilityReserve;
+    }
+
+    public TimeSeriesImpl getStabilityReserveUpperTriggerTrend() {
+        return stabilityReserveUpperTriggerTrend;
+    }
+
+    public void setStabilityReserveUpperTriggerTrend(TimeSeriesImpl stabilityReserveUpperTriggerTrend) {
+        this.stabilityReserveUpperTriggerTrend = stabilityReserveUpperTriggerTrend;
+    }
+
+    public TimeSeriesImpl getStabilityReserveLowerTriggerTrend() {
+        return stabilityReserveLowerTriggerTrend;
+    }
+
+    public void setStabilityReserveLowerTriggerTrend(TimeSeriesImpl stabilityReserveLowerTriggerTrend) {
+        this.stabilityReserveLowerTriggerTrend = stabilityReserveLowerTriggerTrend;
+    }
+
+    public TimeSeriesImpl getStabilityReserveAddingPercentageTrend() {
+        return stabilityReserveAddingPercentageTrend;
+    }
+
+    public void setStabilityReserveAddingPercentageTrend(TimeSeriesImpl stabilityReserveAddingPercentageTrend) {
+        this.stabilityReserveAddingPercentageTrend = stabilityReserveAddingPercentageTrend;
+    }
+
+    public TimeSeriesImpl getStabilityReserveAddingMinimumTrend() {
+        return stabilityReserveAddingMinimumTrend;
+    }
+
+    public void setStabilityReserveAddingMinimumTrend(TimeSeriesImpl stabilityReserveAddingMinimumTrend) {
+        this.stabilityReserveAddingMinimumTrend = stabilityReserveAddingMinimumTrend;
+    }
+
+    public TimeSeriesImpl getStabilityReserveReleaseQuantityTrend() {
+        return stabilityReserveReleaseQuantityTrend;
+    }
+
+    public void setStabilityReserveReleaseQuantityTrend(TimeSeriesImpl stabilityReserveReleaseQuantityTrend) {
+        this.stabilityReserveReleaseQuantityTrend = stabilityReserveReleaseQuantityTrend;
     }
 
 }

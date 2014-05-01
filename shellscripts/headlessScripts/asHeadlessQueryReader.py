@@ -1,4 +1,6 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 *-*
+
 import json
 import glob
 import re
@@ -12,9 +14,10 @@ def check_that_dict_has_equal_length(resultDict):
         if i == 0:
             length = len(value)
         if not length == len(value):
+            print("Key of unequal length: " + key)
             return False
         i = i + 1
-        return True
+    return True
 
 
 def read_query_of_runid(path, runName, runId, queryName, resultDict):
@@ -93,7 +96,7 @@ runId, queryName, json_data, resultDict):
                 + subsubelement[0]).encode("ascii")].append(subsubelement[1])
                 subElementCounter = subElementCounter + 1
         if not subElementCounter == subElementNumber:
-            raise NameError("Number of subresults is not consistent!")
+            raise NameError("Number of subresults is not consistent!:" + queryName + ", " + ''.join(str(e) for e in tempJsonLine))
         line = json_data.readline()
     #print(resultDict)
     return resultDict
@@ -136,7 +139,7 @@ queryName, json_data, resultDict):
             subelement[0]).encode("ascii")].append(subelement[1])
             subElementCounter = subElementCounter + 1
         if not subElementCounter == subElementNumber:
-            raise NameError("Number of subresults is not consistent!")
+            raise NameError("Number of subresults is not consistent! " + queryName + ", " + ''.join(str(e) for e in tempJsonLine))
         line = json_data.readline()
     #print(resultDict)
     return resultDict
@@ -232,6 +235,56 @@ def write_csv_for_run_name(path, runName, ignoredQueries):
     for runId in runIds:
         resultDict = read_runId_to_dictionary(path, runName,
         runId, ignoredQueries)
+        print 
+
+
+def write_first_runid_dictionary_to_csv(path, runName, runId,
+resultDict, noOfTicks):
+    queryNames = ["tick", "runId"]
+    queryNames = set(queryNames)
+    queryNames.update(resultDict.keys())
+    with open(path + runName + ".csv", 'w') as csvfile:
+        csvwriter = csv.DictWriter(csvfile, fieldnames=queryNames)
+        headers = {}
+        for n in csvwriter.fieldnames:
+            headers[n] = n
+        csvwriter.writerow(headers)
+        i = 0
+        while i < noOfTicks:
+            singleTickDict = {}
+            for key, value in resultDict.iteritems():
+                singleTickDict.update({key: value[i]})
+            singleTickDict.update({"tick": i})
+            singleTickDict.update({"runId": runId})
+            csvwriter.writerow(singleTickDict)
+            i = i + 1
+
+
+def write_following_runids_to_csv(path, runName, runId, resultDict, noOfTicks):
+    queryNames = {}
+    with open(path + runName + ".csv", 'rb') as csvtoupdate:
+        dictReader = csv.DictReader(csvtoupdate)
+        queryNames = dictReader.fieldnames
+    with open(path + runName + ".csv", 'a') as csvfile:
+        csvwriter = csv.DictWriter(csvfile, fieldnames=queryNames)
+        i = 0
+        while i < noOfTicks:
+            singleTickDict = {}
+            for key, value in resultDict.iteritems():
+                singleTickDict.update({key: value[i]})
+            singleTickDict.update({"tick": i})
+            singleTickDict.update({"runId": runId})
+            csvwriter.writerow(singleTickDict)
+            i = i + 1
+
+
+def write_csv_for_run_name(path, runName, ignoredQueries):
+    runIds = find_runIds_based_on_logfiles_and_runname(path, runName)
+    totalRunIdNo = len(runIds)
+    j = 0
+    for runId in runIds:
+        resultDict = read_runId_to_dictionary(path, runName,
+        runId, ignoredQueries)
         noOfTicks = len(resultDict.items()[1][1])
         if j == 0:
             write_first_runid_dictionary_to_csv(path, runName, runId,
@@ -254,7 +307,18 @@ if __name__ == "__main__":
     if len(sys.argv[1:]) > 2:
         main(sys.argv[1], sys.argv[2], sys.argv[3:])
     elif len(sys.argv[1:]) == 2:
+        print(sys.argv[1],sys.argv[2])
         main(sys.argv[1], sys.argv[2], [])
+    elif len(sys.argv[1:]) == 1:
+        f=sys.argv[1]
+        f=f[:-1]
+        print(f)
+        fs=f.split("/")
+        print(fs)
+        f=f.replace(fs[len(fs)-1],"")
+        print(f[len(fs)-1])
+        print(f,fs[-1],[])
+        main(f,fs[-1],[])
     else:
         print("This script needs to be called with: outputPath, \
         runName (, ignoredQueries)")
