@@ -23,6 +23,7 @@ import agentspring.role.AbstractRole;
 import agentspring.role.RoleComponent;
 import emlab.gen.domain.contract.CashFlow;
 import emlab.gen.domain.market.electricity.ElectricitySpotMarket;
+import emlab.gen.domain.market.electricity.Segment;
 import emlab.gen.domain.technology.PowerPlant;
 import emlab.gen.repository.Reps;
 
@@ -80,17 +81,17 @@ public class DismantlePowerPlantOperationalLossRole extends AbstractRole<Electri
                 peakLoadforMarket = sr.predict(getCurrentTick()) * peakLoadforMarketNOtrend;
 
             }
-            logger.warn("1 peakLoad " + peakLoadforMarket);
 
             availableFutureCapacity = reps.powerPlantRepository.calculatePeakCapacityOfOperationalPowerPlantsInMarket(
                     market, getCurrentTick());
 
             logger.warn("2 availableFutureCapacity " + availableFutureCapacity);
-            // logger.warn("capacity" + (availableFutureCapacity -
-            // peakLoadforMarket) + "Future" + availableFutureCapacity);
+
+            logger.warn("capacity" + (availableFutureCapacity - peakLoadforMarket) + "Future" + availableFutureCapacity);
 
             // Check interconnector capacity in other market
 
+            // ========= Considering interconnector capacity =========
             double interconnectorCapacity = reps.interconnectorRepository.findInterconnectorCapacity();
             double peakCapacityotherMarket = 0;
             double peakLoadotherMarket = 0;
@@ -155,141 +156,174 @@ public class DismantlePowerPlantOperationalLossRole extends AbstractRole<Electri
                     }
                 }
             }
+            // ========== END ============
 
-            if ((availableFutureCapacity - peakLoadforMarket) > 0D) {
-                for (PowerPlant plant : reps.powerPlantRepository.findOperationalPowerPlantsInMarket(market,
-                        getCurrentTick())) {
-                    // logger.warn("enters loop Powerplant " +
-                    // plant.getLabel());
-                    // Calculate AgeFraction and set it for each plant.
-                    double age = 0;
-                    long currentLiftime = 0;
-                    currentLiftime = getCurrentTick() - plant.getConstructionStartTime()
-                            - plant.getTechnology().getExpectedLeadtime()
-                            - plant.getTechnology().getExpectedPermittime();
-                    // .getExpectedPermittime();
-                    plant.setActualLifetime(currentLiftime);
-                    // logger.warn("ActualLifeTime" +
-                    // plant.getActualLifetime());
-                    // currentLiftime = ((double) plant.getActualLifetime()
-                    // + (double) plant.getTechnology().getExpectedLeadtime() +
-                    // (double) plant.getTechnology()
-                    // .getExpectedPermittime());
+            // ========== Based on peak price in interconnected market
+            // ==========
 
-                    age = (double) plant.getActualLifetime() / (((double) plant.getTechnology().getExpectedLifetime()));
+            double peakOtherMarketClearingPoint = 0;
+            // double interconnectorCapacity =
+            // reps.interconnectorRepository.findInterconnectorCapacity();
+            if (interconnectorCapacity > 0) {
+                logger.warn("15 interconnector exists " + interconnectorCapacity);
 
-                    plant.setAgeFraction((double) age);
-                    // logger.warn("enters loop Powerplant " +
-                    // plant.getAgeFraction());
-                    // Calculate profitability for past n years.
-                    long yearIterator = 0;
-                    double profitability = 0;
-                    double cost = 0;
-                    double revenue = 0;
-                    for (yearIterator = 1; yearIterator <= market.getLookback() && yearIterator > 0; yearIterator++) {
+                for (ElectricitySpotMarket otherMarket : reps.marketRepository.findAllElectricitySpotMarkets()) {
+                    if (otherMarket.getNodeId().intValue() != market.getNodeId().intValue()) {
 
-                        for (CashFlow cf : reps.cashFlowRepository.findAllCashFlowsForPowerPlantForTime(plant,
-                                getCurrentTick() - yearIterator)) {
-                            // logger.warn("enters for loop revenue" +
-                            // cf.getRegardingPowerPlant().getNodeId() + " "
-                            // + plant.getNodeId());
-                            if (cf.getRegardingPowerPlant() != null) {
+                        logger.warn("16 Other Market exists " + otherMarket.getNodeId().intValue() + "My Market "
+                                + market.getNodeId().intValue());
 
-                                // logger.warn("enters power plant loop" +
-                                // plant.getLabel());
-                                if (cf.getType() == 3 || cf.getType() == 4 || cf.getType() == 5 || cf.getType() == 6) {
-                                    cost = cost + cf.getMoney();
-                                    // logger.warn("enters loop cost" +
-                                    // cf.getType());
-                                }
-                                // logger.warn("enters loop revenue" +
-                                // cf.getType());
-                                if (cf.getType() == 1 || cf.getType() == 10) {
-                                    revenue = revenue + cf.getMoney();
-
-                                }
-                            }
+                        Segment seg = reps.segmentRepository.findPeakSegmentforMarket(otherMarket);
+                        logger.warn("17 Finds peak segment " + seg.getSegmentID());
+                        if (getCurrentTick() == 1) {
+                            peakOtherMarketClearingPoint = reps.segmentClearingPointRepository
+                                    .findOneSegmentClearingPointForMarketSegmentAndTime(getCurrentTick() - 1, seg,
+                                            otherMarket).getPrice();
                         }
-                        if (market.getLookback() > 0) {
-                            profitability = (revenue - cost) / (double) (market.getLookback());
-                            plant.setProfitability(profitability);
-                            // logger.warn("enters loop profitability calculation"
-                            // + plant.getProfitability());
-                        } else {
-                            profitability = (revenue - cost);
-                            plant.setProfitability(profitability);
-                            // logger.warn("enters loop profitability calculation"
-                            // + plant.getProfitability());
+                        logger.warn("18 Finds peak price " + peakOtherMarketClearingPoint);
+                        if (getCurrentTick() > 1) {
+                            SimpleRegression sr1 = new SimpleRegression();
+
+                            for (long time = getCurrentTick() - 1; time >= getCurrentTick()
+                                    - market.getBacklookingForDemandForecastinginDismantling()
+                                    && time >= 0; time = time - 1) {
+
+                                sr1.addData(time, reps.segmentClearingPointRepository
+                                        .findOneSegmentClearingPointForMarketSegmentAndTime(time, seg, otherMarket)
+                                        .getPrice());
+                            }
+
+                            peakOtherMarketClearingPoint = sr1.predict(getCurrentTick());
+                            logger.warn("19 Finds peak price " + peakOtherMarketClearingPoint);
                         }
                     }
-                    plant.persist();
                 }
 
-                // Sort in descending order by age fraction and dismantle by age
-                // &
-                // peak availability
-                if ((availableFutureCapacity - peakLoadforMarket) > 0D) {
-                    for (PowerPlant plant : reps.powerPlantRepository
-                            .findOperationalPowerPlantsByDescendingAgeFactorAndMarket(market, getCurrentTick())) {
-
-                        double dismantledPlantCapacity = ((plant.getTechnology().getCapacity()) * plant.getTechnology()
-                                .getPeakSegmentDependentAvailability());
-
-                        if ((availableFutureCapacity - dismantledPlantCapacity) > peakLoadforMarket) {
-
-                            if (plant.getAgeFraction() >= 1.00D) {
-
-                                // logger.warn("enters loop age dismantle" +
-                                // plant.getAgeFraction());
-
-                                plant.dismantlePowerPlant(getCurrentTick());
-
-                                availableFutureCapacity = (availableFutureCapacity - dismantledPlantCapacity);
-                            }
-                        }
-
-                        // if (((availableFutureCapacity -
-                        // dismantledPlantCapacity) - peakLoadforMarket) <= 0)
-                        // break;
-                    }
-                }
-                // logger.warn("capacity" + (availableFutureCapacity -
-                // peakLoadforMarket));
-
-                // Dismantle by profitability until last plant is
-                // profitable
-                // or
-                // capacity margin goes to zero.
-
-                if ((availableFutureCapacity - peakLoadforMarket) > 0D) {
-
-                    for (PowerPlant plant : reps.powerPlantRepository
-                            .findOperationalPowerPlantsByAscendingProfitabilityAndMarket(market, getCurrentTick())) {
-
-                        double dismantledPlantCapacity = ((plant.getTechnology().getCapacity()) * plant.getTechnology()
-                                .getPeakSegmentDependentAvailability());
-                        // logger.warn("Shortage "
-                        // + ((availableFutureCapacity -
-                        // dismantledPlantCapacity) - peakLoadforMarket));
-
-                        if ((availableFutureCapacity - dismantledPlantCapacity) > (peakLoadforMarket)) {
-                            if (plant.getProfitability() < 0) {
-
-                                // logger.warn("enters loop money dismantle" +
-                                // plant.getProfitability());
-
-                                plant.dismantlePowerPlant(getCurrentTick());
-
-                                availableFutureCapacity = (availableFutureCapacity - dismantledPlantCapacity);
-                            }
-                        }
-
-                        // if (((availableFutureCapacity -
-                        // dismantledPlantCapacity) - peakLoadforMarket) <= 0)
-                        // break;
-                    }
-                }
             }
+
+            // ========== END ============
+
+            // if ((availableFutureCapacity - peakLoadforMarket) > 0D) {
+            for (PowerPlant plant : reps.powerPlantRepository.findOperationalPowerPlantsInMarket(market,
+                    getCurrentTick())) {
+                // logger.warn("enters loop Powerplant " +
+                // plant.getLabel());
+                // Calculate AgeFraction and set it for each plant.
+                double age = 0;
+                long currentLiftime = 0;
+                currentLiftime = getCurrentTick() - plant.getConstructionStartTime()
+                        - plant.getTechnology().getExpectedLeadtime() - plant.getTechnology().getExpectedPermittime();
+                // .getExpectedPermittime();
+                plant.setActualLifetime(currentLiftime);
+                // logger.warn("ActualLifeTime" +
+                // plant.getActualLifetime());
+                // currentLiftime = ((double) plant.getActualLifetime()
+                // + (double) plant.getTechnology().getExpectedLeadtime() +
+                // (double) plant.getTechnology()
+                // .getExpectedPermittime());
+
+                age = (double) plant.getActualLifetime() / (((double) plant.getTechnology().getExpectedLifetime()));
+
+                plant.setAgeFraction((double) age);
+
+                if (plant.getAgeFraction() > 1.00D) {
+                    logger.warn("Old O&M" + plant.getActualFixedOperatingCost());
+
+                    double ModifiedOM = plant.getActualFixedOperatingCost()
+                            * Math.pow((1 + (plant.getTechnology().getFixedOperatingCostModifierAfterLifetime())),
+                                    ((double) plant.getActualLifetime() - (((double) plant.getTechnology()
+                                            .getExpectedLifetime()))));
+
+                    plant.setActualFixedOperatingCost(ModifiedOM);
+                    logger.warn("New O&M" + plant.getActualFixedOperatingCost());
+                }
+                // logger.warn("enters loop Powerplant " +
+                // plant.getAgeFraction());
+                // Calculate profitability for past n years.
+                long yearIterator = 0;
+                double profitability = 0;
+                double cost = 0;
+                double revenue = 0;
+                for (yearIterator = 1; yearIterator <= market.getLookback() && yearIterator > 0; yearIterator++) {
+
+                    for (CashFlow cf : reps.cashFlowRepository.findAllCashFlowsForPowerPlantForTime(plant,
+                            getCurrentTick() - yearIterator)) {
+                        // logger.warn("enters for loop revenue" +
+                        // cf.getRegardingPowerPlant().getNodeId() + " "
+                        // + plant.getNodeId());
+                        if (cf.getRegardingPowerPlant() != null) {
+
+                            // logger.warn("enters power plant loop" +
+                            // plant.getLabel());
+                            if (cf.getType() == 3 || cf.getType() == 4 || cf.getType() == 5 || cf.getType() == 6) {
+                                cost = cost + cf.getMoney();
+                                // logger.warn("enters loop cost" +
+                                // cf.getType());
+                            }
+                            // logger.warn("enters loop revenue" +
+                            // cf.getType());
+                            if (cf.getType() == 1 || cf.getType() == 10) {
+                                revenue = revenue + cf.getMoney();
+
+                            }
+                        }
+                    }
+                    if (market.getLookback() > 0) {
+                        profitability = (revenue - cost) / (double) (market.getLookback());
+                        plant.setProfitability(profitability);
+                        // logger.warn("enters loop profitability calculation"
+                        // + plant.getProfitability());
+                    } else {
+                        profitability = (revenue - cost);
+                        plant.setProfitability(profitability);
+                        // logger.warn("enters loop profitability calculation"
+                        // + plant.getProfitability());
+                    }
+                }
+                plant.persist();
+            }
+
+            for (PowerPlant plant : reps.powerPlantRepository
+                    .findOperationalPowerPlantsByAscendingProfitabilityAndMarket(market, getCurrentTick())) {
+
+                double dismantledPlantCapacity = ((plant.getTechnology().getCapacity()) * plant.getTechnology()
+                        .getPeakSegmentDependentAvailability());
+                // logger.warn("Shortage "
+                // + ((availableFutureCapacity -
+                // dismantledPlantCapacity) - peakLoadforMarket));
+
+                // if ((availableFutureCapacity - dismantledPlantCapacity) >
+                // (peakLoadforMarket)) {
+                if (plant.getProfitability() < 0) {
+
+                    // logger.warn("enters loop money dismantle" +
+                    // plant.getProfitability());
+
+                    Segment seg1 = new Segment();
+                    seg1 = reps.segmentRepository.findPeakSegmentforMarket(market);
+                    logger.warn("20 Finds peak segment again " + seg1.getSegmentID());
+
+                    double expectedPeakDispatchPrice = reps.powerPlantDispatchPlanRepository
+                            .findOnePowerPlantDispatchPlanForPowerPlantForSegmentForTime(plant, seg1,
+                                    getCurrentTick() - 1).getPrice();
+                    logger.warn("21 Finds peak price for power plant " + expectedPeakDispatchPrice);
+
+                    if (peakOtherMarketClearingPoint < expectedPeakDispatchPrice) {
+
+                        plant.dismantlePowerPlant(getCurrentTick());
+                        logger.warn("22 Plant dismantled " + plant.getLabel());
+                    }
+
+                    availableFutureCapacity = (availableFutureCapacity - dismantledPlantCapacity);
+                }
+                // }
+
+                // if (((availableFutureCapacity -
+                // dismantledPlantCapacity) - peakLoadforMarket) <= 0)
+                // break;
+            }
+            // }
+            // }
         }
     }
 }

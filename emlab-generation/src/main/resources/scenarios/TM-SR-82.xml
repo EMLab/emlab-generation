@@ -27,12 +27,10 @@
 		p:co2TradingImplemented="false" p:realRenewableDataImplemented="false"
 		p:iterationSpeedFactor="3" p:iterationSpeedCriterion="0.005"
 		p:capDeviationCriterion="0.03"
-		p:deletionOldPPDPBidsAndCashFlowsEnabled="true" p:deletionAge="6">		
+		p:deletionOldPPDPBidsAndCashFlowsEnabled="true" p:deletionAge="4">		
 	</bean>
 
-	<bean class="emlab.gen.trend.TriangularTrend" id="demandGrowthTrendDE"
-		p:start="${demandGrowthDEStart}" p:min="${demandGrowthDEMin}" p:max="${demandGrowthDEMax}"
-		p:top="${demandGrowthDETop}" />
+	<bean id="demandGrowthTrendDE" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/stoichasticDemandDE/demand-82.csv" p:delimiter="," p:variableName="DemandDE" />	
 
 	<!-- Substances -->
 	<bean id="coal" class="emlab.gen.domain.technology.Substance" p:name="Coal"
@@ -260,20 +258,13 @@
 	<bean id="co2Auction" class="emlab.gen.domain.market.CO2Auction"
 		p:auction="false" p:referencePrice="0" p:name="CO2 auction" p:substance-ref="co2"/>
 
-	<!-- Fuel Prices -->
-	<bean id="coalPrice" class="emlab.gen.trend.TriangularTrend" p:start="${coalPriceStart}"
-		p:min="${coalPriceMin}" p:max="${coalPriceMax}" p:top="${coalPriceTop}" />
-	<bean id="gasPrice" class="emlab.gen.trend.TriangularTrend" p:start="${gasPriceStart}"
-		p:min="${gasPriceMin}" p:max="${gasPriceMax}" p:top="${gasPriceTop}" />
-	<bean id="biomassPrice" class="emlab.gen.trend.TriangularTrend"
-		p:start="${biomassPriceStart}" p:min="${biomassPriceMin}" p:max="${biomassPriceMax}"
-		p:top="${biomassPriceTop}" />
-	<bean id="uraniumPrice" class="emlab.gen.trend.TriangularTrend"
-		p:start="${uraniumPriceStart}" p:min="${uraniumPriceMin}" p:max="${uraniumPriceMax}"
-		p:top="${uraniumPriceTop}" />
-	<bean id="lignitePrice" class="emlab.gen.trend.TriangularTrend"
-		p:start="${lignitePriceStart}" p:min="${lignitePriceMin}" p:max="${lignitePriceMax}"
-		p:top="${lignitePriceTop}" />
+    <!-- Fuel Prices -->
+    <bean id="coalPrice" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/stoichasticFuelPrices/fuelPrices-82.csv" p:delimiter="," p:variableName="Coal" />
+    <bean id="gasPrice" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/stoichasticFuelPrices/fuelPrices-82.csv" p:delimiter="," p:variableName="Gas" />
+    <bean id="biomassPrice" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/stoichasticFuelPrices/fuelPrices-82.csv" p:delimiter="," p:variableName="Biomass" />
+    <bean id="uraniumPrice" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/stoichasticFuelPrices/fuelPrices-82.csv" p:delimiter="," p:variableName="Uranium" />
+    <bean id="lignitePrice" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/stoichasticFuelPrices/fuelPrices-82.csv" p:delimiter="," p:variableName="Lignite" />
+
 
 	<!-- Agents -->
 	<bean id="coalSupplier" class="emlab.gen.domain.agent.CommoditySupplier">
@@ -461,8 +452,8 @@
 	</bean>
 	
 	<bean id="strategicReserveOperatorA" class="emlab.gen.domain.agent.StrategicReserveOperator"
-		p:name="StrategicReserveOperatorDE" p:cash="0" p:reservePriceSR="0"
-		p:reserveVolumePercentSR="0">
+		p:name="StrategicReserveOperatorDE" p:cash="0" p:reservePriceSR="1300"
+		p:reserveVolumePercentSR="0.06">
 		<property name="zone" ref="de" />
 	</bean>
 
@@ -834,7 +825,7 @@
 	<bean id="projectPropertyConfigurer"
 		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="location"
-			value="classpath:scenarios/parametersB-TM-DE.properties" />
+			value="classpath:scenarios/parametersB-DYN.properties" />
 	</bean>
 
 </beans>

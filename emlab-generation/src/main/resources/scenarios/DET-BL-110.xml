@@ -27,12 +27,10 @@
 		p:co2TradingImplemented="false" p:realRenewableDataImplemented="false"
 		p:iterationSpeedFactor="3" p:iterationSpeedCriterion="0.005"
 		p:capDeviationCriterion="0.03"
-		p:deletionOldPPDPBidsAndCashFlowsEnabled="true" p:deletionAge="6">		
+		p:deletionOldPPDPBidsAndCashFlowsEnabled="true" p:deletionAge="4">		
 	</bean>
 
-	<bean class="emlab.gen.trend.TriangularTrend" id="demandGrowthTrendDE"
-		p:start="${demandGrowthDEStart}" p:min="${demandGrowthDEMin}" p:max="${demandGrowthDEMax}"
-		p:top="${demandGrowthDETop}" />
+	<bean id="demandGrowthTrendDE" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/stochasticDemandDETTrend/demandTT-110.csv" p:delimiter="," p:variableName="DemandDETT" />
 
 	<!-- Substances -->
 	<bean id="coal" class="emlab.gen.domain.technology.Substance" p:name="Coal"
@@ -461,8 +459,8 @@
 	</bean>
 	
 	<bean id="strategicReserveOperatorA" class="emlab.gen.domain.agent.StrategicReserveOperator"
-		p:name="StrategicReserveOperatorDE" p:cash="0" p:reservePriceSR="0"
-		p:reserveVolumePercentSR="0">
+		p:name="StrategicReserveOperatorDE" p:cash="0" p:reservePriceSR="1300"
+		p:reserveVolumePercentSR="0.06">
 		<property name="zone" ref="de" />
 	</bean>
 
