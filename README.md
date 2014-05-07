@@ -1,6 +1,6 @@
 EMLab-Generation - Cross-border electricity market effects due to price caps in an emission trading system: An Agent-Based Approach
 
-This branch of the EMLab-Generation model, contains the version, as well as complete input data, used for the paper "Cross-border electricity market effects due to price caps in an emission trading system: An Agent-Based Approach".
+This branch of the EMLab-Generation model, contains the version, as well as complete input data, used for the paper [Cross-border electricity market effects due to price caps in an emission trading system: An Agent-Based Approach](http://dx.doi.org/10.1016/j.enpol.2014.03.037).
 
 With the R-script co2priceCaps-scenarioFileCreator.R, the necessary scenario files for reproducing the model results of the paper can be created. For manual inspection of the input data, have a look at the following files and locations:
 
