@@ -27,10 +27,10 @@
 		p:co2TradingImplemented="false" p:realRenewableDataImplemented="false"
 		p:iterationSpeedFactor="3" p:iterationSpeedCriterion="0.005"
 		p:capDeviationCriterion="0.03"
-		p:deletionOldPPDPBidsAndCashFlowsEnabled="true" p:deletionAge="6">
+		p:deletionOldPPDPBidsAndCashFlowsEnabled="true" p:deletionAge="6">		
 	</bean>
 
-	<bean id="demandGrowthTrendDE" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/stoichasticDemandDE/demand-119.csv" p:delimiter="," p:variableName="DemandDE" />
+	<bean id="demandGrowthTrendDE" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/stoichasticDemandDE/demand-119.csv" p:delimiter="," p:variableName="DemandDE" />	
 
 	<!-- Substances -->
 	<bean id="coal" class="emlab.gen.domain.technology.Substance" p:name="Coal"
@@ -265,6 +265,7 @@
     <bean id="uraniumPrice" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/stoichasticFuelPrices/fuelPrices-119.csv" p:delimiter="," p:variableName="Uranium" />
     <bean id="lignitePrice" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/stoichasticFuelPrices/fuelPrices-119.csv" p:delimiter="," p:variableName="Lignite" />
 
+
 	<!-- Agents -->
 	<bean id="coalSupplier" class="emlab.gen.domain.agent.CommoditySupplier">
 		<property name="name" value="Coal supplier" />
@@ -353,50 +354,7 @@
 	
 
 	<bean id="standardInvestmentRole" class="emlab.gen.role.investment.InvestInPowerGenerationTechnologiesRole"/>
-	<bean id="targetInvestmentRole" class="emlab.gen.role.investment.TargetInvestmentRole"/>
 	
-	<!-- Renewable Targets Country A -->
-	
-	<bean id="renewableTargetInvestorcountryA" class="emlab.gen.domain.agent.TargetInvestor"
-	p:name="Renewable Target Investor Country A" p:cash="${startCash}"
-	p:investmentRole-ref="targetInvestmentRole"
-	p:priceMarkUp="1.0"
-	p:investorMarket-ref="germanElectricitySpotMarket"
-	p:equityInterestRate="0.12" p:loanInterestRate="0.09"
-	p:debtRatioOfInvestments="0.7">
-	<property name="powerGenerationTechnologyTargets">
-		<set>
-			<ref bean="windTargetcountryA"/>
-			<ref bean="pvTargetcountryA" />
-			<ref bean="windOffshoreTargetcountryA"/>
-			<ref bean="biomassTargetcountryA"/>
-		</set>
-	</property>
-	</bean>
-	
-	<bean id="windTargetcountryA" class="emlab.gen.domain.policy.PowerGeneratingTechnologyTarget"
-	p:trend-ref="windTrendcountryA" p:powerGeneratingTechnology-ref="windPGT"/>
-	
-	<bean id="windTrendcountryA" class="emlab.gen.trend.StepTrend"
-	p:duration="1" p:minValue="29175" p:increment="822.4" p:start="29175" /> 
-	
-	<bean id="windOffshoreTargetcountryA" class="emlab.gen.domain.policy.PowerGeneratingTechnologyTarget"
-	p:trend-ref="windOffshoreTrendcountryA" p:powerGeneratingTechnology-ref="windOffshorePGT"/>
-	
-	<bean id="windOffshoreTrendcountryA" class="emlab.gen.trend.StepTrend"
-	p:duration="1" p:minValue="432" p:increment="822.4" p:start="432" /> 
-	
-	<bean id="biomassTargetcountryA" class="emlab.gen.domain.policy.PowerGeneratingTechnologyTarget"
-	p:trend-ref="biomassTrendcountryA" p:powerGeneratingTechnology-ref="biomassPGT"/>
-	
-	<bean id="biomassTrendcountryA" class="emlab.gen.trend.StepTrend"
-	p:duration="1" p:minValue="6620" p:increment="251.3" p:start="6620" /> 
-	
-	<bean id="pvTargetcountryA" class="emlab.gen.domain.policy.PowerGeneratingTechnologyTarget"
-	p:trend-ref="pvTrendcountryA" p:powerGeneratingTechnology-ref="photovoltaicPGT"/>
-	
-	<bean id="pvTrendcountryA" class="emlab.gen.trend.StepTrend"
-	p:duration="1" p:minValue="20284" p:increment="3596.9" p:start="20284" />
 	<!-- PowerGenerationTechnology Node Limits -->
 	
 	<bean id="ligniteNodeLimitNl" class="emlab.gen.domain.technology.PowerGeneratingTechnologyNodeLimit"

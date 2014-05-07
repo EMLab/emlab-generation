@@ -378,25 +378,25 @@
 	p:trend-ref="windTrendcountryA" p:powerGeneratingTechnology-ref="windPGT"/>
 	
 	<bean id="windTrendcountryA" class="emlab.gen.trend.StepTrend"
-	p:duration="1" p:minValue="29175" p:increment="822.4" p:start="29175" /> 
+	p:duration="1" p:minValue="0" p:increment="822.4" p:start="0" />
 	
 	<bean id="windOffshoreTargetcountryA" class="emlab.gen.domain.policy.PowerGeneratingTechnologyTarget"
 	p:trend-ref="windOffshoreTrendcountryA" p:powerGeneratingTechnology-ref="windOffshorePGT"/>
 	
 	<bean id="windOffshoreTrendcountryA" class="emlab.gen.trend.StepTrend"
-	p:duration="1" p:minValue="432" p:increment="822.4" p:start="432" /> 
+	p:duration="1" p:minValue="0" p:increment="822.4" p:start="0" />
 	
 	<bean id="biomassTargetcountryA" class="emlab.gen.domain.policy.PowerGeneratingTechnologyTarget"
 	p:trend-ref="biomassTrendcountryA" p:powerGeneratingTechnology-ref="biomassPGT"/>
 	
 	<bean id="biomassTrendcountryA" class="emlab.gen.trend.StepTrend"
-	p:duration="1" p:minValue="6620" p:increment="251.3" p:start="6620" /> 
+	p:duration="1" p:minValue="0" p:increment="251.3" p:start="0" />
 	
 	<bean id="pvTargetcountryA" class="emlab.gen.domain.policy.PowerGeneratingTechnologyTarget"
 	p:trend-ref="pvTrendcountryA" p:powerGeneratingTechnology-ref="photovoltaicPGT"/>
 	
 	<bean id="pvTrendcountryA" class="emlab.gen.trend.StepTrend"
-	p:duration="1" p:minValue="20284" p:increment="3596.9" p:start="20284" />
+	p:duration="1" p:minValue="0" p:increment="3596.9" p:start="0" />
 	<!-- PowerGenerationTechnology Node Limits -->
 	
 	<bean id="ligniteNodeLimitNl" class="emlab.gen.domain.technology.PowerGeneratingTechnologyNodeLimit"

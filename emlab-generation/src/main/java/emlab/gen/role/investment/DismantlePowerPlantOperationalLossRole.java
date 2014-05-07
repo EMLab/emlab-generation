@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import agentspring.role.AbstractRole;
 import agentspring.role.RoleComponent;
 import emlab.gen.domain.contract.CashFlow;
+import emlab.gen.domain.contract.Loan;
 import emlab.gen.domain.market.electricity.ElectricitySpotMarket;
 import emlab.gen.domain.technology.PowerPlant;
 import emlab.gen.repository.Reps;
@@ -29,14 +30,6 @@ import emlab.gen.repository.Reps;
  * @author pradyumnabhagwat
  * 
  */
-
-// If supply is higher than demand, for each power plant check age.
-// Sort by age/expectedLife in descending order and If this value is greater
-// than one, plant is past technical life dismantle it and check supply margin.
-// If supply margin is still positive, calculate income difference (income -
-// fuel, carbon, O&M) over the past n years and sort
-// start dismantling from highest negative value and updating supplyMargin
-// variable, till all plants are dismantled or zero reached
 
 @RoleComponent
 public class DismantlePowerPlantOperationalLossRole extends AbstractRole<ElectricitySpotMarket> {
@@ -76,9 +69,9 @@ public class DismantlePowerPlantOperationalLossRole extends AbstractRole<Electri
                     plant.setActualFixedOperatingCost(ModifiedOM);
                 }
                 long yearIterator = 0;
-                double profitability = 0;
                 double cost = 0;
                 double revenue = 0;
+                double profitability = 0;
                 for (yearIterator = 1; yearIterator <= market.getLookback() && yearIterator > 0; yearIterator++) {
 
                     for (CashFlow cf : reps.cashFlowRepository.findAllCashFlowsForPowerPlantForTime(plant,
@@ -86,36 +79,63 @@ public class DismantlePowerPlantOperationalLossRole extends AbstractRole<Electri
 
                         if (cf.getRegardingPowerPlant() != null) {
 
-                            if (cf.getType() == 3 || cf.getType() == 4 || cf.getType() == 5 || cf.getType() == 6) {
+                            if (cf.getType() == CashFlow.FIXEDOMCOST || cf.getType() == CashFlow.COMMODITY
+                                    || cf.getType() == CashFlow.CO2TAX || cf.getType() == CashFlow.CO2AUCTION) {
                                 cost = cost + cf.getMoney();
                             }
 
-                            if (cf.getType() == 1 || cf.getType() == 10) {
+                            if (cf.getType() == CashFlow.ELECTRICITY_SPOT || cf.getType() == CashFlow.STRRESPAYMENT) {
                                 revenue = revenue + cf.getMoney();
                             }
                         }
                     }
-                    if (market.getLookback() > 0) {
-                        if (getCurrentTick() < market.getBacklookingForDemandForecastinginDismantling()) {
-                            profitability = (revenue - cost) / (double) (getCurrentTick());
-                            plant.setProfitability(profitability);
-                        }
-                        if (getCurrentTick() >= market.getBacklookingForDemandForecastinginDismantling())
-                            profitability = (revenue - cost) / (double) (market.getLookback());
-                        plant.setProfitability(profitability);
-                    } else {
-                        profitability = (revenue - cost);
-                        plant.setProfitability(profitability);
-                    }
                 }
+                profitability = (revenue - cost);
+                plant.setProfitability(profitability);
                 plant.persist();
-                logger.warn("22 Plant prof " + plant.getProfitability());
+                // logger.warn("22 Plant prof " + plant.getProfitability());
             }
 
             for (PowerPlant plant : reps.powerPlantRepository
                     .findOperationalPowerPlantsByAscendingProfitabilityAndMarket(market, getCurrentTick())) {
 
                 if (plant.getProfitability() < 0) {
+
+                    // -------PAY OFF REMAINING LOAN-----//
+                    Loan loan = plant.getLoan();
+                    if (loan != null) {
+                        logger.info("Found a loan: {}", loan);
+                        if (loan.getNumberOfPaymentsDone() < loan.getTotalNumberOfPayments()) {
+
+                            double payment = loan.getAmountPerPayment()
+                                    * (loan.getTotalNumberOfPayments() - loan.getNumberOfPaymentsDone());
+                            reps.nonTransactionalCreateRepository.createCashFlow(plant.getOwner(), loan.getTo(),
+                                    payment, CashFlow.LOAN, getCurrentTick(), loan.getRegardingPowerPlant());
+
+                            loan.setNumberOfPaymentsDone(loan.getNumberOfPaymentsDone()
+                                    + (loan.getTotalNumberOfPayments() - loan.getNumberOfPaymentsDone()));
+
+                            logger.info("DISMANTLING: Paying {} (euro) for remaining loan {}", payment, loan);
+                        }
+                    }
+                    Loan downpayment = plant.getDownpayment();
+                    if (downpayment != null) {
+                        logger.info("Found downpayment");
+                        if (downpayment.getNumberOfPaymentsDone() < downpayment.getTotalNumberOfPayments()) {
+
+                            double payment = downpayment.getAmountPerPayment()
+                                    * (downpayment.getTotalNumberOfPayments() - downpayment.getNumberOfPaymentsDone());
+                            reps.nonTransactionalCreateRepository.createCashFlow(plant.getOwner(), downpayment.getTo(),
+                                    payment, CashFlow.DOWNPAYMENT, getCurrentTick(),
+                                    downpayment.getRegardingPowerPlant());
+
+                            downpayment.setNumberOfPaymentsDone(downpayment.getNumberOfPaymentsDone()
+                                    + (downpayment.getTotalNumberOfPayments() - downpayment.getNumberOfPaymentsDone()));
+
+                            logger.info("DISMANTLING: Paying {} (euro) for remaining downpayment {}", payment,
+                                    downpayment);
+                        }
+                    }
 
                     plant.dismantlePowerPlant(getCurrentTick());
                     // logger.warn("22 Plant dismantled " + plant.getLabel());
