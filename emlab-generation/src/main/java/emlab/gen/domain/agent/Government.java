@@ -55,7 +55,7 @@ public class Government extends DecarbonizationAgent implements Agent {
     @RelatedTo(type = "STABILITY_RESERVE_ADDING_MINIMUM", elementClass = TimeSeriesImpl.class, direction = Direction.OUTGOING)
     private TimeSeriesImpl stabilityReserveAddingMinimumTrend;
 
-    @RelatedTo(type = "STABILITY_RESERVE_RELEASE_MINIMUM", elementClass = TimeSeriesImpl.class, direction = Direction.OUTGOING)
+    @RelatedTo(type = "STABILITY_RESERVE_RELEASE_QUANTITY", elementClass = TimeSeriesImpl.class, direction = Direction.OUTGOING)
     private TimeSeriesImpl stabilityReserveReleaseQuantityTrend;
 
     public double getCO2Tax(long time) {

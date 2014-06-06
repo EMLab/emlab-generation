@@ -219,7 +219,14 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
             renewableAdaptiveCO2CapRole.act(government);
         }
 
-        if (getCurrentTick() >= 10 && model.isStabilityReserveIsActive()) {
+        if (model.isStabilityReserveIsActive() && getCurrentTick() == 0) {
+            government.getStabilityReserveAddingMinimumTrend().getValue(0);
+            government.getStabilityReserveAddingPercentageTrend().getValue(0);
+            government.getStabilityReserveLowerTriggerTrend().getValue(0);
+            government.getStabilityReserveReleaseQuantityTrend().getValue(0);
+            government.getStabilityReserveUpperTriggerTrend().getValue(0);
+        }
+        if (getCurrentTick() >= model.getStabilityReserveFirstYearOfOperation() && model.isStabilityReserveIsActive()) {
             logger.warn("3b. CO2 Market Stability Reserve");
             marketStabilityReserveRole.act(government);
         }

@@ -28,6 +28,7 @@ import com.tinkerpop.pipes.filter.FilterPipe;
 import com.tinkerpop.pipes.filter.FilterPipe.Filter;
 import com.tinkerpop.pipes.util.Pipeline;
 
+import emlab.gen.domain.market.CO2MarketClearingPoint;
 import emlab.gen.domain.market.ClearingPoint;
 import emlab.gen.domain.market.DecarbonizationMarket;
 import emlab.gen.domain.market.electricity.Segment;
@@ -127,6 +128,28 @@ public class ClearingPointRepositoryOld extends AbstractRepository<ClearingPoint
         point.setSegment(segment);
         point.setForecast(forecast);
         point.setInterconnectorFlow(interconnectorFlow);
+        return point;
+    }
+
+    @Transactional
+    public CO2MarketClearingPoint createOrUpdateCO2MarketClearingPoint(DecarbonizationMarket abstractMarket,
+            double price, double volume, boolean emergencyTriggerActivated, double emergencyTriggerOutflow, long time,
+            boolean forecast) {
+        CO2MarketClearingPoint point = null;
+        // TODO make this a pipe
+        if (findClearingPointsForMarketAndTime(abstractMarket, time, forecast).iterator().hasNext()) {
+            point = (CO2MarketClearingPoint) findClearingPointsForMarketAndTime(abstractMarket, time, forecast)
+                    .iterator().next();
+        } else {
+            point = new CO2MarketClearingPoint().persist();
+        }
+        point.setAbstractMarket(abstractMarket);
+        point.setPrice(price);
+        point.setTime(time);
+        point.setVolume(volume);
+        point.setEmergencyTriggerActivated(emergencyTriggerActivated);
+        point.setEmergencyTriggerOutflow(emergencyTriggerOutflow);
+        point.setForecast(forecast);
         return point;
     }
 
