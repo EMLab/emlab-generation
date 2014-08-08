@@ -8,7 +8,7 @@ fuelPriceScenarioLength=1
 microScenarioLength=120
 
 #BaseCase Scenario
-priceCeiling="500"
+priceCeiling="120"
 coalPriceScenario=c("Coal.Medium","Coal.Low","Coal.High")
 gasPriceScenario=c("NaturalGas.Medium","NaturalGas.Low","NaturalGas.High")
 fuelPriceScenarios = c("FuelCentral")
@@ -99,6 +99,8 @@ for(co2PolicyScenario in co2PolicyScenarios){
   }
  co2PolicyNo<-co2PolicyNo+1
 }
+
+
 
 # Sensitivity Producer Banking --------------------------------------------
 filestump<-'ProdBank-'
@@ -360,7 +362,7 @@ co2PolicyScenarios=list(MSRTarget30Percent=c("#emissionCapTimeline"="/data/emiss
                               "#stabilityReserveReleaseQuantityTrend"="/data/msr-release-quantity-20p.csv",
                               "#stabilityReserveAddingMinimumTrend"="/data/msr-adding-minimum-zero.csv",
                               "#stabilityReserveAddingPercentageTrend"="/data/msr-adding-percentage-20p.csv"),
-			      MSRTarget20Percent=c("#emissionCapTimeline"="/data/emissionCapCweUk_unfccc_backloading_smoothed.csv",
+			      MSRTarget10Percent=c("#emissionCapTimeline"="/data/emissionCapCweUk_unfccc_backloading_smoothed.csv",
                               "#stabilityReserveActive"="true",
                               "#stabilityReserveFirstYearOfOperation"="10",
                               "#stabilityReserveUpperTriggerTrend"="/data/msr-upper-trigger-10p.csv",
@@ -386,5 +388,113 @@ co2PolicyScenarios=list(MSRTarget30Percent=c("#emissionCapTimeline"="/data/emiss
 # fuelPriceScenarios = c("FuelCentral")
 # 
 
+
+# Sensitivity Recession ---------------------------------------------------
+#Sensitivity Analysis for a recession in year 25-32
+
+#Placeholders
+
+# Step 1 building the scenarios: insert dataframe and read scenarioA.xml file
+xmlFilePath<-"~/emlab-generation/co2MarketStabilityReserve-scenarioTemplate.xml"
+filestump<-'RecessionBase-'
+# Step 2 building the scenarios: make separate data vectors
+fuelPriceScenarioLength=1
+microScenarioLength=120
+
+#BaseCase Scenario
+priceCeiling="120"
+coalPriceScenario=c("Coal.Medium","Coal.Low","Coal.High")
+gasPriceScenario=c("NaturalGas.Medium","NaturalGas.Low","NaturalGas.High")
+fuelPriceScenarios = c("FuelCentral")
+demandGrowthScenarios = c("demandCentral")
+stabilityReserveFirstYearOfOperation="10"
+
+resPolicyScenarios=list(FRES=c("#cweResPolicy"="/data/policyGoalNREAP_CF_CWE.csv","#gbResPolicy"="/data/policyGoalNREAP_CF_UK.csv"))
+producerBankingScenarios=list("BaseBanking-R3"=c("#stabilityReserveBankingFirstYear"="0.8",
+                                                 "#stabilityReserveBankingSecondYear"="0.5",
+                                                 "#stabilityReserveBankingThirdYear"="0.2",
+                                                 "#centralPrivateDiscountingRate"="0.05",
+                                                 "#centralCO2BackSmoothingFactor"="0",
+                                                 "#centralCO2TargetReversionSpeedFactor"="3"
+))
+
+co2PolicyScenarios=list(PureETS=c("#emissionCapTimeline"="/data/emissionCapCweUk.csv",
+                                  "#stabilityReserveActive"="false",
+                                  "#stabilityReserveFirstYearOfOperation"="100",
+                                  "#stabilityReserveUpperTriggerStart"="0","#stabilityReserveUpperTriggerYearlyIncrease"="0",
+                                  "#stabilityReserveLowerTriggerTrendStart"="0","#stabilityReserveLowerTriggerTrendIncrease"="0",
+                                  "#stabilityReserveReleaseQuantityTrendStart"="0","#stabilityReserveReleaseQuantityTrendIncrease"="0",
+                                  "#stabilityReserveAddingMinimumTrendStart"="0","#stabilityReserveAddingMinimumTrendIncrease"="0",
+                                  "#stabilityReserveAddingPercentageTrendStart"="0","#stabilityReserveAddingPercentageTrendIncrease"="0"),
+                        Backloading=c("#emissionCapTimeline"="/data/emissionCapCweUk_unfccc_backloading_smoothed.csv",
+                                      "#stabilityReserveActive"="false",
+                                      "#stabilityReserveFirstYearOfOperation"="100",
+                                      "#stabilityReserveUpperTriggerStart"="0","#stabilityReserveUpperTriggerYearlyIncrease"="0",
+                                      "#stabilityReserveLowerTriggerTrendStart"="0","#stabilityReserveLowerTriggerTrendIncrease"="0",
+                                      "#stabilityReserveReleaseQuantityTrendStart"="0","#stabilityReserveReleaseQuantityTrendIncrease"="0",
+                                      "#stabilityReserveAddingMinimumTrendStart"="0","#stabilityReserveAddingMinimumTrendIncrease"="0",
+                                      "#stabilityReserveAddingPercentageTrendStart"="0","#stabilityReserveAddingPercentageTrendIncrease"="0"),
+                        MSR=c("#emissionCapTimeline"="/data/emissionCapCweUk_unfccc_backloading_smoothed.csv",
+                              "#stabilityReserveActive"="true",
+                              "#stabilityReserveFirstYearOfOperation"="10",
+                              "#stabilityReserveUpperTriggerStart"="289283608","#stabilityReserveUpperTriggerYearlyIncrease"="0",
+                              "#stabilityReserveLowerTriggerTrendStart"="138911697","#stabilityReserveLowerTriggerTrendIncrease"="0",
+                              "#stabilityReserveReleaseQuantityTrendStart"="34727924","#stabilityReserveReleaseQuantityTrendIncrease"="0",
+                              "#stabilityReserveAddingMinimumTrendStart"="34727924","#stabilityReserveAddingMinimumTrendIncrease"="0",
+                              "#stabilityReserveAddingPercentageTrendStart"="0.12","#stabilityReserveAddingPercentageTrendIncrease"="0"))
+
+microScenarioNo<-seq(1,microScenarioLength)
+
+#No Backloading, smoothed backgloading, backloading
+#backLoadingName=c("NBL","SBL","BL")
+#backLoadingValue=c("/data/emissionCapCweUk.csv","/data/emissionCapCweUk_unfccc_backloading_smoothed.csv","/data/emissionCapCweUk_unfccc_backloading.csv")
+#backLoadingName=c("NBL","SBL","BL")
+#backLoadingValue=c("/data/emissionCapCweUk_citl.csv","/data/emissionCapCweUk_citl_backloading_smoothed.csv","/data/emissionCapCweUk_Citl_backloading.csv")
+
+# Step 3 building the scenarios: estimating the last three parameters
+#${initial_propensity}
+
+
+
+co2PolicyNo<-1
+for(co2PolicyScenario in co2PolicyScenarios){
+  producerBankingNo<-1
+  for(producerBankingScenario in producerBankingScenarios){
+    resScenarioNo<-1
+    for(resScenario in resPolicyScenarios){
+      for (fuelId in seq(1:fuelPriceScenarioLength)){
+        for(demandId in seq(1:length(demandGrowthScenarios))){
+          for (microId in seq(1:microScenarioLength)){
+            xmlFileContent<-readLines(xmlFilePath, encoding = "UTF-8")
+            xmlFileContent<-gsub("#fuelPricePathAndFileName", paste("/data/stochasticFuelPrices/fuelPrices-",microId,".csv", sep="") , xmlFileContent)
+            xmlFileContent<-gsub("#demandPathandFilename", paste("/data/stochasticDemandCWEandGBRecession/demand-",microId,".csv", sep="") , xmlFileContent)
+            xmlFileContent<-gsub("#CoalScenario", coalPriceScenario[fuelId], xmlFileContent)
+            xmlFileContent<-gsub("#GasScenario", gasPriceScenario[fuelId], xmlFileContent)
+            for(resPolicyParameterNo in seq(1,length(resScenario))){
+              xmlFileContent<-gsub(names(resScenario)[resPolicyParameterNo], resScenario[resPolicyParameterNo], xmlFileContent)
+            }
+            for(producerBankingParameterNo in seq(1,length(producerBankingScenario))){
+              xmlFileContent<-gsub(names(producerBankingScenario)[producerBankingParameterNo], producerBankingScenario[producerBankingParameterNo], xmlFileContent)
+            }
+            for(co2PolicyParameterNo in seq(1,length(co2PolicyScenario))){
+              #print(paste("Substituting:",co2PolicyScenario[co2PolicyParameterNo]))
+              #flush.console()
+              xmlFileContent<-gsub(names(co2PolicyScenario)[co2PolicyParameterNo], co2PolicyScenario[co2PolicyParameterNo], xmlFileContent)
+            }
+            #print(paste("~/Dropbox/emlabGen/scenario/",filestump,marketStabilityReservenName[msrId],"-",backLoadingName[backLoadingId],"-",names(resPolicyScenarios)[resScenarioNo],"-",fuelPriceScenarios[fuelId],"-",centralPrivateDiscountingRateScenarioNames[discountingRateId],"-",centralCO2BackSmoothingFactorScenarioNames[backLookingId],"-",centralCO2TargetReversionSpeedFactorScenarioNames[targetReversionId],"-","C",priceCeiling,"-",microId,".xml", sep=""))
+            #flush.console()
+            writeLines(xmlFileContent, paste("~/Dropbox/emlabGen/scenario/",filestump,names(co2PolicyScenarios)[co2PolicyNo],"-",names(producerBankingScenarios)[producerBankingNo],"-",names(resPolicyScenarios)[resScenarioNo],"-",fuelPriceScenarios[fuelId],"-",microId,".xml", sep=""))
+          }
+        }
+      }
+      resScenarioNo<-resScenarioNo+1
+    }
+    producerBankingNo<-producerBankingNo+1
+  }
+  co2PolicyNo<-co2PolicyNo+1
+}
+
+# Sensitivity Recession ---------------------------------------------------
+#Sensitivity Analysis for a recession in year 25-32
 
 

@@ -1135,7 +1135,7 @@ Transmission capacity is assumed to be 3016 in both directions, based on maximum
 		p:duration="1" p:increment="0"
 		p:minValue="0" />
 
-	<bean id="co2PriceCeilingTrend" class="emlab.gen.trend.StepTrend" p:start="500"
+	<bean id="co2PriceCeilingTrend" class="emlab.gen.trend.StepTrend" p:start="120"
 	p:duration="1" p:increment="0" />
 
 	<!-- CO2 Market Stability Reserve -->
