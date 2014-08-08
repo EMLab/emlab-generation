@@ -23,7 +23,7 @@
 
 	<!-- Decarbonization Model -->
 	<bean id="decarbonizationModel" class="emlab.gen.domain.agent.DecarbonizationModel"
-		p:name="Decarbonization Model" p:simulationLength="12"
+		p:name="Decarbonization Model" p:simulationLength="11"
 		p:co2TradingImplemented="true"
 		p:realRenewableDataImplemented="false"
 		p:iterationSpeedFactor="3" p:iterationSpeedCriterion="0.005"
@@ -230,7 +230,7 @@
 		p:willingToInvest="true" p:priceMarkUp="1.0"
 		p:numberOfYearsBacklookingForForecasting="5"
 		p:investorMarket-ref="beneluxElectricitySpotMarket"
-		p:co2Allowances="64e6"/>
+		p:co2Allowances="54e6"/>
 	<bean id="energyProducerB" class="emlab.gen.domain.agent.EnergyProducer"
 		p:name="Energy Producer B" p:cash="-30e9" 
 		p:investmentRole-ref="standardInvestmentRole"
@@ -243,7 +243,7 @@
 		p:willingToInvest="true" p:priceMarkUp="1.0"
 		p:numberOfYearsBacklookingForForecasting="5"
 		p:investorMarket-ref="beneluxElectricitySpotMarket"
-		p:co2Allowances="64e6"/>
+		p:co2Allowances="54e6"/>
 		
 	<bean id="standardInvestmentRole" class="emlab.gen.role.investment.InvestInPowerGenerationTechnologiesRole"/>
 

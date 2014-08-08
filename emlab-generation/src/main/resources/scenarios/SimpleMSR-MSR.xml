@@ -23,7 +23,7 @@
 
 	<!-- Decarbonization Model -->
 	<bean id="decarbonizationModel" class="emlab.gen.domain.agent.DecarbonizationModel"
-		p:name="Decarbonization Model" p:simulationLength="12"
+		p:name="Decarbonization Model" p:simulationLength="11"
 		p:co2TradingImplemented="true"
 		p:realRenewableDataImplemented="false"
 		p:iterationSpeedFactor="3" p:iterationSpeedCriterion="0.005"
@@ -293,11 +293,9 @@
 		p:duration="1" p:increment="0"
 		p:minValue="0" />
 
-	<bean id="stabilityReserveUpperTriggerTrend" class="emlab.gen.trend.StepTrend" p:start="130714685.528713074" 	p:duration="5" p:increment="-28114686"
-		p:minValue="0"  />
+	<bean id="stabilityReserveUpperTriggerTrend" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/SimpleMSR-upperTrigger.csv"  />
 
-	<bean id="stabilityReserveLowerTriggerTrend" class="emlab.gen.trend.StepTrend " p:start="87143123.685808716" p:duration="5" p:increment="-18743124"
-		p:minValue="0"  />
+	<bean id="stabilityReserveLowerTriggerTrend" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/SimpleMSR-lowerTrigger.csv"  />
 
 	<bean id="stabilityReserveReleaseQuantityTrend" class="emlab.gen.trend.StepTrend" p:start="10000000" 	p:duration="5" p:increment="0"
 		p:minValue="0"  />
@@ -306,14 +304,14 @@
 		p:duration="1" p:increment="0"
 		p:minValue="0"/>
 
-	<bean id="stabilityReserveAddingPercentageTrend" class="emlab.gen.trend.StepTrend" p:start="0.16"
+	<bean id="stabilityReserveAddingPercentageTrend" class="emlab.gen.trend.StepTrend" p:start="0.12"
 p:duration="1" p:increment="0" p:minValue="0"/>
 		
 
 	<!-- Government -->
 	<bean id="government" class="emlab.gen.domain.agent.Government"
 		p:name="European Government" p:co2Penalty="500"
-		p:stabilityReserve="20000000"
+		p:stabilityReserve="0"
 		p:stabilityReserveUpperTriggerTrend-ref="stabilityReserveUpperTriggerTrend"
 		p:stabilityReserveLowerTriggerTrend-ref="stabilityReserveLowerTriggerTrend"
 		p:stabilityReserveAddingPercentageTrend-ref="stabilityReserveAddingPercentageTrend"
