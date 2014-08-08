@@ -13,7 +13,7 @@ else
     exit
 fi
 
-../makeRamdisk.sh
+#../makeRamdisk.sh
 
 ## the first parameter gives the jobname, the second the scenario-file including the xml file-ending
 ## Example sh localHeadless.sh example scenarioA-ToyModel.xml
