@@ -19,6 +19,8 @@ import cern.colt.matrix.impl.DenseDoubleMatrix2D;
 import cern.jet.math.Functions;
 import emlab.gen.domain.agent.DecarbonizationModel;
 import emlab.gen.domain.gis.Zone;
+import emlab.gen.domain.market.electricity.Segment;
+import emlab.gen.domain.market.electricity.SegmentLoad;
 import emlab.gen.domain.technology.Interconnector;
 import emlab.gen.domain.technology.IntermittentResourceProfile;
 import emlab.gen.domain.technology.PowerGeneratingTechnology;
@@ -28,11 +30,11 @@ import emlab.gen.util.Utils;
 
 /**
  * *
- * 
+ *
  * @author <a href="mailto:E.J.L.Chappin@tudelft.nl">Emile Chappin</a>
- * 
+ *
  * @author <a href="mailto:J.Richstein@tudelft.nl">Jörn Richstein</a>
- * 
+ *
  */
 @RoleComponent
 public class DetermineResidualLoadCurvesForTwoCountriesRole extends AbstractRole<DecarbonizationModel> implements
@@ -49,6 +51,8 @@ Role<DecarbonizationModel> {
     @Override
     @Transactional
     public void act(DecarbonizationModel model) {
+
+        long clearingTick = getCurrentTick();
 
         logger.warn("0. Determining the residual load duration curve");
 
@@ -110,7 +114,7 @@ Role<DecarbonizationModel> {
             columnIterator++;
         }
 
-        Map<Zone, Map<PowerGridNode, Map<PowerGeneratingTechnology, Integer>>> TECHNOLOGYSPILLFACTORSFORZONEANDNODE = new HashMap<Zone, Map<PowerGridNode, Map<PowerGeneratingTechnology, Integer>>>();
+        Map<Zone, Map<PowerGridNode, Map<PowerGeneratingTechnology, Integer>>> TECHNOLOGYLOADFACTORSFORZONEANDNODE = new HashMap<Zone, Map<PowerGridNode, Map<PowerGeneratingTechnology, Integer>>>();
         for (Zone zone : zoneList) {
             Map<PowerGridNode, Map<PowerGeneratingTechnology, Integer>> NODETOTECHNOLOGY = new HashMap<PowerGridNode, Map<PowerGeneratingTechnology, Integer>>();
             for (PowerGridNode node : zoneToNodeList.get(zone)) {
@@ -121,10 +125,11 @@ Role<DecarbonizationModel> {
                 }
                 NODETOTECHNOLOGY.put(node, technologyToColumn);
             }
-            TECHNOLOGYSPILLFACTORSFORZONEANDNODE.put(zone, NODETOTECHNOLOGY);
+            TECHNOLOGYLOADFACTORSFORZONEANDNODE.put(zone, NODETOTECHNOLOGY);
         }
 
-        double interConnectorCapacity = reps.template.findAll(Interconnector.class).iterator().next().getCapacity();
+        double interConnectorCapacity = reps.template.findAll(Interconnector.class).iterator().next()
+                .getCapacity(clearingTick);
 
         // Create globalResidualLoadMatrix and add hours.
 
@@ -148,10 +153,16 @@ Role<DecarbonizationModel> {
         // 2. Build national load curves, by adding up grid node load curves in
         // each zone.
         // also fill the residual load columns with the initial load curves.
+        // for now simply multiplied with the market wide growth factor
         for (Zone zone : zoneList) {
 
             for (PowerGridNode node : zoneToNodeList.get(zone)) {
                 DoubleMatrix1D hourlyArray = new DenseDoubleMatrix1D(node.getHourlyDemand().getHourlyArray(getCurrentTick()));
+                double growthRate = reps.marketRepository.findElectricitySpotMarketForZone(zone).getDemandGrowthTrend()
+                        .getValue(clearingTick);
+                DoubleMatrix1D growthFactors = hourlyArray.copy();
+                growthFactors.assign(growthRate);
+                hourlyArray.assign(growthFactors, Functions.mult);
                 m.viewColumn(LOADINZONE.get(zone)).assign(hourlyArray, Functions.plus);
                 m.viewColumn(RLOADINZONE.get(zone)).assign(hourlyArray, Functions.plus);
 
@@ -165,7 +176,9 @@ Role<DecarbonizationModel> {
         // intermittent production from the
         // the residual load column (one column per zone). Calculate the total
         // residual load (assuming
-        // no interconnector constraints).
+        // no interconnector constraints). Reduce the load factors by obvious
+        // spill, that is RES production greater than demand + interconnector
+        // capacity.
 
         for (Zone zone : zoneList) {
 
@@ -177,6 +190,8 @@ Role<DecarbonizationModel> {
                             .calculateCapacityOfOperationalIntermittentPowerPlantsByPowerGridNodeAndTechnology(node, technology,
                                     getCurrentTick());
 
+                    logger.warn(technology.getName() + ": " + intermittentCapacityOfTechnologyInNode + " MW.");
+
                     IntermittentResourceProfile intermittentResourceProfile = reps.intermittentResourceProfileRepository
                             .findIntermittentResourceProfileByTechnologyAndNode(technology, node);
 
@@ -184,7 +199,7 @@ Role<DecarbonizationModel> {
                     // technology per node
                     DoubleMatrix1D hourlyProductionPerNode = new DenseDoubleMatrix1D(
                             intermittentResourceProfile.getHourlyArray(getCurrentTick()));
-                    m.viewColumn(TECHNOLOGYSPILLFACTORSFORZONEANDNODE.get(zone).get(node).get(technology)).assign(
+                    m.viewColumn(TECHNOLOGYLOADFACTORSFORZONEANDNODE.get(zone).get(node).get(technology)).assign(
                             hourlyProductionPerNode, Functions.plus);
                     hourlyProductionPerNode.assign(Functions.mult(intermittentCapacityOfTechnologyInNode));
                     m.viewColumn(IPROD.get(zone)).assign(hourlyProductionPerNode, Functions.plus);
@@ -206,7 +221,7 @@ Role<DecarbonizationModel> {
                     DoubleMatrix1D spillVector = loadPlusInterconnector.copy();
                     spillVector.assign(m.viewColumn(IPROD.get(zone)), Functions.div);
                     spillVector.assign(oneVector, Functions.min);
-                    m.viewColumn(TECHNOLOGYSPILLFACTORSFORZONEANDNODE.get(zone).get(node).get(technology)).assign(spillVector,
+                    m.viewColumn(TECHNOLOGYLOADFACTORSFORZONEANDNODE.get(zone).get(node).get(technology)).assign(spillVector,
                             Functions.mult);
                     m.viewColumn(IPROD.get(zone)).assign(loadPlusInterconnector, Functions.min);
 
@@ -330,11 +345,12 @@ Role<DecarbonizationModel> {
         differenceVector.assign(m.viewColumn(13), Functions.minus);
         double result = differenceVector.aggregate(Functions.plus, Functions.identity);
         logger.warn("Result: " + result);
-        // Divide all the technologies in the zone by the spill factors above
+        // Divide all the technology load factors in the zone by the spill
+        // factors above
         for (Zone zone : zoneList) {
             for (PowerGridNode node : zoneToNodeList.get(zone)) {
                 for (PowerGeneratingTechnology technology : technologyList) {
-                    m.viewColumn(TECHNOLOGYSPILLFACTORSFORZONEANDNODE.get(zone).get(node).get(technology)).assign(
+                    m.viewColumn(TECHNOLOGYLOADFACTORSFORZONEANDNODE.get(zone).get(node).get(technology)).assign(
                             spillFactorMap.get(zone), Functions.div);
                 }
             }
@@ -387,30 +403,34 @@ Role<DecarbonizationModel> {
         }
 
         Map<Zone, DynamicBin1D[]> segmentRloadBinsByZone = new HashMap<Zone, DynamicBin1D[]>();
+        Map<Zone, DynamicBin1D[]> segmentLoadBinsByZone = new HashMap<Zone, DynamicBin1D[]>();
 
         for (Zone zone : zoneList) {
             DynamicBin1D[] segmentRloadBinInZone = new DynamicBin1D[noSegments];
+            DynamicBin1D[] segmentLoadBinInZone = new DynamicBin1D[noSegments];
             for (int i = 0; i < noSegments; i++) {
                 segmentRloadBinInZone[i] = new DynamicBin1D();
+                segmentLoadBinInZone[i] = new DynamicBin1D();
             }
             segmentRloadBinsByZone.put(zone, segmentRloadBinInZone);
+            segmentLoadBinsByZone.put(zone, segmentLoadBinInZone);
         }
 
-        Map<Zone, Map<PowerGridNode, Map<PowerGeneratingTechnology, DynamicBin1D[]>>> spillFactorBinMap = new HashMap<Zone, Map<PowerGridNode, Map<PowerGeneratingTechnology, DynamicBin1D[]>>>();
+        Map<Zone, Map<PowerGridNode, Map<PowerGeneratingTechnology, DynamicBin1D[]>>> loadFactorBinMap = new HashMap<Zone, Map<PowerGridNode, Map<PowerGeneratingTechnology, DynamicBin1D[]>>>();
         for (Zone zone : zoneList) {
             Map<PowerGridNode, Map<PowerGeneratingTechnology, DynamicBin1D[]>> NODETOTECHNOLOGY = new HashMap<PowerGridNode, Map<PowerGeneratingTechnology, DynamicBin1D[]>>();
             for (PowerGridNode node : zoneToNodeList.get(zone)) {
                 Map<PowerGeneratingTechnology, DynamicBin1D[]> technologyToBins = new HashMap<PowerGeneratingTechnology, DynamicBin1D[]>();
                 for (PowerGeneratingTechnology technology : technologyList) {
-                    DynamicBin1D[] technologySpillFactorInNode = new DynamicBin1D[noSegments];
+                    DynamicBin1D[] technologyLoadFactorInNode = new DynamicBin1D[noSegments];
                     for (int i = 0; i < noSegments; i++) {
-                        technologySpillFactorInNode[i] = new DynamicBin1D();
+                        technologyLoadFactorInNode[i] = new DynamicBin1D();
                     }
-                    technologyToBins.put(technology, technologySpillFactorInNode);
+                    technologyToBins.put(technology, technologyLoadFactorInNode);
                 }
                 NODETOTECHNOLOGY.put(node, technologyToBins);
             }
-            spillFactorBinMap.put(zone, NODETOTECHNOLOGY);
+            loadFactorBinMap.put(zone, NODETOTECHNOLOGY);
         }
 
         // logger.warn("Max: " + max + "\n" + "Min: " + min);
@@ -430,6 +450,7 @@ Role<DecarbonizationModel> {
             segmentRloadBins[currentSegmentID - 1].add(m.get(row, RLOADTOTAL));
             for (Zone zone : zoneList) {
                 segmentRloadBinsByZone.get(zone)[currentSegmentID - 1].add(m.get(row, RLOADINZONE.get(zone)));
+                segmentLoadBinsByZone.get(zone)[currentSegmentID - 1].add(m.get(row, LOADINZONE.get(zone)));
             }
             segmentInterConnectorBins[currentSegmentID - 1].add(m.get(row, INTERCONNECTOR));
         }
@@ -438,8 +459,8 @@ Role<DecarbonizationModel> {
             for (PowerGridNode node : zoneToNodeList.get(zone)) {
                 for (PowerGeneratingTechnology technology : reps.powerGeneratingTechnologyRepository
                         .findAllIntermittentPowerGeneratingTechnologies()) {
-                    DynamicBin1D[] currentBinArray = spillFactorBinMap.get(zone).get(node).get(technology);
-                    int columnNumber = TECHNOLOGYSPILLFACTORSFORZONEANDNODE.get(zone).get(node).get(technology);
+                    DynamicBin1D[] currentBinArray = loadFactorBinMap.get(zone).get(node).get(technology);
+                    int columnNumber = TECHNOLOGYLOADFACTORSFORZONEANDNODE.get(zone).get(node).get(technology);
                     currentSegmentID = 1;
                     for (int row = 0; row < m.rows() && currentSegmentID <= noSegments; row++) {
                         // IMPORTANT: since [] is zero-based index, it checks one index
@@ -449,7 +470,7 @@ Role<DecarbonizationModel> {
                         }
                         currentBinArray[currentSegmentID - 1].add(m.get(row,columnNumber));
                     }
-                    spillFactorBinMap.get(zone).get(node).put(technology, currentBinArray);
+                    loadFactorBinMap.get(zone).get(node).put(technology, currentBinArray);
                 }
             }
         }
@@ -504,16 +525,22 @@ Role<DecarbonizationModel> {
         // Printing of segments
         int it = 1;
         for (DynamicBin1D bin : segmentRloadBins) {
-            logger.warn("Segment " + it + "\n      Size: " + bin.size() + "\n      Mean RLOAD~: " + Math.round(bin.mean())
-                    + "\n      Max RLOAD~: " + Math.round(bin.max()) + "\n      Min RLOAD~: " + Math.round(bin.min())
-                    + "\n      Std RLOAD~: " + Math.round(bin.standardDeviation()));
+            // logger.warn("Segment " + it + "\n      Size: " + bin.size() +
+            // "\n      Mean RLOAD~: " + Math.round(bin.mean())
+            // + "\n      Max RLOAD~: " + Math.round(bin.max()) +
+            // "\n      Min RLOAD~: " + Math.round(bin.min())
+            // + "\n      Std RLOAD~: " + Math.round(bin.standardDeviation()));
             it++;
         }
+
         it = 1;
         for (DynamicBin1D bin : segmentInterConnectorBins) {
-            logger.warn("Segment " + it + "\n      Size: " + bin.size() + "\n      Mean IntCapacity~: " + Math.round(bin.mean())
-                    + "\n      Max IntCapacity~: " + Math.round(bin.max()) + "\n      Min IntCapacity~: " + Math.round(bin.min())
-                    + "\n      STD IntCapacity~: " + Math.round(bin.standardDeviation()));
+            // logger.warn("Segment " + it + "\n      Size: " + bin.size() +
+            // "\n      Mean IntCapacity~: " + Math.round(bin.mean())
+            // + "\n      Max IntCapacity~: " + Math.round(bin.max()) +
+            // "\n      Min IntCapacity~: " + Math.round(bin.min())
+            // + "\n      STD IntCapacity~: " +
+            // Math.round(bin.standardDeviation()));
             it++;
         }
 
@@ -521,11 +548,15 @@ Role<DecarbonizationModel> {
             logger.warn("Bins for " + zone);
             it = 1;
             String meanRLoad = new String("Residual load in " + zone.getName() + ":");
+            String meanLoad = new String("Load in " + zone.getName() + ":");
             String segmentLength = new String("Segment length " + zone.getName() + ":");
             for (DynamicBin1D bin : segmentRloadBinsByZone.get(zone)) {
-                logger.warn("Segment " + it + "\n      Size: " + bin.size() + "\n      Mean RLOAD~: " + Math.round(bin.mean())
-                        + "\n      Max RLOAD~: " + Math.round(bin.max()) + "\n      Min RLOAD~: " + Math.round(bin.min())
-                        + "\n      Std RLOAD~: " + Math.round(bin.standardDeviation()));
+                // logger.warn("Segment " + it + "\n      Size: " + bin.size() +
+                // "\n      Mean RLOAD~: " + Math.round(bin.mean())
+                // + "\n      Max RLOAD~: " + Math.round(bin.max()) +
+                // "\n      Min RLOAD~: " + Math.round(bin.min())
+                // + "\n      Std RLOAD~: " +
+                // Math.round(bin.standardDeviation()));
                 it++;
                 double mean = bin.mean() * 1000;
                 mean = Math.round(mean);
@@ -533,18 +564,37 @@ Role<DecarbonizationModel> {
                 meanRLoad = meanRLoad.concat("," + mean);
                 segmentLength = segmentLength.concat("," + bin.size());
             }
+            it = 1;
+            for (DynamicBin1D bin : segmentLoadBinsByZone.get(zone)) {
+                // logger.warn("Segment " + it + "\n      Size: " + bin.size() +
+                // "\n      Mean LOAD~: "
+                // + Math.round(bin.mean()) + "\n      Max LOAD~: " +
+                // Math.round(bin.max())
+                // + "\n      Min LOAD~: " + Math.round(bin.min()) +
+                // "\n      Std LOAD~: "
+                // + Math.round(bin.standardDeviation()));
+                it++;
+                double mean = bin.mean() * 1000;
+                mean = Math.round(mean);
+                mean = mean / 1000.0;
+                meanLoad = meanLoad.concat("," + mean);
+                segmentLength = segmentLength.concat("," + bin.size());
+            }
             logger.warn(meanRLoad);
+            logger.warn(meanLoad);
             logger.warn(segmentLength);
         }
+
 
         String loadFactors;
         for (Zone zone : zoneList) {
             String loadFactorString = new String("LF in " + zone.getName() + ":");
             for (PowerGridNode node : zoneToNodeList.get(zone)) {
                 for (PowerGeneratingTechnology technology : technologyList) {
-                    logger.warn("Bins for " + zone + ", " + node + "and " + technology);
+                    // logger.warn("Bins for " + zone + ", " + node + "and " +
+                    // technology);
                     it = 1;
-                    for (DynamicBin1D bin : spillFactorBinMap.get(zone).get(node).get(technology)) {
+                    for (DynamicBin1D bin : loadFactorBinMap.get(zone).get(node).get(technology)) {
                         // logger.warn("Segment " + it + "\n      Size: " +
                         // bin.size() + "\n      Mean RLOAD~: "
                         // + bin.mean() + "\n      Max RLOAD~: " + bin.max() +
@@ -563,6 +613,23 @@ Role<DecarbonizationModel> {
 
         // 8. Store the segment duration and the average load in that segment
         // per country.
+
+        Iterable<SegmentLoad> segmentLoads = reps.segmentLoadRepository.findAll();
+        for (SegmentLoad segmentLoad : segmentLoads) {
+            Segment segment = segmentLoad.getSegment();
+            Zone zone = segmentLoad.getElectricitySpotMarket().getZone();
+            double demandGrowthFactor = reps.marketRepository.findElectricitySpotMarketForZone(zone)
+                    .getDemandGrowthTrend().getValue(clearingTick);
+            segmentLoad.setBaseLoad(segmentLoadBinsByZone.get(zone)[segment.getSegmentID() - 1].mean()
+                    / demandGrowthFactor);
+            // logger.warn("Segment " + segment.getSegmentID() + ": " +
+            // segmentLoad.getBaseLoad() + "MW");
+        }
+
+        Iterable<Segment> segments = reps.segmentRepository.findAll();
+        for (Segment segment : segments) {
+            segment.setLengthInHours(segmentRloadBins[segment.getSegmentID() - 1].size());
+        }
 
         // 9. Afterwards: clear the market, determine revenues.
 
