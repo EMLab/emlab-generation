@@ -35,4 +35,7 @@ public interface TargetInvestorRepository extends GraphRepository<TargetInvestor
     @Query(value = "result = g.v(market).in('INVESTOR_MARKET').next();", type = QueryType.Gremlin)
     TargetInvestor findInvestorByMarket(@Param("market") ElectricitySpotMarket electricitySpotMarket);
 
+    @Query(value = "result = g.v(market).in('INVESTOR_MARKET').filter{it.__type__=='emlab.gen.domain.agent.TargetInvestor'};", type = QueryType.Gremlin)
+    TargetInvestor findTargetInvestorByMarket(@Param("market") ElectricitySpotMarket electricitySpotMarket);
+
 }

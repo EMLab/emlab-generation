@@ -30,6 +30,12 @@ public interface SegmentRepository extends GraphRepository<Segment> {
     @Query(value = "g.v(market).out('SEGMENT_LOAD').out.filter{it.segmentID==1}.next()", type = QueryType.Gremlin)
     public Segment findPeakSegmentforMarket(@Param("market") ElectricitySpotMarket market);
 
+    @Query(value = "g.v(market).out('SEGMENT_LOAD').out.sort{-it.segmentID}.next()", type = QueryType.Gremlin)
+    public Segment findBaseSegmentforMarket(@Param("market") ElectricitySpotMarket market);
+
     @Query(value = "g.v(market).out('SEGMENT_LOAD').out.sort{it.segmentID}_()", type = QueryType.Gremlin)
     public Iterable<Segment> findSegmentforMarketSortedbySegmentID(@Param("market") ElectricitySpotMarket market);
+
+    @Query(value = "g.v(market).out('SEGMENT_LOAD').out", type = QueryType.Gremlin)
+    public Iterable<Segment> findSegmentforMarket(@Param("market") ElectricitySpotMarket market);
 }

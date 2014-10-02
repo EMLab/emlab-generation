@@ -45,6 +45,9 @@ public interface SegmentLoadRepository extends GraphRepository<SegmentLoad> {
     @Query("start segment=node({segment}) match (segment)<-[:SEGMENTLOAD_SEGMENT]-(segmentload) return segmentload")
     public Iterable<SegmentLoad> findSegmentLoadBySegment(@Param("segment") Segment segment);
 
+    @Query("start segment=node({segment}) match (segment)<-[:SEGMENTLOAD_SEGMENT]-(segmentload) return segmentload")
+    public SegmentLoad getSegmentLoadBySegment(@Param("segment") Segment segment);
+
     /**
      * Finds the segment load for a certain segment and market
      * 

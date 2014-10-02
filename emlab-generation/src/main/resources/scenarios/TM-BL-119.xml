@@ -114,7 +114,7 @@
 	<!-- Electricity Spot -->
 	<bean id="germanElectricitySpotMarket" class="emlab.gen.domain.market.electricity.ElectricitySpotMarket"
 		p:name="Country A electricity spot market" p:auction="false"
-		p:referencePrice="40" p:valueOfLostLoad="5000" p:lookback="5" p:backlookingForDemandForecastinginDismantling="5">
+		p:referencePrice="40" p:valueOfLostLoad="1000" p:lookback="5" p:backlookingForDemandForecastinginDismantling="5">
 		<property name="substance" ref="electricity" />
 		<property name="demandGrowthTrend" ref="demandGrowthTrendDE" />
 		<property name="zone" ref="de" />
@@ -457,369 +457,397 @@
 		<property name="zone" ref="de" />
 	</bean>
 
-        <!-- Power Genration Technologies -->
-        <bean id="coalPulverizedSuperCritical" class="emlab.gen.domain.technology.PowerGeneratingTechnology"
-                p:name="CoalPSC" p:capacity="758"
-                p:investmentCostTimeSeries-ref="coalPSCInvestmentCostTimeSeries"
-                p:fixedOperatingCostTimeSeries-ref="coalPSCFixedOperatingCostTimeSeries"
-                p:efficiencyTimeSeries-ref="coalPSCEfficiencyTimeSeries" 
-                p:co2CaptureEffciency="0" 
-                p:depreciationTime="20"
-                p:minimumRunningHours="5000"
-                p:fixedOperatingCostModifierAfterLifetime=".05" p:expectedLifetime="50"
-                p:expectedLeadtime="4" p:expectedPermittime="1" p:minimumFuelQuality=".95"
-                p:maximumInstalledCapacityFractionInCountry="1"
-                p:maximumInstalledCapacityFractionPerAgent="1"
-                p:baseSegmentDependentAvailability="1"
-                p:peakSegmentDependentAvailability="1"
-                p:applicableForLongTermContract="true"
-                p:intermittent="false">
-                <property name="fuels">
-                        <set>
-                                <ref bean="coal" />
-                                <ref bean="biomass" />
-                        </set>
-                </property>
-        </bean>
-        
-        <bean id="coalPSCInvestmentCostTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0" p:start="1365530" />
-        <bean id="coalPSCFixedOperatingCostTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0" p:start="40970" />
-        <bean id="coalPSCEfficiencyTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0.0032724641" p:start=".44" />
-        
-        
-        <bean id="lignitePGT" class="emlab.gen.domain.technology.PowerGeneratingTechnology"
-                p:name="Lignite" p:capacity="1000"
-                p:investmentCostTimeSeries-ref="ligniteInvestmentCostTimeSeries"
-                p:fixedOperatingCostTimeSeries-ref="ligniteFixedOperatingCostTimeSeries"
-                p:efficiencyTimeSeries-ref="ligniteEfficiencyTimeSeries" 
-                p:co2CaptureEffciency="0" 
-                p:depreciationTime="20"
-                p:minimumRunningHours="5000"
-                p:fixedOperatingCostModifierAfterLifetime=".05" p:expectedLifetime="50"
-                p:expectedLeadtime="5" p:expectedPermittime="1" p:minimumFuelQuality=".95"
-                p:maximumInstalledCapacityFractionInCountry="1"
-                p:maximumInstalledCapacityFractionPerAgent="1"
-                p:baseSegmentDependentAvailability="1"
-                p:peakSegmentDependentAvailability="1"
-                p:applicableForLongTermContract="true"
-                p:intermittent="false">
-                <property name="fuels">
-                        <set>
-                                <ref bean="lignite" />
-                        </set>
-                </property>
-        </bean>
-        
-        <bean id="ligniteInvestmentCostTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0" p:start="1700000" />
-        <bean id="ligniteFixedOperatingCostTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0" p:start="41545" />
-        <bean id="ligniteEfficiencyTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0.005" p:start=".45" />
-        
-        <bean id="IGCC" class="emlab.gen.domain.technology.PowerGeneratingTechnology"
-                p:name="IGCC" p:capacity="758"
-                p:investmentCostTimeSeries-ref="igccInvestmentCostTimeSeries"
-                p:fixedOperatingCostTimeSeries-ref="igccFixedOperatingCostTimeSeries"
-                p:efficiencyTimeSeries-ref="igccEfficiencyTimeSeries" 
-                p:co2CaptureEffciency="0"
-                p:depreciationTime="20" p:minimumRunningHours="0"
-                p:fixedOperatingCostModifierAfterLifetime=".05" p:expectedLifetime="50"
-                p:expectedLeadtime="4" p:expectedPermittime="1" p:minimumFuelQuality=".9"
-                p:maximumInstalledCapacityFractionInCountry="1"
-                p:maximumInstalledCapacityFractionPerAgent="1"
-                p:baseSegmentDependentAvailability="1"
-                p:peakSegmentDependentAvailability="1"
-                p:applicableForLongTermContract="true"
-                p:intermittent="false">
-                <property name="fuels">
-                        <set>
-                                <ref bean="coal" />
-                                <ref bean="biomass" />
-                        </set>
-                </property>
-        </bean>
-        
-        <bean id="igccInvestmentCostTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/learningCurves.csv" p:startingYear="-50" p:delimiter="," p:variableName="Igcc_Inv" />
-        <bean id="igccFixedOperatingCostTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/learningCurves.csv" p:startingYear="-50" p:delimiter="," p:variableName="Igcc_OM" />
-        <bean id="igccEfficiencyTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/learningCurves.csv" p:startingYear="-50" p:delimiter="," p:variableName="Igcc_Eff" />
-        
-        <bean id="coalPscCSS" class="emlab.gen.domain.technology.PowerGeneratingTechnology"
-                p:name="CoalPscCSS" p:capacity="600" 
-                p:investmentCostTimeSeries-ref="coalPulverizedCSSInvestmentCostTimeSeries"
-                p:fixedOperatingCostTimeSeries-ref="coalPulverizedCSSFixedOperatingCostTimeSeries"
-                p:efficiencyTimeSeries-ref="coalPulverizedCSSEfficiencyTimeSeries" 
-                p:co2CaptureEffciency="0.875"
-                p:depreciationTime="20" p:minimumRunningHours="5000"
-                p:fixedOperatingCostModifierAfterLifetime=".05" p:expectedLifetime="50"
-                p:expectedLeadtime="4" p:expectedPermittime="1" p:minimumFuelQuality=".9"
-                p:maximumInstalledCapacityFractionInCountry="1"
-                p:maximumInstalledCapacityFractionPerAgent="1"
-                p:baseSegmentDependentAvailability="1"
-                p:peakSegmentDependentAvailability="1"
-                p:applicableForLongTermContract="true"
-                p:intermittent="false">
-                <property name="fuels">
-                        <set>
-                                <ref bean="coal" />
-                                <ref bean="biomass" />
-                        </set>
-                </property>
-        </bean>
-        
-        <bean id="coalPulverizedCSSInvestmentCostTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="-0.0098011846" p:start="2457950" />
-        <bean id="coalPulverizedCSSFixedOperatingCostTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="-0.0099617099" p:start="74030" />
-        <bean id="coalPulverizedCSSEfficiencyTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0.0011744757" p:start=".35" />
-        
-        <bean id="igccCCS" class="emlab.gen.domain.technology.PowerGeneratingTechnology"
-                p:name="IgccCCS" p:capacity="600"
-                p:investmentCostTimeSeries-ref="igccCCSInvestmentCostTimeSeries"
-                p:fixedOperatingCostTimeSeries-ref="igccCCSFixedOperatingCostTimeSeries"
-                p:efficiencyTimeSeries-ref="igccCCSEfficiencyTimeSeries" 
-                p:co2CaptureEffciency="0.875"
-                p:depreciationTime="20" p:minimumRunningHours="0"
-                p:fixedOperatingCostModifierAfterLifetime=".05" p:expectedLifetime="50"
-                p:expectedLeadtime="4" p:expectedPermittime="1" p:minimumFuelQuality=".9"
-                p:maximumInstalledCapacityFractionInCountry="1"
-                p:maximumInstalledCapacityFractionPerAgent="1"
-                p:baseSegmentDependentAvailability="1"
-                p:peakSegmentDependentAvailability="1"
-                p:applicableForLongTermContract="true"
-                p:intermittent="false">
-                <property name="fuels">
-                        <set>
-                                <ref bean="coal" />
-                                <ref bean="biomass" />
-                        </set>
-                </property>
-        </bean>
-        
-        <bean id="igccCCSInvestmentCostTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/learningCurves.csv" p:startingYear="-50" p:delimiter="," p:variableName="IgccCCS_Inv" />
-        <bean id="igccCCSFixedOperatingCostTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/learningCurves.csv" p:startingYear="-50" p:delimiter="," p:variableName="IgccCCS_OM" />
-        <bean id="igccCCSEfficiencyTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/learningCurves.csv" p:startingYear="-50" p:delimiter="," p:variableName="IgccCCS_Eff" />
-        
-        <bean id="CCGT" class="emlab.gen.domain.technology.PowerGeneratingTechnology"
-                p:name="CCGT" p:capacity="776"
-                p:investmentCostTimeSeries-ref="ccgtInvestmentCostTimeSeries"
-                p:fixedOperatingCostTimeSeries-ref="ccgtFixedOperatingCostTimeSeries"
-                p:efficiencyTimeSeries-ref="ccgtEfficiencyTimeSeries" 
-                p:co2CaptureEffciency="0"
-                p:depreciationTime="15" p:minimumRunningHours="0"
-                p:fixedOperatingCostModifierAfterLifetime=".05" p:expectedLifetime="40"
-                p:expectedLeadtime="2" p:expectedPermittime="1" p:minimumFuelQuality="1"
-                p:maximumInstalledCapacityFractionInCountry="1"
-                p:maximumInstalledCapacityFractionPerAgent="1"
-                p:baseSegmentDependentAvailability="1"
-                p:peakSegmentDependentAvailability="1"
-                p:applicableForLongTermContract="true"
-                p:intermittent="false">
-                <property name="fuels">
-                        <set>
-                                <ref bean="naturalgas" />
-                        </set>
-                </property>
-        </bean>
-        
-        <bean id="ccgtInvestmentCostTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="-0.0075679493" p:start="646830" />
-        <bean id="ccgtFixedOperatingCostTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0" p:start="29470" />
-        <bean id="ccgtEfficiencyTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0.002068676" p:start=".59" />
-        
-        <bean id="ccgtCCS" class="emlab.gen.domain.technology.PowerGeneratingTechnology"
-                p:name="CcgtCCS" p:capacity="600"
-                p:investmentCostTimeSeries-ref="ccgtCCSInvestmentCostTimeSeries"
-                p:fixedOperatingCostTimeSeries-ref="ccgtCCSFixedOperatingCostTimeSeries"
-                p:efficiencyTimeSeries-ref="ccgtCCSEfficiencyTimeSeries" 
-                p:co2CaptureEffciency="0.85"
-                p:depreciationTime="15" p:minimumRunningHours="0"
-                p:fixedOperatingCostModifierAfterLifetime=".05" p:expectedLifetime="40"
-                p:expectedLeadtime="3" p:expectedPermittime="1" p:minimumFuelQuality="1"
-                p:maximumInstalledCapacityFractionInCountry="1"
-                p:maximumInstalledCapacityFractionPerAgent="1"
-                p:baseSegmentDependentAvailability="1"
-                p:peakSegmentDependentAvailability="1"
-                p:applicableForLongTermContract="true"
-                p:intermittent="false">
-                <property name="fuels">
-                        <set>
-                                <ref bean="naturalgas" />
-                        </set>
-                </property>
-        </bean>
-        
-        <bean id="ccgtCCSInvestmentCostTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/learningCurves.csv" p:startingYear="-50" p:delimiter="," p:variableName="CcgtCCS_Inv" />
-        <bean id="ccgtCCSFixedOperatingCostTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/learningCurves.csv" p:startingYear="-50" p:delimiter="," p:variableName="CcgtCCS_OM" />
-        <bean id="ccgtCCSEfficiencyTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/learningCurves.csv" p:startingYear="-50" p:delimiter="," p:variableName="CcgtCCS_Eff" />
+     <!-- Power Genration Technologies -->
+<bean id="coalPulverizedSuperCritical" class="emlab.gen.domain.technology.PowerGeneratingTechnology"
+    p:name="CoalPSC" p:capacity="758"
+    p:investmentCostTimeSeries-ref="coalPSCInvestmentCostTimeSeries"
+    p:fixedOperatingCostTimeSeries-ref="coalPSCFixedOperatingCostTimeSeries"
+    p:efficiencyTimeSeries-ref="coalPSCEfficiencyTimeSeries"
+    p:co2CaptureEffciency="0"
+    p:depreciationTime="20"
+    p:minimumRunningHours="5000"
+    p:variableOperatingCostinEURPerMWh="3.20"
+    p:maximumLifeExtension="5"
+    p:fixedOperatingCostModifierAfterLifetime=".05" p:expectedLifetime="50"
+    p:expectedLeadtime="4" p:expectedPermittime="1" p:minimumFuelQuality=".95"
+    p:maximumInstalledCapacityFractionInCountry="1"
+    p:maximumInstalledCapacityFractionPerAgent="1"
+    p:baseSegmentDependentAvailability="1"
+    p:peakSegmentDependentAvailability="1"
+    p:applicableForLongTermContract="true"
+    p:intermittent="false">
+    <property name="fuels">
+        <set>
+            <ref bean="coal" />
+            <ref bean="biomass" />
+        </set>
+    </property>
+</bean>
 
-        
-        <bean id="OCGT" class="emlab.gen.domain.technology.PowerGeneratingTechnology"
-                p:name="OCGT" p:capacity="150"
-                p:investmentCostTimeSeries-ref="ocgtCCSInvestmentCostTimeSeries"
-                p:fixedOperatingCostTimeSeries-ref="ocgtCCSFixedOperatingCostTimeSeries"
-                p:efficiencyTimeSeries-ref="ocgtCCSEfficiencyTimeSeries" 
-                p:co2CaptureEffciency="0"
-                p:depreciationTime="15" p:minimumRunningHours="0"                
-                p:fixedOperatingCostModifierAfterLifetime=".05" p:expectedLifetime="30"
-                p:expectedLeadtime="1" p:expectedPermittime="0" p:minimumFuelQuality="1"
-                p:maximumInstalledCapacityFractionInCountry="1"
-                p:maximumInstalledCapacityFractionPerAgent="1"
-                p:baseSegmentDependentAvailability="1"
-                p:peakSegmentDependentAvailability="1"
-                p:applicableForLongTermContract="true"
-                p:intermittent="false">
-                <property name="fuels">
-                        <set>
-                                <ref bean="naturalgas" />
-                        </set>
-                </property>
-        </bean>
-        
-        <bean id="ocgtCCSInvestmentCostTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0" p:start="359350" />
-        <bean id="ocgtCCSFixedOperatingCostTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0" p:start="14370" />
-        <bean id="ocgtCCSEfficiencyTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0.002068676" p:start="0.38" />
-        
-        <bean id="biomassPGT" class="emlab.gen.domain.technology.PowerGeneratingTechnology"
-                p:name="Biomass" p:capacity="500"
-                p:investmentCostTimeSeries-ref="biomassInvestmentCostTimeSeries"
-                p:fixedOperatingCostTimeSeries-ref="biomassFixedOperatingCostTimeSeries"
-                p:efficiencyTimeSeries-ref="biomassEfficiencyTimeSeries" 
-                p:co2CaptureEffciency="0" 
-                p:depreciationTime="15"
-                p:minimumRunningHours="5000"
-                p:fixedOperatingCostModifierAfterLifetime=".05" p:expectedLifetime="40"
-                p:expectedLeadtime="3" p:expectedPermittime="1" p:minimumFuelQuality="0.5"
-                p:maximumInstalledCapacityFractionInCountry="1"
-                p:maximumInstalledCapacityFractionPerAgent="1"
-                p:baseSegmentDependentAvailability="0.7"
-                p:peakSegmentDependentAvailability="0.7"
-                p:applicableForLongTermContract="true"
-                p:intermittent="false">
-                <property name="fuels">
-                        <set>
-                                <ref bean="biomass" />
-                        </set>
-                </property>
-        </bean>
-        
-        <bean id="biomassInvestmentCostTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/learningCurves.csv" p:startingYear="-50" p:delimiter="," p:variableName="Biomass_Inv" />
-        <bean id="biomassFixedOperatingCostTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/learningCurves.csv" p:startingYear="-50" p:delimiter="," p:variableName="Biomass_OM" />
-        <bean id="biomassEfficiencyTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/learningCurves.csv" p:startingYear="-50" p:delimiter="," p:variableName="Biomass_Eff" />
-        
-        <bean id="biogasPGT" class="emlab.gen.domain.technology.PowerGeneratingTechnology"
-                p:name="Biogas" p:capacity="500"
-                p:investmentCostTimeSeries-ref="biogasInvestmentCostTimeSeries"
-                p:fixedOperatingCostTimeSeries-ref="biogasFixedOperatingCostTimeSeries"
-                p:efficiencyTimeSeries-ref="biogasEfficiencyTimeSeries" 
-                p:co2CaptureEffciency="0" 
-                p:depreciationTime="15"
-                p:minimumRunningHours="0"
-                p:fixedOperatingCostModifierAfterLifetime=".05" p:expectedLifetime="30"
-                p:expectedLeadtime="3" p:expectedPermittime="1" p:minimumFuelQuality="0.5"
-                p:maximumInstalledCapacityFractionInCountry="1"
-                p:maximumInstalledCapacityFractionPerAgent="1"
-                p:baseSegmentDependentAvailability="0.7"
-                p:peakSegmentDependentAvailability="0.7"
-                p:applicableForLongTermContract="true"
-                p:intermittent="false">
-                <property name="fuels">
-                        <set>
-                                <ref bean="biomass" />
-                        </set>
-                </property>
-        </bean>
-        
-        <bean id="biogasInvestmentCostTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/learningCurves.csv" p:startingYear="-50" p:delimiter="," p:variableName="Biogas_Inv" />
-        <bean id="biogasFixedOperatingCostTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/learningCurves.csv" p:startingYear="-50" p:delimiter="," p:variableName="Biogas_OM" />
-        <bean id="biogasEfficiencyTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/learningCurves.csv" p:startingYear="-50" p:delimiter="," p:variableName="Biogas_Eff" />
-        
-        <bean id="windPGT" class="emlab.gen.domain.technology.PowerGeneratingTechnology"
-                p:name="Wind" p:capacity="600" 
-                p:investmentCostTimeSeries-ref="windInvestmentCostTimeSeries"
-                p:fixedOperatingCostTimeSeries-ref="windFixedOperatingCostTimeSeries"
-                p:efficiencyTimeSeries-ref="windEfficiencyTimeSeries" 
-                p:co2CaptureEffciency="0" 
-                p:depreciationTime="15"
-                p:minimumRunningHours="0"
-                p:fixedOperatingCostModifierAfterLifetime=".05" p:expectedLifetime="25"
-                p:expectedLeadtime="1" p:expectedPermittime="1" p:minimumFuelQuality="1"
-                p:maximumInstalledCapacityFractionInCountry="1"
-                p:maximumInstalledCapacityFractionPerAgent="1"
-                p:baseSegmentDependentAvailability="0.40"
-                p:peakSegmentDependentAvailability="0.05"
-                p:applicableForLongTermContract="true">
-        </bean>
-        
-        <bean id="windInvestmentCostTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/learningCurves.csv" p:startingYear="-50" p:delimiter="," p:variableName="Wind_Inv" />
-        <bean id="windFixedOperatingCostTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/learningCurves.csv" p:startingYear="-50" p:delimiter="," p:variableName="Wind_OM" />
-        <bean id="windEfficiencyTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/learningCurves.csv" p:startingYear="-50" p:delimiter="," p:variableName="Wind_Eff" />
-        
-        
-        <bean id="windOffshorePGT" class="emlab.gen.domain.technology.PowerGeneratingTechnology"
-                p:name="WindOffshore" p:capacity="600"
-                p:investmentCostTimeSeries-ref="windOffshoreInvestmentCostTimeSeries"
-                p:fixedOperatingCostTimeSeries-ref="windOffshoreFixedOperatingCostTimeSeries"
-                p:efficiencyTimeSeries-ref="windOffshoreEfficiencyTimeSeries" 
-                p:co2CaptureEffciency="0" 
-                p:depreciationTime="15"
-                p:minimumRunningHours="0"
-                p:fixedOperatingCostModifierAfterLifetime=".05" p:expectedLifetime="25"
-                p:expectedLeadtime="2" p:expectedPermittime="1" p:minimumFuelQuality="1"
-                p:maximumInstalledCapacityFractionInCountry="1"
-                p:maximumInstalledCapacityFractionPerAgent="1"
-                p:baseSegmentDependentAvailability="0.60"
-                p:peakSegmentDependentAvailability="0.07"
-                p:applicableForLongTermContract="true">
-        </bean>
-        
-        <bean id="windOffshoreInvestmentCostTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/learningCurves.csv" p:startingYear="-50" p:delimiter="," p:variableName="WindOffshore_Inv" />
-        <bean id="windOffshoreFixedOperatingCostTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/learningCurves.csv" p:startingYear="-50" p:delimiter="," p:variableName="WindOffshore_OM" />
-        <bean id="windOffshoreEfficiencyTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/learningCurves.csv" p:startingYear="-50" p:delimiter="," p:variableName="WindOffshore_Eff" />
-        
-        
-        <bean id="photovoltaicPGT" class="emlab.gen.domain.technology.PowerGeneratingTechnology"
-                p:name="Photovoltaic" p:capacity="500" 
-                p:investmentCostTimeSeries-ref="pvInvestmentCostTimeSeries"
-                p:fixedOperatingCostTimeSeries-ref="pvFixedOperatingCostTimeSeries"
-                p:efficiencyTimeSeries-ref="pvEfficiencyTimeSeries" 
-                p:co2CaptureEffciency="0" 
-                p:depreciationTime="15"
-                p:minimumRunningHours="0"
-                p:fixedOperatingCostModifierAfterLifetime=".05" p:expectedLifetime="25"
-                p:expectedLeadtime="1" p:expectedPermittime="0" p:minimumFuelQuality="1"
-                p:maximumInstalledCapacityFractionInCountry="1"
-                p:maximumInstalledCapacityFractionPerAgent="1"
-                p:baseSegmentDependentAvailability="0.20"
-                p:peakSegmentDependentAvailability="0.04"
-                p:applicableForLongTermContract="true">
-        </bean>
-        
-        
-        <bean id="pvInvestmentCostTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/learningCurves.csv" p:startingYear="-50" p:delimiter="," p:variableName="PV_Inv" />
-        <bean id="pvFixedOperatingCostTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/learningCurves.csv" p:startingYear="-50" p:delimiter="," p:variableName="PV_OM" />
-        <bean id="pvEfficiencyTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/learningCurves.csv" p:startingYear="-50" p:delimiter="," p:variableName="PV_Eff" />
-        
-        <bean id="nuclearPGT" class="emlab.gen.domain.technology.PowerGeneratingTechnology"
-                p:name="Nuclear" p:capacity="1000"
-                p:investmentCostTimeSeries-ref="nuclearInvestmentCostTimeSeries"
-                p:fixedOperatingCostTimeSeries-ref="nuclearFixedOperatingCostTimeSeries"
-                p:efficiencyTimeSeries-ref="nuclearEfficiencyTimeSeries" 
-                p:co2CaptureEffciency="0" 
-                p:depreciationTime="25"
-                p:minimumRunningHours="5000"
-                p:fixedOperatingCostModifierAfterLifetime=".05" p:expectedLifetime="40"
-                p:expectedLeadtime="5" p:expectedPermittime="2" p:minimumFuelQuality="1"
-                p:maximumInstalledCapacityFractionInCountry="1"
-                p:maximumInstalledCapacityFractionPerAgent="1"
-                p:baseSegmentDependentAvailability="1"
-                p:peakSegmentDependentAvailability="1"
-                p:applicableForLongTermContract="true"
-                p:intermittent="false">
-                <property name="fuels">
-                        <set>
-                                <ref bean="uranium" />
-                        </set>
-                </property>
-        </bean>
-        
-        <bean id="nuclearInvestmentCostTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0" p:start="2874800" />
-        <bean id="nuclearFixedOperatingCostTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0" p:start="71870" />
-        <bean id="nuclearEfficiencyTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0.00001" p:start=".33" />
+<bean id="coalPSCInvestmentCostTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0" p:start="1365530" />
+<bean id="coalPSCFixedOperatingCostTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0" p:start="40970" />
+<bean id="coalPSCEfficiencyTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0.0032724641" p:start=".44" />
+
+
+<bean id="lignitePGT" class="emlab.gen.domain.technology.PowerGeneratingTechnology"
+    p:name="Lignite" p:capacity="1000"
+    p:investmentCostTimeSeries-ref="ligniteInvestmentCostTimeSeries"
+    p:fixedOperatingCostTimeSeries-ref="ligniteFixedOperatingCostTimeSeries"
+    p:efficiencyTimeSeries-ref="ligniteEfficiencyTimeSeries"
+    p:co2CaptureEffciency="0"
+    p:depreciationTime="20"
+    p:minimumRunningHours="5000"
+    p:variableOperatingCostinEURPerMWh="3.20"
+    p:maximumLifeExtension="5"
+    p:fixedOperatingCostModifierAfterLifetime=".05" p:expectedLifetime="50"
+    p:expectedLeadtime="5" p:expectedPermittime="1" p:minimumFuelQuality=".95"
+    p:maximumInstalledCapacityFractionInCountry="1"
+    p:maximumInstalledCapacityFractionPerAgent="1"
+    p:baseSegmentDependentAvailability="1"
+    p:peakSegmentDependentAvailability="1"
+    p:applicableForLongTermContract="true"
+    p:intermittent="false">
+    <property name="fuels">
+        <set>
+            <ref bean="lignite" />
+        </set>
+    </property>
+</bean>
+
+<bean id="ligniteInvestmentCostTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0" p:start="1700000" />
+<bean id="ligniteFixedOperatingCostTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0" p:start="41545" />
+<bean id="ligniteEfficiencyTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0.005" p:start=".45" />
+
+<bean id="IGCC" class="emlab.gen.domain.technology.PowerGeneratingTechnology"
+    p:name="IGCC" p:capacity="758"
+    p:investmentCostTimeSeries-ref="igccInvestmentCostTimeSeries"
+    p:fixedOperatingCostTimeSeries-ref="igccFixedOperatingCostTimeSeries"
+    p:efficiencyTimeSeries-ref="igccEfficiencyTimeSeries"
+    p:co2CaptureEffciency="0"
+    p:depreciationTime="20" p:minimumRunningHours="0"
+    p:variableOperatingCostinEURPerMWh="5.23"
+    p:maximumLifeExtension="5"
+    p:fixedOperatingCostModifierAfterLifetime=".05" p:expectedLifetime="50"
+    p:expectedLeadtime="4" p:expectedPermittime="1" p:minimumFuelQuality=".9"
+    p:maximumInstalledCapacityFractionInCountry="1"
+    p:maximumInstalledCapacityFractionPerAgent="1"
+    p:baseSegmentDependentAvailability="1"
+    p:peakSegmentDependentAvailability="1"
+    p:applicableForLongTermContract="true"
+    p:intermittent="false">
+    <property name="fuels">
+        <set>
+            <ref bean="coal" />
+            <ref bean="biomass" />
+        </set>
+    </property>
+</bean>
+
+<bean id="igccInvestmentCostTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/learningCurves.csv" p:startingYear="-50" p:delimiter="," p:variableName="Igcc_Inv" />
+<bean id="igccFixedOperatingCostTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/learningCurves.csv" p:startingYear="-50" p:delimiter="," p:variableName="Igcc_OM" />
+<bean id="igccEfficiencyTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/learningCurves.csv" p:startingYear="-50" p:delimiter="," p:variableName="Igcc_Eff" />
+
+<bean id="coalPscCSS" class="emlab.gen.domain.technology.PowerGeneratingTechnology"
+    p:name="CoalPscCSS" p:capacity="600"
+    p:investmentCostTimeSeries-ref="coalPulverizedCSSInvestmentCostTimeSeries"
+    p:fixedOperatingCostTimeSeries-ref="coalPulverizedCSSFixedOperatingCostTimeSeries"
+    p:efficiencyTimeSeries-ref="coalPulverizedCSSEfficiencyTimeSeries"
+    p:co2CaptureEffciency="0.875"
+    p:depreciationTime="20" p:minimumRunningHours="5000"
+    p:variableOperatingCostinEURPerMWh="3.22"
+    p:maximumLifeExtension="5"
+    p:fixedOperatingCostModifierAfterLifetime=".05" p:expectedLifetime="50"
+    p:expectedLeadtime="4" p:expectedPermittime="1" p:minimumFuelQuality=".9"
+    p:maximumInstalledCapacityFractionInCountry="1"
+    p:maximumInstalledCapacityFractionPerAgent="1"
+    p:baseSegmentDependentAvailability="1"
+    p:peakSegmentDependentAvailability="1"
+    p:applicableForLongTermContract="true"
+    p:intermittent="false">
+    <property name="fuels">
+        <set>
+            <ref bean="coal" />
+            <ref bean="biomass" />
+        </set>
+    </property>
+</bean>
+
+<bean id="coalPulverizedCSSInvestmentCostTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="-0.0098011846" p:start="2457950" />
+<bean id="coalPulverizedCSSFixedOperatingCostTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="-0.0099617099" p:start="74030" />
+<bean id="coalPulverizedCSSEfficiencyTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0.0011744757" p:start=".35" />
+
+<bean id="igccCCS" class="emlab.gen.domain.technology.PowerGeneratingTechnology"
+    p:name="IgccCCS" p:capacity="600"
+    p:investmentCostTimeSeries-ref="igccCCSInvestmentCostTimeSeries"
+    p:fixedOperatingCostTimeSeries-ref="igccCCSFixedOperatingCostTimeSeries"
+    p:efficiencyTimeSeries-ref="igccCCSEfficiencyTimeSeries"
+    p:co2CaptureEffciency="0.875"
+    p:depreciationTime="20" p:minimumRunningHours="0"
+    p:variableOperatingCostinEURPerMWh="5.93"
+    p:maximumLifeExtension="5"
+    p:fixedOperatingCostModifierAfterLifetime=".05" p:expectedLifetime="50"
+    p:expectedLeadtime="4" p:expectedPermittime="1" p:minimumFuelQuality=".9"
+    p:maximumInstalledCapacityFractionInCountry="1"
+    p:maximumInstalledCapacityFractionPerAgent="1"
+    p:baseSegmentDependentAvailability="1"
+    p:peakSegmentDependentAvailability="1"
+    p:applicableForLongTermContract="true"
+    p:intermittent="false">
+    <property name="fuels">
+        <set>
+            <ref bean="coal" />
+            <ref bean="biomass" />
+        </set>
+    </property>
+</bean>
+
+<bean id="igccCCSInvestmentCostTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/learningCurves.csv" p:startingYear="-50" p:delimiter="," p:variableName="IgccCCS_Inv" />
+<bean id="igccCCSFixedOperatingCostTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/learningCurves.csv" p:startingYear="-50" p:delimiter="," p:variableName="IgccCCS_OM" />
+<bean id="igccCCSEfficiencyTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/learningCurves.csv" p:startingYear="-50" p:delimiter="," p:variableName="IgccCCS_Eff" />
+
+<bean id="CCGT" class="emlab.gen.domain.technology.PowerGeneratingTechnology"
+    p:name="CCGT" p:capacity="776"
+    p:investmentCostTimeSeries-ref="ccgtInvestmentCostTimeSeries"
+    p:fixedOperatingCostTimeSeries-ref="ccgtFixedOperatingCostTimeSeries"
+    p:efficiencyTimeSeries-ref="ccgtEfficiencyTimeSeries"
+    p:co2CaptureEffciency="0"
+    p:depreciationTime="15" p:minimumRunningHours="0"
+    p:variableOperatingCostinEURPerMWh="2.53"
+    p:maximumLifeExtension="10"
+    p:fixedOperatingCostModifierAfterLifetime=".05" p:expectedLifetime="40"
+    p:expectedLeadtime="2" p:expectedPermittime="1" p:minimumFuelQuality="1"
+    p:maximumInstalledCapacityFractionInCountry="1"
+    p:maximumInstalledCapacityFractionPerAgent="1"
+    p:baseSegmentDependentAvailability="1"
+    p:peakSegmentDependentAvailability="1"
+    p:applicableForLongTermContract="true"
+    p:intermittent="false">
+    <property name="fuels">
+        <set>
+            <ref bean="naturalgas" />
+        </set>
+    </property>
+</bean>
+
+<bean id="ccgtInvestmentCostTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="-0.0075679493" p:start="646830" />
+<bean id="ccgtFixedOperatingCostTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0" p:start="29470" />
+<bean id="ccgtEfficiencyTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0.002068676" p:start=".59" />
+
+<bean id="ccgtCCS" class="emlab.gen.domain.technology.PowerGeneratingTechnology"
+    p:name="CcgtCCS" p:capacity="600"
+    p:investmentCostTimeSeries-ref="ccgtCCSInvestmentCostTimeSeries"
+    p:fixedOperatingCostTimeSeries-ref="ccgtCCSFixedOperatingCostTimeSeries"
+    p:efficiencyTimeSeries-ref="ccgtCCSEfficiencyTimeSeries"
+    p:co2CaptureEffciency="0.85"
+    p:depreciationTime="15" p:minimumRunningHours="0"
+    p:variableOperatingCostinEURPerMWh="4.76"
+    p:maximumLifeExtension="10"
+    p:fixedOperatingCostModifierAfterLifetime=".05" p:expectedLifetime="40"
+    p:expectedLeadtime="3" p:expectedPermittime="1" p:minimumFuelQuality="1"
+    p:maximumInstalledCapacityFractionInCountry="1"
+    p:maximumInstalledCapacityFractionPerAgent="1"
+    p:baseSegmentDependentAvailability="1"
+    p:peakSegmentDependentAvailability="1"
+    p:applicableForLongTermContract="true"
+    p:intermittent="false">
+    <property name="fuels">
+        <set>
+            <ref bean="naturalgas" />
+        </set>
+    </property>
+</bean>
+
+<bean id="ccgtCCSInvestmentCostTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/learningCurves.csv" p:startingYear="-50" p:delimiter="," p:variableName="CcgtCCS_Inv" />
+<bean id="ccgtCCSFixedOperatingCostTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/learningCurves.csv" p:startingYear="-50" p:delimiter="," p:variableName="CcgtCCS_OM" />
+<bean id="ccgtCCSEfficiencyTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/learningCurves.csv" p:startingYear="-50" p:delimiter="," p:variableName="CcgtCCS_Eff" />
+
+
+<bean id="OCGT" class="emlab.gen.domain.technology.PowerGeneratingTechnology"
+    p:name="OCGT" p:capacity="150"
+    p:investmentCostTimeSeries-ref="ocgtCCSInvestmentCostTimeSeries"
+    p:fixedOperatingCostTimeSeries-ref="ocgtCCSFixedOperatingCostTimeSeries"
+    p:efficiencyTimeSeries-ref="ocgtCCSEfficiencyTimeSeries"
+    p:co2CaptureEffciency="0"
+    p:depreciationTime="15" p:minimumRunningHours="0"
+    p:variableOperatingCostinEURPerMWh="1.22"
+    p:maximumLifeExtension="10"
+    p:fixedOperatingCostModifierAfterLifetime=".05" p:expectedLifetime="30"
+    p:expectedLeadtime="1" p:expectedPermittime="0" p:minimumFuelQuality="1"
+    p:maximumInstalledCapacityFractionInCountry="1"
+    p:maximumInstalledCapacityFractionPerAgent="1"
+    p:baseSegmentDependentAvailability="1"
+    p:peakSegmentDependentAvailability="1"
+    p:applicableForLongTermContract="true"
+    p:intermittent="false">
+    <property name="fuels">
+        <set>
+            <ref bean="naturalgas" />
+        </set>
+    </property>
+</bean>
+
+<bean id="ocgtCCSInvestmentCostTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0" p:start="359350" />
+<bean id="ocgtCCSFixedOperatingCostTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0" p:start="14370" />
+<bean id="ocgtCCSEfficiencyTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0.002068676" p:start="0.38" />
+
+<bean id="biomassPGT" class="emlab.gen.domain.technology.PowerGeneratingTechnology"
+    p:name="Biomass" p:capacity="500"
+    p:investmentCostTimeSeries-ref="biomassInvestmentCostTimeSeries"
+    p:fixedOperatingCostTimeSeries-ref="biomassFixedOperatingCostTimeSeries"
+    p:efficiencyTimeSeries-ref="biomassEfficiencyTimeSeries"
+    p:co2CaptureEffciency="0"
+    p:depreciationTime="15"
+    p:minimumRunningHours="5000"
+    p:variableOperatingCostinEURPerMWh="3.81"
+    p:maximumLifeExtension="10"
+    p:fixedOperatingCostModifierAfterLifetime=".05" p:expectedLifetime="40"
+    p:expectedLeadtime="3" p:expectedPermittime="1" p:minimumFuelQuality="0.5"
+    p:maximumInstalledCapacityFractionInCountry="1"
+    p:maximumInstalledCapacityFractionPerAgent="1"
+    p:baseSegmentDependentAvailability="0.7"
+    p:peakSegmentDependentAvailability="0.7"
+    p:applicableForLongTermContract="true"
+    p:intermittent="false">
+    <property name="fuels">
+        <set>
+            <ref bean="biomass" />
+        </set>
+    </property>
+</bean>
+
+<bean id="biomassInvestmentCostTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/learningCurves.csv" p:startingYear="-50" p:delimiter="," p:variableName="Biomass_Inv" />
+<bean id="biomassFixedOperatingCostTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/learningCurves.csv" p:startingYear="-50" p:delimiter="," p:variableName="Biomass_OM" />
+<bean id="biomassEfficiencyTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/learningCurves.csv" p:startingYear="-50" p:delimiter="," p:variableName="Biomass_Eff" />
+
+<bean id="biogasPGT" class="emlab.gen.domain.technology.PowerGeneratingTechnology"
+    p:name="Biogas" p:capacity="500"
+    p:investmentCostTimeSeries-ref="biogasInvestmentCostTimeSeries"
+    p:fixedOperatingCostTimeSeries-ref="biogasFixedOperatingCostTimeSeries"
+    p:efficiencyTimeSeries-ref="biogasEfficiencyTimeSeries"
+    p:co2CaptureEffciency="0"
+    p:depreciationTime="15"
+    p:minimumRunningHours="0"
+    p:variableOperatingCostinEURPerMWh="6.28"
+    p:maximumLifeExtension="10"
+    p:fixedOperatingCostModifierAfterLifetime=".05" p:expectedLifetime="30"
+    p:expectedLeadtime="3" p:expectedPermittime="1" p:minimumFuelQuality="0.5"
+    p:maximumInstalledCapacityFractionInCountry="1"
+    p:maximumInstalledCapacityFractionPerAgent="1"
+    p:baseSegmentDependentAvailability="0.7"
+    p:peakSegmentDependentAvailability="0.7"
+    p:applicableForLongTermContract="true"
+    p:intermittent="false">
+    <property name="fuels">
+        <set>
+            <ref bean="biomass" />
+        </set>
+    </property>
+</bean>
+
+<bean id="biogasInvestmentCostTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/learningCurves.csv" p:startingYear="-50" p:delimiter="," p:variableName="Biogas_Inv" />
+<bean id="biogasFixedOperatingCostTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/learningCurves.csv" p:startingYear="-50" p:delimiter="," p:variableName="Biogas_OM" />
+<bean id="biogasEfficiencyTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/learningCurves.csv" p:startingYear="-50" p:delimiter="," p:variableName="Biogas_Eff" />
+
+<bean id="windPGT" class="emlab.gen.domain.technology.PowerGeneratingTechnology"
+    p:name="Wind" p:capacity="600"
+    p:investmentCostTimeSeries-ref="windInvestmentCostTimeSeries"
+    p:fixedOperatingCostTimeSeries-ref="windFixedOperatingCostTimeSeries"
+    p:efficiencyTimeSeries-ref="windEfficiencyTimeSeries"
+    p:co2CaptureEffciency="0"
+    p:depreciationTime="15"
+    p:minimumRunningHours="0"
+    p:variableOperatingCostinEURPerMWh="0"
+    p:maximumLifeExtension="0"
+    p:fixedOperatingCostModifierAfterLifetime=".05" p:expectedLifetime="25"
+    p:expectedLeadtime="1" p:expectedPermittime="1" p:minimumFuelQuality="1"
+    p:maximumInstalledCapacityFractionInCountry="1"
+    p:maximumInstalledCapacityFractionPerAgent="1"
+    p:baseSegmentDependentAvailability="0.40"
+    p:peakSegmentDependentAvailability="0.05"
+    p:applicableForLongTermContract="true">
+</bean>
+
+<bean id="windInvestmentCostTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/learningCurves.csv" p:startingYear="-50" p:delimiter="," p:variableName="Wind_Inv" />
+<bean id="windFixedOperatingCostTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/learningCurves.csv" p:startingYear="-50" p:delimiter="," p:variableName="Wind_OM" />
+<bean id="windEfficiencyTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/learningCurves.csv" p:startingYear="-50" p:delimiter="," p:variableName="Wind_Eff" />
+
+
+<bean id="windOffshorePGT" class="emlab.gen.domain.technology.PowerGeneratingTechnology"
+    p:name="WindOffshore" p:capacity="600"
+    p:investmentCostTimeSeries-ref="windOffshoreInvestmentCostTimeSeries"
+    p:fixedOperatingCostTimeSeries-ref="windOffshoreFixedOperatingCostTimeSeries"
+    p:efficiencyTimeSeries-ref="windOffshoreEfficiencyTimeSeries"
+    p:co2CaptureEffciency="0"
+    p:depreciationTime="15"
+    p:minimumRunningHours="0"
+    p:variableOperatingCostinEURPerMWh="0"
+    p:maximumLifeExtension="0"
+    p:fixedOperatingCostModifierAfterLifetime=".05" p:expectedLifetime="25"
+    p:expectedLeadtime="2" p:expectedPermittime="1" p:minimumFuelQuality="1"
+    p:maximumInstalledCapacityFractionInCountry="1"
+    p:maximumInstalledCapacityFractionPerAgent="1"
+    p:baseSegmentDependentAvailability="0.60"
+    p:peakSegmentDependentAvailability="0.07"
+    p:applicableForLongTermContract="true">
+</bean>
+
+<bean id="windOffshoreInvestmentCostTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/learningCurves.csv" p:startingYear="-50" p:delimiter="," p:variableName="WindOffshore_Inv" />
+<bean id="windOffshoreFixedOperatingCostTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/learningCurves.csv" p:startingYear="-50" p:delimiter="," p:variableName="WindOffshore_OM" />
+<bean id="windOffshoreEfficiencyTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/learningCurves.csv" p:startingYear="-50" p:delimiter="," p:variableName="WindOffshore_Eff" />
+
+
+<bean id="photovoltaicPGT" class="emlab.gen.domain.technology.PowerGeneratingTechnology"
+    p:name="Photovoltaic" p:capacity="500"
+    p:investmentCostTimeSeries-ref="pvInvestmentCostTimeSeries"
+    p:fixedOperatingCostTimeSeries-ref="pvFixedOperatingCostTimeSeries"
+    p:efficiencyTimeSeries-ref="pvEfficiencyTimeSeries"
+    p:co2CaptureEffciency="0"
+    p:depreciationTime="15"
+    p:minimumRunningHours="0"
+    p:variableOperatingCostinEURPerMWh="0"
+    p:maximumLifeExtension="0"
+    p:fixedOperatingCostModifierAfterLifetime=".05" p:expectedLifetime="25"
+    p:expectedLeadtime="1" p:expectedPermittime="0" p:minimumFuelQuality="1"
+    p:maximumInstalledCapacityFractionInCountry="1"
+    p:maximumInstalledCapacityFractionPerAgent="1"
+    p:baseSegmentDependentAvailability="0.20"
+    p:peakSegmentDependentAvailability="0.04"
+    p:applicableForLongTermContract="true">
+</bean>
+
+
+<bean id="pvInvestmentCostTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/learningCurves.csv" p:startingYear="-50" p:delimiter="," p:variableName="PV_Inv" />
+<bean id="pvFixedOperatingCostTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/learningCurves.csv" p:startingYear="-50" p:delimiter="," p:variableName="PV_OM" />
+<bean id="pvEfficiencyTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/learningCurves.csv" p:startingYear="-50" p:delimiter="," p:variableName="PV_Eff" />
+
+<bean id="nuclearPGT" class="emlab.gen.domain.technology.PowerGeneratingTechnology"
+    p:name="Nuclear" p:capacity="1000"
+    p:investmentCostTimeSeries-ref="nuclearInvestmentCostTimeSeries"
+    p:fixedOperatingCostTimeSeries-ref="nuclearFixedOperatingCostTimeSeries"
+    p:efficiencyTimeSeries-ref="nuclearEfficiencyTimeSeries"
+    p:co2CaptureEffciency="0"
+    p:depreciationTime="25"
+    p:minimumRunningHours="5000"
+    p:variableOperatingCostinEURPerMWh="1.6"
+    p:maximumLifeExtension="10"
+    p:fixedOperatingCostModifierAfterLifetime=".05" p:expectedLifetime="40"
+    p:expectedLeadtime="5" p:expectedPermittime="2" p:minimumFuelQuality="1"
+    p:maximumInstalledCapacityFractionInCountry="1"
+    p:maximumInstalledCapacityFractionPerAgent="1"
+    p:baseSegmentDependentAvailability="1"
+    p:peakSegmentDependentAvailability="1"
+    p:applicableForLongTermContract="true"
+    p:intermittent="false">
+    <property name="fuels">
+        <set>
+            <ref bean="uranium" />
+        </set>
+    </property>
+</bean>
+
+<bean id="nuclearInvestmentCostTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0" p:start="2874800" />
+<bean id="nuclearFixedOperatingCostTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0" p:start="71870" />
+<bean id="nuclearEfficiencyTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0.00001" p:start=".33" />
 
 	<!-- Parameter file -->
 	<bean id="projectPropertyConfigurer"

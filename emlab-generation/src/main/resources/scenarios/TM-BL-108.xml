@@ -353,7 +353,7 @@
 		p:investorMarket-ref="germanElectricitySpotMarket"/>
 	
 
-	<bean id="standardInvestmentRole" class="emlab.gen.role.investment.InvestInPowerGenerationTechnologiesRole"/>
+	<bean id="standardInvestmentRole" class="emlab.gen.role.investment.InvestInPowerGenerationTechnologiesRoleforEconomicDismantling"/>
 	
 	<!-- PowerGenerationTechnology Node Limits -->
 	

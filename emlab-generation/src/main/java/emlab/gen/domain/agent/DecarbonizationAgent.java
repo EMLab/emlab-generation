@@ -26,10 +26,28 @@ public class DecarbonizationAgent extends AbstractAgent {
     private double co2Allowances;
     private String name;
     private double lastYearsCo2Allowances;
+    private double temporaryCashComparatorDismantling;
+    private double temporaryRESCapacityPredictor;
+
+    public double getTemporaryRESCapacityPredictor() {
+        return temporaryRESCapacityPredictor;
+    }
+
+    public void setTemporaryRESCapacityPredictor(double temporaryRESCapacityPredictor) {
+        this.temporaryRESCapacityPredictor = temporaryRESCapacityPredictor;
+    }
 
     @Override
     public String getName() {
         return name;
+    }
+
+    public double getTemporaryCashComparatorDismantling() {
+        return temporaryCashComparatorDismantling;
+    }
+
+    public void setTemporaryCashComparatorDismantling(double temporaryCashComparatorDismantling) {
+        this.temporaryCashComparatorDismantling = temporaryCashComparatorDismantling;
     }
 
     @Override
