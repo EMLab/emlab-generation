@@ -19,6 +19,7 @@ import cern.colt.matrix.impl.DenseDoubleMatrix2D;
 import cern.jet.math.Functions;
 import emlab.gen.domain.agent.DecarbonizationModel;
 import emlab.gen.domain.gis.Zone;
+import emlab.gen.domain.market.electricity.IntermittentTechnologyNodeLoadFactor;
 import emlab.gen.domain.market.electricity.Segment;
 import emlab.gen.domain.market.electricity.SegmentLoad;
 import emlab.gen.domain.technology.Interconnector;
@@ -585,6 +586,7 @@ Role<DecarbonizationModel> {
             logger.warn(segmentLength);
         }
 
+        // 9. Store the load factors in the IntermittentTechnologyLoadFactors
 
         String loadFactors;
         for (Zone zone : zoneList) {
@@ -593,6 +595,15 @@ Role<DecarbonizationModel> {
                 for (PowerGeneratingTechnology technology : technologyList) {
                     // logger.warn("Bins for " + zone + ", " + node + "and " +
                     // technology);
+                    IntermittentTechnologyNodeLoadFactor intTechnologyNodeLoadFactor = reps.intermittentTechnologyNodeLoadFactorRepository
+                            .findIntermittentTechnologyNodeLoadFactorForNodeAndTechnology(node, technology);
+                    if (intTechnologyNodeLoadFactor == null) {
+                        intTechnologyNodeLoadFactor = new IntermittentTechnologyNodeLoadFactor().persist();
+                        intTechnologyNodeLoadFactor.setLoadFactors(new double[noSegments]);
+                        intTechnologyNodeLoadFactor.setNode(node);
+                        intTechnologyNodeLoadFactor.setTechnology(technology);
+                    }
+                    ;
                     it = 1;
                     for (DynamicBin1D bin : loadFactorBinMap.get(zone).get(node).get(technology)) {
                         // logger.warn("Segment " + it + "\n      Size: " +
@@ -600,6 +611,7 @@ Role<DecarbonizationModel> {
                         // + bin.mean() + "\n      Max RLOAD~: " + bin.max() +
                         // "\n      Min RLOAD~: " + bin.min()
                         // + "\n      Std RLOAD~: " + bin.standardDeviation());
+                        intTechnologyNodeLoadFactor.setLoadFactorForSegmentId(it, bin.mean());
                         double mean = bin.mean() * 1000;
                         mean = Math.round(mean);
                         mean = mean / 1000.0;
@@ -631,7 +643,6 @@ Role<DecarbonizationModel> {
             segment.setLengthInHours(segmentRloadBins[segment.getSegmentID() - 1].size());
         }
 
-        // 9. Afterwards: clear the market, determine revenues.
 
     }
 
