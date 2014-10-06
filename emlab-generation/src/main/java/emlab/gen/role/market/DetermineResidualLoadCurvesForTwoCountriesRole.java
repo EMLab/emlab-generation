@@ -241,7 +241,8 @@ Role<DecarbonizationModel> {
         // intermittent production if over supply.
         // In the end calculate the total residual load curve over all
         // countries.
-        logger.warn("First 10 values of matrix: \n " + m.viewPart(0, 0, 10, m.columns()).toString());
+        // logger.warn("First 10 values of matrix: \n " + m.viewPart(0, 0, 10,
+        // m.columns()).toString());
 
         Zone zoneA = zoneList.get(0);
         Zone zoneB = zoneList.get(1);
@@ -345,7 +346,7 @@ Role<DecarbonizationModel> {
         DoubleMatrix1D differenceVector = m.viewColumn(12).copy();
         differenceVector.assign(m.viewColumn(13), Functions.minus);
         double result = differenceVector.aggregate(Functions.plus, Functions.identity);
-        logger.warn("Result: " + result);
+        // logger.warn("Result: " + result);
         // Divide all the technology load factors in the zone by the spill
         // factors above
         for (Zone zone : zoneList) {
@@ -643,7 +644,32 @@ Role<DecarbonizationModel> {
             segment.setLengthInHours(segmentRloadBins[segment.getSegmentID() - 1].size());
         }
 
+        for (Zone zone : zoneList) {
+            double intermittentCapacityOfTechnologyInZone=0;
 
+
+
+
+            for (PowerGeneratingTechnology technology : technologyList) {
+                double productionOfTechInZone = 0;
+
+                for (PowerGridNode node : zoneToNodeList.get(zone)) {
+
+                    intermittentCapacityOfTechnologyInZone += reps.powerPlantRepository
+                            .calculateCapacityOfOperationalIntermittentPowerPlantsByPowerGridNodeAndTechnology(node, technology,
+                                    getCurrentTick());
+                    productionOfTechInZone += m.viewColumn(
+                            TECHNOLOGYLOADFACTORSFORZONEANDNODE.get(zone).get(node).get(technology)).zSum()
+                            * intermittentCapacityOfTechnologyInZone;
+
+
+                }
+
+                logger.warn(technology.getName() + " is producing " + productionOfTechInZone + " MWh in "
+                        + zone.getName() + ".");
+
+            }
+        }
     }
 
     public Reps getReps() {
