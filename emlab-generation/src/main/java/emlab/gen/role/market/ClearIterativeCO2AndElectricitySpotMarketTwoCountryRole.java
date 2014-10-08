@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 the original author or authors.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -48,14 +48,14 @@ import emlab.gen.util.Utils;
  * The market is divided into {@link Segment}s and cleared for each segment. A
  * global CO2 emissions market is cleared. The process is iterative and the
  * target is to let the total emissions match the cap.
- * 
+ *
  * @author <a href="mailto:E.J.L.Chappin@tudelft.nl">Emile Chappin</a>
- * 
+ *
  * @author <a href="mailto:A.Chmieliauskas@tudelft.nl">Alfredas
  *         Chmieliauskas</a>
- * 
+ *
  * @author <a href="mailto:J.C.Richstein@tudelft.nl">Joern C. Richstein</a>
- * 
+ *
  */
 @RoleComponent
 public class ClearIterativeCO2AndElectricitySpotMarketTwoCountryRole extends
@@ -277,7 +277,7 @@ AbstractClearElectricitySpotMarketRole<DecarbonizationModel> implements Role<Dec
 
     /**
      * Clears a time segment of all electricity markets for a given CO2 price.
-     * 
+     *
      * @param powerPlants
      *            to be used
      * @param markets

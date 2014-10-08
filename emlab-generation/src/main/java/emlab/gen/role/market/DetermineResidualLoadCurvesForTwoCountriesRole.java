@@ -378,11 +378,30 @@ Role<DecarbonizationModel> {
 
         double min = m.viewColumn(RLOADTOTAL).aggregate(Functions.min, Functions.identity);
         double max = m.viewColumn(RLOADTOTAL).aggregate(Functions.max, Functions.identity);
+        double hoursWithoutZeroRLoad = 0;
+        for (int row = 0; row < m.rows(); row++) {
+            if (m.get(row, RLOADTOTAL) > 0) {
+                hoursWithoutZeroRLoad++;
+            } else {
+                break;
+            }
+
+        }
 
         int noSegments = (int) reps.segmentRepository.count();
 
         double[] upperBoundSplit = new double[noSegments];
 
+        if (hoursWithoutZeroRLoad > 8750) {
+            for (int i = 0; i < noSegments; i++) {
+                upperBoundSplit[i] = max - (((double) (i)) / noSegments * (max - min));
+            }
+        } else {
+            for (int i = 0; i < (noSegments - 1); i++) {
+                upperBoundSplit[i] = max - (((double) (i)) / (noSegments - 1) * (max - min));
+            }
+            upperBoundSplit[noSegments - 1] = 0;
+        }
         // 7. Create DynamicBins as representation for segments and for later
         // calculation of means, no etc. Per bin one sort of information (e.g.
         // residual
@@ -400,9 +419,6 @@ Role<DecarbonizationModel> {
             segmentInterConnectorBins[i] = new DynamicBin1D();
         }
 
-        for (int i = 0; i < noSegments; i++) {
-            upperBoundSplit[i] = max - (((double) (i)) / noSegments * (max - min));
-        }
 
         Map<Zone, DynamicBin1D[]> segmentRloadBinsByZone = new HashMap<Zone, DynamicBin1D[]>();
         Map<Zone, DynamicBin1D[]> segmentLoadBinsByZone = new HashMap<Zone, DynamicBin1D[]>();
@@ -442,11 +458,14 @@ Role<DecarbonizationModel> {
 
         // Assign hours and load to bins and segments
         int currentSegmentID = 1;
+        int hoursAssignedToCurrentSegment = 0;
         for (int row = 0; row < m.rows() && currentSegmentID <= noSegments; row++) {
             // IMPORTANT: since [] is zero-based index, it checks one index
             // ahead of current segment.
-            while (currentSegmentID < noSegments && m.get(row, RLOADTOTAL) <= upperBoundSplit[currentSegmentID]) {
+            while (currentSegmentID < noSegments && hoursAssignedToCurrentSegment > 0
+                    && m.get(row, RLOADTOTAL) <= upperBoundSplit[currentSegmentID]) {
                 currentSegmentID++;
+                hoursAssignedToCurrentSegment = 0;
             }
             m.set(row, SEGMENT, currentSegmentID);
             segmentRloadBins[currentSegmentID - 1].add(m.get(row, RLOADTOTAL));
@@ -455,6 +474,7 @@ Role<DecarbonizationModel> {
                 segmentLoadBinsByZone.get(zone)[currentSegmentID - 1].add(m.get(row, LOADINZONE.get(zone)));
             }
             segmentInterConnectorBins[currentSegmentID - 1].add(m.get(row, INTERCONNECTOR));
+            hoursAssignedToCurrentSegment++;
         }
 
         for (Zone zone : zoneList) {
@@ -464,13 +484,17 @@ Role<DecarbonizationModel> {
                     DynamicBin1D[] currentBinArray = loadFactorBinMap.get(zone).get(node).get(technology);
                     int columnNumber = TECHNOLOGYLOADFACTORSFORZONEANDNODE.get(zone).get(node).get(technology);
                     currentSegmentID = 1;
+                    hoursAssignedToCurrentSegment = 0;
                     for (int row = 0; row < m.rows() && currentSegmentID <= noSegments; row++) {
                         // IMPORTANT: since [] is zero-based index, it checks one index
                         // ahead of current segment.
-                        while (currentSegmentID < noSegments && m.get(row, RLOADTOTAL) <= upperBoundSplit[currentSegmentID]) {
+                        while (currentSegmentID < noSegments && hoursAssignedToCurrentSegment > 0
+                                && m.get(row, RLOADTOTAL) <= upperBoundSplit[currentSegmentID]) {
                             currentSegmentID++;
+                            hoursAssignedToCurrentSegment = 0;
                         }
                         currentBinArray[currentSegmentID - 1].add(m.get(row,columnNumber));
+                        hoursAssignedToCurrentSegment++;
                     }
                     loadFactorBinMap.get(zone).get(node).put(technology, currentBinArray);
                 }
@@ -495,15 +519,19 @@ Role<DecarbonizationModel> {
             m = m.viewSorted(RLOADINZONE.get(zone)).viewRowFlip();
             int hoursInDifferentSegment = 0;
             double averageSegmentDeviation = 0;
+            hoursAssignedToCurrentSegment = 0;
             for (int row = 0; row < m.rows() && currentSegmentID <= noSegments; row++) {
-                while (currentSegmentID < noSegments && m.get(row, RLOADINZONE.get(zone)) <= upperBoundSplitInZone[currentSegmentID]) {
+                while (currentSegmentID < noSegments && hoursAssignedToCurrentSegment > 0
+                        && m.get(row, RLOADINZONE.get(zone)) <= upperBoundSplitInZone[currentSegmentID]) {
                     currentSegmentID++;
+                    hoursAssignedToCurrentSegment = 0;
                 }
                 m.set(row, SEGMENTFORZONE.get(zone), currentSegmentID);
                 if (currentSegmentID != m.get(row, SEGMENT)) {
                     hoursInDifferentSegment++;
                     averageSegmentDeviation += Math.abs(currentSegmentID - m.get(row, SEGMENT));
                 }
+                hoursAssignedToCurrentSegment++;
             }
             if (hoursInDifferentSegment != 0) {
                 averageSegmentDeviation = averageSegmentDeviation / hoursInDifferentSegment;
