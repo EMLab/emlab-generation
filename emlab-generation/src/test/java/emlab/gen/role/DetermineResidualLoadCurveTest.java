@@ -199,18 +199,18 @@ public class DetermineResidualLoadCurveTest {
         // segmentLoadMarket2S1.setBaseLoad(600);
 
         SegmentLoad segmentLoadMarket1S3 = new SegmentLoad().persist();
-        segmentLoadMarket1S1.setSegment(S3);
+        segmentLoadMarket1S3.setSegment(S3);
         // segmentLoadMarket1S1.setBaseLoad(790);
 
         SegmentLoad segmentLoadMarket2S3 = new SegmentLoad().persist();
-        segmentLoadMarket2S1.setSegment(S3);
+        segmentLoadMarket2S3.setSegment(S3);
 
         SegmentLoad segmentLoadMarket1S4 = new SegmentLoad().persist();
-        segmentLoadMarket1S1.setSegment(S4);
+        segmentLoadMarket1S4.setSegment(S4);
         // segmentLoadMarket1S1.setBaseLoad(790);
 
         SegmentLoad segmentLoadMarket2S4 = new SegmentLoad().persist();
-        segmentLoadMarket2S1.setSegment(S4);
+        segmentLoadMarket2S4.setSegment(S4);
         // segmentLoadMarket2S1.setBaseLoad(600);
 
         Set<SegmentLoad> segmentLoads1 = new HashSet<SegmentLoad>();

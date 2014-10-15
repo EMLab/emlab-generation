@@ -191,7 +191,8 @@ Role<DecarbonizationModel> {
                             .calculateCapacityOfOperationalIntermittentPowerPlantsByPowerGridNodeAndTechnology(node, technology,
                                     getCurrentTick());
 
-                    logger.warn(technology.getName() + ": " + intermittentCapacityOfTechnologyInNode + " MW.");
+                    logger.warn(technology.getName() + ": " + intermittentCapacityOfTechnologyInNode + " MW in Node "
+                            + node.getName() + " and Zone: " + zone.getName());
 
                     IntermittentResourceProfile intermittentResourceProfile = reps.intermittentResourceProfileRepository
                             .findIntermittentResourceProfileByTechnologyAndNode(technology, node);
@@ -207,30 +208,36 @@ Role<DecarbonizationModel> {
                     // Add to zonal-technological RES column
 
                     // Substracts the above from the residual load curve
-                    m.viewColumn(RLOADINZONE.get(zone)).assign(m.viewColumn(IPROD.get(zone)), Functions.minus);
-
-                    // Assign minimum of -interConnectorCapacity to national
-                    // residual load
-                    m.viewColumn(RLOADINZONE.get(zone)).assign(m.viewColumn(INTERCONNECTOR), Functions.max);
-
-                    // Assign a maximum production value of Load +
-                    // interconnector capacity of INTPROD
-                    DoubleMatrix1D loadPlusInterconnector = m.viewColumn(LOADINZONE.get(zone)).copy();
-                    // Need to substract interconnector capacity, since defined
-                    // negatively.
-                    loadPlusInterconnector.assign(m.viewColumn(INTERCONNECTOR), Functions.minus);
-                    DoubleMatrix1D spillVector = loadPlusInterconnector.copy();
-                    spillVector.assign(m.viewColumn(IPROD.get(zone)), Functions.div);
-                    spillVector.assign(oneVector, Functions.min);
-                    m.viewColumn(TECHNOLOGYLOADFACTORSFORZONEANDNODE.get(zone).get(node).get(technology)).assign(spillVector,
-                            Functions.mult);
-                    m.viewColumn(IPROD.get(zone)).assign(loadPlusInterconnector, Functions.min);
+                    m.viewColumn(RLOADINZONE.get(zone)).assign(hourlyProductionPerNode, Functions.minus);
 
                 }
 
             }
 
             m.viewColumn(RLOADTOTAL).assign(m.viewColumn(RLOADINZONE.get(zone)), Functions.plus);
+            // Assign minimum of -interConnectorCapacity to national
+            // residual load
+            m.viewColumn(RLOADINZONE.get(zone)).assign(m.viewColumn(INTERCONNECTOR), Functions.max);
+
+            // Assign a maximum production value of Load +
+            // interconnector capacity of INTPROD
+            DoubleMatrix1D loadPlusInterconnector = m.viewColumn(LOADINZONE.get(zone)).copy();
+            // Need to substract interconnector capacity, since defined
+            // negatively.
+            loadPlusInterconnector.assign(m.viewColumn(INTERCONNECTOR), Functions.minus);
+            DoubleMatrix1D spillVector = loadPlusInterconnector.copy();
+            spillVector.assign(m.viewColumn(IPROD.get(zone)), Functions.div);
+            spillVector.assign(oneVector, Functions.min);
+            m.viewColumn(IPROD.get(zone)).assign(loadPlusInterconnector, Functions.min);
+
+            for (PowerGridNode node : zoneToNodeList.get(zone)) {
+
+                for (PowerGeneratingTechnology technology : technologyList) {
+                            m.viewColumn(TECHNOLOGYLOADFACTORSFORZONEANDNODE.get(zone).get(node).get(technology)).assign(spillVector,
+                            Functions.mult);
+                }
+            }
+
         }
 
         // 4. Do a pre-market clearing of RES production: For each time step
@@ -565,12 +572,10 @@ Role<DecarbonizationModel> {
 
         it = 1;
         for (DynamicBin1D bin : segmentInterConnectorBins) {
-            // logger.warn("Segment " + it + "\n      Size: " + bin.size() +
-            // "\n      Mean IntCapacity~: " + Math.round(bin.mean())
-            // + "\n      Max IntCapacity~: " + Math.round(bin.max()) +
-            // "\n      Min IntCapacity~: " + Math.round(bin.min())
-            // + "\n      STD IntCapacity~: " +
-            // Math.round(bin.standardDeviation()));
+            logger.warn("Segment " + it + "\n      Size: " + bin.size() + "\n      Mean IntCapacity~: "
+                    + Math.round(bin.mean()) + "\n      Max IntCapacity~: " + Math.round(bin.max())
+                    + "\n      Min IntCapacity~: " + Math.round(bin.min()) + "\n      STD IntCapacity~: "
+                    + Math.round(bin.standardDeviation()));
             it++;
         }
 
@@ -619,8 +624,8 @@ Role<DecarbonizationModel> {
 
         String loadFactors;
         for (Zone zone : zoneList) {
-            String loadFactorString = new String("LF in " + zone.getName() + ":");
             for (PowerGridNode node : zoneToNodeList.get(zone)) {
+                String loadFactorString = new String("LF in " + node.getName() + ":");
                 for (PowerGeneratingTechnology technology : technologyList) {
                     // logger.warn("Bins for " + zone + ", " + node + "and " +
                     // technology);
@@ -648,8 +653,8 @@ Role<DecarbonizationModel> {
                         it++;
                     }
                 }
+                logger.warn(loadFactorString);
             }
-            logger.warn(loadFactorString);
         }
 
         // 8. Store the segment duration and the average load in that segment
