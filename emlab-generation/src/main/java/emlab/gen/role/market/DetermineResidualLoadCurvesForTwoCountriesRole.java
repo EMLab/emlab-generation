@@ -233,7 +233,7 @@ Role<DecarbonizationModel> {
             for (PowerGridNode node : zoneToNodeList.get(zone)) {
 
                 for (PowerGeneratingTechnology technology : technologyList) {
-                            m.viewColumn(TECHNOLOGYLOADFACTORSFORZONEANDNODE.get(zone).get(node).get(technology)).assign(spillVector,
+                    m.viewColumn(TECHNOLOGYLOADFACTORSFORZONEANDNODE.get(zone).get(node).get(technology)).assign(spillVector,
                             Functions.mult);
                 }
             }
@@ -646,9 +646,9 @@ Role<DecarbonizationModel> {
                         // "\n      Min RLOAD~: " + bin.min()
                         // + "\n      Std RLOAD~: " + bin.standardDeviation());
                         intTechnologyNodeLoadFactor.setLoadFactorForSegmentId(it, bin.mean());
-                        double mean = bin.mean() * 1000;
+                        double mean = bin.mean() * 1000000;
                         mean = Math.round(mean);
-                        mean = mean / 1000.0;
+                        mean = mean / 1000000.0;
                         loadFactorString = loadFactorString.concat(" " + mean);
                         it++;
                     }

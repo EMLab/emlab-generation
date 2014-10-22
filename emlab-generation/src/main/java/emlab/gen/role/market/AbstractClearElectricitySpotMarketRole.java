@@ -450,6 +450,7 @@ public abstract class AbstractClearElectricitySpotMarketRole<T extends Decarboni
                 plan.setStatus(Bid.PARTLY_ACCEPTED);
             } else {
                 plan.setStatus(Bid.FAILED);
+                plan.setAcceptedAmount(0);
                 return 0;
             }
         }
