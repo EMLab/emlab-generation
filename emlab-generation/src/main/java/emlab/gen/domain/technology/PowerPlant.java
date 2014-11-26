@@ -562,7 +562,8 @@ public class PowerPlant {
 
     IntermittentTechnologyNodeLoadFactor getIntermittentTechnologyNodeLoadFactor(){
         return intermittentTechnologyNodeLoadFactorRepository
-                .findIntermittentTechnologyNodeLoadFactorForPowerPlant(this);
+                .findIntermittentTechnologyNodeLoadFactorForNodeAndTechnology(this.getLocation(),
+                        this.getTechnology());
     }
 
 }

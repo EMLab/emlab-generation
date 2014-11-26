@@ -191,8 +191,9 @@ Role<DecarbonizationModel> {
                             .calculateCapacityOfOperationalIntermittentPowerPlantsByPowerGridNodeAndTechnology(node, technology,
                                     getCurrentTick());
 
-                    logger.warn(technology.getName() + ": " + intermittentCapacityOfTechnologyInNode + " MW in Node "
-                            + node.getName() + " and Zone: " + zone.getName());
+                    // logger.warn(technology.getName() + ": " +
+                    // intermittentCapacityOfTechnologyInNode + " MW in Node "
+                    // + node.getName() + " and Zone: " + zone.getName());
 
                     IntermittentResourceProfile intermittentResourceProfile = reps.intermittentResourceProfileRepository
                             .findIntermittentResourceProfileByTechnologyAndNode(technology, node);
@@ -368,9 +369,10 @@ Role<DecarbonizationModel> {
         // Make the interconnector capacity postive
         m.viewColumn(INTERCONNECTOR).assign(Functions.mult(-1));
 
-        logger.warn("Number of hours where both countries of negative residual load: "
-                + numberOfHoursWereBothCountriesHaveNegativeResidualLoad);
-        logger.warn("Number of hours where one country exports to the other: " + numberOfHoursWhereOneCountryExportsREStoTheOther);
+        // logger.warn("Number of hours where both countries of negative residual load: "
+        // + numberOfHoursWereBothCountriesHaveNegativeResidualLoad);
+        // logger.warn("Number of hours where one country exports to the other: "
+        // + numberOfHoursWhereOneCountryExportsREStoTheOther);
 
         // 5. Order the hours in the global residual load curve. Peak load
         // first, base load last.
@@ -557,7 +559,8 @@ Role<DecarbonizationModel> {
 
         // m = m.viewSorted(RLOADTOTAL).viewRowFlip();
         //
-        logger.debug("First 30 values of matrix: \n " + m.viewPart(0, 0, 30, m.columns()).toString());
+        // logger.debug("First 30 values of matrix: \n " + m.viewPart(0, 0, 30,
+        // m.columns()).toString());
 
         // Printing of segments
         int it = 1;
@@ -572,15 +575,18 @@ Role<DecarbonizationModel> {
 
         it = 1;
         for (DynamicBin1D bin : segmentInterConnectorBins) {
-            logger.warn("Segment " + it + "\n      Size: " + bin.size() + "\n      Mean IntCapacity~: "
-                    + Math.round(bin.mean()) + "\n      Max IntCapacity~: " + Math.round(bin.max())
-                    + "\n      Min IntCapacity~: " + Math.round(bin.min()) + "\n      STD IntCapacity~: "
-                    + Math.round(bin.standardDeviation()));
+            // logger.warn("Segment " + it + "\n      Size: " + bin.size() +
+            // "\n      Mean IntCapacity~: "
+            // + Math.round(bin.mean()) + "\n      Max IntCapacity~: " +
+            // Math.round(bin.max())
+            // + "\n      Min IntCapacity~: " + Math.round(bin.min()) +
+            // "\n      STD IntCapacity~: "
+            // + Math.round(bin.standardDeviation()));
             it++;
         }
 
         for (Zone zone : zoneList) {
-            logger.warn("Bins for " + zone);
+            // logger.warn("Bins for " + zone);
             it = 1;
             String meanRLoad = new String("Residual load in " + zone.getName() + ":");
             String meanLoad = new String("Load in " + zone.getName() + ":");
@@ -615,9 +621,9 @@ Role<DecarbonizationModel> {
                 meanLoad = meanLoad.concat("," + mean);
                 segmentLength = segmentLength.concat("," + bin.size());
             }
-            logger.warn(meanRLoad);
-            logger.warn(meanLoad);
-            logger.warn(segmentLength);
+            // logger.warn(meanRLoad);
+            // logger.warn(meanLoad);
+            // logger.warn(segmentLength);
         }
 
         // 9. Store the load factors in the IntermittentTechnologyLoadFactors
@@ -625,8 +631,9 @@ Role<DecarbonizationModel> {
         String loadFactors;
         for (Zone zone : zoneList) {
             for (PowerGridNode node : zoneToNodeList.get(zone)) {
-                String loadFactorString = new String("LF in " + node.getName() + ":");
+
                 for (PowerGeneratingTechnology technology : technologyList) {
+                    String loadFactorString = new String(technology.getName() + " LF in " + node.getName() + ":");
                     // logger.warn("Bins for " + zone + ", " + node + "and " +
                     // technology);
                     IntermittentTechnologyNodeLoadFactor intTechnologyNodeLoadFactor = reps.intermittentTechnologyNodeLoadFactorRepository
@@ -652,8 +659,9 @@ Role<DecarbonizationModel> {
                         loadFactorString = loadFactorString.concat(" " + mean);
                         it++;
                     }
+                    logger.warn(loadFactorString);
                 }
-                logger.warn(loadFactorString);
+
             }
         }
 
@@ -698,8 +706,9 @@ Role<DecarbonizationModel> {
 
                 }
 
-                logger.warn(technology.getName() + " is producing " + productionOfTechInZone + " MWh in "
-                        + zone.getName() + ".");
+                // logger.warn(technology.getName() + " is producing " +
+                // productionOfTechInZone + " MWh in "
+                // + zone.getName() + ".");
 
             }
         }
