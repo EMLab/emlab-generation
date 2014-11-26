@@ -48,7 +48,7 @@ Transmission capacity is assumed to be 3016 in both directions, based on maximum
 	<bean id="decarbonizationModel" class="emlab.gen.domain.agent.DecarbonizationModel"
 		p:name="Decarbonization Model" p:simulationLength="40"
 		p:co2TradingImplemented="true"
-		p:realRenewableDataImplemented="false"
+		p:realRenewableDataImplemented="true"
 		p:iterationSpeedFactor="3" p:iterationSpeedCriterion="0.005"
 		p:capDeviationCriterion="0.03" p:deletionOldPPDPBidsAndCashFlowsEnabled="true"
 		p:deletionAge="2" p:centralForecastBacklookingYears="5"
