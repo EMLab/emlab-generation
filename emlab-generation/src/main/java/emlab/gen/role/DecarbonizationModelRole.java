@@ -304,6 +304,8 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
         logger.warn("  7. Investing");
         Timer timerInvest = new Timer();
         timerInvest.start();
+
+        logger.warn("\t Private investment");
         if (getCurrentTick() > 1) {
             boolean someOneStillWillingToInvest = true;
             while (someOneStillWillingToInvest) {
@@ -320,6 +322,7 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
             }
             resetWillingnessToInvest();
         }
+        logger.warn("\t subsidized investment.");
         for (TargetInvestor targetInvestor : template.findAll(TargetInvestor.class)) {
             genericInvestmentRole.act(targetInvestor);
         }

@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2013 the original author or authors.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,9 +27,7 @@ import emlab.gen.domain.agent.TargetInvestor;
 import emlab.gen.domain.market.CO2Auction;
 import emlab.gen.domain.market.ClearingPoint;
 import emlab.gen.domain.market.electricity.ElectricitySpotMarket;
-import emlab.gen.domain.market.electricity.Segment;
 import emlab.gen.domain.policy.PowerGeneratingTechnologyTarget;
-import emlab.gen.domain.technology.PowerPlant;
 import emlab.gen.repository.Reps;
 import emlab.gen.repository.StrategicReserveOperatorRepository;
 
@@ -54,9 +52,8 @@ public class RenewableAdaptiveCO2CapRole extends AbstractRole<Government> {
     @Transactional
     public void act(Government government) {
 
-        logger.warn("TimeSeries before: {}", government.getCo2CapTrend().getTimeSeries());
-
-        double co2WeighingFactor = 1.0;
+        // logger.warn("TimeSeries before: {}",
+        // government.getCo2CapTrend().getTimeSeries());
 
         double co2Emissions = 0;
 
@@ -79,29 +76,49 @@ public class RenewableAdaptiveCO2CapRole extends AbstractRole<Government> {
 
         double averageEmissionsPerMWh = co2Emissions / totalProduction;
 
-        double expectedAdditionalProdcutionByRenewables = 0;
+        double plannedProductionByRenewables = 0;
+        double totalPlannedCapacity = 0;
 
-        for(TargetInvestor targetInvestor : template.findAll(TargetInvestor.class)){
-            for(PowerGeneratingTechnologyTarget target : targetInvestor.getPowerGenerationTechnologyTargets()){
-                double installedCapacity = target.getTrend().getValue(getCurrentTick());
-                PowerPlant calculationPowerPlant = new PowerPlant();
-                calculationPowerPlant.setConstructionStartTime(getCurrentTick() - 8);
-                calculationPowerPlant.setActualNominalCapacity(installedCapacity);
-                calculationPowerPlant.setTechnology(target.getPowerGeneratingTechnology());
-                calculationPowerPlant.setDismantleTime(1000);
-                calculationPowerPlant.setActualPermittime(1);
-                calculationPowerPlant.setActualPermittime(1);
-                for(Segment segment : reps.segmentRepository.findAll()){
-                    expectedAdditionalProdcutionByRenewables += segment.getLengthInHours()*calculationPowerPlant.getAvailableCapacity(getCurrentTick(), segment, reps.segmentRepository.count());
-                }
+        double totalProducedRenewableElectricity = 0;
+
+        double totalActualInstalledCapacity = 0;
+        for (TargetInvestor targetInvestor : template.findAll(TargetInvestor.class)) {
+            for (PowerGeneratingTechnologyTarget target : targetInvestor.getPowerGenerationTechnologyTargets()) {
+                double producedRenewableElectricityByTechnologyByTargetInvestor = reps.powerPlantDispatchPlanRepository
+                        .calculateTotalProductionForEnergyProducerForTimeForTechnology(targetInvestor,
+                                getCurrentTick() - 1, target.getPowerGeneratingTechnology(), false);
+                totalProducedRenewableElectricity += producedRenewableElectricityByTechnologyByTargetInvestor;
+                double installedCapacityByTechnology = reps.powerPlantRepository
+                        .calculateCapacityOfExpectedOperationalPowerPlantsByOwnerByTechnology(getCurrentTick() - 1,
+                                targetInvestor, target.getPowerGeneratingTechnology());
+                totalActualInstalledCapacity += installedCapacityByTechnology;
+                double plannedCapacityByTechnologyAndTargetInvestor = target.getTrend().getValue(getCurrentTick() - 1);
+                totalPlannedCapacity += target.getTrend().getValue(getCurrentTick() - 1);
+                double plannedProducedRenewableElectricityByTechnologyAndTargetInvestor = plannedCapacityByTechnologyAndTargetInvestor
+                        / installedCapacityByTechnology * producedRenewableElectricityByTechnologyByTargetInvestor;
+                plannedProductionByRenewables += plannedProducedRenewableElectricityByTechnologyAndTargetInvestor;
             }
         }
 
-        double savedEmissionsApproximation = expectedAdditionalProdcutionByRenewables * averageEmissionsPerMWh;
+        double plannedSavedEmissionsApproximation = plannedProductionByRenewables * averageEmissionsPerMWh;
+        double actualSavedEmissionsApproximation = totalProducedRenewableElectricity * averageEmissionsPerMWh;
 
+        double capReduction = 0;
+
+        if (!government.isDeviationFromResTargetAdjustment()) {
+            capReduction = actualSavedEmissionsApproximation * government.getAdaptiveCapCO2SavingsWeighingFactor();
+        } else {
+            capReduction = Math.max(0, actualSavedEmissionsApproximation - plannedSavedEmissionsApproximation)
+                    * government.getAdaptiveCapCO2SavingsWeighingFactor();
+        }
+        logger.warn("plannedSavedEmissionsApproximation: " + plannedSavedEmissionsApproximation
+                + ", actualSavedEmissionsApproximation: " + actualSavedEmissionsApproximation + ", Cap reduction: "
+                + capReduction);
+        logger.warn("plannedCapacity: " + totalPlannedCapacity + ", actualCapacity: "
+                + totalActualInstalledCapacity);
         government.getCo2CapTrend().setValue(getCurrentTick(),
-                government.getCo2CapTrend().getValue(getCurrentTick()) - savedEmissionsApproximation);
-
-        logger.warn("TimeSeries after: {}", government.getCo2CapTrend().getTimeSeries());
+                government.getCo2CapTrend().getValue(getCurrentTick()) - capReduction);
+        // logger.warn("TimeSeries after: {}",
+        // government.getCo2CapTrend().getTimeSeries());
     }
 }

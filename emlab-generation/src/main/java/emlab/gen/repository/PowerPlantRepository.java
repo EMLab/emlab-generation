@@ -193,18 +193,28 @@ public interface PowerPlantRepository extends GraphRepository<PowerPlant> {
             @Param("node") PowerGridNode node, @Param("tech") PowerGeneratingTechnology technology,
             @Param("tick") long tick);
 
-    @Query(value = "result = g.v(market).out('ZONE').in('REGION').in('LOCATION').filter{it.__type__=='emlab.gen.domain.technology.PowerPlant'}.out('POWERPLANT_OWNER').filter{it==g.v(owner)}.in('POWERPLANT_OWNER').filter{((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick) && (it.expectedEndOfLife > tick)}.out('TECHNOLOGY').filter{it==g.v(tech)};", type = QueryType.Gremlin)
+    @Query(value = "result = g.v(market).out('ZONE').in('REGION').in('LOCATION').filter{it.__type__=='emlab.gen.domain.technology.PowerPlant'}.as('owner').out('POWERPLANT_OWNER').filter{it==g.v(owner)}.back('owner').filter{((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick) && (it.expectedEndOfLife > tick)}.out('TECHNOLOGY').filter{it==g.v(tech)};", type = QueryType.Gremlin)
     public Iterable<PowerPlant> findExpectedOperationalPowerPlantsInMarketByOwnerAndTechnology(
             @Param("market") ElectricitySpotMarket market, @Param("tech") PowerGeneratingTechnology technology,
             @Param("tick") long tick, @Param("owner") EnergyProducer owner);
 
-    @Query(value = "result = g.v(market).out('ZONE').in('REGION').in('LOCATION').filter{it.__type__=='emlab.gen.domain.technology.PowerPlant'}.out('POWERPLANT_OWNER').filter{it==g.v(owner)}.in('POWERPLANT_OWNER').filter{((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick) && (it.expectedEndOfLife > tick)}.as('x').out('TECHNOLOGY').filter{it==g.v(tech)}.back('x').sum{it.actualNominalCapacity};"
+    @Query(value = "result = g.v(market).out('ZONE').in('REGION').in('LOCATION').filter{it.__type__=='emlab.gen.domain.technology.PowerPlant'}.as('owner').out('POWERPLANT_OWNER').filter{it==g.v(owner)}.back('owner').filter{((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick) && (it.expectedEndOfLife > tick)}.as('x').out('TECHNOLOGY').filter{it==g.v(tech)}.back('x').sum{it.actualNominalCapacity};"
             + "if(result == null){return 0} else{return result}", type = QueryType.Gremlin)
     public double calculateCapacityOfExpectedOperationalPowerPlantsInMarketByOwnerAndTechnology(
             @Param("market") ElectricitySpotMarket market, @Param("tech") PowerGeneratingTechnology technology,
             @Param("tick") long tick, @Param("owner") EnergyProducer owner);
 
-    @Query(value = "result = g.v(market).out('ZONE').in('REGION').in('LOCATION').filter{it.__type__=='emlab.gen.domain.technology.PowerPlant'}.out('POWERPLANT_OWNER').filter{it==g.v(owner)}.in('POWERPLANT_OWNER').filter{((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick) && (it.expectedEndOfLife > tick)}.out('TECHNOLOGY');", type = QueryType.Gremlin)
+    @Query(value = "result = g.v(owner).in('POWERPLANT_OWNER').filter{((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick) && (it.expectedEndOfLife > tick)}.sum{it.actualNominalCapacity};"
+            + "if(result == null){return 0} else{return result}", type = QueryType.Gremlin)
+    public double calculateCapacityOfExpectedOperationalPowerPlantsByOwner(@Param("tick") long tick,
+            @Param("owner") EnergyProducer owner);
+
+    @Query(value = "result = g.v(owner).in('POWERPLANT_OWNER').filter{((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick) && (it.expectedEndOfLife > tick)}.as('x').out('POWERPLANT_DISPATCHPLAN').filter{it==g.v(tech)}.back('x').sum{it.actualNominalCapacity};"
+            + "if(result == null){return 0} else{return result}", type = QueryType.Gremlin)
+    public double calculateCapacityOfExpectedOperationalPowerPlantsByOwnerByTechnology(@Param("tick") long tick,
+            @Param("owner") EnergyProducer owner, @Param("tech") PowerGeneratingTechnology pgt);
+
+    @Query(value = "result = g.v(market).out('ZONE').in('REGION').in('LOCATION').filter{it.__type__=='emlab.gen.domain.technology.PowerPlant'}.as('x').out('POWERPLANT_OWNER').filter{it==g.v(owner)}.back('x').filter{((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick) && (it.expectedEndOfLife > tick)}.out('TECHNOLOGY');", type = QueryType.Gremlin)
     public Iterable<PowerPlant> findExpectedOperationalPowerPlantsInMarketByOwner(
             @Param("market") ElectricitySpotMarket market, @Param("tick") long tick,
             @Param("owner") EnergyProducer owner);

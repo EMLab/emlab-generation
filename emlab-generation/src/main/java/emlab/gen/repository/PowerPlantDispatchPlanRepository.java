@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 the original author or authors.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,11 +25,12 @@ import emlab.gen.domain.agent.EnergyProducer;
 import emlab.gen.domain.market.electricity.ElectricitySpotMarket;
 import emlab.gen.domain.market.electricity.PowerPlantDispatchPlan;
 import emlab.gen.domain.market.electricity.Segment;
+import emlab.gen.domain.technology.PowerGeneratingTechnology;
 import emlab.gen.domain.technology.PowerPlant;
 
 /**
  * Repository for PowerPlantDispatchPlans
- * 
+ *
  * @author JCRichstein
  * @author ejlchappin
  *
@@ -84,9 +85,35 @@ public interface PowerPlantDispatchPlanRepository extends GraphRepository<PowerP
     public Iterable<PowerPlantDispatchPlan> findAllPowerPlantDispatchPlansForEnergyProducerForTime(
             @Param("producer") EnergyProducer producer, @Param("time") long time, @Param("forecast") boolean forecast);
 
+    @Query(value = "g.v(producer).out('BIDDER').propertyFilter('time', FilterPipe.Filter.EQUAL, time).propertyFilter('forecast', FilterPipe.Filter.EQUAL, forecast).as('x').out('POWERPLANT_DISPATCHPLAN').filter{it==g.v(tech)}.back('x')", type = QueryType.Gremlin)
+    public Iterable<PowerPlantDispatchPlan> findAllPowerPlantDispatchPlansForEnergyProducerForTimeForTechnology(
+            @Param("producer") EnergyProducer producer, @Param("time") long time,
+            @Param("tech") PowerGeneratingTechnology pgt, @Param("forecast") boolean forecast);
+
+
     @Query(value = "g.v(producer).out('BIDDER').propertyFilter('time', FilterPipe.Filter.EQUAL, time).propertyFilter('status', FilterPipe.Filter.GREATER_THAN_EQUAL , 2).propertyFilter('forecast', FilterPipe.Filter.EQUAL, forecast)", type = QueryType.Gremlin)
     public Iterable<PowerPlantDispatchPlan> findAllAcceptedPowerPlantDispatchPlansForEnergyProducerForTime(
             @Param("producer") EnergyProducer producer, @Param("time") long time, @Param("forecast") boolean forecast);
+
+    @Query(value = "sum=0;ppdps=g.v(producer).out('BIDDER').propertyFilter('time', FilterPipe.Filter.EQUAL, time).propertyFilter('status', FilterPipe.Filter.GREATER_THAN_EQUAL , 2).propertyFilter('forecast', FilterPipe.Filter.EQUAL, forecast);"
+            +
+            "for(ppdp in ppdps){"+
+            "totalAmount = ppdp.getProperty('acceptedAmount') + ppdp.getProperty('capacityLongTermContract');"+
+            "hoursInSegment = ppdp.out('SEGMENT_DISPATCHPLAN').next().getProperty('lengthInHours');"+
+            "production = totalAmount * hoursInSegment;"+
+            "sum = sum + production};"
+            + " return sum;", type = QueryType.Gremlin)
+    public double calculateTotalProductionForEnergyProducerForTime(@Param("producer") EnergyProducer producer,
+            @Param("time") long time, @Param("forecast") boolean forecast);
+
+    @Query(value = "sum=0;ppdps=g.v(producer).out('BIDDER').propertyFilter('time', FilterPipe.Filter.EQUAL, time).propertyFilter('status', FilterPipe.Filter.GREATER_THAN_EQUAL , 2).propertyFilter('forecast', FilterPipe.Filter.EQUAL, forecast).as('x').out('POWERPLANT_DISPATCHPLAN').filter{it==g.v(tech)}.back('x');"
+            + "for(ppdp in ppdps){"
+            + "totalAmount = ppdp.getProperty('acceptedAmount') + ppdp.getProperty('capacityLongTermContract');"
+            + "hoursInSegment = ppdp.out('SEGMENT_DISPATCHPLAN').next().getProperty('lengthInHours');"
+            + "production = totalAmount * hoursInSegment;" + "sum = sum + production};" + " return sum;", type = QueryType.Gremlin)
+    public double calculateTotalProductionForEnergyProducerForTimeForTechnology(
+            @Param("producer") EnergyProducer producer, @Param("time") long time,
+            @Param("tech") PowerGeneratingTechnology pgt, @Param("forecast") boolean forecast);
 
     @Query(value = "g.v(producer).out('BIDDER').propertyFilter('time', FilterPipe.Filter.EQUAL, time).propertyFilter('forecast', FilterPipe.Filter.EQUAL, forecast).as('x').out('SEGMENT_DISPATCHPLAN').idFilter(segment, FilterPipe.Filter.EQUAL).back('x')", type = QueryType.Gremlin)
     public Iterable<PowerPlantDispatchPlan> findAllPowerPlantDispatchPlansForEnergyProducerForTimeAndSegment(

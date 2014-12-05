@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 the original author or authors.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,6 +21,19 @@ import org.springframework.data.neo4j.annotation.RelatedTo;
 
 import agentspring.agent.Agent;
 import emlab.gen.trend.TimeSeriesImpl;
+
+/**
+ * Government class representing a government of the entire simualation (e.g. a
+ * European government, or a federal governemnt). Contains two boolean
+ * parameters. activelyAdjustingTheCO2Cap defines whether the government adjusts
+ * the CO2 based on renewable installations. The second parameter
+ * deviationFromResTargetAdjustment sets if the deviation is measured from zero,
+ * or as an exceeding of the predefined target. See
+ * emlab.gen.role.co2Policy.RenewableAdaptiveCO2CapRole.java for details.
+ *
+ * @author jcrichstein
+ *
+ */
 
 @NodeEntity
 public class Government extends DecarbonizationAgent implements Agent {
@@ -38,6 +51,10 @@ public class Government extends DecarbonizationAgent implements Agent {
     private TimeSeriesImpl co2PriceCeilingTrend;
 
     private boolean activelyAdjustingTheCO2Cap;
+
+    private boolean deviationFromResTargetAdjustment;
+
+    private double adaptiveCapCO2SavingsWeighingFactor;
 
     private double co2Penalty;
 
@@ -166,6 +183,22 @@ public class Government extends DecarbonizationAgent implements Agent {
 
     public void setStabilityReserveReleaseQuantityTrend(TimeSeriesImpl stabilityReserveReleaseQuantityTrend) {
         this.stabilityReserveReleaseQuantityTrend = stabilityReserveReleaseQuantityTrend;
+    }
+
+    public boolean isDeviationFromResTargetAdjustment() {
+        return deviationFromResTargetAdjustment;
+    }
+
+    public void setDeviationFromResTargetAdjustment(boolean deviationFromResTargetAdjustment) {
+        this.deviationFromResTargetAdjustment = deviationFromResTargetAdjustment;
+    }
+
+    public double getAdaptiveCapCO2SavingsWeighingFactor() {
+        return adaptiveCapCO2SavingsWeighingFactor;
+    }
+
+    public void setAdaptiveCapCO2SavingsWeighingFactor(double adaptiveCapCO2SavingsWeighingFactor) {
+        this.adaptiveCapCO2SavingsWeighingFactor = adaptiveCapCO2SavingsWeighingFactor;
     }
 
 }
