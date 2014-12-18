@@ -50,11 +50,16 @@ public class Government extends DecarbonizationAgent implements Agent {
     @RelatedTo(type = "CO2_PRICECEILING_TREND", elementClass = TimeSeriesImpl.class, direction = Direction.OUTGOING)
     private TimeSeriesImpl co2PriceCeilingTrend;
 
+    @RelatedTo(type = "CO2CAPADJUSTMENT_TIMESERIES", elementClass = TimeSeriesImpl.class, direction = Direction.OUTGOING)
+    private TimeSeriesImpl co2CapAdjustmentTimeSeries;
+
     private boolean activelyAdjustingTheCO2Cap;
 
     private boolean deviationFromResTargetAdjustment;
 
     private double adaptiveCapCO2SavingsWeighingFactor;
+
+    private boolean adaptiveCapAdjustmentBasedOnCapNotActualEmissions;
 
     private double co2Penalty;
 
@@ -199,6 +204,23 @@ public class Government extends DecarbonizationAgent implements Agent {
 
     public void setAdaptiveCapCO2SavingsWeighingFactor(double adaptiveCapCO2SavingsWeighingFactor) {
         this.adaptiveCapCO2SavingsWeighingFactor = adaptiveCapCO2SavingsWeighingFactor;
+    }
+
+    public TimeSeriesImpl getCo2CapAdjustmentTimeSeries() {
+        return co2CapAdjustmentTimeSeries;
+    }
+
+    public void setCo2CapAdjustmentTimeSeries(TimeSeriesImpl co2CapAdjustmentTimeSeries) {
+        this.co2CapAdjustmentTimeSeries = co2CapAdjustmentTimeSeries;
+    }
+
+    public boolean isAdaptiveCapAdjustmentBasedOnCapNotActualEmissions() {
+        return adaptiveCapAdjustmentBasedOnCapNotActualEmissions;
+    }
+
+    public void setAdaptiveCapAdjustmentBasedOnCapNotActualEmissions(
+            boolean adaptiveCapAdjustmentBasedOnCapNotActualEmissions) {
+        this.adaptiveCapAdjustmentBasedOnCapNotActualEmissions = adaptiveCapAdjustmentBasedOnCapNotActualEmissions;
     }
 
 }

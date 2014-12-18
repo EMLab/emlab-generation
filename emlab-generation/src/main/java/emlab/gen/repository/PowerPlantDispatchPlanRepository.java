@@ -106,7 +106,7 @@ public interface PowerPlantDispatchPlanRepository extends GraphRepository<PowerP
     public double calculateTotalProductionForEnergyProducerForTime(@Param("producer") EnergyProducer producer,
             @Param("time") long time, @Param("forecast") boolean forecast);
 
-    @Query(value = "sum=0;ppdps=g.v(producer).out('BIDDER').propertyFilter('time', FilterPipe.Filter.EQUAL, time).propertyFilter('status', FilterPipe.Filter.GREATER_THAN_EQUAL , 2).propertyFilter('forecast', FilterPipe.Filter.EQUAL, forecast).as('x').out('POWERPLANT_DISPATCHPLAN').filter{it==g.v(tech)}.back('x');"
+    @Query(value = "sum=0;ppdps=g.v(producer).out('BIDDER').propertyFilter('time', FilterPipe.Filter.EQUAL, time).propertyFilter('status', FilterPipe.Filter.GREATER_THAN_EQUAL , 2).propertyFilter('forecast', FilterPipe.Filter.EQUAL, forecast).as('x').out('POWERPLANT_DISPATCHPLAN').out('TECHNOLOGY').filter{it==g.v(tech)}.back('x');"
             + "for(ppdp in ppdps){"
             + "totalAmount = ppdp.getProperty('acceptedAmount') + ppdp.getProperty('capacityLongTermContract');"
             + "hoursInSegment = ppdp.out('SEGMENT_DISPATCHPLAN').next().getProperty('lengthInHours');"

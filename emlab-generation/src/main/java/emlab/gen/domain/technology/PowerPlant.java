@@ -542,6 +542,8 @@ public class PowerPlant {
      *            the actualNominalCapacity to set
      */
     public void setActualNominalCapacity(double actualNominalCapacity) {
+        if (actualNominalCapacity < 0)
+            throw new RuntimeException("ERROR: " + this.name + " power plant is being set with a negative capacity!");
         this.actualNominalCapacity = actualNominalCapacity;
     }
 
