@@ -1,6 +1,4 @@
 setwd("~/emlab-generation/rscripts/")
-library(xtable)
-library(scales)
 source("rConfig.R")
 source("batchRunAnalysis.R")
 setwd(analysisFolder)

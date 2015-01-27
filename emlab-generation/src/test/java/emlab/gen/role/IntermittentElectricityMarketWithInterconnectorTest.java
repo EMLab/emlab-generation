@@ -712,9 +712,8 @@ public class IntermittentElectricityMarketWithInterconnectorTest {
                         assertEquals("CoalInM1 right accepted amount in S1", 700, plan.getAcceptedAmount(), 0.001);
                         break;
                     case 2:
-                        assertEquals("CoalInM1 right accepted amount in S2", 571.105, plan.getAcceptedAmount(), 0.001);
+                        assertEquals("CoalInM1 right accepted amount in S2", 572.055, plan.getAcceptedAmount(), 0.001);
                     }
-                    break;
                 } else if (plan.getPowerPlant().getName().equals("CoalInM2")) {
                     assertEquals("CoalInM2 right price", 27, plan.getBidWithoutCO2(), 0.001);
                     assertEquals("CoalInM2 right amount", 1300, plan.getAmount(), 0.001);
