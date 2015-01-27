@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2013 the original author or authors.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -35,26 +35,26 @@ import emlab.gen.repository.Reps;
 /**
  * The power plant entry parser, takes rows of a CSV table and turns it into
  * power plants in the database when the simulation starts.
- * 
+ *
  * The columns of the table need to be defined in the following order:
- * 
+ *
  * Name|TechnologyName|LocationName|Age|OwnerName|Capacity|Efficiency
- * 
+ *
  * and column headers should be given.
- * 
+ *
  * TechnologyName (of class PowerGeneratingTechnology), OwnerName (of class
  * EnergyProducer) and LocationName (of class PowerGridNode) need to correspond
  * exactly to the names defined in the scenario file.
- * 
+ *
  * The entries of the columns OwnerName, Capacity and Efficiency may be left
  * empty. In this case the owner is randomly assigned, the capacity set to the
  * standard capacity times the locational capacity factor, and the efficiency is
  * calculated from the age of the power plant and the learning curve of the
  * technology. The columns OwnerName, Capacity, and Efficiency maybe left away
  * entirely (but only if the columns to the right are also left away).
- * 
+ *
  * @author JCRichstein
- * 
+ *
  */
 public class PowerPlantEntryParser implements CSVEntryParser<PowerPlant> {
 
@@ -65,7 +65,7 @@ public class PowerPlantEntryParser implements CSVEntryParser<PowerPlant> {
     private final List<PowerGridNode> powerGridNodes;
 
     /**
-     * 
+     *
      */
     public PowerPlantEntryParser(List<EnergyProducer> producers, List<PowerGeneratingTechnology> technologies,
             List<PowerGridNode> powerGridNodes) {
@@ -137,7 +137,14 @@ public class PowerPlantEntryParser implements CSVEntryParser<PowerPlant> {
                 e.printStackTrace();
             }
         }
-        return createPowerPlant(name, pgt, energyProducer, powerGridNode, age, capacity, efficiency);
+        try {
+            return createPowerPlant(name, pgt, energyProducer, powerGridNode, age, capacity, efficiency);
+        } catch (NullPointerException e) {
+            logger.warn("ERROR: Name: \"" + name + "\",Pgt: " + pgt + ", EnergyProducer" + energyProducer + ", Node:"
+                    + powerGridNode
+                    + ", Age:" + age + ", Capacity: " + capacity + ", Efficiency:" + efficiency);
+            throw e;
+        }
     }
 
     private PowerPlant createPowerPlant(String name, PowerGeneratingTechnology technology,

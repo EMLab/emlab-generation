@@ -42,6 +42,7 @@ import emlab.gen.role.investment.DismantlePowerPlantPastTechnicalLifetimeRole;
 import emlab.gen.role.investment.GenericInvestmentRole;
 import emlab.gen.role.market.ClearCommodityMarketRole;
 import emlab.gen.role.market.ClearIterativeCO2AndElectricitySpotMarketTwoCountryRole;
+import emlab.gen.role.market.DetermineResidualLoadCurvesForTwoCountriesRole;
 import emlab.gen.role.market.ProcessAcceptedBidsRole;
 import emlab.gen.role.market.ProcessAcceptedPowerPlantDispatchRole;
 import emlab.gen.role.market.ReassignPowerPlantsToLongTermElectricityContractsRole;
@@ -112,6 +113,8 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
     private RenewableAdaptiveCO2CapRole renewableAdaptiveCO2CapRole;
     @Autowired
     MarketStabilityReserveRole marketStabilityReserveRole;
+    @Autowired
+    private DetermineResidualLoadCurvesForTwoCountriesRole determineResidualLoadCurve;
 
     @Autowired
     Reps reps;
@@ -139,13 +142,17 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
         Timer timer = new Timer();
         timer.start();
 
-        // for (EnergyProducer producer :
-        // reps.genericRepository.findAllAtRandom(EnergyProducer.class)) {
-        // dismantlePowerPlantRole.act(producer);
-        // payForLoansRole.act(producer);
-        // // producer.act(dismantlePowerPlantRole);
-        // // producer.act(payForLoansRole);
-        // }
+        logger.warn("  0a. Determing load duration curves.");
+        if (model.isRealRenewableDataImplemented())
+            determineResidualLoadCurve.act(model);
+
+        logger.warn("  0. Dismantling & paying loans");
+        for (EnergyProducer producer : reps.genericRepository.findAllAtRandom(EnergyProducer.class)) {
+            dismantlePowerPlantRole.act(producer);
+            payForLoansRole.act(producer);
+            // producer.act(dismantlePowerPlantRole);
+            // producer.act(payForLoansRole);
+        }
 
         /*
          * Determine fuel mix of power plants
@@ -243,7 +250,14 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
             renewableAdaptiveCO2CapRole.act(government);
         }
 
-        if (getCurrentTick() >= 10 && model.isStabilityReserveIsActive()) {
+        if (model.isStabilityReserveIsActive() && getCurrentTick() == 0) {
+            government.getStabilityReserveAddingMinimumTrend().getValue(0);
+            government.getStabilityReserveAddingPercentageTrend().getValue(0);
+            government.getStabilityReserveLowerTriggerTrend().getValue(0);
+            government.getStabilityReserveReleaseQuantityTrend().getValue(0);
+            government.getStabilityReserveUpperTriggerTrend().getValue(0);
+        }
+        if (getCurrentTick() >= model.getStabilityReserveFirstYearOfOperation() && model.isStabilityReserveIsActive()) {
             logger.warn("3b. CO2 Market Stability Reserve");
             marketStabilityReserveRole.act(government);
         }
@@ -327,6 +341,8 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
         logger.warn("  7. Investing");
         Timer timerInvest = new Timer();
         timerInvest.start();
+
+        logger.warn("\t Private investment");
         if (getCurrentTick() > 1) {
             boolean someOneStillWillingToInvest = true;
             while (someOneStillWillingToInvest) {
@@ -343,6 +359,7 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
             }
             resetWillingnessToInvest();
         }
+        logger.warn("\t subsidized investment.");
         for (TargetInvestor targetInvestor : template.findAll(TargetInvestor.class)) {
             genericInvestmentRole.act(targetInvestor);
         }

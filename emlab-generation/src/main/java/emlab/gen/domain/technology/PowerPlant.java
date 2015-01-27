@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 the original author or authors.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,16 +27,18 @@ import org.springframework.transaction.annotation.Transactional;
 
 import emlab.gen.domain.agent.EnergyProducer;
 import emlab.gen.domain.contract.Loan;
+import emlab.gen.domain.market.electricity.IntermittentTechnologyNodeLoadFactor;
 import emlab.gen.domain.market.electricity.PowerPlantDispatchPlan;
 import emlab.gen.domain.market.electricity.Segment;
+import emlab.gen.repository.IntermittentTechnologyNodeLoadFactorRepository;
 import emlab.gen.repository.PowerPlantDispatchPlanRepository;
 
 /**
  * Representation of a power plant
- * 
+ *
  * @author jcrichstein
  * @author ejlchappin
- * 
+ *
  */
 
 @Configurable
@@ -46,6 +48,10 @@ public class PowerPlant {
     @Transient
     @Autowired
     private PowerPlantDispatchPlanRepository powerPlantDispatchPlanRepository;
+
+    @Transient
+    @Autowired
+    private IntermittentTechnologyNodeLoadFactorRepository intermittentTechnologyNodeLoadFactorRepository;
 
     @RelatedTo(type = "TECHNOLOGY", elementClass = PowerGeneratingTechnology.class, direction = Direction.OUTGOING)
     private PowerGeneratingTechnology technology;
@@ -166,12 +172,54 @@ public class PowerPlant {
     public double getAvailableCapacity(long currentTick, Segment segment,
             long numberOfSegments) {
         if (isOperational(currentTick)) {
-            double factor = 1;
-            if (segment != null) {// if no segment supplied, assume we want full
-                // capacity
-                double segmentID = segment.getSegmentID();
-                if ((int) segmentID != 1) {
+            if (this.getTechnology().isIntermittent()) {
+                IntermittentTechnologyNodeLoadFactor intermittentTechnologyNodeLoadFactor = getIntermittentTechnologyNodeLoadFactor();
+                double factor = intermittentTechnologyNodeLoadFactor.getLoadFactorForSegment(segment);
+                return getActualNominalCapacity() * factor;
+            } else {
+                double factor = 1;
+                if (segment != null) {// if no segment supplied, assume we want full
+                    // capacity
+                    double segmentID = segment.getSegmentID();
+                    if ((int) segmentID != 1) {
 
+                        double min = getTechnology()
+                                .getPeakSegmentDependentAvailability();
+                        double max = getTechnology()
+                                .getBaseSegmentDependentAvailability();
+                        double segmentPortion = (numberOfSegments - segmentID)
+                                / (numberOfSegments - 1); // start
+                        // counting
+                        // at
+                        // 1.
+
+                        double range = max - min;
+
+                        factor = max - segmentPortion * range;
+                        int i = 0;
+                    } else {
+                        factor = getTechnology()
+                                .getPeakSegmentDependentAvailability();
+                    }
+                }
+                return getActualNominalCapacity() * factor;
+            }
+        } else {
+            return 0;
+        }
+    }
+
+    public double getExpectedAvailableCapacity(long futureTick,
+            Segment segment, long numberOfSegments) {
+        if (isExpectedToBeOperational(futureTick)) {
+            if (this.getTechnology().isIntermittent()) {
+                double factor = getIntermittentTechnologyNodeLoadFactor().getLoadFactorForSegment(segment);
+                return getActualNominalCapacity() * factor;
+            } else {
+                double factor = 1;
+                if (segment != null) {// if no segment supplied, assume we want full
+                    // capacity
+                    double segmentID = segment.getSegmentID();
                     double min = getTechnology()
                             .getPeakSegmentDependentAvailability();
                     double max = getTechnology()
@@ -185,40 +233,9 @@ public class PowerPlant {
                     double range = max - min;
 
                     factor = max - segmentPortion * range;
-                    int i = 0;
-                } else {
-                    factor = getTechnology()
-                            .getPeakSegmentDependentAvailability();
                 }
+                return getActualNominalCapacity() * factor;
             }
-            return getActualNominalCapacity() * factor;
-        } else {
-            return 0;
-        }
-    }
-
-    public double getExpectedAvailableCapacity(long futureTick,
-            Segment segment, long numberOfSegments) {
-        if (isExpectedToBeOperational(futureTick)) {
-            double factor = 1;
-            if (segment != null) {// if no segment supplied, assume we want full
-                // capacity
-                double segmentID = segment.getSegmentID();
-                double min = getTechnology()
-                        .getPeakSegmentDependentAvailability();
-                double max = getTechnology()
-                        .getBaseSegmentDependentAvailability();
-                double segmentPortion = (numberOfSegments - segmentID)
-                        / (numberOfSegments - 1); // start
-                // counting
-                // at
-                // 1.
-
-                double range = max - min;
-
-                factor = max - segmentPortion * range;
-            }
-            return getActualNominalCapacity() * factor;
         } else {
             return 0;
         }
@@ -263,7 +280,7 @@ public class PowerPlant {
      * Determines whether a plant is still in its technical lifetime. The end of
      * the technical lifetime is determined by the construction start time, the
      * permit time, the lead time and the actual lifetime.
-     * 
+     *
      * @param currentTick
      * @return whether the plant is still in its technical lifetime.
      */
@@ -407,7 +424,7 @@ public class PowerPlant {
      * Sets the actual capital that is needed to build the power plant. It reads
      * the investment cost from the and automatically adjusts for the actual
      * building and permit time, as well as power plant size.
-     * 
+     *
      * @param timeOfPermitorBuildingStart
      */
     public void calculateAndSetActualInvestedCapital(
@@ -470,15 +487,15 @@ public class PowerPlant {
     /**
      * Persists and specifies the properties of a new Power Plant (which needs
      * to be created separately before with new PowerPlant();
-     * 
+     *
      * Do not forget that any change made here should be reflected in the
      * ElectricityProducerFactory!!
-     * 
+     *
      * @param time
      * @param energyProducer
      * @param location
      * @param technology
-     * 
+     *
      * @author J.C.Richstein
      */
     @Transactional
@@ -543,6 +560,8 @@ public class PowerPlant {
      *            the actualNominalCapacity to set
      */
     public void setActualNominalCapacity(double actualNominalCapacity) {
+        if (actualNominalCapacity < 0)
+            throw new RuntimeException("ERROR: " + this.name + " power plant is being set with a negative capacity!");
         this.actualNominalCapacity = actualNominalCapacity;
     }
 
@@ -559,6 +578,12 @@ public class PowerPlant {
      */
     public void setActualFixedOperatingCost(double actualFixedOperatingCost) {
         this.actualFixedOperatingCost = actualFixedOperatingCost;
+    }
+
+    IntermittentTechnologyNodeLoadFactor getIntermittentTechnologyNodeLoadFactor(){
+        return intermittentTechnologyNodeLoadFactorRepository
+                .findIntermittentTechnologyNodeLoadFactorForNodeAndTechnology(this.getLocation(),
+                        this.getTechnology());
     }
 
 }

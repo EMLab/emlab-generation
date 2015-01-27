@@ -410,8 +410,9 @@ public class ElectricityMarketSubmittingAndClearingTest {
         }
 
 
-        submitOffersToElectricitySpotMarketRole.createOffersForElectricitySpotMarket(null, getCurrentTick() + 3, true,
-                null);
+        // submitOffersToElectricitySpotMarketRole.createOffersForElectricitySpotMarket(null,
+        // getCurrentTick() + 3, true,
+        // null);
         // submitOffersToElectricitySpotMarketRole.createOffersForElectricitySpotMarket(null,
         // getCurrentTick(), false,
         // null);
@@ -531,7 +532,7 @@ public class ElectricityMarketSubmittingAndClearingTest {
 
 
         clearIterativeCO2AndElectricitySpotMarketTwoCountryRole
-                .makeCentralElectricityMarketForecastForTimeStep(getCurrentTick() + model.getCentralForecastingYear());
+        .makeCentralElectricityMarketForecastForTimeStep(getCurrentTick() + model.getCentralForecastingYear());
 
         Iterable<PowerPlantDispatchPlan> ppdps = reps.powerPlantDispatchPlanRepository.findAll();
         for (PowerPlantDispatchPlan ppdp : ppdps) {
