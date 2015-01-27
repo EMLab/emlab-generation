@@ -59,6 +59,10 @@ public interface PowerPlantDispatchPlanRepository extends GraphRepository<PowerP
             @Param("plant") PowerPlant plant, @Param("segment") Segment segment, @Param("time") long time,
             @Param("forecast") boolean forecast);
 
+    @Query(value = "result = g.v(plant).in('POWERPLANT_DISPATCHPLAN').as('x').out('SEGMENT_DISPATCHPLAN').filter{it.segmentID==1}.back('x')..propertyFilter('forecast', FilterPipe.Filter.EQUAL, forecast).propertyFilter('time', FilterPipe.Filter.EQUAL, time); if(!result.hasNext()){return null;} else{return result.next();}", type = QueryType.Gremlin)
+    public PowerPlantDispatchPlan findOnePowerPlantDispatchPlanForPeakSegmentGivenPowerPlantAndTime(
+            @Param("plant") PowerPlant plant, @Param("time") long time, @Param("forecast") boolean forecast);
+
     // @Query(value =
     // "g.v(segment).in('SEGMENT_DISPATCHPLAN').propertyFilter('time', FilterPipe.Filter.EQUAL, time)",
     // type = QueryType.Gremlin)
@@ -101,19 +105,15 @@ public interface PowerPlantDispatchPlanRepository extends GraphRepository<PowerP
             @Param("producer") EnergyProducer producer, @Param("time") long time,
             @Param("tech") PowerGeneratingTechnology pgt, @Param("forecast") boolean forecast);
 
-
     @Query(value = "g.v(producer).out('BIDDER').propertyFilter('time', FilterPipe.Filter.EQUAL, time).propertyFilter('status', FilterPipe.Filter.GREATER_THAN_EQUAL , 2).propertyFilter('forecast', FilterPipe.Filter.EQUAL, forecast)", type = QueryType.Gremlin)
     public Iterable<PowerPlantDispatchPlan> findAllAcceptedPowerPlantDispatchPlansForEnergyProducerForTime(
             @Param("producer") EnergyProducer producer, @Param("time") long time, @Param("forecast") boolean forecast);
 
     @Query(value = "sum=0;ppdps=g.v(producer).out('BIDDER').propertyFilter('time', FilterPipe.Filter.EQUAL, time).propertyFilter('status', FilterPipe.Filter.GREATER_THAN_EQUAL , 2).propertyFilter('forecast', FilterPipe.Filter.EQUAL, forecast);"
-            +
-            "for(ppdp in ppdps){"+
-            "totalAmount = ppdp.getProperty('acceptedAmount') + ppdp.getProperty('capacityLongTermContract');"+
-            "hoursInSegment = ppdp.out('SEGMENT_DISPATCHPLAN').next().getProperty('lengthInHours');"+
-            "production = totalAmount * hoursInSegment;"+
-            "sum = sum + production};"
-            + " return sum;", type = QueryType.Gremlin)
+            + "for(ppdp in ppdps){"
+            + "totalAmount = ppdp.getProperty('acceptedAmount') + ppdp.getProperty('capacityLongTermContract');"
+            + "hoursInSegment = ppdp.out('SEGMENT_DISPATCHPLAN').next().getProperty('lengthInHours');"
+            + "production = totalAmount * hoursInSegment;" + "sum = sum + production};" + " return sum;", type = QueryType.Gremlin)
     public double calculateTotalProductionForEnergyProducerForTime(@Param("producer") EnergyProducer producer,
             @Param("time") long time, @Param("forecast") boolean forecast);
 

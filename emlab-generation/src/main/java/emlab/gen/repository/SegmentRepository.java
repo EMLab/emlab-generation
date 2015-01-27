@@ -27,7 +27,7 @@ import emlab.gen.domain.market.electricity.Segment;
 @Repository
 public interface SegmentRepository extends GraphRepository<Segment> {
 
-    @Query(value = "g.v(market).out('SEGMENT_LOAD').out.filter{it.segmentID==1}.next()", type = QueryType.Gremlin)
+    @Query(value = "g.v(market).out('SEGMENT_LOAD').out('SEGMENTLOAD_SEGMENT').filter{it.segmentID==1}", type = QueryType.Gremlin)
     public Segment findPeakSegmentforMarket(@Param("market") ElectricitySpotMarket market);
 
     @Query(value = "g.v(market).out('SEGMENT_LOAD').out.sort{-it.segmentID}.next()", type = QueryType.Gremlin)

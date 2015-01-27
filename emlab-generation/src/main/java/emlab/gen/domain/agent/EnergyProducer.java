@@ -52,6 +52,17 @@ public class EnergyProducer extends DecarbonizationAgent implements Agent {
     private double debtRatioOfInvestments;
     private boolean willingToInvest;
 
+    @SimulationParameter(label = "Simple Capacity Market")
+    private boolean simpleCapacityMarketEnabled;
+
+    public boolean isSimpleCapacityMarketEnabled() {
+        return simpleCapacityMarketEnabled;
+    }
+
+    public void setSimpleCapacityMarketEnabled(boolean isSimpleCapacityMarketEnabled) {
+        this.simpleCapacityMarketEnabled = isSimpleCapacityMarketEnabled;
+    }
+
     // Loan
     @SimulationParameter(label = "Loan Interest Rate", from = 0, to = 1)
     private double loanInterestRate;

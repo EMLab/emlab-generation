@@ -27,7 +27,6 @@ import org.springframework.transaction.annotation.Transactional;
 import agentspring.role.AbstractRole;
 import agentspring.role.RoleComponent;
 import emlab.gen.domain.agent.CommoditySupplier;
-import emlab.gen.domain.agent.EnergyProducer;
 import emlab.gen.domain.agent.Government;
 import emlab.gen.domain.contract.CashFlow;
 import emlab.gen.domain.contract.Loan;
@@ -60,10 +59,6 @@ public class DismantlePowerPlantOperationalLossRole extends AbstractRole<Electri
     @Transactional
     public void act(ElectricitySpotMarket market) {
         if (getCurrentTick() > 0) {
-
-            for (EnergyProducer prod : reps.energyProducerRepository.findAll()) {
-                prod.setTemporaryCashComparatorDismantling(prod.getCash());
-            }
 
             for (PowerPlant plant : reps.powerPlantRepository.findOperationalPowerPlantsInMarket(market,
                     getCurrentTick())) {

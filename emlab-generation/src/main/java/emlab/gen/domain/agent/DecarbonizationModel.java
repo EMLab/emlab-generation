@@ -78,6 +78,17 @@ public class DecarbonizationModel extends AbstractAgent implements Agent {
     @SimulationParameter(label = "Deletion age")
     private long deletionAge;
 
+    @SimulationParameter(label = "Simple Capacity Market")
+    private boolean simpleCapacityMarketEnabled;
+
+    public void setSimpleCapacityMarketEnabled(boolean simpleCapacityMarketEnabled) {
+        this.simpleCapacityMarketEnabled = simpleCapacityMarketEnabled;
+    }
+
+    public boolean isSimpleCapacityMarketEnabled() {
+        return simpleCapacityMarketEnabled;
+    }
+
     public boolean isRealRenewableDataImplemented() {
         return realRenewableDataImplemented;
     }
