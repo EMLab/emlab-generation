@@ -706,7 +706,7 @@ public class IntermittentElectricityMarketWithInterconnectorTest {
                         break;
                     case 2:
                         logger.warn("CoalInM1, S2 , " + plan.getAcceptedAmount());
-                        assertEquals("CoalInM1 right accepted amount in S2", 571.105, plan.getAcceptedAmount(), 0.001);
+                        assertEquals("CoalInM1 right accepted amount in S2", 572.055, plan.getAcceptedAmount(), 0.001);
                         break;
                     }
                 } else if (plan.getPowerPlant().getName().equals("CoalInM2")) {
