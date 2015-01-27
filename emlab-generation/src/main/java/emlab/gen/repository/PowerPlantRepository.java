@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 the original author or authors.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,17 +32,17 @@ import emlab.gen.domain.technology.Substance;
 
 /**
  * Repository for {PowerPlant}
- * 
+ *
  * @author ejlchappin
  * @author jcrichstein
- * 
+ *
  */
 @Repository
 public interface PowerPlantRepository extends GraphRepository<PowerPlant> {
 
     /**
      * Finds plants by owner.
-     * 
+     *
      * @param owner
      *            of the plants
      * @return the list of plants
@@ -57,7 +57,7 @@ public interface PowerPlantRepository extends GraphRepository<PowerPlant> {
      * Finds operational plants (only use for current tick, since only
      * officially dismantled powerplants and plants in the building process will
      * be excluded).
-     * 
+     *
      * @param owner
      *            of the plants
      * @param tick
@@ -86,7 +86,7 @@ public interface PowerPlantRepository extends GraphRepository<PowerPlant> {
      * Finds operational plants and gives them back as a list (only use for
      * current tick, since only officially dismantled powerplants and plants in
      * the building process will be excluded).
-     * 
+     *
      * @param owner
      *            of the plants
      * @param tick
@@ -106,7 +106,7 @@ public interface PowerPlantRepository extends GraphRepository<PowerPlant> {
 
     /**
      * Finds plants by owner and selects only operational plants.
-     * 
+     *
      * @param owner
      *            of the plants
      * @param tick
@@ -123,7 +123,7 @@ public interface PowerPlantRepository extends GraphRepository<PowerPlant> {
 
     /**
      * Finds plants by owner and selects only operational plants.
-     * 
+     *
      * @param owner
      *            of the plants
      * @param tick
@@ -193,18 +193,33 @@ public interface PowerPlantRepository extends GraphRepository<PowerPlant> {
             @Param("node") PowerGridNode node, @Param("tech") PowerGeneratingTechnology technology,
             @Param("tick") long tick);
 
-    @Query(value = "result = g.v(market).out('ZONE').in('REGION').in('LOCATION').filter{it.__type__=='emlab.gen.domain.technology.PowerPlant'}.out('POWERPLANT_OWNER').filter{it==g.v(owner)}.in('POWERPLANT_OWNER').filter{((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick) && (it.expectedEndOfLife > tick)}.out('TECHNOLOGY').filter{it==g.v(tech)};", type = QueryType.Gremlin)
+    @Query(value = "result = g.v(market).out('ZONE').in('REGION').in('LOCATION').filter{it.__type__=='emlab.gen.domain.technology.PowerPlant'}.as('owner').out('POWERPLANT_OWNER').filter{it==g.v(owner)}.back('owner').filter{((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick) && (it.expectedEndOfLife > tick)}.out('TECHNOLOGY').filter{it==g.v(tech)};", type = QueryType.Gremlin)
     public Iterable<PowerPlant> findExpectedOperationalPowerPlantsInMarketByOwnerAndTechnology(
             @Param("market") ElectricitySpotMarket market, @Param("tech") PowerGeneratingTechnology technology,
             @Param("tick") long tick, @Param("owner") EnergyProducer owner);
 
-    @Query(value = "result = g.v(market).out('ZONE').in('REGION').in('LOCATION').filter{it.__type__=='emlab.gen.domain.technology.PowerPlant'}.out('POWERPLANT_OWNER').filter{it==g.v(owner)}.in('POWERPLANT_OWNER').filter{((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick) && (it.expectedEndOfLife > tick)}.as('x').out('TECHNOLOGY').filter{it==g.v(tech)}.back('x').sum{it.actualNominalCapacity};"
+    @Query(value = "result = g.v(market).out('ZONE').in('REGION').in('LOCATION').filter{it.__type__=='emlab.gen.domain.technology.PowerPlant'}.as('owner').out('POWERPLANT_OWNER').filter{it==g.v(owner)}.back('owner').filter{((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick) && (it.expectedEndOfLife > tick)}.as('x').out('TECHNOLOGY').filter{it==g.v(tech)}.back('x').sum{it.actualNominalCapacity};"
             + "if(result == null){return 0} else{return result}", type = QueryType.Gremlin)
     public double calculateCapacityOfExpectedOperationalPowerPlantsInMarketByOwnerAndTechnology(
             @Param("market") ElectricitySpotMarket market, @Param("tech") PowerGeneratingTechnology technology,
             @Param("tick") long tick, @Param("owner") EnergyProducer owner);
 
-    @Query(value = "result = g.v(market).out('ZONE').in('REGION').in('LOCATION').filter{it.__type__=='emlab.gen.domain.technology.PowerPlant'}.out('POWERPLANT_OWNER').filter{it==g.v(owner)}.in('POWERPLANT_OWNER').filter{((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick) && (it.expectedEndOfLife > tick)}.out('TECHNOLOGY');", type = QueryType.Gremlin)
+    @Query(value = "result = g.v(owner).in('POWERPLANT_OWNER').filter{((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick) && (it.expectedEndOfLife > tick)}.sum{it.actualNominalCapacity};"
+            + "if(result == null){return 0} else{return result}", type = QueryType.Gremlin)
+    public double calculateCapacityOfExpectedOperationalPowerPlantsByOwner(@Param("tick") long tick,
+            @Param("owner") EnergyProducer owner);
+
+    @Query(value = "result = g.v(owner).in('POWERPLANT_OWNER').filter{((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick) && (it.expectedEndOfLife > tick)}.as('x').out('TECHNOLOGY').filter{it.name==g.v(tech).name}.back('x').sum{it.actualNominalCapacity};"
+            + "if(result == null){return 0} else{return result}", type = QueryType.Gremlin)
+    public double calculateCapacityOfExpectedOperationalPowerPlantsByOwnerByTechnology(@Param("tick") long tick,
+            @Param("owner") EnergyProducer owner, @Param("tech") PowerGeneratingTechnology pgt);
+
+    @Query(value = "result = g.v(owner).in('POWERPLANT_OWNER').filter{it.expectedEndOfLife == tick}.as('x').out('TECHNOLOGY').filter{it.name==g.v(tech).name}.back('x').sum{it.actualNominalCapacity};"
+            + "if(result == null){return 0} else{return result}", type = QueryType.Gremlin)
+    public double calculateCapacityOfExpectedDismantledPowerPlantsByOwnerByTechnology(@Param("tick") long tick,
+            @Param("owner") EnergyProducer owner, @Param("tech") PowerGeneratingTechnology pgt);
+
+    @Query(value = "result = g.v(market).out('ZONE').in('REGION').in('LOCATION').filter{it.__type__=='emlab.gen.domain.technology.PowerPlant'}.as('x').out('POWERPLANT_OWNER').filter{it==g.v(owner)}.back('x').filter{((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick) && (it.expectedEndOfLife > tick)}.out('TECHNOLOGY');", type = QueryType.Gremlin)
     public Iterable<PowerPlant> findExpectedOperationalPowerPlantsInMarketByOwner(
             @Param("market") ElectricitySpotMarket market, @Param("tick") long tick,
             @Param("owner") EnergyProducer owner);
@@ -247,5 +262,25 @@ public interface PowerPlantRepository extends GraphRepository<PowerPlant> {
     @Query(value = "substanceShares = g.v(substance).in('SUBSTANCE').filter{it.__type__=='emlab.gen.domain.technology.SubstanceShareInFuelMix'};"
             + "sum=substanceShares.sum{it.share}; if(sum!=null) return sum else return 0;;", type = QueryType.Gremlin)
     public double calculateSubstanceUsage(@Param("substance") Substance substance);
+
+    @Query(value = "g.v(gridnode).in('LOCATION').filter{(it.__type__=='emlab.gen.domain.technology.PowerPlant')}.as('p').out('TECHNOLOGY').filter{it.intermittent == true}.back('p').filter{((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick) && (it.dismantleTime > tick)}", type = QueryType.Gremlin)
+    Iterable<PowerPlant> findOperationalIntermittentPowerPlantsByPowerGridNode(@Param("gridnode") PowerGridNode node,
+            @Param("tick") long tick);
+
+    @Query(value = "result = g.v(gridnode).in('LOCATION').filter{(it.__type__=='emlab.gen.domain.technology.PowerPlant')}.as('p').out('TECHNOLOGY').filter{it.intermittent == true}.back('p').filter{((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick) && (it.dismantleTime > tick)}.out('TECHNOLOGY').sum{it.capacity};"
+            + "if(result == null){return 0;} else{return result;}", type = QueryType.Gremlin)
+    double calculateCapacityOfIntermittentPowerPlantsByPowerGridNode(@Param("gridnode") PowerGridNode node,
+            @Param("tick") long tick);
+
+    @Query(value = "g.v(gridnode).in('LOCATION').filter{(it.__type__=='emlab.gen.domain.technology.PowerPlant')}.as('p').out('TECHNOLOGY').filter{it.intermittent == true && it==g.v(technology)}.back('p').filter{((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick) && (it.dismantleTime > tick)}", type = QueryType.Gremlin)
+    Iterable<PowerPlant> findOperationalIntermittentPowerPlantsByPowerGridNodeAndTechnology(
+            @Param("gridnode") PowerGridNode node,
+            @Param("technology") PowerGeneratingTechnology powerGeneratingTechnology, @Param("tick") long tick);
+
+    @Query(value = "result = g.v(gridnode).in('LOCATION').filter{(it.__type__=='emlab.gen.domain.technology.PowerPlant')}.as('p').out('TECHNOLOGY').filter{it.intermittent == true && it==g.v(technology)}.back('p').filter{((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick) && (it.dismantleTime > tick)}.sum{it.actualNominalCapacity};"
+            + "if(result == null){return 0;} else{return result;}", type = QueryType.Gremlin)
+    double calculateCapacityOfOperationalIntermittentPowerPlantsByPowerGridNodeAndTechnology(
+            @Param("gridnode") PowerGridNode node,
+            @Param("technology") PowerGeneratingTechnology powerGeneratingTechnology, @Param("tick") long tick);
 
 }

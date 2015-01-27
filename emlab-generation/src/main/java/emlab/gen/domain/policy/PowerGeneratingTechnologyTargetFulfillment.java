@@ -20,6 +20,7 @@ import org.springframework.data.neo4j.annotation.NodeEntity;
 import org.springframework.data.neo4j.annotation.RelatedTo;
 
 import emlab.gen.domain.technology.PowerGeneratingTechnology;
+import emlab.gen.domain.technology.PowerGridNode;
 import emlab.gen.trend.TimeSeriesImpl;
 
 
@@ -28,20 +29,32 @@ import emlab.gen.trend.TimeSeriesImpl;
  *
  */
 @NodeEntity
-public class PowerGeneratingTechnologyTarget {
+public class PowerGeneratingTechnologyTargetFulfillment {
 
     /**
      * {@link powerGeneratingTechnology} defines the technology that the target applies to
      */
-    @RelatedTo(type="TARGET_TECHNOLOGY", elementClass=PowerGeneratingTechnology.class, direction=Direction.OUTGOING)
+    @RelatedTo(type = "TARGETFULFILLMENT_TECHNOLOGY", elementClass = PowerGeneratingTechnology.class, direction = Direction.OUTGOING)
     PowerGeneratingTechnology powerGeneratingTechnology;
 
     /**
      * {@link trend} contains the target installed capacity of the technology
      * in MW.
      */
-    @RelatedTo(type = "TARGET_TREND", elementClass = TimeSeriesImpl.class, direction = Direction.OUTGOING)
+    @RelatedTo(type = "TARGETFULFILLMENT_TREND", elementClass = TimeSeriesImpl.class, direction = Direction.OUTGOING)
     TimeSeriesImpl trend;
+
+    @RelatedTo(type = "INVESTOR_NODE", elementClass = PowerGridNode.class, direction = Direction.OUTGOING)
+    private PowerGridNode specificPowerGridNode;
+
+    public PowerGeneratingTechnology getPowerGeneratingTechnology() {
+        return powerGeneratingTechnology;
+    }
+
+    public void setPowerGeneratingTechnology(
+            PowerGeneratingTechnology powerGeneratingTechnology) {
+        this.powerGeneratingTechnology = powerGeneratingTechnology;
+    }
 
     public TimeSeriesImpl getTrend() {
         return trend;
@@ -51,13 +64,12 @@ public class PowerGeneratingTechnologyTarget {
         this.trend = trend;
     }
 
-    public PowerGeneratingTechnology getPowerGeneratingTechnology() {
-        return powerGeneratingTechnology;
+    public PowerGridNode getSpecificPowerGridNode() {
+        return specificPowerGridNode;
     }
 
-    public void setPowerGeneratingTechnology(
-            PowerGeneratingTechnology powerGeneratingTechnology) {
-        this.powerGeneratingTechnology = powerGeneratingTechnology;
+    public void setSpecificPowerGridNode(PowerGridNode specificPowerGridNode) {
+        this.specificPowerGridNode = specificPowerGridNode;
     }
 
 }

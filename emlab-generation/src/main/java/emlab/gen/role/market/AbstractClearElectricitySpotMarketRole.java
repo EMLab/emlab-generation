@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 the original author or authors.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -46,11 +46,11 @@ import emlab.gen.util.GeometricTrendRegression;
 /**
  * Creates and clears the {@link ElectricitySpotMarket} for two {@link Zone}s. The market is divided into {@link Segment}s and cleared for each segment. A global CO2 emissions market is cleared. The
  * process is iterative and the target is to let the total emissions match the cap.
- * 
+ *
  * @author <a href="mailto:E.J.L.Chappin@tudelft.nl">Emile Chappin</a>
- * 
+ *
  * @author <a href="mailto:A.Chmieliauskas@tudelft.nl">Alfredas Chmieliauskas</a>
- * 
+ *
  */
 public abstract class AbstractClearElectricitySpotMarketRole<T extends DecarbonizationModel> extends AbstractRole<T> {
 
@@ -112,7 +112,7 @@ public abstract class AbstractClearElectricitySpotMarketRole<T extends Decarboni
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see java.lang.Object#toString()
          */
         @Override
@@ -259,7 +259,7 @@ public abstract class AbstractClearElectricitySpotMarketRole<T extends Decarboni
 
     /**
      * Clears a the global market, under the assumption that no capacity constraints apply, and that demand is fixed in that segment. Has been taken out of the main function, to make it transactional.
-     * 
+     *
      * @param segment
      * @param markets
      * @param globalOutcome
@@ -295,7 +295,7 @@ public abstract class AbstractClearElectricitySpotMarketRole<T extends Decarboni
 
     /**
      * Determine for each power plant whether it will be covered (partially) by long-term contracts for each of the segments and stores that in the respective power plant dipatch plan.
-     * 
+     *
      * @param plants
      *            all plants
      * @param segments
@@ -363,7 +363,7 @@ public abstract class AbstractClearElectricitySpotMarketRole<T extends Decarboni
      * Determine demand in this segment for each market, based on the total load
      * in this tick minus the load covered by LongTermContracts. If now
      * demandGrowthMap is supplied, assume current tick.
-     * 
+     *
      * @param segment
      * @return the total demand
      */
@@ -406,7 +406,7 @@ public abstract class AbstractClearElectricitySpotMarketRole<T extends Decarboni
 
     /**
      * Determine the total load by summing up the loads of individual markets in a loadInMarkets map.
-     * 
+     *
      * @param loadInMarkets
      * @return the total load.
      */
@@ -422,7 +422,7 @@ public abstract class AbstractClearElectricitySpotMarketRole<T extends Decarboni
     /**
      * Determine the production of a power plant on the spot market, based on supply so far and load to be covered. The result is saved to the respective power plant dispatch plan, as well as the
      * Status of the respective Bid.
-     * 
+     *
      * @param plant
      * @param segment
      * @param supplySoFar
@@ -446,10 +446,12 @@ public abstract class AbstractClearElectricitySpotMarketRole<T extends Decarboni
             // Plant will by partly supplying and this is the
             // final plant or is not supplying at all
             plantSupply = load - supplySoFar;
-            if (plantSupply > 0) {
+            if (plantSupply - epsilon > 0) {
                 plan.setStatus(Bid.PARTLY_ACCEPTED);
-            } else
+            } else {
                 plan.setStatus(Bid.FAILED);
+                plantSupply = 0d;
+            }
         }
 
         plan.setAcceptedAmount(plantSupply);
@@ -459,7 +461,7 @@ public abstract class AbstractClearElectricitySpotMarketRole<T extends Decarboni
 
     /**
      * Determine the total CO2 emissions based on all current power plant dispatch plans.
-     * 
+     *
      * @return the total CO2 emissions
      */
     double determineTotalEmissionsBasedOnPowerPlantDispatchPlan(boolean forecast, long clearingTick) {
@@ -480,7 +482,7 @@ public abstract class AbstractClearElectricitySpotMarketRole<T extends Decarboni
     /**
      * Determine the total CO2 emissions of EnergyProducer based on all current
      * power plant dispatch plans.
-     * 
+     *
      * @return the total CO2 emissions
      */
     double determineTotalEmissionsBasedOnPowerPlantDispatchPlanForEnergyProducer(boolean forecast, long clearingTick,
@@ -502,7 +504,7 @@ public abstract class AbstractClearElectricitySpotMarketRole<T extends Decarboni
 
     /**
      * Determines the stability of CO2 and electricity prices, and, if not stable, adjusts the CO2 price for a next iteration.
-     * 
+     *
      * @param co2PriceStability
      *            the co2PriceStability so far
      * @param model
@@ -588,7 +590,7 @@ public abstract class AbstractClearElectricitySpotMarketRole<T extends Decarboni
     /**
      * Finds the last known price for a substance. We try to find the market for it and get it get the price on that market for this tick, previous tick, or from a possible supplier directly. If
      * multiple prices are found, the average is returned. This is the case for electricity spot markets, as they may have segments.
-     * 
+     *
      * @param substance
      *            the price we want for
      * @return the (average) price found
@@ -607,7 +609,7 @@ public abstract class AbstractClearElectricitySpotMarketRole<T extends Decarboni
     /**
      * Finds the last known price on a specific market. We try to get it for this tick, previous tick, or from a possible supplier directly. If multiple prices are found, the average is returned. This
      * is the case for electricity spot markets, as they may have segments.
-     * 
+     *
      * @param substance
      *            the price we want for
      * @return the (average) price found
@@ -648,7 +650,7 @@ public abstract class AbstractClearElectricitySpotMarketRole<T extends Decarboni
 
     /**
      * Calculates the volume-weighted average price on a market based on a set of clearingPoints.
-     * 
+     *
      * @param clearingPoints
      *            the clearingPoints with the volumes and prices
      * @return the weighted average

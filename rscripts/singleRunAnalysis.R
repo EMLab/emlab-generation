@@ -15,7 +15,7 @@ plotPowerPlantDispatchForTickAndMarket <- function(tick, market, segmentID, simp
   p<-ggplot(data) +
     geom_rect(aes(xmin = volumePrev, xmax = volume, ymin = -2, ymax = price, fill=technology, alpha=status))+
     scale_fill_manual("Technologies", values=c("CoalPSC" = "black", "Biomass" = "darkgreen", "Biogas"="darkolivegreen3", "Nuclear" = "purple", "Lignite" = "saddlebrown",
-                                                "OCGT" = "darkred", "CCGT" = "blue", "PV" = "yellow", "Wind" = "chartreuse4",
+                                                "OCGT" = "darkred", "CCGT" = "blue", "Photovoltaic" = "yellow", "Wind" = "chartreuse4",
                                                 "CoalPscCCS" = "darkgray", "IGCC" = "orange", "IgccCCS"="orangered", "CcgtCCS" = "red",
                                                 "WindOffshore" = "navyblue", "HydroPower" = "skyblue3"), drop=FALSE)+
     scale_alpha_manual("Status", values = c("-1" = 0.5, "2"=0.75, "3"=1), drop=FALSE, guide="none")+
@@ -25,7 +25,7 @@ plotPowerPlantDispatchForTickAndMarket <- function(tick, market, segmentID, simp
     xlab("Capacity [MW]")+
     ylab("Bid [EUR/MWh]")+
     geom_vline(xintercept = DemandLevels[DemandLevels$market==market & DemandLevels$segmentID==segmentID & DemandLevels$tick==tick,]$volume, colour="orange")+
-    geom_vline(xintercept = SegmentClearingPoints[SegmentClearingPoints$market==market & SegmentClearingPoints$segmentID==segmentID & SegmentClearingPoints$tick==tick,]$volume, colour="red")+
+    geom_vline(xintercept = (SegmentClearingPoints[SegmentClearingPoints$market==market & SegmentClearingPoints$segmentID==segmentID & SegmentClearingPoints$tick==tick,]$volume-SegmentClearingPoints[SegmentClearingPoints$market==market & SegmentClearingPoints$segmentID==segmentID & SegmentClearingPoints$tick==tick,]$interconectorFlow)/SegmentClearingPoints[SegmentClearingPoints$market==market & SegmentClearingPoints$segmentID==segmentID & SegmentClearingPoints$tick==tick,]$segmentLength, colour="red")+
     annotate("text", x=0.80*xMax, y=0.95*yMax, label=paste("Carbon Price:  ",effectiveCO2Price, " EUR/tCO2 \nEl. Spot Price:  ", electricityPrice, " EUR/MWh", sep=""))+
     guides(fill = guide_legend(order = 1))
   return(p)

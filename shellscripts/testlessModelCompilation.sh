@@ -9,4 +9,4 @@ fi
 
 #start model
 cd $emlabModelFolder
-mvn clean install "$@"
+mvn clean install -DskipTests "$@"

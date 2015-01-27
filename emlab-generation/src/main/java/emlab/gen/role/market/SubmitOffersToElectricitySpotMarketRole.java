@@ -110,7 +110,6 @@ Role<EnergyProducer> {
             logger.info("Submitting offers for {} with technology {}", plant.getName(), plant.getTechnology().getName());
 
             for (SegmentLoad segmentload : market.getLoadDurationCurve()) {
-
                 Segment segment = segmentload.getSegment();
                 double capacity;
                 if (tick == getCurrentTick()) {

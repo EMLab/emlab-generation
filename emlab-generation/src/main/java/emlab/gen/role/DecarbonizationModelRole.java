@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 the original author or authors.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -41,6 +41,7 @@ import emlab.gen.role.investment.DismantlePowerPlantPastTechnicalLifetimeRole;
 import emlab.gen.role.investment.GenericInvestmentRole;
 import emlab.gen.role.market.ClearCommodityMarketRole;
 import emlab.gen.role.market.ClearIterativeCO2AndElectricitySpotMarketTwoCountryRole;
+import emlab.gen.role.market.DetermineResidualLoadCurvesForTwoCountriesRole;
 import emlab.gen.role.market.ProcessAcceptedBidsRole;
 import emlab.gen.role.market.ProcessAcceptedPowerPlantDispatchRole;
 import emlab.gen.role.market.ReassignPowerPlantsToLongTermElectricityContractsRole;
@@ -58,9 +59,9 @@ import emlab.gen.role.operating.PayOperatingAndMaintainanceCostsRole;
 
 /**
  * Main model role.
- * 
+ *
  * @author alfredas, ejlchappin, jcrichstein
- * 
+ *
  */
 @ScriptComponent
 public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel> implements Role<DecarbonizationModel> {
@@ -109,6 +110,8 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
     private RenewableAdaptiveCO2CapRole renewableAdaptiveCO2CapRole;
     @Autowired
     MarketStabilityReserveRole marketStabilityReserveRole;
+    @Autowired
+    private DetermineResidualLoadCurvesForTwoCountriesRole determineResidualLoadCurve;
 
     @Autowired
     Reps reps;
@@ -135,6 +138,10 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
         logger.warn("***** STARTING TICK {} *****", getCurrentTick());
         Timer timer = new Timer();
         timer.start();
+
+        logger.warn("  0a. Determing load duration curves.");
+        if (model.isRealRenewableDataImplemented())
+            determineResidualLoadCurve.act(model);
 
         logger.warn("  0. Dismantling & paying loans");
         for (EnergyProducer producer : reps.genericRepository.findAllAtRandom(EnergyProducer.class)) {
@@ -178,21 +185,8 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
             logger.warn("        took: {} seconds.", timerMarket.seconds());
         }
 
-        // timerMarket.reset();
-        // timerMarket.start();
-        // logger.warn("  2b. Creating market forecast");
-        //
-        // clearIterativeCO2AndElectricitySpotMarketTwoCountryRole
-        // .makeCentralElectricityMarketForecastForTimeStep(getCurrentTick() +
-        // model.getCentralForecastingYear());
-        //
-        // logger.warn("        took: {} seconds.", timerMarket.seconds());
-        //
-        // timerMarket.reset();
-
         /*
-         * Clear electricity spot and CO2 markets and determine also the
-         * commitment of powerplants.
+         * Clear electricity spot and CO2 markets and determine also the commitment of powerplants.
          */
         timerMarket.reset();
         timerMarket.start();
@@ -310,6 +304,8 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
         logger.warn("  7. Investing");
         Timer timerInvest = new Timer();
         timerInvest.start();
+
+        logger.warn("\t Private investment");
         if (getCurrentTick() > 1) {
             boolean someOneStillWillingToInvest = true;
             while (someOneStillWillingToInvest) {
@@ -326,6 +322,7 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
             }
             resetWillingnessToInvest();
         }
+        logger.warn("\t subsidized investment.");
         for (TargetInvestor targetInvestor : template.findAll(TargetInvestor.class)) {
             genericInvestmentRole.act(targetInvestor);
         }
@@ -338,7 +335,7 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
             // agentspring.simulation.Schedule.getSchedule().stop();
             // }
 
-            logger.warn("  7.5. Reassign LTCs");
+            logger.warn("  7. Reassign LTCs");
             timerMarket.reset();
             timerMarket.start();
             for (EnergyProducer producer : reps.genericRepository.findAllAtRandom(EnergyProducer.class)) {
