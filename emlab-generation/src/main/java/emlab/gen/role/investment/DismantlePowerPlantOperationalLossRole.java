@@ -134,7 +134,8 @@ public class DismantlePowerPlantOperationalLossRole extends AbstractRole<Electri
                                 cost = cost + cf.getMoney();
                             }
 
-                            if (cf.getType() == CashFlow.ELECTRICITY_SPOT || cf.getType() == CashFlow.STRRESPAYMENT) {
+                            if (cf.getType() == CashFlow.ELECTRICITY_SPOT || cf.getType() == CashFlow.STRRESPAYMENT
+                                    || cf.getType() == CashFlow.SIMPLE_CAPACITY_MARKET) {
                                 revenue = revenue + cf.getMoney();
 
                             }

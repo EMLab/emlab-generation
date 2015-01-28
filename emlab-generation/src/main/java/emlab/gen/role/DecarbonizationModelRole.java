@@ -153,13 +153,14 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
         if (model.isRealRenewableDataImplemented())
             determineResidualLoadCurve.act(model);
 
-        logger.warn("  0. Dismantling & paying loans");
-        for (EnergyProducer producer : reps.genericRepository.findAllAtRandom(EnergyProducer.class)) {
-            dismantlePowerPlantRole.act(producer);
-            payForLoansRole.act(producer);
-            // producer.act(dismantlePowerPlantRole);
-            // producer.act(payForLoansRole);
-        }
+        // logger.warn("  0. Dismantling & paying loans");
+        // for (EnergyProducer producer :
+        // reps.genericRepository.findAllAtRandom(EnergyProducer.class)) {
+        // dismantlePowerPlantRole.act(producer);
+        // payForLoansRole.act(producer);
+        // producer.act(dismantlePowerPlantRole);
+        // producer.act(payForLoansRole);
+        // }
 
         /*
          * Determine fuel mix of power plants
@@ -167,7 +168,7 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
         Timer timerMarket = new Timer();
         timerMarket.start();
 
-        logger.warn("  0a. Dismantling");
+        logger.warn("  0b. Dismantling");
         timerMarket.reset();
         timerMarket.start();
         for (ElectricitySpotMarket market : reps.marketRepository.findAllElectricitySpotMarketsAsList()) {
@@ -176,7 +177,7 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
         timerMarket.stop();
         logger.warn("        took: {} seconds.", timerMarket.seconds());
 
-        logger.warn("  0b. Paying loans");
+        logger.warn("  0c. Paying loans");
         timerMarket.reset();
         timerMarket.start();
         for (EnergyProducer producer : reps.genericRepository.findAllAtRandom(EnergyProducer.class)) {

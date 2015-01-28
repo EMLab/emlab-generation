@@ -30,7 +30,7 @@ import emlab.gen.domain.technology.PowerPlant;
 
 /**
  * Repository for PowerPlantDispatchPlans
- *
+ * 
  * @author JCRichstein
  * @author ejlchappin
  * 
@@ -59,7 +59,7 @@ public interface PowerPlantDispatchPlanRepository extends GraphRepository<PowerP
             @Param("plant") PowerPlant plant, @Param("segment") Segment segment, @Param("time") long time,
             @Param("forecast") boolean forecast);
 
-    @Query(value = "result = g.v(plant).in('POWERPLANT_DISPATCHPLAN').as('x').out('SEGMENT_DISPATCHPLAN').filter{it.segmentID==1}.back('x')..propertyFilter('forecast', FilterPipe.Filter.EQUAL, forecast).propertyFilter('time', FilterPipe.Filter.EQUAL, time); if(!result.hasNext()){return null;} else{return result.next();}", type = QueryType.Gremlin)
+    @Query(value = "result = g.v(plant).in('POWERPLANT_DISPATCHPLAN').as('x').out('SEGMENT_DISPATCHPLAN').filter{it.segmentID==1}.back('x').propertyFilter('forecast', FilterPipe.Filter.EQUAL, forecast).propertyFilter('time', FilterPipe.Filter.EQUAL, time); if(!result.hasNext()){return null;} else{return result.next();}", type = QueryType.Gremlin)
     public PowerPlantDispatchPlan findOnePowerPlantDispatchPlanForPeakSegmentGivenPowerPlantAndTime(
             @Param("plant") PowerPlant plant, @Param("time") long time, @Param("forecast") boolean forecast);
 
