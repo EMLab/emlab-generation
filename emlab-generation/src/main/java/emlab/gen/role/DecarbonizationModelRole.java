@@ -301,6 +301,13 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
         timerMarket.stop();
         logger.warn("        took: {} seconds.", timerMarket.seconds());
 
+        logger.warn("  6.b) Creating power plant financial reports.");
+        Timer financialReports = new Timer();
+        financialReports.start();
+
+        financialReports.stop();
+        logger.warn("        took: {} seconds.", financialReports.seconds());
+
         logger.warn("  7. Investing");
         Timer timerInvest = new Timer();
         timerInvest.start();
