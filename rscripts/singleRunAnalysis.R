@@ -32,10 +32,13 @@ plotPowerPlantDispatchForTickAndMarket <- function(tick, market, segmentID, simp
 }
 
 printPowerPlantDispatchForAllTicksAndMarkets <- function(tick, simpleQueriesDF, PowerPlantDispatchPlans, 
-                                                         SegmentClearingPoints, DemandLevels, analysisFolder, fileType){
+                                                         SegmentClearingPoints, DemandLevels, analysisFolder, fileType, segmentsToBePrinted=NULL){
+  if(is.null(segmentsToBePrinted)){
+    segmentsToBePrinted=c(1,10,20)
+  }
   countries=sub(pattern=" electricity spot market",replacement="",x=unique(SegmentClearingPoints$market))
   for(market in unique(SegmentClearingPoints$market)){
-    for(i in seq(1:20)){
+    for(i in segmentsToBePrinted){
       p<-plotPowerPlantDispatchForTickAndMarket(tick, market, i, simpleQueriesDF, PowerPlantDispatchPlans, SegmentClearingPoints, DemandLevels)
       chartName<-paste(analysisFolder,gsub("\\s","", market),"_Tick",tick,"_Segment",i,fileType, sep="")
       ggsave(filename=chartName, plot=p, width=10, height=5)
