@@ -142,6 +142,7 @@ runSimulation <- function(x, ticks, run, dryRunFile=NULL, ...) {
     startSimulation()
   } else{
     load(dryRunFile)
+    ticks<-length(result$simpleQueriesDF$tick)
   }
   tick <- 0
   while (tick < ticks) {
@@ -157,9 +158,13 @@ runSimulation <- function(x, ticks, run, dryRunFile=NULL, ...) {
       }
     }
     x(tick,result,...)
+    print(paste("Tick ", tick, " done.", sep=""))
+    flush.console()
     #print(paste("finished tick",tick))
-    if(is.null(dryRunFile))
+    if(is.null(dryRunFile)){
       resumeSimulation()
+      save(result, ascii=TRUE, file=paste(run,".RData", sep=""))
+    }
     tick <- tick + 1
   }
   if(is.null(dryRunFile)){
