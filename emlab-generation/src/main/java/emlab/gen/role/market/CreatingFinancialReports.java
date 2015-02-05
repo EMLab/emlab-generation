@@ -16,6 +16,7 @@
 package emlab.gen.role.market;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import agentspring.role.RoleComponent;
 import emlab.gen.domain.agent.DecarbonizationModel;
@@ -40,30 +41,66 @@ public class CreatingFinancialReports extends AbstractClearElectricitySpotMarket
     private Reps reps;
 
 
+    @Transactional
     public void act(DecarbonizationModel model) {
 
-        for (PowerPlant plant : reps.powerPlantRepository.findOperationalPowerPlants(getCurrentTick())) {
+        logger.warn("Querying power plants.");
+
+        for (PowerPlant plant : reps.powerPlantRepository.findAll()) {
 
             FinancialPowerPlantReport financialPowerPlantReport = new FinancialPowerPlantReport();
-            financialPowerPlantReport.setFixedCosts(0);
+            financialPowerPlantReport.setTime(getCurrentTick());
             financialPowerPlantReport.setFullLoadHours(0);
             financialPowerPlantReport.setPowerPlant(plant);
-            financialPowerPlantReport.setSpotMarketRevenue(0);
-            financialPowerPlantReport.setVariableCosts(0);
+            financialPowerPlantReport.setCommodityCosts(0);
             financialPowerPlantReport.persist();
 
-            // Determining variable costs in current time step.
+
+            // Determining variable and CO2 costs in current time step.
             double totalSupply = plant.calculateElectricityOutputAtTime(getCurrentTick(), false);
+            financialPowerPlantReport.setProduction(totalSupply);
 
             for (SubstanceShareInFuelMix share : plant.getFuelMix()) {
 
                 double amount = share.getShare() * totalSupply;
                 Substance substance = share.getSubstance();
                 double substanceCost = findLastKnownPriceForSubstance(substance) * amount;
-                financialPowerPlantReport
-                .setVariableCosts(financialPowerPlantReport.getVariableCosts() + substanceCost);
+                financialPowerPlantReport.setCommodityCosts(financialPowerPlantReport.getCommodityCosts()
+                        + substanceCost);
+
 
             }
+            financialPowerPlantReport.setCo2Costs(reps.powerPlantRepository.calculateCO2CostsOfPowerPlant(plant,
+                    getCurrentTick()));
+            financialPowerPlantReport.setVariableCosts(financialPowerPlantReport.getCommodityCosts()+financialPowerPlantReport.getCo2Costs());
+
+            //Determine fixed costs
+            financialPowerPlantReport.setFixedCosts(reps.powerPlantRepository
+                    .calculateFixedCostsOfPowerPlant(plant, getCurrentTick()));
+
+            //Calculate overall revenue
+            financialPowerPlantReport.setSpotMarketRevenue(reps.powerPlantRepository
+                    .calculateSpotMarketRevenueOfPowerPlant(plant, getCurrentTick()));
+
+            financialPowerPlantReport.setStrategicReserveRevenue(reps.powerPlantRepository
+                    .calculateStrategicReserveRevenueOfPowerPlant(plant, getCurrentTick()));
+
+            financialPowerPlantReport.setCapacityMarketRevenue(reps.powerPlantRepository
+                    .calculateCapacityMarketRevenueOfPowerPlant(plant, getCurrentTick()));
+
+            financialPowerPlantReport.setCo2HedgingRevenue(reps.powerPlantRepository
+                    .calculateCO2HedgingRevenueOfPowerPlant(plant, getCurrentTick()));
+
+
+            financialPowerPlantReport.setOverallRevenue(financialPowerPlantReport.getCapacityMarketRevenue() + financialPowerPlantReport.getCo2HedgingRevenue() + financialPowerPlantReport.getSpotMarketRevenue() + financialPowerPlantReport
+                    .getStrategicReserveRevenue());
+
+            // Calculate Full load hours
+            financialPowerPlantReport.setFullLoadHours(reps.powerPlantRepository.calculateFullLoadHoursOfPowerPlant(
+                    plant, getCurrentTick()));
+
+
+
         }
 
 

@@ -41,6 +41,7 @@ import emlab.gen.role.investment.DismantlePowerPlantPastTechnicalLifetimeRole;
 import emlab.gen.role.investment.GenericInvestmentRole;
 import emlab.gen.role.market.ClearCommodityMarketRole;
 import emlab.gen.role.market.ClearIterativeCO2AndElectricitySpotMarketTwoCountryRole;
+import emlab.gen.role.market.CreatingFinancialReports;
 import emlab.gen.role.market.DetermineResidualLoadCurvesForTwoCountriesRole;
 import emlab.gen.role.market.ProcessAcceptedBidsRole;
 import emlab.gen.role.market.ProcessAcceptedPowerPlantDispatchRole;
@@ -112,6 +113,8 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
     MarketStabilityReserveRole marketStabilityReserveRole;
     @Autowired
     private DetermineResidualLoadCurvesForTwoCountriesRole determineResidualLoadCurve;
+    @Autowired
+    private CreatingFinancialReports creatingFinancialReports;
 
     @Autowired
     Reps reps;
@@ -304,6 +307,8 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
         logger.warn("  6.b) Creating power plant financial reports.");
         Timer financialReports = new Timer();
         financialReports.start();
+
+        creatingFinancialReports.act(model);
 
         financialReports.stop();
         logger.warn("        took: {} seconds.", financialReports.seconds());
