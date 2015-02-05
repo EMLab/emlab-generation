@@ -94,8 +94,8 @@ saveQueriesToDataFrameList <- function(tick, listOfDataFrames, queries){
   df<-data.frame(tick)
   colnames(df)<-"tick"
   for (i in seq(1,length(queries[[1]]))){
-    print(paste("Query", i, " ", queries[i,1]))
-    flush.console()
+    message(paste("Query", i, " ", queries[i,1]))
+    #flush.console()
     if(grepl("^(?!TABLE).*$", queries[i,1], perl = TRUE)){
       tmpDF <- queryNumberToDataFrame(i, queries)
       if(!is.null(tmpDF))
@@ -158,8 +158,7 @@ runSimulation <- function(x, ticks, run, dryRunFile=NULL, ...) {
       }
     }
     x(tick,result,...)
-    print(paste("Tick ", tick, " done.", sep=""))
-    flush.console()
+    message(paste("Tick ", tick, " done.", sep=""))
     #print(paste("finished tick",tick))
     if(is.null(dryRunFile)){
       resumeSimulation()
