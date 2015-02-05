@@ -8,26 +8,33 @@
 
 <<echo=false,results=hide>>=
 setwd("~/emlab-generation/rscripts/")
+# The outputFolder should be created before running the simulation. The Rnw used to 
+# run the simulation should be saved in the output folder.
+outputFolder<-"~/emlab-generation/rscripts/exampleSweaveReport/"
+runName<-"exampleSweaveReport"
+noOfTicks<-40
+#scenario<-NULL #Scenario name can be set here, incl. the xml ending
+dryRun<-FALSE
 source("rConfig.R")
 source("simulation.R")
 @
 
-\newcommand\report[1]{
+\newcommand\report[3]{
 
   \begin{figure}
-    \subfloat[Segment 1]{\label{fig:esm1}\includegraphics[width=9in]{figures/CountryAelectricityspotmarket_Tick#1_Segment1.pdf}}\\
-    \subfloat[Segment 10]{\label{fig:esm3}\includegraphics[width=9in]{figures/CountryAelectricityspotmarket_Tick#1_Segment10.pdf}}\\
-    \subfloat[Segment 20]{\label{fig:esm5}\includegraphics[width=9in]{figures/CountryAelectricityspotmarket_Tick#1_Segment20.pdf}}
-    \caption{Electricity Spot Market A, Tick #1}
+    \subfloat[Segment 1]{\label{fig:esm1}\includegraphics[width=9in]{figures/#2electricityspotmarket_Tick#1_Segment1.pdf}}\\
+    \subfloat[Segment 10]{\label{fig:esm3}\includegraphics[width=9in]{figures/#2electricityspotmarket_Tick#1_Segment10.pdf}}\\
+    \subfloat[Segment 20]{\label{fig:esm5}\includegraphics[width=9in]{figures/#2electricityspotmarket_Tick#1_Segment20.pdf}}
+    \caption{Electricity Spot Market #2, Tick #1}
   \end{figure}
   
   \clearpage 
   
     \begin{figure}
-    \subfloat[Segment 1]{\label{fig:esm1}\includegraphics[width=9in]{figures/CountryBelectricityspotmarket_Tick#1_Segment1.pdf}}\\
-    \subfloat[Segment 10]{\label{fig:esm3}\includegraphics[width=9in]{figures/CountryBelectricityspotmarket_Tick#1_Segment10.pdf}}\\
-    \subfloat[Segment 20]{\label{fig:esm5}\includegraphics[width=9in]{figures/CountryBelectricityspotmarket_Tick#1_Segment20.pdf}}
-    \caption{Electricity Spot Market B, Tick #1}
+    \subfloat[Segment 1]{\label{fig:esm1}\includegraphics[width=9in]{figures/#3electricityspotmarket_Tick#1_Segment1.pdf}}\\
+    \subfloat[Segment 10]{\label{fig:esm3}\includegraphics[width=9in]{figures/#3electricityspotmarket_Tick#1_Segment10.pdf}}\\
+    \subfloat[Segment 20]{\label{fig:esm5}\includegraphics[width=9in]{figures/#3electricityspotmarket_Tick#1_Segment20.pdf}}
+    \caption{Electricity Spot Market #3, Tick #1}
   \end{figure}
 }
 
@@ -44,22 +51,32 @@ source("simulation.R")
 <<results=tex>>=
 createReportPdf <- function(tick,listOfDFs) {
   with(listOfDFs,printPowerPlantDispatchForAllTicksAndMarkets(tick, simpleQueriesDF, PowerPlantDispatchPlans, 
-                                                         SegmentClearingPoints, DemandLevels, paste(rscriptFolder,"exampleSweaveReport/figures/",sep=""), ".pdf"))
-  cat("\\report{",tick,"}\n",sep="")
+                                                         SegmentClearingPoints, DemandLevels, paste(outputFolder,"figures/",sep=""), ".pdf"))
+  markets=countries=sub(pattern=" electricity spot market",replacement="",x=unique(listOfDFs$SegmentClearingPoints$market))
+  cat("\\report{",tick,"}{",markets[1],"}{",markets[2],"}\n",sep="")
 }
 
 createPostRunPlots <- function(listOfDFs, listOfVariablesAndCaptions){
   names(listOfDFs$simpleQueriesDF)<-sapply(names(listOfDFs$simpleQueriesDF), function(x){gsub(x=x, pattern=" ", replacement="_")})
   for(variableAndCaption in listOfVariablesAndCaptions){
     filename=sub(x=variableAndCaption[[1]], pattern=' ', replacement='_')
-    with(listOfDFs, printTimeSeriesForVariable(df=simpleQueriesDF, variable=filename, ylabel=variableAndCaption[[2]], filetype=".pdf", filename=filename, analysisFolder=paste(rscriptFolder,"exampleSweaveReport/figures/", sep="")))
+    with(listOfDFs, printTimeSeriesForVariable(df=simpleQueriesDF, variable=filename, ylabel=variableAndCaption[[2]], filetype=".pdf", filename=filename, analysisFolder=paste(outputFolder,"/figures/", sep="")))
     cat("\\postrunplot{",filename,"}{",variableAndCaption[[3]],"}\n",sep="")
   }
 }
-setwd("~/emlab-generation/rscripts/exampleSweaveReport/")
-runResult<-runSimulation(createReportPdf,40, "newInvestment")
-  ##runResult<-runSimulation(createReportPdf,40, "newInvestment","~/emlab-generation/rscripts/exampleSweaveReport/newInvestment.RData")
-
+if(!file.exists(outputFolder)){
+  dir.create(outputFolder)
+}
+if(!file.exists(paste(outputFolder,"/figures/", sep=""))){
+  dir.create(paste(outputFolder,"/figures/", sep=""))
+}
+if(exists("scenario")){if(!is.null(scenario)) message(paste("Load Scenario",scenario,loadScenario(scenario)))}
+setwd(outputFolder)
+if(!dryRun){
+  runResult<-runSimulation(createReportPdf,noOfTicks, runName)
+} else{
+  runResult<-runSimulation(createReportPdf,noOfTicks,runName,paste(outputFolder,runName,".RData",sep=""))
+}
 createPostRunPlots(runResult, list(list("Avg_El_PricesinEURpMWh_Country A", "Electr. Price [Eur/MWh]", "Average Eletricity Price in Country A"),list("Avg_El_PricesinEURpMWh_Country B", "Electr. Price [Eur/MWh]", "Average Eletricity Price in Country B"), list("CO2Emissions_inTonpA",expression(paste(CO[2], " Emissions [Ton/a]", sep="")), "CO$_2$ Emissions"), list("CO2Auction", expression(paste(CO[2]," Price [EUR/t]", sep="")), "CO$_2$ Price")))
 @
 
