@@ -105,7 +105,7 @@ AbstractClearElectricitySpotMarketRole<DecarbonizationModel> implements Role<Dec
         Map<Substance, Double> fuelPriceMap = predictFuelPrices(model.getCentralForecastBacklookingYears(),
                 clearingTick);
 
-        logger.warn("Fuel prices: {}", fuelPriceMap);
+        // logger.warn("Fuel prices: {}", fuelPriceMap);
 
         Map<ElectricitySpotMarket, Double> demandGrowthMap = predictDemand(model.getCentralForecastBacklookingYears(),
                 clearingTick);
@@ -706,13 +706,16 @@ AbstractClearElectricitySpotMarketRole<DecarbonizationModel> implements Role<Dec
                     clearingTick, -deltaBankedEmissionCertificateToReachBankingTarget, currentEmissions,
                     futureEmissions, previouslyBankedCertificates, averageCO2PriceOfLastTwoYears);
 
-            logger.warn("Iteration: " + breakOffIterator + ": " + co2SecantSearch.toString() + ", Future: "
-                    + futureCO2Price);
+            // logger.warn("Iteration: " + breakOffIterator + ": " +
+            // co2SecantSearch.toString() + ", Future: "
+            // + futureCO2Price);
 
             if (!co2SecantSearch.stable) {
                 targetEnergyProducerBanking = calculateTargetCO2EmissionBankingOfEnergyProducers(currentEmissions,
                         futureEmissions, model);
-                logger.warn("Hedging Target: {}, Relative Hedging: {}", targetEnergyProducerBanking, targetEnergyProducerBanking/government.getCo2Cap(getCurrentTick()));
+                // logger.warn("Hedging Target: {}, Relative Hedging: {}",
+                // targetEnergyProducerBanking,
+                // targetEnergyProducerBanking/government.getCo2Cap(getCurrentTick()));
 
                 deltaBankedEmissionCertificateToReachBankingTarget = (targetEnergyProducerBanking - previouslyBankedCertificates)
                         / model.getCentralCO2TargetReversionSpeedFactor();
@@ -951,9 +954,9 @@ AbstractClearElectricitySpotMarketRole<DecarbonizationModel> implements Role<Dec
         co2SecantSearch.stable = false;
         double capDeviationCriterion = model.getCapDeviationCriterion();
         double currentCap = government.getCo2Cap(clearingTick);
-        logger.warn("Current cap: {}", currentCap);
+        // logger.warn("Current cap: {}", currentCap);
         double futureCap = government.getCo2Cap(clearingTick + model.getCentralForecastingYear());
-        logger.warn("Future cap: {}", futureCap);
+        // logger.warn("Future cap: {}", futureCap);
         //        logger.warn("Is MSR active in future ? {}.",
         //                (model.isStabilityReserveIsActive() && (model.getStabilityReserveFirstYearOfOperation() <= clearingTick
         //                + model.getCentralForecastingYear())));
@@ -967,7 +970,7 @@ AbstractClearElectricitySpotMarketRole<DecarbonizationModel> implements Role<Dec
                                 expectedBankedPermits,
                                 government)
                                 : futureCap;
-                                logger.warn("effective future cap: {}", effectiveCapInFuture);
+        // logger.warn("effective future cap: {}", effectiveCapInFuture);
                                 effectiveCapInFuture -= (government.isActivelyAdjustingTheCO2Cap() & getCurrentTick() > 0) ? renewableAdaptiveCO2CapRole
                                         .calculatedExpectedCapReductionForTimeStep(government, clearingTick,
                                                 clearingTick + model.getCentralForecastingYear(), currentEmissions, futureEmissions,

@@ -44,12 +44,24 @@ public class CreatingFinancialReports extends AbstractClearElectricitySpotMarket
     @Transactional
     public void act(DecarbonizationModel model) {
 
-        logger.warn("Querying power plants.");
+        createFinancialReportsForPowerPlantsAndTick(
+                reps.powerPlantRepository.findAllPowerPlantsWhichAreNotDismantledBeforeTick(getCurrentTick() - 2),
+                getCurrentTick());
 
-        for (PowerPlant plant : reps.powerPlantRepository.findAll()) {
+    }
+
+    public void createFinancialReportsForNewInvestments(DecarbonizationModel model) {
+        createFinancialReportsForPowerPlantsAndTick(
+                reps.powerPlantRepository.findAllPowerPlantsWithConstructionStartTimeInTick(getCurrentTick()),
+                getCurrentTick());
+    }
+
+    void createFinancialReportsForPowerPlantsAndTick(Iterable<PowerPlant> plants, long tick) {
+
+        for (PowerPlant plant : plants) {
 
             FinancialPowerPlantReport financialPowerPlantReport = new FinancialPowerPlantReport();
-            financialPowerPlantReport.setTime(getCurrentTick());
+            financialPowerPlantReport.setTime(tick);
             financialPowerPlantReport.setFullLoadHours(0);
             financialPowerPlantReport.setPowerPlant(plant);
             financialPowerPlantReport.setCommodityCosts(0);
@@ -57,7 +69,7 @@ public class CreatingFinancialReports extends AbstractClearElectricitySpotMarket
 
 
             // Determining variable and CO2 costs in current time step.
-            double totalSupply = plant.calculateElectricityOutputAtTime(getCurrentTick(), false);
+            double totalSupply = plant.calculateElectricityOutputAtTime(tick, false);
             financialPowerPlantReport.setProduction(totalSupply);
 
             for (SubstanceShareInFuelMix share : plant.getFuelMix()) {
@@ -71,25 +83,26 @@ public class CreatingFinancialReports extends AbstractClearElectricitySpotMarket
 
             }
             financialPowerPlantReport.setCo2Costs(reps.powerPlantRepository.calculateCO2CostsOfPowerPlant(plant,
-                    getCurrentTick()));
+                    tick));
             financialPowerPlantReport.setVariableCosts(financialPowerPlantReport.getCommodityCosts()+financialPowerPlantReport.getCo2Costs());
 
             //Determine fixed costs
             financialPowerPlantReport.setFixedCosts(reps.powerPlantRepository
-                    .calculateFixedCostsOfPowerPlant(plant, getCurrentTick()));
+                    .calculateFixedCostsOfPowerPlant(plant,
+                            tick));
 
             //Calculate overall revenue
             financialPowerPlantReport.setSpotMarketRevenue(reps.powerPlantRepository
-                    .calculateSpotMarketRevenueOfPowerPlant(plant, getCurrentTick()));
+                    .calculateSpotMarketRevenueOfPowerPlant(plant, tick));
 
             financialPowerPlantReport.setStrategicReserveRevenue(reps.powerPlantRepository
-                    .calculateStrategicReserveRevenueOfPowerPlant(plant, getCurrentTick()));
+                    .calculateStrategicReserveRevenueOfPowerPlant(plant, tick));
 
             financialPowerPlantReport.setCapacityMarketRevenue(reps.powerPlantRepository
-                    .calculateCapacityMarketRevenueOfPowerPlant(plant, getCurrentTick()));
+                    .calculateCapacityMarketRevenueOfPowerPlant(plant, tick));
 
             financialPowerPlantReport.setCo2HedgingRevenue(reps.powerPlantRepository
-                    .calculateCO2HedgingRevenueOfPowerPlant(plant, getCurrentTick()));
+                    .calculateCO2HedgingRevenueOfPowerPlant(plant, tick));
 
 
             financialPowerPlantReport.setOverallRevenue(financialPowerPlantReport.getCapacityMarketRevenue() + financialPowerPlantReport.getCo2HedgingRevenue() + financialPowerPlantReport.getSpotMarketRevenue() + financialPowerPlantReport
@@ -97,12 +110,21 @@ public class CreatingFinancialReports extends AbstractClearElectricitySpotMarket
 
             // Calculate Full load hours
             financialPowerPlantReport.setFullLoadHours(reps.powerPlantRepository.calculateFullLoadHoursOfPowerPlant(
-                    plant, getCurrentTick()));
+                    plant, tick));
+
+            int operationalStatus;
+            if (plant.isOperational(tick))
+                operationalStatus = 1;
+            else if (plant.isInPipeline(tick))
+                operationalStatus = 0;
+            else
+                operationalStatus = 2;
+
+            financialPowerPlantReport.setPowerPlantStatus(operationalStatus);
 
 
 
         }
-
 
     }
 

@@ -63,6 +63,12 @@ public class FinancialPowerPlantReport {
 
     double production;
 
+    int powerPlantStatus;
+
+    public static final int UNDERCONSTRUCTION = 0;
+    public static final int OPERATIONAL = 1;
+    public static final int DISMANTLED = 2;
+
     public long getTime() {
         return time;
     }
@@ -174,6 +180,14 @@ public class FinancialPowerPlantReport {
 
     public void setCo2Costs(double co2Costs) {
         this.co2Costs = co2Costs;
+    }
+
+    public int getPowerPlantStatus() {
+        return powerPlantStatus;
+    }
+
+    public void setPowerPlantStatus(int powerPlantStatus) {
+        this.powerPlantStatus = powerPlantStatus;
     }
 
 }

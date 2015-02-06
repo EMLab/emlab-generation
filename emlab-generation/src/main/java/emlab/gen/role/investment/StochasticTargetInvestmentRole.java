@@ -50,11 +50,11 @@ public class StochasticTargetInvestmentRole extends GenericInvestmentRole<Stocha
     @Transactional
     public void act(StochasticTargetInvestor targetInvestor) {
 
-        logger.warn(targetInvestor.getName() + " making investments.");
+        // logger.warn(targetInvestor.getName() + " making investments.");
 
         for(PowerGeneratingTechnologyTarget target : targetInvestor.getPowerGenerationTechnologyTargets()){
             PowerGeneratingTechnology pgt = target.getPowerGeneratingTechnology();
-            logger.warn("\t looking at" + pgt.getName());
+            // logger.warn("\t looking at" + pgt.getName());
             PowerGeneratingTechnologyTargetFulfillment targetFulfillment = null;
             for (PowerGeneratingTechnologyTargetFulfillment tgtFulfillment : targetInvestor
                     .getPowerGeneratingTechnologyPercentageOfYearlyTargetFulfillments()) {
@@ -78,17 +78,21 @@ public class StochasticTargetInvestmentRole extends GenericInvestmentRole<Stocha
             if (pgtLimit != null) {
                 pgtNodeLimit = pgtLimit.getUpperCapacityLimit(futureTimePoint);
             }
-            logger.warn("TechName: " + pgt.getName() + ", EnergyProducer" + targetInvestor + ", time: "
-                    + futureTimePoint);
+            // logger.warn("TechName: " + pgt.getName() + ", EnergyProducer" +
+            // targetInvestor + ", time: "
+            // + futureTimePoint);
             double expectedDismantledPowerPlantCapacityOfTechnologyAndOwner = reps.powerPlantRepository
                     .calculateCapacityOfExpectedDismantledPowerPlantsByOwnerByTechnology(futureTimePoint, targetInvestor, pgt);
             double targetInstallationDelta = (target.getTrend().getValue(futureTimePoint) - target.getTrend().getValue(
                     futureTimePoint - 1))
                     + expectedDismantledPowerPlantCapacityOfTechnologyAndOwner;
-            logger.warn(target.getPowerGeneratingTechnology().getName() + ": " + targetInstallationDelta
-                    + " of which repowering: " + expectedDismantledPowerPlantCapacityOfTechnologyAndOwner);
+            // logger.warn(target.getPowerGeneratingTechnology().getName() +
+            // ": " + targetInstallationDelta
+            // + " of which repowering: " +
+            // expectedDismantledPowerPlantCapacityOfTechnologyAndOwner);
             targetInstallationDelta = targetInstallationDelta * targetFulfillment.getTrend().getValue(futureTimePoint);
-            logger.warn(target.getPowerGeneratingTechnology().getName() + " Stochastic: " + targetInstallationDelta);
+            // logger.warn(target.getPowerGeneratingTechnology().getName() +
+            // " Stochastic: " + targetInstallationDelta);
             double installedCapacityDeviation = 0;
             if (pgtNodeLimit > expectedInstalledCapacity + targetInstallationDelta) {
                 installedCapacityDeviation = targetInstallationDelta;

@@ -371,7 +371,7 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
             reps.cashFlowRepository.delete(reps.cashFlowRepository.findAllCashFlowsForForTime(getCurrentTick()
                     - model.getDeletionAge()));
             reps.powerPlantRepository.delete(reps.powerPlantRepository
-                    .findAllPowerPlantsDismantledBeforeTick(getCurrentTick() - model.getDeletionAge()));
+                    .findAllPowerPlantsDismantledBeforeTick(getCurrentTick() - 1 - model.getDeletionAge()));
             reps.powerPlantDispatchPlanRepository.delete(reps.powerPlantDispatchPlanRepository
                     .findAllPowerPlantDispatchPlansForTime(getCurrentTick() + model.getCentralForecastingYear() - 1,
                             true));

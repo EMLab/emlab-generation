@@ -79,9 +79,14 @@ public interface PowerPlantRepository extends GraphRepository<PowerPlant> {
     // Iterable<PowerPlant> findOperationalPowerPlants(@Param("tick") long
     // tick);
 
+    @Query(value = "g.idx('__types__')[[className:'emlab.gen.domain.technology.PowerPlant']] .propertyFilter('dismantleTime', FilterPipe.Filter.GREATER_THAN, tick)", type = QueryType.Gremlin)
+    Iterable<PowerPlant> findAllPowerPlantsWhichAreNotDismantledBeforeTick(@Param("tick") long tick);
+
     @Query(value = "g.idx('__types__')[[className:'emlab.gen.domain.technology.PowerPlant']] .propertyFilter('dismantleTime', FilterPipe.Filter.LESS_THAN, tick)", type = QueryType.Gremlin)
     Iterable<PowerPlant> findAllPowerPlantsDismantledBeforeTick(@Param("tick") long tick);
 
+    @Query(value = "g.idx('__types__')[[className:'emlab.gen.domain.technology.PowerPlant']].filter{it.constructionStartTime==tick}", type = QueryType.Gremlin)
+    Iterable<PowerPlant> findAllPowerPlantsWithConstructionStartTimeInTick(@Param("tick") long tick);
     /**
      * Finds operational plants and gives them back as a list (only use for
      * current tick, since only officially dismantled powerplants and plants in
@@ -304,7 +309,7 @@ public interface PowerPlantRepository extends GraphRepository<PowerPlant> {
     @Query(value = "result=g.v(plant).in('REGARDING_POWERPLANT').filter{it.type==3 || it.type==7 || it.type==8}.propertyFilter('time', FilterPipe.Filter.EQUAL, tick).money.sum(); if(result==null){result=0}; return result", type = QueryType.Gremlin)
     double calculateFixedCostsOfPowerPlant(@Param("plant") PowerPlant plant, @Param("tick") long tick);
 
-    @Query(value = "ppdps=g.v(plant).in('POWERPLANT_DISPATCHPLAN').filter{it.time==tick}; sum=0;"
+    @Query(value = "ppdps=g.v(plant).in('POWERPLANT_DISPATCHPLAN').filter{it.time==tick}.propertyFilter('forecast', FilterPipe.Filter.EQUAL, false); sum=0;"
             + "fullLoadHours=0;"
             + "for(ppdp in ppdps){"
             + "totalAmount = ppdp.getProperty('acceptedAmount') + ppdp.getProperty('capacityLongTermContract');"

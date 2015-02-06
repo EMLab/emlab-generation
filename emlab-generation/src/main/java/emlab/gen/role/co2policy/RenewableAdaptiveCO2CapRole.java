@@ -98,10 +98,14 @@ public class RenewableAdaptiveCO2CapRole extends AbstractRole<Government> {
                 totalPlannedCapacity += plannedCapacityByTechnologyAndTargetInvestor;
                 double plannedProducedRenewableElectricityByTechnologyAndTargetInvestor = plannedCapacityByTechnologyAndTargetInvestor
                         / installedCapacityByTechnology * producedRenewableElectricityByTechnologyByTargetInvestor;
-                logger.warn("plannedProducedRenewable " + target.getPowerGeneratingTechnology().getName() + ": "
-                        + plannedProducedRenewableElectricityByTechnologyAndTargetInvestor + " =  "
-                        + plannedCapacityByTechnologyAndTargetInvestor
-                        +"/" + installedCapacityByTechnology +"*" + producedRenewableElectricityByTechnologyByTargetInvestor);
+                // logger.warn("plannedProducedRenewable " +
+                // target.getPowerGeneratingTechnology().getName() + ": "
+                // +
+                // plannedProducedRenewableElectricityByTechnologyAndTargetInvestor
+                // + " =  "
+                // + plannedCapacityByTechnologyAndTargetInvestor
+                // +"/" + installedCapacityByTechnology +"*" +
+                // producedRenewableElectricityByTechnologyByTargetInvestor);
                 plannedProductionByRenewables += Double
                         .isNaN(plannedProducedRenewableElectricityByTechnologyAndTargetInvestor) ? 0
                                 : plannedProducedRenewableElectricityByTechnologyAndTargetInvestor;
@@ -179,10 +183,14 @@ public class RenewableAdaptiveCO2CapRole extends AbstractRole<Government> {
                 totalPlannedCapacity += plannedCapacityByTechnologyAndTargetInvestor;
                 double plannedProducedRenewableElectricityByTechnologyAndTargetInvestor = plannedCapacityByTechnologyAndTargetInvestor
                         / installedCapacityByTechnology * producedRenewableElectricityByTechnologyByTargetInvestor;
-                logger.warn("plannedProducedRenewable " + target.getPowerGeneratingTechnology().getName() + ": "
-                        + plannedProducedRenewableElectricityByTechnologyAndTargetInvestor + " =  "
-                        + plannedCapacityByTechnologyAndTargetInvestor + "/" + installedCapacityByTechnology + "*"
-                        + producedRenewableElectricityByTechnologyByTargetInvestor);
+                // logger.warn("plannedProducedRenewable " +
+                // target.getPowerGeneratingTechnology().getName() + ": "
+                // +
+                // plannedProducedRenewableElectricityByTechnologyAndTargetInvestor
+                // + " =  "
+                // + plannedCapacityByTechnologyAndTargetInvestor + "/" +
+                // installedCapacityByTechnology + "*"
+                // + producedRenewableElectricityByTechnologyByTargetInvestor);
                 plannedProductionByRenewables += Double
                         .isNaN(plannedProducedRenewableElectricityByTechnologyAndTargetInvestor) ? 0
                                 : plannedProducedRenewableElectricityByTechnologyAndTargetInvestor;
@@ -208,9 +216,11 @@ public class RenewableAdaptiveCO2CapRole extends AbstractRole<Government> {
             capReduction = Math.max(0, actualSavedEmissionsApproximation - plannedSavedEmissionsApproximation)
                     * government.getAdaptiveCapCO2SavingsWeighingFactor();
         }
-        logger.warn("plannedSavedEmissionsApproximation: " + plannedSavedEmissionsApproximation
-                + ", actualSavedEmissionsApproximation: " + actualSavedEmissionsApproximation + ", Cap reduction: "
-                + capReduction);
+        // logger.warn("plannedSavedEmissionsApproximation: " +
+        // plannedSavedEmissionsApproximation
+        // + ", actualSavedEmissionsApproximation: " +
+        // actualSavedEmissionsApproximation + ", Cap reduction: "
+        // + capReduction);
         // logger.warn("TimeSeries after: {}",
         // government.getCo2CapTrend().getTimeSeries());
 
