@@ -3,6 +3,7 @@ library(RCurl)
 library(plyr)
 source("rConfig.R")
 source("AgentSpringQueryReader.R")
+source("AgentSpringHeadlessReader.R")
 source("singleRunAnalysis.R")
 options(warn=-1)
 ### FUNCTIONS ###
@@ -88,6 +89,22 @@ queryNumberToDataFrame <- function(number, queries){
   queryResult<-querySimulation(queries[number,2],queries[number,3])$result
   if(!is.null(queryResult))
     simpleQueryResultToDataFrame(queryResult, queries[number,1])
+}
+
+getResultListFromHeadlessModelRun<-function(outputFolder, modelRun, runName){
+  simpleQueriesDF<-getDataFrameForModelRun(outPutFolder = outputFolder, modelRun, modelRun)
+  PowerPlantDispatchPlans<-getTableForRunId(outputFolder = outputFolder,modelRun =modelRun , tableName="PowerPlantDispatchPlans")
+  SegmentClearingPoints<-getTableForRunId(outputFolder = outputFolder,modelRun =modelRun , tableName="SegmentClearingPoints")
+  DemandLevels<-getTableForRunId(outputFolder = outputFolder,modelRun =modelRun , tableName="DemandLevels")
+  FinancialReports<-getTableForRunId(outputFolder = outputFolder,modelRun =modelRun , tableName="FinancialReports")
+  result<-list(modelRun)
+  result[["simpleQueriesDF"]]<-simpleQueriesDF
+  result[["PowerPlantDispatchPlans"]]<-PowerPlantDispatchPlans
+  result[["SegmentClearingPoints"]]<-SegmentClearingPoints
+  result[["FinancialReports"]]<-FinancialReports
+  result[["DemandLevels"]]<-DemandLevels
+  save(result, ascii=TRUE, file=paste(runName,".RData", sep=""))
+  return(result)
 }
 
 saveQueriesToDataFrameList <- function(tick, listOfDataFrames, queries){

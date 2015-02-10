@@ -54,12 +54,12 @@ getDataFrameForModelRunsInFolderWithFilePattern <- function(outPutFolder, patter
   return(df)
 }
 
-getTableForRunId <- function(outputFolder, modelRun, runId, tableName){
-  if(!file.exists(paste(outputFolder,runId,"-",tableName,".csv", sep=""))){
+getTableForRunId <- function(outputFolder, modelRun, tableName){
+  if(!file.exists(paste(outputFolder,modelRun,"-",tableName,".csv", sep=""))){
     setwd(outputFolder)
-    system(paste('python ',headlessFolder,"asHeadlessTableReader.py ", outputFolder, " ", modelRun, " ", runId, " ",  tableName, sep=""))
+    system(paste('python ',headlessFolder,"asHeadlessTableReader.py ", outputFolder, " ", modelRun, " ",  tableName, sep=""))
   }
-  df<-read.csv(paste(outputFolder,runId,"-",tableName,".csv", sep=""))
+  df<-read.csv(paste(outputFolder,modelRun,"-",tableName,".csv", sep=""))
   return(df)
 }
 
