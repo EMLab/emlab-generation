@@ -18,7 +18,8 @@ def read_tableQuery_of_runid(path, runName, runId, tableName):
     filename = runId + "-" + "TABLE_" + tableName
     filepath = path + runName + "/" + filename
     json_data = open(filepath, 'r')
-    line = json_data.readline()
+    lines = json_data.readlines()
+    line=lines[0]
     jsonLine = json.loads(line[:-2], encoding="ascii")
     wrapperCounter = 0
     tempJsonLine = jsonLine
@@ -41,21 +42,22 @@ def read_tableQuery_of_runid(path, runName, runId, tableName):
         for content in subelement:
             resultDict[(headers[headerNumber]).encode("ascii")].append(content)
             headerNumber = headerNumber + 1
-    line = json_data.readline()
-    while line and (line is not None) and isinstance(line, (list)):
-        counter = 0
-        tempJsonLine = json.loads(line[:-2], encoding="ascii")
-        while counter < wrapperCounter:
-            tempJsonLine = tempJsonLine[0]
-            counter = counter + 1
+    for line in lines[1:]:
+        jsonLine = json.loads(line[:-2], encoding="ascii")
+        tempJsonLine = jsonLine
+        #Unwrapping the json lists, in case it is wrapped
+        while (tempJsonLine is not None) and len(tempJsonLine) == 1 and \
+         isinstance(tempJsonLine, (list)) and \
+         (not isinstance(tempJsonLine[0][0], (basestring))):
+             tempJsonLine = tempJsonLine[0]
+             wrapperCounter = wrapperCounter + 1
         tempJsonLine = tempJsonLine[1:]
         for subelement in tempJsonLine:
             headerNumber = 0
             if not len(subelement) == len(headers):
                 raise NameError("Table length differs from header length!")
             for content in subelement:
-                resultDict[(headers[headerNumber]).
-                encode("ascii")].append(content)
+                resultDict[(headers[headerNumber]).encode("ascii")].append(content)
                 headerNumber = headerNumber + 1
         line = json_data.readline()
     return resultDict
@@ -63,6 +65,7 @@ def read_tableQuery_of_runid(path, runName, runId, tableName):
 
 def write_first_tableResultDict_to_csv(path, runName, runId, tableName,
 resultDict):
+   # print(resultDict)
     queryNames = ["runId"]
     queryNames = set(queryNames)
     queryNames.update(resultDict.keys())
