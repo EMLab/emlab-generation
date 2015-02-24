@@ -65,8 +65,7 @@ public class StochasticTargetInvestmentRole extends GenericInvestmentRole<Stocha
             PowerGridNode installationNode = targetInvestor.getSpecificPowerGridNode();
 
             if (installationNode == null)
-                reps.powerGeneratingTechnologyNodeLimitRepository.findOneByTechnologyAndMarket(pgt,
-                        targetInvestor.getInvestorMarket());
+		installationNode = reps.powerGridNodeRepository.findFirstPowerGridNodeByElectricitySpotMarket(targetInvestor.getInvestorMarket());
 
             long futureTimePoint = getCurrentTick()+pgt.getExpectedLeadtime()+pgt.getExpectedPermittime();
             double expectedInstalledCapacity = reps.powerPlantRepository.calculateCapacityOfExpectedOperationalPowerPlantsInMarketAndTechnology(targetInvestor.getInvestorMarket(), pgt, futureTimePoint);
