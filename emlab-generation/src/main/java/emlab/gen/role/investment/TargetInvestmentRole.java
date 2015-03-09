@@ -30,6 +30,7 @@ import emlab.gen.domain.contract.Loan;
 import emlab.gen.domain.policy.PowerGeneratingTechnologyTarget;
 import emlab.gen.domain.technology.PowerGeneratingTechnology;
 import emlab.gen.domain.technology.PowerGeneratingTechnologyNodeLimit;
+import emlab.gen.domain.technology.PowerGridNode;
 import emlab.gen.domain.technology.PowerPlant;
 import emlab.gen.repository.Reps;
 
@@ -73,7 +74,12 @@ public class TargetInvestmentRole extends GenericInvestmentRole<TargetInvestor> 
                 double powerPlantCapacityRatio = installedCapacityDeviation/pgt.getCapacity();
 
                 PowerPlant plant = new PowerPlant();
-                plant.specifyNotPersist(getCurrentTick(), targetInvestor, reps.powerGridNodeRepository.findFirstPowerGridNodeByElectricitySpotMarket(targetInvestor.getInvestorMarket()), pgt);
+		PowerGridNode installationNode = targetInvestor.getSpecificPowerGridNode();
+
+		if (installationNode == null)
+		    installationNode = reps.powerGridNodeRepository.findFirstPowerGridNodeByElectricitySpotMarket(targetInvestor.getInvestorMarket());
+                
+		plant.specifyNotPersist(getCurrentTick(), targetInvestor, installationNode, pgt);
                 plant.setActualNominalCapacity(pgt.getCapacity()*powerPlantCapacityRatio);
                 PowerPlantManufacturer manufacturer = reps.genericRepository.findFirst(PowerPlantManufacturer.class);
                 BigBank bigbank = reps.genericRepository.findFirst(BigBank.class);
