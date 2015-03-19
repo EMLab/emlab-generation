@@ -570,6 +570,8 @@ AbstractClearElectricitySpotMarketRole<DecarbonizationModel> implements Role<Dec
             fuelPriceMap.put(substance, findLastKnownPriceForSubstance(substance));
         }
 
+	logger.warn(fuelPriceMap.toString());
+
         Map<Substance, Double> futureFuelPriceMap = predictFuelPrices(model.getCentralForecastBacklookingYears(),
                 clearingTick + model.getCentralForecastingYear());
 
@@ -684,6 +686,7 @@ AbstractClearElectricitySpotMarketRole<DecarbonizationModel> implements Role<Dec
             futureCO2Price = co2SecantSearch.co2Price
                     * Math.pow(1 + model.getCentralPrivateDiscountingRate(), model.getCentralForecastingYear());
 
+	    logger.warn("Iteration " + breakOffIterator + ", CO2Price for clearing: " + co2SecantSearch.co2Price);
             clearOneOrTwoConnectedElectricityMarketsAtAGivenCO2PriceForSegments(government,
                     clearingTick + model.getCentralForecastingYear(), true, futureDemandGrowthMap, futureFuelPriceMap,
                     futureCO2Price, futureNationalMinCo2Prices, segments, interconnector, model);
@@ -794,6 +797,7 @@ AbstractClearElectricitySpotMarketRole<DecarbonizationModel> implements Role<Dec
             }
         }
 
+	logger.warn("CO2Price that is saved: " + co2SecantSearch.co2Price);
         reps.clearingPointRepositoryOld.createOrUpdateCO2MarketClearingPoint(co2Auction, co2SecantSearch.co2Price,
                 currentEmissions, emergencyPriceTriggerActive, emergencyAllowancesToBeReleased, clearingTick, false);
         reps.clearingPointRepositoryOld.createOrUpdateCO2MarketClearingPoint(co2Auction,
@@ -818,10 +822,11 @@ AbstractClearElectricitySpotMarketRole<DecarbonizationModel> implements Role<Dec
                 producer.setCo2Allowances(bankedEmissionsOfProducer);
             }
         } else {
-            clearIterativeCO2AndElectricitySpotMarketTwoCountryForTimestepAndFuelPrices(model, false, clearingTick,
-                    fuelPriceMap, null, previouslyBankedCertificates);
+	    logger.warn("Banking exhausted.");
             clearIterativeCO2AndElectricitySpotMarketTwoCountryForTimestepAndFuelPrices(model, true, clearingTick
                     + model.getCentralForecastingYear(), futureFuelPriceMap, futureDemandGrowthMap, 0);
+            clearIterativeCO2AndElectricitySpotMarketTwoCountryForTimestepAndFuelPrices(model, false, clearingTick,
+                    fuelPriceMap, null, previouslyBankedCertificates);
             for (EnergyProducer producer : reps.energyProducerRepository.findAll()) {
                 producer.setLastYearsCo2Allowances(producer.getCo2Allowances());
                 producer.setCo2Allowances(0);
@@ -970,7 +975,7 @@ AbstractClearElectricitySpotMarketRole<DecarbonizationModel> implements Role<Dec
                                 expectedBankedPermits,
                                 government)
                                 : futureCap;
-        // logger.warn("effective future cap: {}", effectiveCapInFuture);
+                                // logger.warn("effective future cap: {}", effectiveCapInFuture);
                                 effectiveCapInFuture -= (government.isActivelyAdjustingTheCO2Cap() & getCurrentTick() > 0) ? renewableAdaptiveCO2CapRole
                                         .calculatedExpectedCapReductionForTimeStep(government, clearingTick,
                                                 clearingTick + model.getCentralForecastingYear(), currentEmissions, futureEmissions,

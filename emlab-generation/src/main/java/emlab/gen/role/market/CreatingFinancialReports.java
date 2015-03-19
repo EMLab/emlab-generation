@@ -17,9 +17,15 @@ package emlab.gen.role.market;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 
 import agentspring.role.RoleComponent;
 import emlab.gen.domain.agent.DecarbonizationModel;
+import org.springframework.data.neo4j.support.Neo4jTemplate;
 import emlab.gen.domain.market.electricity.FinancialPowerPlantReport;
 import emlab.gen.domain.technology.PowerPlant;
 import emlab.gen.domain.technology.Substance;
@@ -40,9 +46,17 @@ public class CreatingFinancialReports extends AbstractClearElectricitySpotMarket
     @Autowired
     private Reps reps;
 
+    @Autowired
+    Neo4jTemplate template;
 
     @Transactional
     public void act(DecarbonizationModel model) {
+
+        Map<Substance, Double> fuelPriceMap = new HashMap<Substance, Double>();
+        for (Substance substance : template.findAll(Substance.class)) {
+            fuelPriceMap.put(substance, findLastKnownPriceForSubstance(substance));
+        }
+	logger.warn(fuelPriceMap.toString());
 
         createFinancialReportsForPowerPlantsAndTick(
                 reps.powerPlantRepository.findAllPowerPlantsWhichAreNotDismantledBeforeTick(getCurrentTick() - 2),

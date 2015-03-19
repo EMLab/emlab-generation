@@ -98,4 +98,6 @@ public class Reps {
     @Autowired
     public IntermittentTechnologyNodeLoadFactorRepository intermittentTechnologyNodeLoadFactorRepository;
 
+    @Autowired
+    public FinancialPowerPlantReportRepository financialPowerPlantReportRepository;
 }
