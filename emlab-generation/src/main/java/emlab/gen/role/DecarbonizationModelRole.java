@@ -375,6 +375,8 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
             reps.powerPlantDispatchPlanRepository.delete(reps.powerPlantDispatchPlanRepository
                     .findAllPowerPlantDispatchPlansForTime(getCurrentTick() + model.getCentralForecastingYear() - 1,
                             true));
+            reps.financialPowerPlantReportRepository.delete(reps.financialPowerPlantReportRepository
+                    .findAllFinancialPowerPlantReportsForTime(getCurrentTick() - 5 - model.getDeletionAge()));
             timerMarket.stop();
             logger.warn("        took: {} seconds.", timerMarket.seconds());
         }
