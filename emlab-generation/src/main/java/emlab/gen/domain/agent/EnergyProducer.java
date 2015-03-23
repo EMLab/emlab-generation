@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 the original author or authors.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -63,6 +63,11 @@ public class EnergyProducer extends DecarbonizationAgent implements Agent {
     private int dismantlingProlongingYearsAfterTechnicalLifetime;
     private double dismantlingRequiredOperatingProfit;
     private long pastTimeHorizon;
+
+    // Historical CVar Parameters
+    private double historicalCVarAlpha;
+    private double historicalCVarBeta;
+    private double historicalCVarPropensityForNewTechnologies;
 
     public boolean isWillingToInvest() {
         return willingToInvest;
@@ -182,5 +187,29 @@ public class EnergyProducer extends DecarbonizationAgent implements Agent {
 
     public void setInvestorMarket(ElectricitySpotMarket investorMarket) {
         this.investorMarket = investorMarket;
+    }
+
+    public double getHistoricalCVarAlpha() {
+        return historicalCVarAlpha;
+    }
+
+    public void setHistoricalCVarAlpha(double historicalCVarAlpha) {
+        this.historicalCVarAlpha = historicalCVarAlpha;
+    }
+
+    public double getHistoricalCVarBeta() {
+        return historicalCVarBeta;
+    }
+
+    public void setHistoricalCVarBeta(double historicalCVarBeta) {
+        this.historicalCVarBeta = historicalCVarBeta;
+    }
+
+    public double getHistoricalCVarPropensityForNewTechnologies() {
+        return historicalCVarPropensityForNewTechnologies;
+    }
+
+    public void setHistoricalCVarPropensityForNewTechnologies(double historicalCVarPropensityForNewTechnologies) {
+        this.historicalCVarPropensityForNewTechnologies = historicalCVarPropensityForNewTechnologies;
     }
 }

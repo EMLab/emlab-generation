@@ -297,17 +297,19 @@ NodeBacked {
                         // plant.getActualNominalCapacity();
 
 
-                        double alpha = 0.05;
-                        double beta = 1;
                         Double cVarOfHistoricalGrossProfitsResult = reps.financialPowerPlantReportRepository
                                 .calculateHistoricalCVarRelativePerMWForOperationaPlantsForEnergyProducerAndTechnologyForYearsFromToAndAlphaValue(
-                                        getCurrentTick() - 5, getCurrentTick(), agent, technology, alpha);
+                                        getCurrentTick() - 5, getCurrentTick(), agent, technology,
+                                        agent.getHistoricalCVarAlpha());
 
                         double cVarOfHistoricalGrossProfits = 0;
-                        if (cVarOfHistoricalGrossProfitsResult != null)
+                        if (cVarOfHistoricalGrossProfitsResult != null) {
                             cVarOfHistoricalGrossProfits = cVarOfHistoricalGrossProfitsResult.doubleValue()
-                            * plant.getActualNominalCapacity();
-                        ;
+                                    * plant.getActualNominalCapacity();
+                        } else {
+                            cVarOfHistoricalGrossProfits = agent.getHistoricalCVarPropensityForNewTechnologies()
+                                    * expectedGrossProfit;
+                        }
 
 
 
@@ -362,7 +364,7 @@ NodeBacked {
 
                         double historicalCvarProjectValue = discountedHistoricalCvarOpProfit + discountedCapitalCosts;
 
-                        projectValue += historicalCvarProjectValue;
+                        projectValue += agent.getHistoricalCVarBeta() * historicalCvarProjectValue;
                         // if (historicalCvarProjectValue < 0) {
                         // logger.warn("Adjusting NPV!");
                         // projectValue += beta * historicalCvarProjectValue;
