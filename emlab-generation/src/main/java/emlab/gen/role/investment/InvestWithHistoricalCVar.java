@@ -599,7 +599,7 @@ NodeBacked {
             }
 
             //get difference between technology target and expected operational capacity
-            for (TargetInvestor targetInvestor : reps.targetInvestorRepository.findAll()) {
+            for (TargetInvestor targetInvestor : reps.targetInvestorRepository.findAllByMarket(market)) {
                 if (!(targetInvestor instanceof StochasticTargetInvestor)) {
                     for (PowerGeneratingTechnologyTarget pggt : targetInvestor.getPowerGenerationTechnologyTargets()) {
                         double expectedTechnologyCapacity = reps.powerPlantRepository
