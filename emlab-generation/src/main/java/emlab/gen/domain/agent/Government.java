@@ -61,6 +61,8 @@ public class Government extends DecarbonizationAgent implements Agent {
 
     private boolean adaptiveCapAdjustmentBasedOnCapNotActualEmissions;
 
+    private boolean adaptiveCapAdjustmentRelativeToNonSubsidisedProduction;
+
     private double co2Penalty;
 
     private double stabilityReserve;
@@ -221,6 +223,16 @@ public class Government extends DecarbonizationAgent implements Agent {
     public void setAdaptiveCapAdjustmentBasedOnCapNotActualEmissions(
             boolean adaptiveCapAdjustmentBasedOnCapNotActualEmissions) {
         this.adaptiveCapAdjustmentBasedOnCapNotActualEmissions = adaptiveCapAdjustmentBasedOnCapNotActualEmissions;
+    }
+
+
+    public boolean isAdaptiveCapAdjustmentRelativeToNonSubsidisedProduction() {
+        return adaptiveCapAdjustmentRelativeToNonSubsidisedProduction;
+    }
+
+    public void setAdaptiveCapAdjustmentRelativeToNonSubsidisedProduction(
+            boolean adaptiveCapAdjustmentRelativeToNonSubsidisedProduction) {
+        this.adaptiveCapAdjustmentRelativeToNonSubsidisedProduction = adaptiveCapAdjustmentRelativeToNonSubsidisedProduction;
     }
 
 }
