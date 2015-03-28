@@ -328,6 +328,8 @@ NodeBacked {
                         // based on the companies debt-ratio
                         double wacc = (1 - agent.getDebtRatioOfInvestments()) * agent.getEquityInterestRate()
                                 + agent.getDebtRatioOfInvestments() * agent.getLoanInterestRate();
+                        if (cVarOfHistoricalGrossProfitsResult == null)
+                            wacc += agent.getHistoricalCVarInterestRateIncreaseForNewTechnologies();
 
                         // Creation of out cash-flow during power plant building
                         // phase (note that the cash-flow is negative!)
@@ -364,7 +366,11 @@ NodeBacked {
 
                         double historicalCvarProjectValue = discountedHistoricalCvarOpProfit + discountedCapitalCosts;
 
-                        projectValue += agent.getHistoricalCVarBeta() * historicalCvarProjectValue;
+                        if (cVarOfHistoricalGrossProfitsResult != null
+                                || (agent.getHistoricalCVarInterestRateIncreaseForNewTechnologies() == 0 & cVarOfHistoricalGrossProfitsResult == null)) {
+                            projectValue += (agent.getHistoricalCVarBeta() * historicalCvarProjectValue < 0) ? agent
+                                    .getHistoricalCVarBeta() * historicalCvarProjectValue : 0;
+                        }
                         // if (historicalCvarProjectValue < 0) {
                         // logger.warn("Adjusting NPV!");
                         // projectValue += beta * historicalCvarProjectValue;
