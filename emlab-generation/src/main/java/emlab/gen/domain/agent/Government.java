@@ -67,6 +67,8 @@ public class Government extends DecarbonizationAgent implements Agent {
 
     private double stabilityReserve;
 
+    private boolean stabilityReserveHasOneYearDelayInsteadOfTwoYearDelay;
+
     @RelatedTo(type = "STABILITY_RESERVE_UPPER_TRIGGER", elementClass = TimeSeriesImpl.class, direction = Direction.OUTGOING)
     private TimeSeriesImpl stabilityReserveUpperTriggerTrend;
 
@@ -233,6 +235,15 @@ public class Government extends DecarbonizationAgent implements Agent {
     public void setAdaptiveCapAdjustmentRelativeToNonSubsidisedProduction(
             boolean adaptiveCapAdjustmentRelativeToNonSubsidisedProduction) {
         this.adaptiveCapAdjustmentRelativeToNonSubsidisedProduction = adaptiveCapAdjustmentRelativeToNonSubsidisedProduction;
+    }
+
+    public boolean isStabilityReserveHasOneYearDelayInsteadOfTwoYearDelay() {
+        return stabilityReserveHasOneYearDelayInsteadOfTwoYearDelay;
+    }
+
+    public void setStabilityReserveHasOneYearDelayInsteadOfTwoYearDelay(
+            boolean stabilityReserveHasOneYearDelayInsteadOfTwoYearDelay) {
+        this.stabilityReserveHasOneYearDelayInsteadOfTwoYearDelay = stabilityReserveHasOneYearDelayInsteadOfTwoYearDelay;
     }
 
 }

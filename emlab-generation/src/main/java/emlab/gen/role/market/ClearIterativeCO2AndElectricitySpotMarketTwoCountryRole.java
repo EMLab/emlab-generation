@@ -570,7 +570,7 @@ AbstractClearElectricitySpotMarketRole<DecarbonizationModel> implements Role<Dec
             fuelPriceMap.put(substance, findLastKnownPriceForSubstance(substance));
         }
 
-	logger.warn(fuelPriceMap.toString());
+        logger.warn(fuelPriceMap.toString());
 
         Map<Substance, Double> futureFuelPriceMap = predictFuelPrices(model.getCentralForecastBacklookingYears(),
                 clearingTick + model.getCentralForecastingYear());
@@ -686,7 +686,7 @@ AbstractClearElectricitySpotMarketRole<DecarbonizationModel> implements Role<Dec
             futureCO2Price = co2SecantSearch.co2Price
                     * Math.pow(1 + model.getCentralPrivateDiscountingRate(), model.getCentralForecastingYear());
 
-	    logger.warn("Iteration " + breakOffIterator + ", CO2Price for clearing: " + co2SecantSearch.co2Price);
+            logger.warn("Iteration " + breakOffIterator + ", CO2Price for clearing: " + co2SecantSearch.co2Price);
             clearOneOrTwoConnectedElectricityMarketsAtAGivenCO2PriceForSegments(government,
                     clearingTick + model.getCentralForecastingYear(), true, futureDemandGrowthMap, futureFuelPriceMap,
                     futureCO2Price, futureNationalMinCo2Prices, segments, interconnector, model);
@@ -797,7 +797,7 @@ AbstractClearElectricitySpotMarketRole<DecarbonizationModel> implements Role<Dec
             }
         }
 
-	logger.warn("CO2Price that is saved: " + co2SecantSearch.co2Price);
+        logger.warn("CO2Price that is saved: " + co2SecantSearch.co2Price);
         reps.clearingPointRepositoryOld.createOrUpdateCO2MarketClearingPoint(co2Auction, co2SecantSearch.co2Price,
                 currentEmissions, emergencyPriceTriggerActive, emergencyAllowancesToBeReleased, clearingTick, false);
         reps.clearingPointRepositoryOld.createOrUpdateCO2MarketClearingPoint(co2Auction,
@@ -822,7 +822,7 @@ AbstractClearElectricitySpotMarketRole<DecarbonizationModel> implements Role<Dec
                 producer.setCo2Allowances(bankedEmissionsOfProducer);
             }
         } else {
-	    logger.warn("Banking exhausted.");
+            logger.warn("Banking exhausted.");
             clearIterativeCO2AndElectricitySpotMarketTwoCountryForTimestepAndFuelPrices(model, true, clearingTick
                     + model.getCentralForecastingYear(), futureFuelPriceMap, futureDemandGrowthMap, 0);
             clearIterativeCO2AndElectricitySpotMarketTwoCountryForTimestepAndFuelPrices(model, false, clearingTick,
@@ -967,7 +967,7 @@ AbstractClearElectricitySpotMarketRole<DecarbonizationModel> implements Role<Dec
         //                + model.getCentralForecastingYear())));
         //        logger.warn("First year MSR is active: {}", model.getStabilityReserveFirstYearOfOperation());
         double expectedBankedPermits = calculateExpectedBankedCertificates(currentEmissions, futureEmissions,
-                currentCap, futureCap, previouslyBankedCertificates, model.getCentralForecastingYear());
+                currentCap, futureCap, previouslyBankedCertificates, model.getCentralForecastingYear(), government);
         double effectiveCapInFuture = (model.isStabilityReserveIsActive() && (model
                 .getStabilityReserveFirstYearOfOperation() <= clearingTick + model.getCentralForecastingYear())) ? futureCap
                         - marketStabilityReserveRole.calculateInflowToMarketReserveForTimeStep(
@@ -1121,10 +1121,11 @@ AbstractClearElectricitySpotMarketRole<DecarbonizationModel> implements Role<Dec
     }
 
     double calculateExpectedBankedCertificates(double currentEmissions, double futureEmissions, double currentCap,
-            double futureCap, double currentlyBankedEmissions, long centralForecastingYear) {
+            double futureCap, double currentlyBankedEmissions, long centralForecastingYear, Government government) {
         double expectedBankedCertificates = currentlyBankedEmissions + currentCap - currentEmissions + futureCap
                 - futureEmissions;
-        expectedBankedCertificates = 1 / 3.0
+        expectedBankedCertificates = government.isStabilityReserveHasOneYearDelayInsteadOfTwoYearDelay() ? 2.0 / 3.0
+                * expectedBankedCertificates + 1.0 / 3.0 * currentlyBankedEmissions : 1 / 3.0
                 * expectedBankedCertificates
                 + 2 / 3.0 * currentlyBankedEmissions;
         return expectedBankedCertificates;
