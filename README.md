@@ -1,16 +1,16 @@
-EMLab Agent-Based Model
+EMLab-Generation - Adjusting the CO2 cap to subsidised RES generation: Can CO2 prices be decoupled from renewable policy?
 
-EMLab is a suite of Agent-Based Models dealing with policy questions on the long-term evolution of the electricity sector. It contains various scenarios, agent descriptions and behaviors, that allows the user to capture developments in this sector. The research using this model focuses on CO2 and renewables policy, generation adequacy, capacity mechanisms, investment risk and behaviour and open data. The project makes use of the the AgentSpring modelling framework.
+This branch of the EMLab-Generation model, contains the version, as well as complete input data, used for the paper Adjusting the CO2 cap to subsidised RES generation: Can CO2 prices be decoupled from renewable policy?
 
-Research developed by *TU Delft, Faculty of Technology Policy and Management, Energy & Industry Section*
+With the R-script adaptiveCO2-DualNode-scenarioFileCreator.R, the necessary scenario files for reproducing the model results of the paper can be created. For manual inspection of the input data, have a look at the following files and locations:
 
+adaptiveCO2-DualNode-scenarioTemplate.xml is the template from which the Monte-Carlo simulation files are created, using a R-script, which substitutes placeholders by the actual scenario values.
+More complex input data is contained in the following folder: https://github.com/EMLab/emlab-generation/tree/paper/resCapAdaption/emlab-generation/src/main/resources/data
+This research was developed at TU Delft, Faculty of Technology Policy and Management, Energy & Industry Section
 
-Supported by:
-* [Energy Delta Gas Research program, project A1 – Understanding gas sector intra-market and inter-market interactions](http://www.edgar-program.com/nl/projects/A1)
-* [Knowledge for Climate program, project INCAH – Infrastructure Climate Adaptation in Hotspots] (http://knowledgeforclimate.climateresearchnetherlands.nl/infrastructurenetworks)
-* [Erasmus Mundus Joint Doctorate in Sustainable Energy Technologies and Strategies Program](http://www.upcomillas.es/estudios/estu_doct_SETS.aspx)
+And supported by:
 
-
-Please contact Emile Chappin (e.j.l.chappin@tudelft.nl) or Jörn C. Richstein (j.c.richstein@tudelft.nl) to get involved in this project.
-
-Installation instructions: See https://github.com/EMLab/emlab-generation/wiki/EMLab-and-Github
+Erasmus Mundus Joint Doctorate in Sustainable Energy Technologies and Strategies Program
+Energy Delta Gas Research program, project A1 – Understanding gas sector intra-market and inter-market interactions
+Knowledge for Climate program, project INCAH – Infrastructure Climate Adaptation in Hotspots
+Please contact Jörn C. Richstein (j.c.richstein@tudelft.nl),Émile J.L. Chappin (E.J.L.Chappin@tudelft.nl) or Laurens de Vries (L.J.deVries@tudelft.nl) for further information on the paper. For more information on the EMLab-Generation model, please visit: https://github.com/EMLab/emlab-generation/ or http://emlab.tudelft.nl/ .
