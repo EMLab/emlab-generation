@@ -33,7 +33,7 @@ cd $LOCALRESULTFOLDER/$JOBNAME
 for PBS_ARRAYID in $(eval echo "{$START..$END}")
 do
 echo "$SCENARIO-$PBS_ARRAYID.xml"
-java -d64 -server -Xmx3072m -Drun.id=$JOBNAME-$PBS_ARRAYID -DSCENARIO_FOLDER=$SCENARIOPATH -Dresults.path=$LOCALRESULTFOLDER/$JOBNAME -Dscenario.file=$SCENARIO-$PBS_ARRAYID".xml" $QUERYCOMMAND -jar $LOCALJARFILE
+java -d64 -server -Xmx3072m -Drun.id=$runId -DSCENARIO_FOLDER=$SCENARIOPATH -Dresults.path=$LOCALRESULTFOLDER/$JOBNAME -Dscenario.file=$SCENARIO-$PBS_ARRAYID".xml" $QUERYCOMMAND -jar $LOCALJARFILE
 mv simulation.log "$JOBNAME-$PBS_ARRAYID.log"
 rm -rf /tmp/ramdisk/emlab.gen-db/$JOBNAME-$PBS_ARRAYID
 done
