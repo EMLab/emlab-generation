@@ -69,6 +69,8 @@ public class EnergyProducer extends DecarbonizationAgent implements Agent {
     private double historicalCVarBeta;
     private double historicalCVarPropensityForNewTechnologies;
     private double historicalCVarInterestRateIncreaseForNewTechnologies;
+    private long historicalCvarBacklookingYears;
+    private boolean historicalCvarCreateDummyPowerPlantsForNewTechnologies;
 
     public boolean isWillingToInvest() {
         return willingToInvest;
@@ -221,5 +223,22 @@ public class EnergyProducer extends DecarbonizationAgent implements Agent {
     public void setHistoricalCVarInterestRateIncreaseForNewTechnologies(
             double historicalCVarInterestRateIncreaseForNewTechnologies) {
         this.historicalCVarInterestRateIncreaseForNewTechnologies = historicalCVarInterestRateIncreaseForNewTechnologies;
+    }
+
+    public long getHistoricalCvarBacklookingYears() {
+        return historicalCvarBacklookingYears;
+    }
+
+    public void setHistoricalCvarBacklookingYears(long historicalCvarBacklookingYears) {
+        this.historicalCvarBacklookingYears = historicalCvarBacklookingYears;
+    }
+
+    public boolean isHistoricalCvarCreateDummyPowerPlantsForNewTechnologies() {
+        return historicalCvarCreateDummyPowerPlantsForNewTechnologies;
+    }
+
+    public void setHistoricalCvarCreateDummyPowerPlantsForNewTechnologies(
+            boolean historicalCvarCreateDummyPowerPlantsForNewTechnologies) {
+        this.historicalCvarCreateDummyPowerPlantsForNewTechnologies = historicalCvarCreateDummyPowerPlantsForNewTechnologies;
     }
 }

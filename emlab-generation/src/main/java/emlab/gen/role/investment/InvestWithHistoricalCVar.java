@@ -158,6 +158,7 @@ NodeBacked {
         PowerGridNode bestNodeWithoutCvar = null;
 
         for (PowerGeneratingTechnology technology : reps.genericRepository.findAll(PowerGeneratingTechnology.class)) {
+            // logger.warn("Looking at tech: {}", technology.getName());
 
             DecarbonizationModel model = reps.genericRepository.findAll(DecarbonizationModel.class).iterator().next();
 
@@ -183,6 +184,63 @@ NodeBacked {
             // + possibleInstallationNodes.toString());
 
             for (PowerGridNode node : possibleInstallationNodes) {
+
+                if (agent.isHistoricalCvarCreateDummyPowerPlantsForNewTechnologies()) {
+                    PowerPlant dummyPowerPlant = reps.powerPlantRepository
+                            .findOneOperationalHistoricalCvarDummyPowerPlantsByOwnerAndTechnology(
+                                    technology, getCurrentTick(), agent);
+                    if (dummyPowerPlant != null) { // If dummy
+                        // plant
+                        // exists,
+                        // update efficiency to the
+                        // current time step
+                        // logger.warn("Found dummy plant. Updating it");
+                        // logger.warn("Found dummy plant. {}",
+                        // dummyPowerPlant);
+                        dummyPowerPlant.setActualEfficiency(technology.getEfficiency(getCurrentTick()
+                                - technology.getExpectedLeadtime() - technology.getExpectedPermittime()));
+                        dummyPowerPlant.setConstructionStartTime(getCurrentTick() - technology.getExpectedLeadtime()
+                                - technology.getExpectedPermittime());
+                        dummyPowerPlant.persist();
+                    } else { // else check if power plants exist in the market,
+                        // ignoring dummy plants
+                        if (reps.powerPlantRepository
+                                .calculateCapacityOfOperationalPowerPlantsByOwnerAndTechnology(
+                                        technology,
+                                        getCurrentTick(), agent) < 1.0) {
+                            double size = reps.powerPlantRepository
+                                    .calculateCapacityOfOperationalPowerPlantsByOwnerAndTechnology(
+                                            technology, getCurrentTick(), agent);
+                            // logger.warn("Did not find dummy plant. Creating it. Found size: "
+                            // + size);
+                            String label = agent.getName() + " - " + technology.getName() + " HistoricalCvarDummy";
+                            PowerPlant dummyPlant = new PowerPlant();
+                            dummyPlant.setName(label);
+                            dummyPlant.setTechnology(technology);
+                            dummyPlant.setOwner(agent);
+                            dummyPlant.setLocation(node);
+                            dummyPlant.setConstructionStartTime(getCurrentTick() - technology.getExpectedLeadtime()
+                                    - technology.getExpectedPermittime());
+                            dummyPlant.setActualLeadtime(0);
+                            dummyPlant.setActualPermittime(0);
+                            dummyPlant.setActualEfficiency(technology.getEfficiency(getCurrentTick()
+                                    - technology.getExpectedLeadtime()));
+                            dummyPlant.setActualNominalCapacity(0.001);
+                            dummyPlant.setDismantleTime(1000);
+                            dummyPlant.calculateAndSetActualInvestedCapital(getCurrentTick()
+                                    - technology.getExpectedLeadtime() - technology.getExpectedPermittime()
+                                    );
+                            dummyPlant.calculateAndSetActualFixedOperatingCosts(getCurrentTick()
+                                    - technology.getExpectedLeadtime() - technology.getExpectedPermittime()
+                                    );
+                            dummyPlant.setExpectedEndOfLife(1000.0);
+                            dummyPlant.setHistoricalCvarDummyPlant(true);
+                            dummyPlant.persist();
+
+                        }
+
+                    }
+                }
 
                 PowerPlant plant = new PowerPlant();
                 plant.specifyNotPersist(getCurrentTick(), agent, node, technology);
@@ -299,14 +357,18 @@ NodeBacked {
 
                         Double cVarOfHistoricalGrossProfitsResult = reps.financialPowerPlantReportRepository
                                 .calculateHistoricalCVarRelativePerMWForOperationaPlantsForEnergyProducerAndTechnologyForYearsFromToAndAlphaValue(
-                                        getCurrentTick() - 5, getCurrentTick(), agent, technology,
+                                        getCurrentTick() - agent.getHistoricalCvarBacklookingYears(), getCurrentTick(),
+                                        agent, technology,
                                         agent.getHistoricalCVarAlpha());
 
                         double cVarOfHistoricalGrossProfits = 0;
                         if (cVarOfHistoricalGrossProfitsResult != null) {
                             cVarOfHistoricalGrossProfits = cVarOfHistoricalGrossProfitsResult.doubleValue()
                                     * plant.getActualNominalCapacity();
+                            // logger.warn("Found historical results: {}",
+                            // cVarOfHistoricalGrossProfits);
                         } else {
+                            // logger.warn("Didn't find any historical results, scaling expected profits down with New Tech Propensity!");
                             cVarOfHistoricalGrossProfits = agent.getHistoricalCVarPropensityForNewTechnologies()
                                     * expectedGrossProfit;
                         }
@@ -406,22 +468,26 @@ NodeBacked {
                         /*
                          * Divide by capacity, in order not to favour large power plants (which have the single largest NPV
                          */
-                        if (projectValue < 0 && oldProjectValue > 0) {
-                            logger.warn(
-                                    "Not profitable w CVAR. NPV-CVAR: {}, NPV: {}, CVAR-GP: "
-                                            + cVarOfHistoricalGrossProfits / plant.getActualNominalCapacity() + " Tech:"
-                                            + technology + " in "
-                                            + node.getName(), projectValue / plant.getActualNominalCapacity(),
-                                            oldProjectValue / plant.getActualNominalCapacity());
-                        }
-                        if (projectValue > 0) {
-                            logger.warn(
-                                    "Is profitable w CVAR. NPV-CVAR: {}, NPV: {}, CVAR-GP: "
-                                            + cVarOfHistoricalGrossProfits / plant.getActualNominalCapacity() + " Tech:"
-                                            + technology + " in "
-                                            + node.getName(), projectValue / plant.getActualNominalCapacity(),
-                                            oldProjectValue / plant.getActualNominalCapacity());
-                        }
+                        // if (projectValue < 0 && oldProjectValue > 0) {
+                        // logger.warn(
+                        // "Not profitable w CVAR. NPV-CVAR: {}, NPV: {}, CVAR-GP: "
+                        // + cVarOfHistoricalGrossProfits /
+                        // plant.getActualNominalCapacity() + " Tech:"
+                        // + technology + " in "
+                        // + node.getName(), projectValue /
+                        // plant.getActualNominalCapacity(),
+                        // oldProjectValue / plant.getActualNominalCapacity());
+                        // }
+                        // if (projectValue > 0) {
+                        // logger.warn(
+                        // "Is profitable w CVAR. NPV-CVAR: {}, NPV: {}, CVAR-GP: "
+                        // + cVarOfHistoricalGrossProfits /
+                        // plant.getActualNominalCapacity() + " Tech:"
+                        // + technology + " in "
+                        // + node.getName(), projectValue /
+                        // plant.getActualNominalCapacity(),
+                        // oldProjectValue / plant.getActualNominalCapacity());
+                        // }
 
                         if (projectValue > 0 && projectValue / plant.getActualNominalCapacity() > highestValue) {
                             highestValue = projectValue / plant.getActualNominalCapacity();

@@ -155,6 +155,7 @@ public class PowerPlantEntryParser implements CSVEntryParser<PowerPlant> {
         plant.setTechnology(technology);
         plant.setOwner(energyProducer);
         plant.setLocation(location);
+        plant.setHistoricalCvarDummyPlant(false);
         plant.setConstructionStartTime(-(technology.getExpectedLeadtime() + technology.getExpectedPermittime() + age));
         plant.setActualLeadtime(plant.getTechnology().getExpectedLeadtime());
         plant.setActualPermittime(plant.getTechnology().getExpectedPermittime());

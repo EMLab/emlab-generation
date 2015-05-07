@@ -144,6 +144,18 @@ public interface PowerPlantRepository extends GraphRepository<PowerPlant> {
     double calculateCapacityOfOperationalPowerPlantsByTechnology(@Param("tech") PowerGeneratingTechnology technology,
             @Param("tick") long tick);
 
+    @Query(value = "result = g.v(owner).in('POWERPLANT_OWNER').filter{it.historicalCvarDummyPlant == true}.filter{((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick) && (it.dismantleTime > tick)}.as('x').out('TECHNOLOGY').filter{it.name==g.v(tech).name}.back('x');"
+            + "if(!result.hasNext()){return null;} else{return result.next();}", type = QueryType.Gremlin)
+    PowerPlant findOneOperationalHistoricalCvarDummyPowerPlantsByOwnerAndTechnology(
+            @Param("tech") PowerGeneratingTechnology technology,
+            @Param("tick") long tick, @Param("owner") EnergyProducer owner);
+
+    @Query(value = "result = g.v(owner).in('POWERPLANT_OWNER').filter{it.historicalCvarDummyPlant == false}.filter{((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick) && (it.dismantleTime > tick)}.as('x').out('TECHNOLOGY').filter{it.name==g.v(tech).name}.back('x').sum{it.actualNominalCapacity};"
+            + "if(result == null){return 0} else{return result}", type = QueryType.Gremlin)
+    public double calculateCapacityOfOperationalPowerPlantsByOwnerAndTechnology(
+            @Param("tech") PowerGeneratingTechnology technology,
+            @Param("tick") long tick, @Param("owner") EnergyProducer owner);
+
     @Query("start tech=node({tech}) match (tech)<-[:TECHNOLOGY]-(plant) return plant")
     public Iterable<PowerPlant> findPowerPlantsByTechnology(@Param("tech") PowerGeneratingTechnology technology);
 
