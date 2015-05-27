@@ -264,6 +264,13 @@ public class InvestInPowerGenerationTechnologiesRole<T extends EnergyProducer> e
 
                     double capacityRevenue = 0d;
                     double sumCapacityRevenue = 0d;
+                    // the following is a piece of bad coding - as it requires
+                    // each agent to have the property of
+                    // 'issimplecapacitymarketenabled. While the concept of
+                    // 'enablingCapacityMarket' should not be related
+                    // to an agent but to the zone in question., and therefore
+                    // be accessed by the zone as well.
+
                     if ((agent.isSimpleCapacityMarketEnabled()) && (regulator != null)) {
 
                         long time = 0l;
@@ -280,6 +287,10 @@ public class InvestInPowerGenerationTechnologiesRole<T extends EnergyProducer> e
                         // logger.warn(" And capacity (null) is"
                         // + plant.getExpectedAvailableCapacity(futureTimePoint,
                         // null, numberOfSegments));
+
+                        // -------expected capacity revenue, N years in the
+                        // future, is the AVERAGE of the past few years of
+                        // capacity revenue-----
                         capacityRevenue = plant.getExpectedAvailableCapacity(futureTimePoint, peakSegment,
                                 numberOfSegments) * sumCapacityRevenue / (getCurrentTick() - time);
 

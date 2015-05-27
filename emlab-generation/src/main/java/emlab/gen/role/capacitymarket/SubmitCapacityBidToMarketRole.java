@@ -129,7 +129,9 @@ public class SubmitCapacityBidToMarketRole extends AbstractEnergyProducerRole<En
                                 // + electricityMarketRevenue);
                                 // +
                                 // hours);
-
+                                // because you're only trying to compute
+                                // marginal cost of capacity, you subtract the
+                                // marg. cost of energy from the revenue
                                 if (mc <= expectedElectricityPrice) {
                                     sumEMR = sumEMR + (expectedElectricityPrice - mc) * hours
                                             * ppdp.getAcceptedAmount();
