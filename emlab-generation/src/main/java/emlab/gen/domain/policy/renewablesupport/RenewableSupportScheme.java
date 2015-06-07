@@ -15,22 +15,31 @@
  ******************************************************************************/
 package emlab.gen.domain.policy.renewablesupport;
 
+import java.util.Set;
+
 import org.neo4j.graphdb.Direction;
 import org.springframework.data.neo4j.annotation.NodeEntity;
 import org.springframework.data.neo4j.annotation.RelatedTo;
 
 import emlab.gen.domain.agent.Regulator;
-import emlab.gen.domain.market.DecarbonizationMarket;
+import emlab.gen.domain.technology.PowerGeneratingTechnology;
 
 /**
  * @author Kaveri3012 A generic renewable support scheme role, meant to be able
- *         to model price based and quantity based schemes.
+ *         to model both price based and quantity based schemes.
  */
 @NodeEntity
-public class RenewableSupportScheme extends DecarbonizationMarket {
+public class RenewableSupportScheme {
 
     @RelatedTo(type = "WITH_REGULATOR", elementClass = Regulator.class, direction = Direction.OUTGOING)
     private Regulator regulator;
+
+    @RelatedTo(type = "TECHNOLOGIES_ELIGIBLE_ARE", elementClass = PowerGeneratingTechnology.class, direction = Direction.OUTGOING)
+    private Set<PowerGeneratingTechnology> powerGeneratingTechnologiesEligible;
+
+    private boolean technologySpecificityEnabled;
+
+    private boolean locationSpecificityEnabled;
 
     public Regulator getRegulator() {
         return regulator;
@@ -38,6 +47,22 @@ public class RenewableSupportScheme extends DecarbonizationMarket {
 
     public void setRegulator(Regulator regulator) {
         this.regulator = regulator;
+    }
+
+    public boolean isTechnologySpecificityEnabled() {
+        return technologySpecificityEnabled;
+    }
+
+    public void setTechnologySpecificityEnabled(boolean technologySpecificityEnabled) {
+        this.technologySpecificityEnabled = technologySpecificityEnabled;
+    }
+
+    public boolean isLocationSpecificityEnabled() {
+        return locationSpecificityEnabled;
+    }
+
+    public void setLocationSpecificityEnabled(boolean locationSpecificityEnabled) {
+        this.locationSpecificityEnabled = locationSpecificityEnabled;
     }
 
 }

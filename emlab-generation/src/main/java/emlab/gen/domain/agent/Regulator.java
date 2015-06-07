@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2013 the original author or authors.
+ * Copyright 2015 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,13 @@ import emlab.gen.domain.gis.Zone;
 @NodeEntity
 public class Regulator extends DecarbonizationAgent implements Agent {
 
+    @RelatedTo(type = "OF_ZONE", elementClass = Zone.class, direction = Direction.OUTGOING)
+    private Zone zone;
+
+    private int numberOfYearsLookingBackToForecastDemand;
+
+    // Capacity Market Related Parameters
+
     @SimulationParameter(label = "Capacity Market Price Cap", from = 1000, to = 150000)
     private double capacityMarketPriceCap;
 
@@ -48,10 +55,9 @@ public class Regulator extends DecarbonizationAgent implements Agent {
     private int targetPeriod; // number of years in the future that the capacity
     // is being planned for - set to zero
 
-    private int numberOfYearsLookingBackToForecastDemand;
-
-    @RelatedTo(type = "OF_ZONE", elementClass = Zone.class, direction = Direction.OUTGOING)
-    private Zone zone;
+    // Feed-in-Premium Related Pàrameters
+    @SimulationParameter(label = "FeedInPremiumFactor", from = 0, to = 1)
+    private double feedInPremiumFactor;
 
     public double getDemandTarget() {
         return demandTarget;
