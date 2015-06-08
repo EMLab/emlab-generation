@@ -87,6 +87,7 @@ public class PowerPlant {
     private double actualEfficiency;
     private double expectedEndOfLife;
     private double actualNominalCapacity;
+    private boolean hasFeedInPremiumContract;
 
     public double ageFraction;
     public double profitability;
@@ -128,6 +129,14 @@ public class PowerPlant {
         }
         // Construction not yet finished.
         return false;
+    }
+
+    public boolean isHasFeedInPremiumContract() {
+        return hasFeedInPremiumContract;
+    }
+
+    public void setHasFeedInPremiumContract(boolean hasFeedInPremiumContract) {
+        this.hasFeedInPremiumContract = hasFeedInPremiumContract;
     }
 
     public boolean isExpectedToBeOperational(long time) {

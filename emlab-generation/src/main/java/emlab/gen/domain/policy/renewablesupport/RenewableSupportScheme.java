@@ -41,6 +41,15 @@ public class RenewableSupportScheme {
 
     private boolean locationSpecificityEnabled;
 
+    public Set<PowerGeneratingTechnology> getPowerGeneratingTechnologiesEligible() {
+        return powerGeneratingTechnologiesEligible;
+    }
+
+    public void setPowerGeneratingTechnologiesEligible(
+            Set<PowerGeneratingTechnology> powerGeneratingTechnologiesEligible) {
+        this.powerGeneratingTechnologiesEligible = powerGeneratingTechnologiesEligible;
+    }
+
     public Regulator getRegulator() {
         return regulator;
     }
