@@ -300,8 +300,13 @@ public class InvestInPowerGenerationTechnologiesRole<T extends EnergyProducer> e
                     // logger.warn("Capacity Revenue" + capacityRevenue);
 
                     operatingProfit = operatingProfit + capacityRevenue;
-                    // logger.warn("Operating Profit with capacity revenue" +
-                    // operatingProfit);
+
+                    // Feed In Premium revenues :
+                    // if feed in premiumImplemented, then get regulator's
+                    // feedInPremiumFactor and then
+                    // if technology is eligible,
+                    // operatingProfit = operatingProfit*(1+feedInPremiumFactor)
+
                     // TODO Alter discount rate on the basis of the amount
                     // in long-term contracts?
                     // TODO Alter discount rate on the basis of other stuff,

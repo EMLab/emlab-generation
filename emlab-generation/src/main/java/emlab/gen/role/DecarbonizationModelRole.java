@@ -33,6 +33,7 @@ import emlab.gen.domain.agent.TargetInvestor;
 import emlab.gen.domain.market.CommodityMarket;
 import emlab.gen.domain.market.capacity.CapacityMarket;
 import emlab.gen.domain.market.electricity.ElectricitySpotMarket;
+import emlab.gen.domain.policy.renewablesupport.RenewableSupportScheme;
 import emlab.gen.repository.Reps;
 import emlab.gen.role.capacitymarket.ExportLimiterRole;
 import emlab.gen.role.capacitymarket.SimpleCapacityMarketMainRole;
@@ -60,6 +61,7 @@ import emlab.gen.role.operating.PayCO2AuctionRole;
 import emlab.gen.role.operating.PayCO2TaxRole;
 import emlab.gen.role.operating.PayForLoansRole;
 import emlab.gen.role.operating.PayOperatingAndMaintainanceCostsRole;
+import emlab.gen.role.renewablesupport.FeedInPremiumRole;
 
 /**
  * Main model role.
@@ -122,6 +124,8 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
     private SimpleCapacityMarketMainRole simpleCapacityMarketMainRole;
     @Autowired
     private ExportLimiterRole exportLimiterRole;
+    @Autowired
+    private FeedInPremiumRole feedInPremiumRole;
 
     @Autowired
     Reps reps;
@@ -198,8 +202,8 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
 
         /*
          * Run Simple Capacity Market (start from tick 1, due to initialization
-         * requirements- it needs values (revenues from electricity sport
-         * market) from previous tick
+         * requirements- it needs values (revenues from electricity spot market)
+         * from previous tick
          */
 
         if ((getCurrentTick() > 0) && (model.isSimpleCapacityMarketEnabled())) {
@@ -365,6 +369,18 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
         }
         timerMarket.stop();
         logger.warn("        took: {} seconds.", timerMarket.seconds());
+
+        if (model.isFeedInPremiumImplemented()) {
+            logger.warn(" 6a. Run Feed In Premium Scheme");
+            for (RenewableSupportScheme scheme : reps.renewableSupportSchemeRepository.findAll()) {
+                feedInPremiumRole.act(scheme);
+            }
+
+            // exportLimiterRole.act(model);
+
+            timerMarket.stop();
+            logger.warn("        took: {} seconds.", timerMarket.seconds());
+        }
 
         logger.warn("  7. Investing");
         Timer timerInvest = new Timer();

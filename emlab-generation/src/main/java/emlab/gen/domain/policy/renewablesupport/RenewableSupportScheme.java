@@ -41,6 +41,18 @@ public class RenewableSupportScheme {
 
     private boolean locationSpecificityEnabled;
 
+    private long supportSchemeDuration;
+
+    private char name;
+
+    public char getName() {
+        return name;
+    }
+
+    public void setName(char name) {
+        this.name = name;
+    }
+
     public Set<PowerGeneratingTechnology> getPowerGeneratingTechnologiesEligible() {
         return powerGeneratingTechnologiesEligible;
     }
@@ -72,6 +84,14 @@ public class RenewableSupportScheme {
 
     public void setLocationSpecificityEnabled(boolean locationSpecificityEnabled) {
         this.locationSpecificityEnabled = locationSpecificityEnabled;
+    }
+
+    public long getSupportSchemeDuration() {
+        return supportSchemeDuration;
+    }
+
+    public void setSupportSchemeDuration(long supportSchemeDuration) {
+        this.supportSchemeDuration = supportSchemeDuration;
     }
 
 }

@@ -38,6 +38,7 @@ public class CashFlow {
     public static final int STRRESPAYMENT = 10;
     public static final int SIMPLE_CAPACITY_MARKET = 11;
     public static final int CO2HEDGING = 12;
+    public static final int FEED_IN_PREMIUM = 13;
 
     @RelatedTo(type = "FROM_AGENT", elementClass = DecarbonizationAgent.class, direction = Direction.OUTGOING)
     private DecarbonizationAgent from;

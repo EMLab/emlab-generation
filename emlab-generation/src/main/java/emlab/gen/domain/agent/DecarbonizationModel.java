@@ -56,7 +56,6 @@ public class DecarbonizationModel extends AbstractAgent implements Agent {
 
     private boolean noPrivateIntermittentRESInvestment;
 
-
     @SimulationParameter(label = "Simulation Length", from = 0, to = 75)
     private double simulationLength;
 
@@ -80,6 +79,17 @@ public class DecarbonizationModel extends AbstractAgent implements Agent {
 
     @SimulationParameter(label = "Simple Capacity Market")
     private boolean simpleCapacityMarketEnabled;
+
+    @SimulationParameter(label = "Feed in Premium")
+    private boolean feedInPremiumImplemented;
+
+    public boolean isFeedInPremiumImplemented() {
+        return feedInPremiumImplemented;
+    }
+
+    public void setFeedInPremiumImplemented(boolean feedInPremiumImplemented) {
+        this.feedInPremiumImplemented = feedInPremiumImplemented;
+    }
 
     public void setSimpleCapacityMarketEnabled(boolean simpleCapacityMarketEnabled) {
         this.simpleCapacityMarketEnabled = simpleCapacityMarketEnabled;

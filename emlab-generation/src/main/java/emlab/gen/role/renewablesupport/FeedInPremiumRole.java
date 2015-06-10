@@ -25,6 +25,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import agentspring.role.AbstractRole;
 import emlab.gen.domain.agent.Regulator;
+import emlab.gen.domain.contract.CashFlow;
+import emlab.gen.domain.market.electricity.ElectricitySpotMarket;
+import emlab.gen.domain.market.electricity.PowerPlantDispatchPlan;
+import emlab.gen.domain.market.electricity.SegmentLoad;
 import emlab.gen.domain.policy.renewablesupport.RenewableSupportScheme;
 import emlab.gen.domain.policy.renewablesupport.SupportPriceContract;
 import emlab.gen.domain.technology.PowerGeneratingTechnology;
@@ -60,34 +64,78 @@ public class FeedInPremiumRole extends AbstractRole<RenewableSupportScheme> {
         regulator = renewableSupportScheme.getRegulator();
 
         Set<PowerGeneratingTechnology> technologySet = new HashSet<PowerGeneratingTechnology>();
-
         technologySet = renewableSupportScheme.getPowerGeneratingTechnologiesEligible();
 
+        ElectricitySpotMarket eMarket = reps.marketRepository.findElectricitySpotMarketForZone(regulator.getZone());
+
         for (PowerGeneratingTechnology technology : technologySet) {
-            for (PowerPlant plant : reps.powerPlantRepository.findOperationalPowerPlantsByTechnology(technology,
-                    getCurrentTick())) {
 
-                if (plant.isHasFeedInPremiumContract() == false) {
+            for (PowerPlant plant : reps.powerPlantRepository.findOperationalPowerPlantsByMarketAndTechnology(eMarket,
+                    technology, getCurrentTick())) {
 
-                    SupportPriceContract contract = new SupportPriceContract();
+                SupportPriceContract contract = null;
 
-                    // todo: calculate electricity market price that the plant
-                    // has earned this year in perUnit terms and
-                    // multiply that by (1+ FeedInPremiumFactor)
+                double finishedConstruction = plant.getConstructionStartTime() + plant.calculateActualPermittime()
+                        + plant.calculateActualLeadtime();
 
-                    // make feed in Premium Factor technology specific?
+                // existing eligible plants at the start of the simulation (tick
+                // 0) do not get contracts.
 
-                    contract.setPricePerUnit(regulator.getFeedInPremiumFactor());
+                // if statement below is for newly constructed plants at any
+                // tick
+                if (finishedConstruction == getCurrentTick()) {
+                    contract = new SupportPriceContract();
                     contract.setStart(getCurrentTick());
-                    contract.setFinish(getCurrentTick() + regulator.getFeedInPremiumContractLength());
-                    plant.setHasFeedInPremiumContract(true);
                 }
 
-                // create cash flow for plant of the subsidy. (or better do that
-                // outside of this role,
-                // so Rob de Jeu can use it too?
-            }
-        }
+                // for all eligible plants, the support price is calculated, and
+                // payment is made.
+                if (getCurrentTick() <= (contract.getStart() + renewableSupportScheme.getSupportSchemeDuration())) {
 
+                    double sumEMR = 0d;
+                    double electricityPrice = 0d;
+
+                    // the for loop below calculates the electricity market
+                    // price the plant earned
+                    // throughout the year, for its total production
+                    for (SegmentLoad segmentLoad : eMarket.getLoadDurationCurve()) {
+
+                        PowerPlantDispatchPlan ppdp = reps.powerPlantDispatchPlanRepository
+                                .findOnePowerPlantDispatchPlanForPowerPlantForSegmentForTime(plant,
+                                        segmentLoad.getSegment(), getCurrentTick());
+                        if (ppdp.getStatus() < 0) {
+                            sumEMR = 0d;
+                        } else if (ppdp.getStatus() >= 2) {
+                            electricityPrice = reps.segmentClearingPointRepository
+                                    .findOneSegmentClearingPointForMarketSegmentAndTime(getCurrentTick(),
+                                            segmentLoad.getSegment(), eMarket).getPrice();
+
+                            double hours = segmentLoad.getSegment().getLengthInHours();
+                            sumEMR = sumEMR + electricityPrice * hours * ppdp.getAcceptedAmount();
+
+                        }
+
+                    }
+
+                    // support price calculation for this year (NOT per UNIT as
+                    // the contract property states
+                    double supportPrice = sumEMR * regulator.getFeedInPremiumFactor();
+                    contract.setPricePerUnit(supportPrice);
+
+                    // payment
+                    reps.nonTransactionalCreateRepository.createCashFlow(eMarket, plant.getOwner(),
+                            contract.getPricePerUnit(), CashFlow.FEED_IN_PREMIUM, getCurrentTick(), plant);
+
+                }
+
+                // delete contract. not sure if necessary. contract has been
+                // mainly used to control period of payment
+                if (getCurrentTick() > (contract.getStart() + renewableSupportScheme.getSupportSchemeDuration())) {
+                    contract = null;
+                }
+
+            }
+
+        }
     }
 }
