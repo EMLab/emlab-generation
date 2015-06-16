@@ -24,6 +24,7 @@ import org.springframework.data.neo4j.support.Neo4jTemplate;
 import org.springframework.transaction.annotation.Transactional;
 
 import agentspring.role.AbstractRole;
+import agentspring.role.RoleComponent;
 import emlab.gen.domain.agent.Regulator;
 import emlab.gen.domain.contract.CashFlow;
 import emlab.gen.domain.market.electricity.ElectricitySpotMarket;
@@ -47,6 +48,7 @@ import emlab.gen.repository.Reps;
  * 
  * 
  */
+@RoleComponent
 public class FeedInPremiumRole extends AbstractRole<RenewableSupportScheme> {
 
     @Transient
@@ -90,48 +92,53 @@ public class FeedInPremiumRole extends AbstractRole<RenewableSupportScheme> {
 
                 // for all eligible plants, the support price is calculated, and
                 // payment is made.
-                if (getCurrentTick() <= (contract.getStart() + renewableSupportScheme.getSupportSchemeDuration())) {
+                if (contract != null) {
 
-                    double sumEMR = 0d;
-                    double electricityPrice = 0d;
+                    if (getCurrentTick() <= (contract.getStart() + renewableSupportScheme.getSupportSchemeDuration())) {
 
-                    // the for loop below calculates the electricity market
-                    // price the plant earned
-                    // throughout the year, for its total production
-                    for (SegmentLoad segmentLoad : eMarket.getLoadDurationCurve()) {
+                        double sumEMR = 0d;
+                        double electricityPrice = 0d;
 
-                        PowerPlantDispatchPlan ppdp = reps.powerPlantDispatchPlanRepository
-                                .findOnePowerPlantDispatchPlanForPowerPlantForSegmentForTime(plant,
-                                        segmentLoad.getSegment(), getCurrentTick());
-                        if (ppdp.getStatus() < 0) {
-                            sumEMR = 0d;
-                        } else if (ppdp.getStatus() >= 2) {
-                            electricityPrice = reps.segmentClearingPointRepository
-                                    .findOneSegmentClearingPointForMarketSegmentAndTime(getCurrentTick(),
-                                            segmentLoad.getSegment(), eMarket).getPrice();
+                        // the for loop below calculates the electricity market
+                        // price the plant earned
+                        // throughout the year, for its total production
+                        for (SegmentLoad segmentLoad : eMarket.getLoadDurationCurve()) {
 
-                            double hours = segmentLoad.getSegment().getLengthInHours();
-                            sumEMR = sumEMR + electricityPrice * hours * ppdp.getAcceptedAmount();
+                            PowerPlantDispatchPlan ppdp = reps.powerPlantDispatchPlanRepository
+                                    .findOnePowerPlantDispatchPlanForPowerPlantForSegmentForTime(plant,
+                                            segmentLoad.getSegment(), getCurrentTick());
+                            if (ppdp.getStatus() < 0) {
+                                sumEMR = 0d;
+                            } else if (ppdp.getStatus() >= 2) {
+                                electricityPrice = reps.segmentClearingPointRepository
+                                        .findOneSegmentClearingPointForMarketSegmentAndTime(getCurrentTick(),
+                                                segmentLoad.getSegment(), eMarket).getPrice();
+
+                                double hours = segmentLoad.getSegment().getLengthInHours();
+                                sumEMR = sumEMR + electricityPrice * hours * ppdp.getAcceptedAmount();
+
+                            }
 
                         }
 
+                        // support price calculation for this year (NOT per UNIT
+                        // as
+                        // the contract property states
+                        double supportPrice = sumEMR * regulator.getFeedInPremiumFactor();
+                        contract.setPricePerUnit(supportPrice);
+
+                        // payment
+                        reps.nonTransactionalCreateRepository.createCashFlow(eMarket, plant.getOwner(),
+                                contract.getPricePerUnit(), CashFlow.FEED_IN_PREMIUM, getCurrentTick(), plant);
+
                     }
 
-                    // support price calculation for this year (NOT per UNIT as
-                    // the contract property states
-                    double supportPrice = sumEMR * regulator.getFeedInPremiumFactor();
-                    contract.setPricePerUnit(supportPrice);
+                    // delete contract. not sure if necessary. contract has been
+                    // mainly used to control period of payment
+                    if (getCurrentTick() > (contract.getStart() + renewableSupportScheme.getSupportSchemeDuration())) {
+                        contract = null;
+                    }
 
-                    // payment
-                    reps.nonTransactionalCreateRepository.createCashFlow(eMarket, plant.getOwner(),
-                            contract.getPricePerUnit(), CashFlow.FEED_IN_PREMIUM, getCurrentTick(), plant);
-
-                }
-
-                // delete contract. not sure if necessary. contract has been
-                // mainly used to control period of payment
-                if (getCurrentTick() > (contract.getStart() + renewableSupportScheme.getSupportSchemeDuration())) {
-                    contract = null;
                 }
 
             }

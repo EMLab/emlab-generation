@@ -59,19 +59,8 @@ public class Regulator extends DecarbonizationAgent implements Agent {
     @SimulationParameter(label = "FeedInPremiumFactor", from = 0, to = 1)
     private double feedInPremiumFactor;
 
-    @SimulationParameter(label = "FeedInPremium Contract Length", from = 0, to = 1)
-    private long feedInPremiumContractLength;
-
     public double getDemandTarget() {
         return demandTarget;
-    }
-
-    public long getFeedInPremiumContractLength() {
-        return feedInPremiumContractLength;
-    }
-
-    public void setFeedInPremiumContractLength(long feedInPremiumContractLength) {
-        this.feedInPremiumContractLength = feedInPremiumContractLength;
     }
 
     public void setDemandTarget(double demandTarget) {

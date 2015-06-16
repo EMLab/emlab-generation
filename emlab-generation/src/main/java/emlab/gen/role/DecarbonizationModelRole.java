@@ -29,7 +29,6 @@ import emlab.gen.domain.agent.EnergyConsumer;
 import emlab.gen.domain.agent.EnergyProducer;
 import emlab.gen.domain.agent.Government;
 import emlab.gen.domain.agent.StrategicReserveOperator;
-import emlab.gen.domain.agent.TargetInvestor;
 import emlab.gen.domain.market.CommodityMarket;
 import emlab.gen.domain.market.capacity.CapacityMarket;
 import emlab.gen.domain.market.electricity.ElectricitySpotMarket;
@@ -375,9 +374,6 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
             for (RenewableSupportScheme scheme : reps.renewableSupportSchemeRepository.findAll()) {
                 feedInPremiumRole.act(scheme);
             }
-
-            // exportLimiterRole.act(model);
-
             timerMarket.stop();
             logger.warn("        took: {} seconds.", timerMarket.seconds());
         }
@@ -403,10 +399,11 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
             }
             resetWillingnessToInvest();
         }
-        logger.warn("\t subsidized investment.");
-        for (TargetInvestor targetInvestor : template.findAll(TargetInvestor.class)) {
-            genericInvestmentRole.act(targetInvestor);
-        }
+        // logger.warn("\t subsidized investment.");
+        // for (TargetInvestor targetInvestor :
+        // template.findAll(TargetInvestor.class)) {
+        // genericInvestmentRole.act(targetInvestor);
+        // }
         timerInvest.stop();
         logger.warn("        took: {} seconds.", timerInvest.seconds());
 

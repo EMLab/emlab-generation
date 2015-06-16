@@ -21,6 +21,7 @@ import org.neo4j.graphdb.Direction;
 import org.springframework.data.neo4j.annotation.NodeEntity;
 import org.springframework.data.neo4j.annotation.RelatedTo;
 
+import agentspring.simulation.SimulationParameter;
 import emlab.gen.domain.agent.Regulator;
 import emlab.gen.domain.technology.PowerGeneratingTechnology;
 
@@ -41,15 +42,16 @@ public class RenewableSupportScheme {
 
     private boolean locationSpecificityEnabled;
 
+    @SimulationParameter(label = "Support Scheme Duration", from = 0, to = 50)
     private long supportSchemeDuration;
 
-    private char name;
+    private String name;
 
-    public char getName() {
+    public String getName() {
         return name;
     }
 
-    public void setName(char name) {
+    public void setName(String name) {
         this.name = name;
     }
 
