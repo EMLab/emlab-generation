@@ -29,6 +29,7 @@ import emlab.gen.domain.agent.EnergyConsumer;
 import emlab.gen.domain.agent.EnergyProducer;
 import emlab.gen.domain.agent.Government;
 import emlab.gen.domain.agent.StrategicReserveOperator;
+import emlab.gen.domain.agent.TargetInvestor;
 import emlab.gen.domain.market.CommodityMarket;
 import emlab.gen.domain.market.capacity.CapacityMarket;
 import emlab.gen.domain.market.electricity.ElectricitySpotMarket;
@@ -45,6 +46,7 @@ import emlab.gen.role.investment.DismantlePowerPlantPastTechnicalLifetimeRole;
 import emlab.gen.role.investment.GenericInvestmentRole;
 import emlab.gen.role.market.ClearCommodityMarketRole;
 import emlab.gen.role.market.ClearIterativeCO2AndElectricitySpotMarketTwoCountryRole;
+import emlab.gen.role.market.CreatingFinancialReports;
 import emlab.gen.role.market.DetermineResidualLoadCurvesForTwoCountriesRole;
 import emlab.gen.role.market.ProcessAcceptedBidsRole;
 import emlab.gen.role.market.ProcessAcceptedPowerPlantDispatchRole;
@@ -64,9 +66,9 @@ import emlab.gen.role.renewablesupport.FeedInPremiumRole;
 
 /**
  * Main model role.
- * 
+ *
  * @author alfredas, ejlchappin, jcrichstein
- * 
+ *
  */
 @ScriptComponent
 public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel> implements Role<DecarbonizationModel> {
@@ -122,8 +124,9 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
     @Autowired
     private SimpleCapacityMarketMainRole simpleCapacityMarketMainRole;
     @Autowired
-    private ExportLimiterRole exportLimiterRole;
-    @Autowired
+    private CreatingFinancialReports creatingFinancialReports;
+
+	@Autowired
     private FeedInPremiumRole feedInPremiumRole;
 
     @Autowired
@@ -242,7 +245,7 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
 
         // timerMarket.reset();
         // timerMarket.start();
-        // logger.warn("  2c. Creating market forecast");
+        // logger.warn("  2b. Creating market forecast");
         //
         // clearIterativeCO2AndElectricitySpotMarketTwoCountryRole
         // .makeCentralElectricityMarketForecastForTimeStep(getCurrentTick() +
@@ -369,6 +372,16 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
         timerMarket.stop();
         logger.warn("        took: {} seconds.", timerMarket.seconds());
 
+logger.warn("  6.b) Creating power plant financial reports.");
+        Timer financialReports = new Timer();
+        financialReports.start();
+
+        creatingFinancialReports.act(model);
+
+        financialReports.stop();
+        logger.warn("        took: {} seconds.", financialReports.seconds());
+
+
         if (model.isFeedInPremiumImplemented()) {
             logger.warn(" 6a. Run Feed In Premium Scheme");
             for (RenewableSupportScheme scheme : reps.renewableSupportSchemeRepository.findAll()) {
@@ -399,11 +412,10 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
             }
             resetWillingnessToInvest();
         }
-        // logger.warn("\t subsidized investment.");
-        // for (TargetInvestor targetInvestor :
-        // template.findAll(TargetInvestor.class)) {
-        // genericInvestmentRole.act(targetInvestor);
-        // }
+        logger.warn("\t subsidized investment.");
+        for (TargetInvestor targetInvestor : template.findAll(TargetInvestor.class)) {
+            genericInvestmentRole.act(targetInvestor);
+        }
         timerInvest.stop();
         logger.warn("        took: {} seconds.", timerInvest.seconds());
 
@@ -441,6 +453,8 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
             reps.powerPlantDispatchPlanRepository.delete(reps.powerPlantDispatchPlanRepository
                     .findAllPowerPlantDispatchPlansForTime(getCurrentTick() + model.getCentralForecastingYear() - 1,
                             true));
+            reps.financialPowerPlantReportRepository.delete(reps.financialPowerPlantReportRepository
+                    .findAllFinancialPowerPlantReportsForTime(getCurrentTick() - 5 - model.getDeletionAge()));
             timerMarket.stop();
             logger.warn("        took: {} seconds.", timerMarket.seconds());
         }

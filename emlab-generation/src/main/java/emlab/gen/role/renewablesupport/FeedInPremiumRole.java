@@ -106,7 +106,7 @@ public class FeedInPremiumRole extends AbstractRole<RenewableSupportScheme> {
 
                             PowerPlantDispatchPlan ppdp = reps.powerPlantDispatchPlanRepository
                                     .findOnePowerPlantDispatchPlanForPowerPlantForSegmentForTime(plant,
-                                            segmentLoad.getSegment(), getCurrentTick());
+                                            segmentLoad.getSegment(), getCurrentTick(), false);
                             if (ppdp.getStatus() < 0) {
                                 sumEMR = 0d;
                             } else if (ppdp.getStatus() >= 2) {

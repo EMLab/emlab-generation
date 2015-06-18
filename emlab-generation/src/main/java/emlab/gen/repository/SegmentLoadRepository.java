@@ -60,8 +60,7 @@ public interface SegmentLoadRepository extends GraphRepository<SegmentLoad> {
     @Query(value = "segID = g.v(segment).segmentID;"
             + "double baseLoad = g.v(market).out('SEGMENT_LOAD').as('x').out('SEGMENTLOAD_SEGMENT').filter{it.segmentID==segID}.back('x').baseLoad.next();"
             + "return baseLoad", type = QueryType.Gremlin)
-    public double returnSegmentBaseLoadBySegmentAndMarket(@Param("segment") Segment segment,
-            @Param("market") ElectricitySpotMarket market);
+    public double returnSegmentBaseLoadBySegmentAndMarket(@Param("segment") Segment segment, @Param("market") ElectricitySpotMarket market);
 
     // peak Load by Zone
 

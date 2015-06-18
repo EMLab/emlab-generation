@@ -3,6 +3,7 @@ library(RCurl)
 library(plyr)
 source("rConfig.R")
 source("AgentSpringQueryReader.R")
+source("AgentSpringHeadlessReader.R")
 source("singleRunAnalysis.R")
 options(warn=-1)
 ### FUNCTIONS ###
@@ -90,12 +91,28 @@ queryNumberToDataFrame <- function(number, queries){
     simpleQueryResultToDataFrame(queryResult, queries[number,1])
 }
 
+getResultListFromHeadlessModelRun<-function(outputFolder, modelRun, runName){
+  simpleQueriesDF<-getDataFrameForModelRun(outPutFolder = outputFolder, modelRun, modelRun)
+  PowerPlantDispatchPlans<-getTableForRunId(outputFolder = outputFolder,modelRun =modelRun , tableName="PowerPlantDispatchPlans")
+  SegmentClearingPoints<-getTableForRunId(outputFolder = outputFolder,modelRun =modelRun , tableName="SegmentClearingPoints")
+  DemandLevels<-getTableForRunId(outputFolder = outputFolder,modelRun =modelRun , tableName="DemandLevels")
+  FinancialReports<-getTableForRunId(outputFolder = outputFolder,modelRun =modelRun , tableName="FinancialReports")
+  result<-list(modelRun)
+  result[["simpleQueriesDF"]]<-simpleQueriesDF
+  result[["PowerPlantDispatchPlans"]]<-PowerPlantDispatchPlans
+  result[["SegmentClearingPoints"]]<-SegmentClearingPoints
+  result[["FinancialReports"]]<-FinancialReports
+  result[["DemandLevels"]]<-DemandLevels
+  save(result, ascii=TRUE, file=paste(runName,".RData", sep=""))
+  return(result)
+}
+
 saveQueriesToDataFrameList <- function(tick, listOfDataFrames, queries){
   df<-data.frame(tick)
   colnames(df)<-"tick"
   for (i in seq(1,length(queries[[1]]))){
-    print(paste("Query", i))
-    flush.console()
+    message(paste("Query", i, " ", queries[i,1]))
+    #flush.console()
     if(grepl("^(?!TABLE).*$", queries[i,1], perl = TRUE)){
       tmpDF <- queryNumberToDataFrame(i, queries)
       if(!is.null(tmpDF))
@@ -142,6 +159,7 @@ runSimulation <- function(x, ticks, run, dryRunFile=NULL, ...) {
     startSimulation()
   } else{
     load(dryRunFile)
+    ticks<-length(result$simpleQueriesDF$tick)
   }
   tick <- 0
   while (tick < ticks) {
@@ -157,9 +175,12 @@ runSimulation <- function(x, ticks, run, dryRunFile=NULL, ...) {
       }
     }
     x(tick,result,...)
+    message(paste("Tick ", tick, " done.", sep=""))
     #print(paste("finished tick",tick))
-    if(is.null(dryRunFile))
+    if(is.null(dryRunFile)){
       resumeSimulation()
+      save(result, ascii=TRUE, file=paste(run,".RData", sep=""))
+    }
     tick <- tick + 1
   }
   if(is.null(dryRunFile)){

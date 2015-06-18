@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package emlab.gen.repository;
 
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 
 /**
  * @author JCRichstein
- * 
+ *
  */
 @Repository
 public class Reps {
@@ -116,4 +116,6 @@ public class Reps {
     @Autowired
     public RenewableSupportSchemeRepository renewableSupportSchemeRepository;
 
+    @Autowired
+    public FinancialPowerPlantReportRepository financialPowerPlantReportRepository;
 }

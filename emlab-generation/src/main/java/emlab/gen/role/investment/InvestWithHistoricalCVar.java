@@ -68,7 +68,7 @@ import emlab.gen.util.MapValueComparator;
  */
 @Configurable
 @NodeEntity
-public class InvestInPowerGenerationTechnologiesStandard<T extends EnergyProducer> extends GenericInvestmentRole<T>
+public class InvestWithHistoricalCVar<T extends EnergyProducer> extends GenericInvestmentRole<T>
 implements
 Role<T>,
 NodeBacked {
@@ -151,8 +151,11 @@ NodeBacked {
         // + marketInformation.maxExpectedLoad, agent, market);
 
         double highestValue = Double.MIN_VALUE;
+        double highestValueWithoutCvar = Double.MIN_VALUE;
         PowerGeneratingTechnology bestTechnology = null;
+        PowerGeneratingTechnology bestTechnologyWithoutCVar = null;
         PowerGridNode bestNode = null;
+        PowerGridNode bestNodeWithoutCvar = null;
 
         for (PowerGeneratingTechnology technology : reps.genericRepository.findAll(PowerGeneratingTechnology.class)) {
 
@@ -293,7 +296,27 @@ NodeBacked {
                         double fixedOMCost = calculateFixedOperatingCost(plant, getCurrentTick());// /
                         // plant.getActualNominalCapacity();
 
+
+                        Double cVarOfHistoricalGrossProfitsResult = reps.financialPowerPlantReportRepository
+                                .calculateHistoricalCVarRelativePerMWForOperationaPlantsForEnergyProducerAndTechnologyForYearsFromToAndAlphaValue(
+                                        getCurrentTick() - 5, getCurrentTick(), agent, technology,
+                                        agent.getHistoricalCVarAlpha());
+
+                        double cVarOfHistoricalGrossProfits = 0;
+                        if (cVarOfHistoricalGrossProfitsResult != null) {
+                            cVarOfHistoricalGrossProfits = cVarOfHistoricalGrossProfitsResult.doubleValue()
+                                    * plant.getActualNominalCapacity();
+                        } else {
+                            cVarOfHistoricalGrossProfits = agent.getHistoricalCVarPropensityForNewTechnologies()
+                                    * expectedGrossProfit;
+                        }
+
+
+
                         double operatingProfit = expectedGrossProfit - fixedOMCost;
+
+                        double historicalCvarOperatingProfit = cVarOfHistoricalGrossProfits - fixedOMCost;
+
 
                         // TODO Alter discount rate on the basis of the amount
                         // in long-term contracts?
@@ -305,17 +328,23 @@ NodeBacked {
                         // based on the companies debt-ratio
                         double wacc = (1 - agent.getDebtRatioOfInvestments()) * agent.getEquityInterestRate()
                                 + agent.getDebtRatioOfInvestments() * agent.getLoanInterestRate();
+                        if (cVarOfHistoricalGrossProfitsResult == null)
+                            wacc += agent.getHistoricalCVarInterestRateIncreaseForNewTechnologies();
 
                         // Creation of out cash-flow during power plant building
                         // phase (note that the cash-flow is negative!)
-                        TreeMap<Integer, Double> discountedProjectCapitalOutflow = calculateSimplePowerPlantInvestmentCashFlow(
+                        TreeMap<Integer, Double> projectCapitalOutflow = calculateSimplePowerPlantInvestmentCashFlow(
                                 technology.getDepreciationTime(), (int) plant.getActualLeadtime(),
                                 plant.getActualInvestedCapital(), 0);
                         // Creation of in cashflow during operation
-                        TreeMap<Integer, Double> discountedProjectCashInflow = calculateSimplePowerPlantInvestmentCashFlow(
+                        TreeMap<Integer, Double> projectCashInflow = calculateSimplePowerPlantInvestmentCashFlow(
                                 technology.getDepreciationTime(), (int) plant.getActualLeadtime(), 0, operatingProfit);
 
-                        double discountedCapitalCosts = npv(discountedProjectCapitalOutflow, wacc);// are
+                        TreeMap<Integer, Double> projectCashInflowHistoricalCVar = calculateSimplePowerPlantInvestmentCashFlow(
+                                technology.getDepreciationTime(), (int) plant.getActualLeadtime(), 0,
+                                historicalCvarOperatingProfit);
+
+                        double discountedCapitalCosts = npv(projectCapitalOutflow, wacc);// are
                         // defined
                         // negative!!
                         // plant.getActualNominalCapacity();
@@ -324,19 +353,42 @@ NodeBacked {
                         // + discountedCapitalCosts, agent,
                         // technology);
 
-                        double discountedOpProfit = npv(discountedProjectCashInflow, wacc);
+                        double discountedOpProfit = npv(projectCashInflow, wacc);
+
+                        double discountedHistoricalCvarOpProfit = npv(projectCashInflowHistoricalCVar, wacc);
 
                         // logger.warn("Agent {}  found that the projected discounted inflows for technology {} to be "
                         // + discountedOpProfit,
                         // agent, technology);
 
                         double projectValue = discountedOpProfit + discountedCapitalCosts;
+                        double oldProjectValue = projectValue;
+
+                        double historicalCvarProjectValue = discountedHistoricalCvarOpProfit + discountedCapitalCosts;
+
+                        if (cVarOfHistoricalGrossProfitsResult != null
+                                || (agent.getHistoricalCVarInterestRateIncreaseForNewTechnologies() == 0 & cVarOfHistoricalGrossProfitsResult == null)) {
+                            projectValue += (agent.getHistoricalCVarBeta() * historicalCvarProjectValue < 0) ? agent
+                                    .getHistoricalCVarBeta() * historicalCvarProjectValue : 0;
+                        }
+                        // if (historicalCvarProjectValue < 0) {
+                        // logger.warn("Adjusting NPV!");
+                        // projectValue += beta * historicalCvarProjectValue;
+                        // }
 
                         // if (technology.isIntermittent()) {
                         // logger.warn(technology + "in " + node.getName() +
                         // ", NPV: " + projectValue
                         // + ", GrossProfit: " + expectedGrossProfit);
                         // }
+
+                        // logger.warn(technology + "in " + node.getName() +
+                        // ", NPV: " + projectValue + ", GrossProfit: "
+                        // + expectedGrossProfit);
+                        //
+                        // logger.warn("CVar: " + historicalCvarProjectValue);
+                        //
+                        // logger.warn("NPV-CVAR: " + projectValue);
 
                         // logger.warn(
                         // "Agent {}  found the project value for technology {} to be "
@@ -354,17 +406,50 @@ NodeBacked {
                         /*
                          * Divide by capacity, in order not to favour large power plants (which have the single largest NPV
                          */
+                        if (projectValue < 0 && oldProjectValue > 0) {
+                            logger.warn(
+                                    "Not profitable w CVAR. NPV-CVAR: {}, NPV: {}, CVAR-GP: "
+                                            + cVarOfHistoricalGrossProfits / plant.getActualNominalCapacity() + " Tech:"
+                                            + technology + " in "
+                                            + node.getName(), projectValue / plant.getActualNominalCapacity(),
+                                            oldProjectValue / plant.getActualNominalCapacity());
+                        }
+                        if (projectValue > 0) {
+                            logger.warn(
+                                    "Is profitable w CVAR. NPV-CVAR: {}, NPV: {}, CVAR-GP: "
+                                            + cVarOfHistoricalGrossProfits / plant.getActualNominalCapacity() + " Tech:"
+                                            + technology + " in "
+                                            + node.getName(), projectValue / plant.getActualNominalCapacity(),
+                                            oldProjectValue / plant.getActualNominalCapacity());
+                        }
 
                         if (projectValue > 0 && projectValue / plant.getActualNominalCapacity() > highestValue) {
                             highestValue = projectValue / plant.getActualNominalCapacity();
                             bestTechnology = plant.getTechnology();
                             bestNode = node;
                         }
+
+                        if (oldProjectValue > 0
+                                && oldProjectValue / plant.getActualNominalCapacity() > highestValueWithoutCvar) {
+                            highestValueWithoutCvar = oldProjectValue / plant.getActualNominalCapacity();
+                            bestTechnologyWithoutCVar = plant.getTechnology();
+                            bestNodeWithoutCvar = node;
+                        }
                     }
 
                 }
 
             }
+        }
+
+        if (bestTechnology != null && bestTechnologyWithoutCVar != null
+                && !bestTechnologyWithoutCVar.equals(bestTechnology)) {
+            logger.warn("Because of CVar investing in {}, instead of in {}", bestTechnology.getName(),
+                    bestTechnologyWithoutCVar.getName());
+        }
+        if (bestTechnology == null && bestTechnologyWithoutCVar != null) {
+            logger.warn("Not investing. W/o CVar would have invested in {}",
+                    bestTechnologyWithoutCVar.getName());
         }
 
         if (bestTechnology != null) {

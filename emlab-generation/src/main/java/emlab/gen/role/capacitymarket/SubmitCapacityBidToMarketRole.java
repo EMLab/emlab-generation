@@ -113,7 +113,7 @@ public class SubmitCapacityBidToMarketRole extends AbstractEnergyProducerRole<En
 
                             PowerPlantDispatchPlan ppdp = reps.powerPlantDispatchPlanRepository
                                     .findOnePowerPlantDispatchPlanForPowerPlantForSegmentForTime(plant,
-                                            segmentLoad.getSegment(), tickTemp);
+                                            segmentLoad.getSegment(), tickTemp, false);
 
                             if (ppdp.getStatus() < 0) {
                                 electricityMarketRevenue = 0d;
