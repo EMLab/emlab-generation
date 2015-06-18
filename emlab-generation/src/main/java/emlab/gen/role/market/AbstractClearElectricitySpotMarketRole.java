@@ -619,6 +619,15 @@ public abstract class AbstractClearElectricitySpotMarketRole<T extends Decarboni
                 .findClearingPointsForMarketAndTime(market, getCurrentTick(), false));
         Substance substance = market.getSubstance();
 
+        for (CommoditySupplier supplier : reps.genericRepository.findAll(CommoditySupplier.class)) {
+            if (supplier.getSubstance().equals(substance)) {
+
+                logger.info("Price found for {} by asking the supplier {} directly", substance.getName(),
+                        supplier.getName());
+                return supplier.getPriceOfCommodity().getValue(getCurrentTick());
+            }
+        }
+
         if (average != null) {
             logger.info("Average price found on market for this tick for {}", substance.getName());
             return average;
@@ -636,13 +645,7 @@ public abstract class AbstractClearElectricitySpotMarketRole<T extends Decarboni
             return market.getReferencePrice();
         }
 
-        for (CommoditySupplier supplier : reps.genericRepository.findAll(CommoditySupplier.class)) {
-            if (supplier.getSubstance().equals(substance)) {
 
-                logger.info("Price found for {} by asking the supplier {} directly", substance.getName(), supplier.getName());
-                return supplier.getPriceOfCommodity().getValue(getCurrentTick());
-            }
-        }
 
         logger.info("No price has been found for {}", substance.getName());
         return 0d;

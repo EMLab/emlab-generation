@@ -42,7 +42,7 @@ public interface PowerPlantRepository extends GraphRepository<PowerPlant> {
 
     /**
      * Finds plants by owner.
-     *
+     * 
      * @param owner
      *            of the plants
      * @return the list of plants
@@ -79,8 +79,14 @@ public interface PowerPlantRepository extends GraphRepository<PowerPlant> {
     // Iterable<PowerPlant> findOperationalPowerPlants(@Param("tick") long
     // tick);
 
+    @Query(value = "g.idx('__types__')[[className:'emlab.gen.domain.technology.PowerPlant']] .propertyFilter('dismantleTime', FilterPipe.Filter.GREATER_THAN, tick)", type = QueryType.Gremlin)
+    Iterable<PowerPlant> findAllPowerPlantsWhichAreNotDismantledBeforeTick(@Param("tick") long tick);
+
     @Query(value = "g.idx('__types__')[[className:'emlab.gen.domain.technology.PowerPlant']] .propertyFilter('dismantleTime', FilterPipe.Filter.LESS_THAN, tick)", type = QueryType.Gremlin)
     Iterable<PowerPlant> findAllPowerPlantsDismantledBeforeTick(@Param("tick") long tick);
+
+    @Query(value = "g.idx('__types__')[[className:'emlab.gen.domain.technology.PowerPlant']].filter{it.constructionStartTime==tick}", type = QueryType.Gremlin)
+    Iterable<PowerPlant> findAllPowerPlantsWithConstructionStartTimeInTick(@Param("tick") long tick);
 
     /**
      * Finds operational plants and gives them back as a list (only use for
@@ -99,9 +105,9 @@ public interface PowerPlantRepository extends GraphRepository<PowerPlant> {
     @Query(value = "g.idx('__types__')[[className:'emlab.gen.domain.technology.PowerPlant']].filter{(it.dismantleTime > tick) && ((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick)}.sum{it.actualNominalCapacity};", type = QueryType.Gremlin)
     double calculateCapacityOfOperationalPowerPlants(@Param("tick") long tick);
 
-    @Query(value = "t = new Table();" +
-            "g.idx('__types__')[[className:'emlab.gen.domain.technology.PowerPlant']].filter{(it.dismantleTime > tick) && ((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick)}.as('pp').out('TECHNOLOGY').as('ty').table(t){it.actualNominalCapacity}{it.peakSegmentDependentAvailability}.cap().next(); " +
-            "capacitySum = 0; for (row in t){capacitySum += row.get(0) * row.get(1);}; return capacitySum;" , type = QueryType.Gremlin)
+    @Query(value = "t = new Table();"
+            + "g.idx('__types__')[[className:'emlab.gen.domain.technology.PowerPlant']].filter{(it.dismantleTime > tick) && ((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick)}.as('pp').out('TECHNOLOGY').as('ty').table(t){it.actualNominalCapacity}{it.peakSegmentDependentAvailability}.cap().next(); "
+            + "capacitySum = 0; for (row in t){capacitySum += row.get(0) * row.get(1);}; return capacitySum;", type = QueryType.Gremlin)
     double calculatePeakCapacityOfOperationalPowerPlants(@Param("tick") long tick);
 
     /**
@@ -163,9 +169,9 @@ public interface PowerPlantRepository extends GraphRepository<PowerPlant> {
     public double calculateCapacityOfOperationalPowerPlantsInMarket(@Param("market") ElectricitySpotMarket market,
             @Param("tick") long tick);
 
-    @Query(value = "t = new Table();" +
-            "g.v(market).out('ZONE').in('REGION').in('LOCATION').filter{it.__type__=='emlab.gen.domain.technology.PowerPlant'}.filter{((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick) && (it.dismantleTime > tick)}.as('pp').out('TECHNOLOGY').as('ty').table(t){it.actualNominalCapacity}{it.peakSegmentDependentAvailability}.cap().next(); " +
-            "capacitySum = 0; for (row in t){capacitySum += row.get(0) * row.get(1);}; return capacitySum;" , type = QueryType.Gremlin)
+    @Query(value = "t = new Table();"
+            + "g.v(market).out('ZONE').in('REGION').in('LOCATION').filter{it.__type__=='emlab.gen.domain.technology.PowerPlant'}.filter{((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick) && (it.dismantleTime > tick)}.as('pp').out('TECHNOLOGY').as('ty').table(t){it.actualNominalCapacity}{it.peakSegmentDependentAvailability}.cap().next(); "
+            + "capacitySum = 0; for (row in t){capacitySum += row.get(0) * row.get(1);}; return capacitySum;", type = QueryType.Gremlin)
     public double calculatePeakCapacityOfOperationalPowerPlantsInMarket(@Param("market") ElectricitySpotMarket market,
             @Param("tick") long tick);
 
@@ -193,16 +199,27 @@ public interface PowerPlantRepository extends GraphRepository<PowerPlant> {
             @Param("node") PowerGridNode node, @Param("tech") PowerGeneratingTechnology technology,
             @Param("tick") long tick);
 
-    @Query(value = "result = g.v(market).out('ZONE').in('REGION').in('LOCATION').filter{it.__type__=='emlab.gen.domain.technology.PowerPlant'}.as('owner').out('POWERPLANT_OWNER').filter{it==g.v(owner)}.back('owner').filter{((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick) && (it.expectedEndOfLife > tick)}.out('TECHNOLOGY').filter{it==g.v(tech)};", type = QueryType.Gremlin)
+    @Query(value = "result = g.v(market).out('ZONE').in('REGION').in('LOCATION').filter{it.__type__=='emlab.gen.domain.technology.PowerPlant'}.out('POWERPLANT_OWNER').filter{it==g.v(owner)}.in('POWERPLANT_OWNER').filter{((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick) && (it.expectedEndOfLife > tick)}.out('TECHNOLOGY').filter{it==g.v(tech)};", type = QueryType.Gremlin)
     public Iterable<PowerPlant> findExpectedOperationalPowerPlantsInMarketByOwnerAndTechnology(
             @Param("market") ElectricitySpotMarket market, @Param("tech") PowerGeneratingTechnology technology,
             @Param("tick") long tick, @Param("owner") EnergyProducer owner);
 
-    @Query(value = "result = g.v(market).out('ZONE').in('REGION').in('LOCATION').filter{it.__type__=='emlab.gen.domain.technology.PowerPlant'}.as('owner').out('POWERPLANT_OWNER').filter{it==g.v(owner)}.back('owner').filter{((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick) && (it.expectedEndOfLife > tick)}.as('x').out('TECHNOLOGY').filter{it==g.v(tech)}.back('x').sum{it.actualNominalCapacity};"
+    @Query(value = "result = g.v(market).out('ZONE').in('REGION').in('LOCATION').filter{it.__type__=='emlab.gen.domain.technology.PowerPlant'}.out('POWERPLANT_OWNER').filter{it==g.v(owner)}.in('POWERPLANT_OWNER').filter{((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick) && (it.expectedEndOfLife > tick)}.as('x').out('TECHNOLOGY').filter{it==g.v(tech)}.back('x').sum{it.actualNominalCapacity};"
             + "if(result == null){return 0} else{return result}", type = QueryType.Gremlin)
     public double calculateCapacityOfExpectedOperationalPowerPlantsInMarketByOwnerAndTechnology(
             @Param("market") ElectricitySpotMarket market, @Param("tech") PowerGeneratingTechnology technology,
             @Param("tick") long tick, @Param("owner") EnergyProducer owner);
+
+    @Query(value = "result = g.v(market).out('ZONE').in('REGION').in('LOCATION').filter{it.__type__=='emlab.gen.domain.technology.PowerPlant'}.out('POWERPLANT_OWNER').filter{it==g.v(owner)}.in('POWERPLANT_OWNER').filter{((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick) && (it.expectedEndOfLife > tick)}.sum{it.actualNominalCapacity};"
+            + "if(result == null){return 0} else{return result}", type = QueryType.Gremlin)
+    public double calculateCapacityOfExpectedOperationalPowerPlantsInMarketByOwner(
+            @Param("market") ElectricitySpotMarket market, @Param("tick") long tick,
+            @Param("owner") EnergyProducer owner);
+
+    @Query(value = "result = g.v(owner).in('POWERPLANT_OWNER').filter{it.expectedEndOfLife == tick}.as('x').out('TECHNOLOGY').filter{it.name==g.v(tech).name}.back('x').sum{it.actualNominalCapacity};"
+            + "if(result == null){return 0} else{return result}", type = QueryType.Gremlin)
+    public double calculateCapacityOfExpectedDismantledPowerPlantsByOwnerByTechnology(@Param("tick") long tick,
+            @Param("owner") EnergyProducer owner, @Param("tech") PowerGeneratingTechnology pgt);
 
     @Query(value = "result = g.v(owner).in('POWERPLANT_OWNER').filter{((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick) && (it.expectedEndOfLife > tick)}.sum{it.actualNominalCapacity};"
             + "if(result == null){return 0} else{return result}", type = QueryType.Gremlin)
@@ -213,22 +230,6 @@ public interface PowerPlantRepository extends GraphRepository<PowerPlant> {
             + "if(result == null){return 0} else{return result}", type = QueryType.Gremlin)
     public double calculateCapacityOfExpectedOperationalPowerPlantsByOwnerByTechnology(@Param("tick") long tick,
             @Param("owner") EnergyProducer owner, @Param("tech") PowerGeneratingTechnology pgt);
-
-    @Query(value = "result = g.v(owner).in('POWERPLANT_OWNER').filter{it.expectedEndOfLife == tick}.as('x').out('TECHNOLOGY').filter{it.name==g.v(tech).name}.back('x').sum{it.actualNominalCapacity};"
-            + "if(result == null){return 0} else{return result}", type = QueryType.Gremlin)
-    public double calculateCapacityOfExpectedDismantledPowerPlantsByOwnerByTechnology(@Param("tick") long tick,
-            @Param("owner") EnergyProducer owner, @Param("tech") PowerGeneratingTechnology pgt);
-
-    @Query(value = "result = g.v(market).out('ZONE').in('REGION').in('LOCATION').filter{it.__type__=='emlab.gen.domain.technology.PowerPlant'}.as('x').out('POWERPLANT_OWNER').filter{it==g.v(owner)}.back('x').filter{((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick) && (it.expectedEndOfLife > tick)}.out('TECHNOLOGY');", type = QueryType.Gremlin)
-    public Iterable<PowerPlant> findExpectedOperationalPowerPlantsInMarketByOwner(
-            @Param("market") ElectricitySpotMarket market, @Param("tick") long tick,
-            @Param("owner") EnergyProducer owner);
-
-    @Query(value = "result = g.v(market).out('ZONE').in('REGION').in('LOCATION').filter{it.__type__=='emlab.gen.domain.technology.PowerPlant'}.out('POWERPLANT_OWNER').filter{it==g.v(owner)}.in('POWERPLANT_OWNER').filter{((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick) && (it.expectedEndOfLife > tick)}.sum{it.actualNominalCapacity};"
-            + "if(result == null){return 0} else{return result}", type = QueryType.Gremlin)
-    public double calculateCapacityOfExpectedOperationalPowerPlantsInMarketByOwner(
-            @Param("market") ElectricitySpotMarket market, @Param("tick") long tick,
-            @Param("owner") EnergyProducer owner);
 
     @Query(value = "g.v(market).out('ZONE').in('REGION').in('LOCATION').filter{it.__type__=='emlab.gen.domain.technology.PowerPlant'}", type = QueryType.Gremlin)
     public Iterable<PowerPlant> findPowerPlantsInMarket(@Param("market") ElectricitySpotMarket market);
@@ -259,9 +260,43 @@ public interface PowerPlantRepository extends GraphRepository<PowerPlant> {
     public double calculateCapacityOfPowerPlantsByMarketInPipeline(@Param("market") ElectricitySpotMarket market,
             @Param("tick") long tick);
 
+    @Query(value = "g.v(market).out('ZONE').in('REGION').in('LOCATION').filter{it.__type__=='emlab.gen.domain.technology.PowerPlant'}.as('plant').filter{((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick) && (it.dismantleTime > tick)}.sort{-it.ageFraction}_()", type = QueryType.Gremlin)
+    public Iterable<PowerPlant> findOperationalPowerPlantsByDescendingAgeFactorAndMarket(
+            @Param("market") ElectricitySpotMarket market, @Param("tick") long tick);
+
+    @Query(value = "g.v(market).out('ZONE').in('REGION').in('LOCATION').filter{it.__type__=='emlab.gen.domain.technology.PowerPlant'}.as('plant').filter{((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick) && (it.dismantleTime > tick)}.sort{it.profitability}_()", type = QueryType.Gremlin)
+    public Iterable<PowerPlant> findOperationalPowerPlantsByAscendingProfitabilityAndMarket(
+            @Param("market") ElectricitySpotMarket market, @Param("tick") long tick);
+
+    @Query(value = "g.v(market).out('ZONE').in('REGION').in('LOCATION').filter{it.__type__=='emlab.gen.domain.technology.PowerPlant'}.as('plant').filter{((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick) && (it.dismantleTime > tick)}.sort{-it.profitability}_()", type = QueryType.Gremlin)
+    public Iterable<PowerPlant> findOperationalPowerPlantsByDescendingProfitabilityAndMarket(
+            @Param("market") ElectricitySpotMarket market, @Param("tick") long tick);
+
+    @Query(value = "g.v(market).out('ZONE').in('REGION').in('LOCATION').filter{it.__type__=='emlab.gen.domain.technology.PowerPlant'}.filter{((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick)}", type = QueryType.Gremlin)
+    public Iterable<PowerPlant> findExpectedOperationalPowerPlantsInMarketWithoutDismantling(
+            @Param("market") ElectricitySpotMarket market, @Param("tick") long tick);
+
+    @Query(value = "double counter=0;"
+            + "powerplants = g.v(market).out('ZONE').in('REGION').in('LOCATION').filter{it.__type__=='emlab.gen.domain.technology.PowerPlant'}.filter{((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick) && (it.dismantleTime > tick)};"
+            + "for (pp in powerplants) {" + "capacity = pp.actualNominalCapacity.next();"
+            + "peak=pp.out('TECHNOLOGY').peakSegmentDependentAvailability.next();" + "result = capacity*peak;"
+            + "counter = counter+result };" + "return counter", type = QueryType.Gremlin)
+    public double calculatePeakCapacityOfPowerPlantsByMarketTime(@Param("market") ElectricitySpotMarket market,
+            @Param("tick") long tick);
+
     @Query(value = "substanceShares = g.v(substance).in('SUBSTANCE').filter{it.__type__=='emlab.gen.domain.technology.SubstanceShareInFuelMix'};"
             + "sum=substanceShares.sum{it.share}; if(sum!=null) return sum else return 0;;", type = QueryType.Gremlin)
     public double calculateSubstanceUsage(@Param("substance") Substance substance);
+
+    @Query(value = "g.v(market).out('ZONE').in('REGION').in('LOCATION').filter{it.__type__=='emlab.gen.domain.technology.PowerPlant'}.filter{((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick) && (it.expectedEndOfLife > tick) && it.profitability>=0}", type = QueryType.Gremlin)
+    public Iterable<PowerPlant> findExpectedOperationalProfitablePowerPlantsInMarket(
+            @Param("market") ElectricitySpotMarket market, @Param("tick") long tick);
+
+    @Query(value = "t = new Table();"
+            + "g.v(market).out('ZONE').in('REGION').in('LOCATION').filter{it.__type__=='emlab.gen.domain.technology.PowerPlant'}.filter{((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick) && (it.dismantleTime > tick)}.as('pp').out('TECHNOLOGY').as('ty').table(t){it.actualNominalCapacity}{it.baseSegmentDependentAvailability}.cap().next(); "
+            + "capacitySum = 0; for (row in t){capacitySum += row.get(0) * row.get(1);}; return capacitySum;", type = QueryType.Gremlin)
+    public double calculateBaseCapacityOfOperationalPowerPlantsInMarket(@Param("market") ElectricitySpotMarket market,
+            @Param("tick") long tick);
 
     @Query(value = "g.v(gridnode).in('LOCATION').filter{(it.__type__=='emlab.gen.domain.technology.PowerPlant')}.as('p').out('TECHNOLOGY').filter{it.intermittent == true}.back('p').filter{((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick) && (it.dismantleTime > tick)}", type = QueryType.Gremlin)
     Iterable<PowerPlant> findOperationalIntermittentPowerPlantsByPowerGridNode(@Param("gridnode") PowerGridNode node,
@@ -282,5 +317,46 @@ public interface PowerPlantRepository extends GraphRepository<PowerPlant> {
     double calculateCapacityOfOperationalIntermittentPowerPlantsByPowerGridNodeAndTechnology(
             @Param("gridnode") PowerGridNode node,
             @Param("technology") PowerGeneratingTechnology powerGeneratingTechnology, @Param("tick") long tick);
+
+    @Query(value = "result=g.v(plant).in('REGARDING_POWERPLANT').propertyFilter('type', FilterPipe.Filter.EQUAL, 1).propertyFilter('time', FilterPipe.Filter.EQUAL, tick).money.sum(); if(result==null){result=0}; return result", type = QueryType.Gremlin)
+    double calculateSpotMarketRevenueOfPowerPlant(@Param("plant") PowerPlant plant, @Param("tick") long tick);
+
+    @Query(value = "result=g.v(plant).in('REGARDING_POWERPLANT').propertyFilter('type', FilterPipe.Filter.EQUAL, 2).propertyFilter('time', FilterPipe.Filter.EQUAL, tick).money.sum(); if(result==null){result=0}; return result", type = QueryType.Gremlin)
+    double calculateLongTermContractRevenueOfPowerPlant(@Param("plant") PowerPlant plant, @Param("tick") long tick);
+
+    @Query(value = "result=g.v(plant).in('REGARDING_POWERPLANT').propertyFilter('type', FilterPipe.Filter.EQUAL, 10).propertyFilter('time', FilterPipe.Filter.EQUAL, tick).money.sum(); if(result==null){result=0}; return result", type = QueryType.Gremlin)
+    double calculateStrategicReserveRevenueOfPowerPlant(@Param("plant") PowerPlant plant, @Param("tick") long tick);
+
+    @Query(value = "result=g.v(plant).in('REGARDING_POWERPLANT').propertyFilter('type', FilterPipe.Filter.EQUAL, 11).propertyFilter('time', FilterPipe.Filter.EQUAL, tick).money.sum(); if(result==null){result=0}; return result", type = QueryType.Gremlin)
+    double calculateCapacityMarketRevenueOfPowerPlant(@Param("plant") PowerPlant plant, @Param("tick") long tick);
+
+    @Query(value = "result=g.v(plant).in('REGARDING_POWERPLANT').propertyFilter('type', FilterPipe.Filter.EQUAL, 12).propertyFilter('time', FilterPipe.Filter.EQUAL, tick).money.sum(); if(result==null){result=0}; return result", type = QueryType.Gremlin)
+    double calculateCO2HedgingRevenueOfPowerPlant(@Param("plant") PowerPlant plant, @Param("tick") long tick);
+
+    @Query(value = "result=g.v(plant).in('REGARDING_POWERPLANT').filter{it.type==5 || it.type==6 || it.type==9}.propertyFilter('time', FilterPipe.Filter.EQUAL, tick).money.sum(); if(result==null){result=0}; return result", type = QueryType.Gremlin)
+    double calculateCO2CostsOfPowerPlant(@Param("plant") PowerPlant plant, @Param("tick") long tick);
+
+    @Query(value = "result=g.v(plant).in('REGARDING_POWERPLANT').filter{it.type==3 || it.type==7 || it.type==8}.propertyFilter('time', FilterPipe.Filter.EQUAL, tick).money.sum(); if(result==null){result=0}; return result", type = QueryType.Gremlin)
+    double calculateFixedCostsOfPowerPlant(@Param("plant") PowerPlant plant, @Param("tick") long tick);
+
+    @Query(value = "ppdps=g.v(plant).in('POWERPLANT_DISPATCHPLAN').filter{it.time==tick}.propertyFilter('forecast', FilterPipe.Filter.EQUAL, false); sum=0;"
+            + "fullLoadHours=0;"
+            + "for(ppdp in ppdps){"
+            + "totalAmount = ppdp.getProperty('acceptedAmount') + ppdp.getProperty('capacityLongTermContract');"
+            + "if(totalAmount==null) totalAmount=0;"
+            + "hoursInSegment = ppdp.out('SEGMENT_DISPATCHPLAN').next().getProperty('lengthInHours');"
+            + "production = totalAmount * hoursInSegment;"
+            + "fullLoadHours = fullLoadHours + hoursInSegment * totalAmount  / (ppdp.out('POWERPLANT_DISPATCHPLAN').next().actualNominalCapacity *1.0d);"
+            + "}; return fullLoadHours;", type = QueryType.Gremlin)
+    double calculateFullLoadHoursOfPowerPlant(@Param("plant") PowerPlant plant, @Param("tick") long tick);
+
+    @Query(value = "g.v(market).out('ZONE').in('REGION').in('LOCATION').filter{(it.__type__=='emlab.gen.domain.technology.PowerPlant')}.as('p').out('TECHNOLOGY').filter{it==g.v(technology)}.back('p').filter{((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick) && (it.dismantleTime > tick)}", type = QueryType.Gremlin)
+    Iterable<PowerPlant> findOperationalPowerPlantsByMarketAndTechnology(@Param("market") ElectricitySpotMarket market,
+            @Param("technology") PowerGeneratingTechnology powerGeneratingTechnology, @Param("tick") long tick);
+
+    @Query(value = "result = g.v(market).out('ZONE').in('REGION').in('LOCATION').filter{it.__type__=='emlab.gen.domain.technology.PowerPlant'}.as('x').out('POWERPLANT_OWNER').filter{it==g.v(owner)}.back('x').filter{((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick) && (it.expectedEndOfLife > tick)}.out('TECHNOLOGY');", type = QueryType.Gremlin)
+    public Iterable<PowerPlant> findExpectedOperationalPowerPlantsInMarketByOwner(
+            @Param("market") ElectricitySpotMarket market, @Param("tick") long tick,
+            @Param("owner") EnergyProducer owner);
 
 }
