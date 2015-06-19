@@ -102,6 +102,7 @@ public class Reps {
     public IntermittentTechnologyNodeLoadFactorRepository intermittentTechnologyNodeLoadFactorRepository;
 
     @Autowired
+<<<<<<< HEAD
     public CapacityMarketRepository capacityMarketRepository;
 
     @Autowired
@@ -116,9 +117,7 @@ public class Reps {
     @Autowired
     public RenewableSupportSchemeRepository renewableSupportSchemeRepository;
 
-    @Autowired
+=======
     public FinancialPowerPlantReportRepository financialPowerPlantReportRepository;
-
-    @Autowired
-    public RelativeRenewableTargetRepository relativeRenewableTargetRepository;
+>>>>>>> Jorn/feature/historicalCVar
 }

@@ -47,6 +47,26 @@ public class RenewableSupportScheme {
 
     private String name;
 
+    private long futureTenderOperationStartTime;
+
+    private double yearlyTenderDemandTarget;
+
+    public double getYearlyTenderDemandTarget() {
+        return yearlyTenderDemandTarget;
+    }
+
+    public void setYearlyTenderDemandTarget(double yearlyTenderDemandTarget) {
+        this.yearlyTenderDemandTarget = yearlyTenderDemandTarget;
+    }
+
+    public long getFutureTenderOperationStartTime() {
+        return futureTenderOperationStartTime;
+    }
+
+    public void setFutureTenderOperationStartTime(long futureTimePointTender) {
+        this.futureTenderOperationStartTime = futureTimePointTender;
+    }
+
     public String getName() {
         return name;
     }

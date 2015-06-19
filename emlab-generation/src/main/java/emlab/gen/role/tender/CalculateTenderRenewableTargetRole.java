@@ -33,7 +33,7 @@ import emlab.gen.util.GeometricTrendRegression;
  */
 
 @RoleComponent
-public class CalculateRenewableTargetRoleTender extends AbstractRole<Regulator> implements Role<Regulator> {
+public class CalculateTenderRenewableTargetRole extends AbstractRole<Regulator> implements Role<Regulator> {
 
     @Autowired
     Reps reps;
@@ -45,6 +45,15 @@ public class CalculateRenewableTargetRoleTender extends AbstractRole<Regulator> 
         // Zone is the country
         Zone zone = regulator.getZone();
         ElectricitySpotMarket market = reps.marketRepository.findElectricitySpotMarketForZone(zone);
+        
+        public double targetFactor = tenderTargets.getTrend().getValue(futureTimePoint);
+
+        /*
+         * Calculates the target for the current tick. But How do I retrieve
+         * forecast from line 99? I thought 'return' would do the job
+         */
+
+        double renewableTarget = targetFactor * forecast;
 
     }
 
@@ -65,7 +74,7 @@ public class CalculateRenewableTargetRoleTender extends AbstractRole<Regulator> 
         /*  Where is the numberOfYearsBacklookingForForecasting defined for the
          *  regulator?
          */
-
+        
         for (long time = getCurrentTick(); time > getCurrentTick() - numberOfYearsBacklookingForForecasting
                 && time >= 0; time = time - 1) {
 
@@ -128,13 +137,4 @@ public class CalculateRenewableTargetRoleTender extends AbstractRole<Regulator> 
      * does tenderTargets relate to the scenario file? Or do I need to define
      * something is else to relate tothis part of the scenario file?
      */
-    public double targetFactor = tenderTargets.getTrend().getValue(futureTimePoint);
 
-    /*
-     * Calculates the target for the current tick. But How do I retrieve
-     * forecast from line 99? I thought 'return' would do the job
-     */
-
-    double renewableTarget = targetFactor * forecast;
-
-}
