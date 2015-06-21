@@ -27,8 +27,16 @@ import emlab.gen.domain.market.electricity.ElectricitySpotMarket;
  * @author JCRichstein
  *
  */
-public interface TargetInvestorRepository extends
-GraphRepository<TargetInvestor> {
+public interface TargetInvestorRepository extends GraphRepository<TargetInvestor> {
+
+    @Query(value = "result = g.v(market).in('INVESTOR_MARKET').next(); ; if(!result.hasNext()){return null;} else{return result.next();}", type = QueryType.Gremlin)
+    TargetInvestor findOneByMarket(@Param("market") ElectricitySpotMarket electricitySpotMarket);
+
+    @Query(value = "result = g.v(market).in('INVESTOR_MARKET').next();", type = QueryType.Gremlin)
+    TargetInvestor findInvestorByMarket(@Param("market") ElectricitySpotMarket electricitySpotMarket);
+
+    @Query(value = "result = g.v(market).in('INVESTOR_MARKET').filter{it.__type__=='emlab.gen.domain.agent.TargetInvestor'};", type = QueryType.Gremlin)
+    TargetInvestor findTargetInvestorByMarket(@Param("market") ElectricitySpotMarket electricitySpotMarket);
 
     @Query(value = "g.idx('__types__')[[className:'emlab.gen.domain.agent.TargetInvestor']].as('x').out('INVESTOR_MARKET').idFilter(market, FilterPipe.Filter.EQUAL).back('x')", type = QueryType.Gremlin)
     Iterable<TargetInvestor> findAllByMarket(@Param("market") ElectricitySpotMarket electricitySpotMarket);

@@ -15,12 +15,27 @@
  ******************************************************************************/
 package emlab.gen.repository;
 
+import org.springframework.data.neo4j.annotation.Query;
+import org.springframework.data.neo4j.annotation.QueryType;
 import org.springframework.data.neo4j.repository.GraphRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import emlab.gen.domain.market.electricity.ElectricitySpotMarket;
 import emlab.gen.domain.market.electricity.Segment;
 
 @Repository
 public interface SegmentRepository extends GraphRepository<Segment> {
 
+    @Query(value = "g.v(market).out('SEGMENT_LOAD').out('SEGMENTLOAD_SEGMENT').filter{it.segmentID==1}", type = QueryType.Gremlin)
+    public Segment findPeakSegmentforMarket(@Param("market") ElectricitySpotMarket market);
+
+    @Query(value = "g.v(market).out('SEGMENT_LOAD').out.sort{-it.segmentID}.next()", type = QueryType.Gremlin)
+    public Segment findBaseSegmentforMarket(@Param("market") ElectricitySpotMarket market);
+
+    @Query(value = "g.v(market).out('SEGMENT_LOAD').out.sort{it.segmentID}_()", type = QueryType.Gremlin)
+    public Iterable<Segment> findSegmentforMarketSortedbySegmentID(@Param("market") ElectricitySpotMarket market);
+
+    @Query(value = "g.v(market).out('SEGMENT_LOAD').out", type = QueryType.Gremlin)
+    public Iterable<Segment> findSegmentforMarket(@Param("market") ElectricitySpotMarket market);
 }

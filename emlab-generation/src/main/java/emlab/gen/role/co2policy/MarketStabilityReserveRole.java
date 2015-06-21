@@ -46,7 +46,9 @@ public class MarketStabilityReserveRole extends AbstractRole<Government> {
 
     @Transactional
     public void act(Government government) {
-        double allowancesInCirculation = reps.decarbonizationAgentRepository.determinePreviouslyBankedCO2Certificates();
+        double allowancesInCirculation = government.isStabilityReserveHasOneYearDelayInsteadOfTwoYearDelay() ? reps.decarbonizationAgentRepository
+                .determineTotallyBankedCO2Certificates() : reps.decarbonizationAgentRepository
+                .determinePreviouslyBankedCO2Certificates();
         double inflowToMarketReserve = calculateInflowToMarketReserveForTimeStep(getCurrentTick(),
                 allowancesInCirculation, government);
         government.setStabilityReserve(government.getStabilityReserve() + inflowToMarketReserve);
@@ -66,7 +68,7 @@ public class MarketStabilityReserveRole extends AbstractRole<Government> {
             return allowancesToBeAddedToReserve;
         } else if (allowancesInCirculation < government.getStabilityReserveLowerTriggerTrend().getValue(clearingTick)) {
             double allowancesToBeReleased = Math.min(government.getStabilityReserve(),
- government
+                    government
                     .getStabilityReserveReleaseQuantityTrend().getValue(clearingTick));
             return -allowancesToBeReleased;
         }

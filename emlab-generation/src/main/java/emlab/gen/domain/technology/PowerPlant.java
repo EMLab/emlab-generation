@@ -87,6 +87,26 @@ public class PowerPlant {
     private double actualEfficiency;
     private double expectedEndOfLife;
     private double actualNominalCapacity;
+    private boolean hasFeedInPremiumContract;
+
+    public double ageFraction;
+    public double profitability;
+
+    public double getProfitability() {
+        return profitability;
+    }
+
+    public void setProfitability(double profitability) {
+        this.profitability = profitability;
+    }
+
+    public double getAgeFraction() {
+        return ageFraction;
+    }
+
+    public void setAgeFraction(double ageFraction) {
+        this.ageFraction = ageFraction;
+    }
 
     public boolean isOperational(long currentTick) {
 
@@ -109,6 +129,14 @@ public class PowerPlant {
         }
         // Construction not yet finished.
         return false;
+    }
+
+    public boolean isHasFeedInPremiumContract() {
+        return hasFeedInPremiumContract;
+    }
+
+    public void setHasFeedInPremiumContract(boolean hasFeedInPremiumContract) {
+        this.hasFeedInPremiumContract = hasFeedInPremiumContract;
     }
 
     public boolean isExpectedToBeOperational(long time) {
@@ -218,6 +246,7 @@ public class PowerPlant {
                 }
                 return getActualNominalCapacity() * factor;
             }
+    
         } else {
             return 0;
         }
