@@ -324,7 +324,7 @@ public class InvestInPowerGenerationTechnologiesRole<T extends EnergyProducer> e
                         for (RenewableSupportScheme scheme : reps.renewableSupportSchemeRepository.findAll()) {
 
                             if (scheme.getPowerGeneratingTechnologiesEligible().contains(technology))
-                                operatingProfit = operatingProfit * (1 + regulator.getFeedInPremiumFactor());
+                                operatingProfit = operatingProfit * (1 + scheme.getFeedInPremiumFactor());
 
                         }
 

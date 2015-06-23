@@ -47,6 +47,18 @@ public class RenewableSupportScheme {
 
     private String name;
 
+    // Feed-in-Premium Related Pàrameters
+    @SimulationParameter(label = "FeedInPremiumFactor", from = 0, to = 1)
+    private double feedInPremiumFactor;
+
+    public double getFeedInPremiumFactor() {
+        return feedInPremiumFactor;
+    }
+
+    public void setFeedInPremiumFactor(double feedInPremiumFactor) {
+        this.feedInPremiumFactor = feedInPremiumFactor;
+    }
+
     public String getName() {
         return name;
     }

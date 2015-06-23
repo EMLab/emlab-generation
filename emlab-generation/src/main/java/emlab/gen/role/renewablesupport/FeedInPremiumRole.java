@@ -124,7 +124,7 @@ public class FeedInPremiumRole extends AbstractRole<RenewableSupportScheme> {
                         // support price calculation for this year (NOT per UNIT
                         // as
                         // the contract property states
-                        double supportPrice = sumEMR * regulator.getFeedInPremiumFactor();
+                        double supportPrice = sumEMR * renewableSupportScheme.getFeedInPremiumFactor();
                         contract.setPricePerUnit(supportPrice);
 
                         // payment
