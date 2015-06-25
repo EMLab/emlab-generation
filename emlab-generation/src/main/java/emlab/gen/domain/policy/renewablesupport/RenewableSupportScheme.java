@@ -21,7 +21,9 @@ import org.neo4j.graphdb.Direction;
 import org.springframework.data.neo4j.annotation.NodeEntity;
 import org.springframework.data.neo4j.annotation.RelatedTo;
 
+import agentspring.agent.Agent;
 import agentspring.simulation.SimulationParameter;
+import emlab.gen.domain.agent.DecarbonizationAgent;
 import emlab.gen.domain.agent.Regulator;
 import emlab.gen.domain.technology.PowerGeneratingTechnology;
 
@@ -30,7 +32,7 @@ import emlab.gen.domain.technology.PowerGeneratingTechnology;
  *         to model both price based and quantity based schemes.
  */
 @NodeEntity
-public class RenewableSupportScheme {
+public class RenewableSupportScheme extends DecarbonizationAgent implements Agent {
 
     @RelatedTo(type = "WITH_REGULATOR", elementClass = Regulator.class, direction = Direction.OUTGOING)
     private Regulator regulator;

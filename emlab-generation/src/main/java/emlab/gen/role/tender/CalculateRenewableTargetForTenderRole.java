@@ -30,12 +30,12 @@ import emlab.gen.repository.Reps;
 import emlab.gen.util.GeometricTrendRegression;
 
 /**
- * @author rjjdejeu
+ * @author rjjdejeu, Kaveri
  *
  */
 
 @RoleComponent
-public class CalculateTenderRenewableTargetRole extends AbstractRole<RenewableSupportScheme> implements
+public class CalculateRenewableTargetForTenderRole extends AbstractRole<RenewableSupportScheme> implements
         Role<RenewableSupportScheme> {
 
     @Autowired
