@@ -71,10 +71,16 @@ public class TenderClearingRole extends AbstractRole<Regulator> implements Role<
         // RelativeRenewableTarget) {
         // this.RelativeRenewableTarget = RelativeRenewableTarget;
 
-        // Goes through the
+        // Goes through the list of the bids that are sorted on ascending order
+        // by price
         for (TenderDispatchPlan currentTenderDispatchPlan : sortedListofTenderDispatchPlan) {
 
+            // if the tender is not cleared yet, it collects complete bids (line
+            // 79), and otherwise it collects a bid partially (line 87)
+            // then after this every bid has been checked, and tender is full,
+            // the tender will be cleared and next bids fail
             if (isTheTenderCleared == false) {
+                // I need some explanation on this clearingEpsilon here
                 if (relativeRenewableTarget - (sumOfTenderBidQuantityAccepted + currentTenderDispatchPlan.getAmount()) >= -clearingEpsilon) {
                     acceptedSubsidyPrice = currentTenderDispatchPlan.getPrice();
                     currentTenderDispatchPlan.setStatus(Bid.ACCEPTED);
@@ -118,8 +124,12 @@ public class TenderClearingRole extends AbstractRole<Regulator> implements Role<
 
         } else {
             ClearingPoint clearingPoint = new ClearingPoint();
+            // lastAcceptedBid is a dummy here, needs to be defined better
+            // The situation here is that the target is not reached, and the
+            // last bid submitted bidPrice will
+            // determine the subsidyPrice
             clearingPoint.setPrice(lastAcceptedBid.getBidPrice);
-            clearingPoint.setVolume(sumofSupplyBidsAccepted);
+            clearingPoint.setVolume(sumOfTenderBidQuantityAccepted());
             clearingPoint.setTime(getCurrentTick());
             clearingPoint.persist();
 
