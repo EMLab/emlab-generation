@@ -71,11 +71,7 @@ public class TenderClearingRole extends AbstractRole<Regulator> implements Role<
         // RelativeRenewableTarget) {
         // this.RelativeRenewableTarget = RelativeRenewableTarget;
 
-        if (regulator.getRelativeRenewableTarget() == 0) {
-            isTheTenderCleared = true;
-            acceptedSubsidyPrice = 0;
-        }
-
+        // Goes through the
         for (TenderDispatchPlan currentTenderDispatchPlan : sortedListofTenderDispatchPlan) {
 
             if (isTheTenderCleared == false) {
