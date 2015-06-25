@@ -356,6 +356,6 @@ public class ForecastDemandRoleTest2 {
 
         fDemandRole.act(regulator);
 
-        logger.warn("Target Demand for this tick: " + regulator.getDemandTarget());
+        logger.warn("Target Demand for this tick: " + regulator.getRelativeRenewableTarget());
     }
 }

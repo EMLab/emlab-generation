@@ -128,8 +128,8 @@ public class ForecastDemandRoleTest {
 
         fDemandRole.act(regulator);
 
-        logger.warn("Target Demand for this tick: " + regulator.getDemandTarget());
-        assertTrue(regulator.getDemandTarget() == 4255);
+        logger.warn("Target Demand for this tick: " + regulator.getRelativeRenewableTarget());
+        assertTrue(regulator.getRelativeRenewableTarget() == 4255);
         // logger.warn("Target Demand for this tick: " +
         // fDemandRole.expectedDemandFactor);
 
