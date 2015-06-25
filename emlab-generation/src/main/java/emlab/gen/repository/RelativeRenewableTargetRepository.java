@@ -15,8 +15,12 @@
  ******************************************************************************/
 package emlab.gen.repository;
 
+import org.springframework.data.neo4j.annotation.Query;
+import org.springframework.data.neo4j.annotation.QueryType;
 import org.springframework.data.neo4j.repository.GraphRepository;
+import org.springframework.data.repository.query.Param;
 
+import emlab.gen.domain.agent.Regulator;
 import emlab.gen.domain.policy.renewablesupport.RelativeRenewableTarget;
 
 /**
@@ -24,5 +28,8 @@ import emlab.gen.domain.policy.renewablesupport.RelativeRenewableTarget;
  *
  */
 public interface RelativeRenewableTargetRepository extends GraphRepository<RelativeRenewableTarget> {
+
+    @Query(value = "g.v(regulator).out('SET_BY_REGULATOR')", type = QueryType.Gremlin)
+    public RelativeRenewableTarget findRelativeRenewableTargetByRegulator(@Param("regulator") Regulator regulator);
 
 }

@@ -116,4 +116,12 @@ public class RenewableSupportScheme {
         this.supportSchemeDuration = supportSchemeDuration;
     }
 
+    /**
+     * @param scheme
+     */
+    public void act(RenewableSupportScheme scheme) {
+        // TODO Auto-generated method stub
+
+    }
+
 }
