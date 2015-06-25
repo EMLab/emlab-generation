@@ -23,7 +23,7 @@ import agentspring.role.AbstractRole;
 import agentspring.role.Role;
 import emlab.gen.domain.agent.Regulator;
 import emlab.gen.domain.market.Bid;
-import emlab.gen.domain.market.capacity.CapacityClearingPoint;
+import emlab.gen.domain.market.ClearingPoint;
 import emlab.gen.domain.policy.renewablesupport.TenderDispatchPlan;
 import emlab.gen.repository.Reps;
 
@@ -53,7 +53,7 @@ public class TenderClearingRole extends AbstractRole<Regulator> implements Role<
         // Iterable<Bid> findAllSortedBidsByPrice(@Param("tick") long time);
 
         sortedListofTenderDispatchPlan = reps.tenderRepository.sortedTenderBidsByPrice(getCurrentTick());
-        double demand = 0d;
+        double relativeRenewableTarget = 0d;
         double sumOfTenderBidQuantityAccepted = 0d;
         double acceptedSubsidyPrice = 0d;
         boolean isTheTenderCleared = false;
@@ -62,7 +62,7 @@ public class TenderClearingRole extends AbstractRole<Regulator> implements Role<
         // relevant for exact clearing)
         double clearingEpsilon = 0.001d;
 
-        // I added this in regulator.java (in domain.agent);
+        // Should I add line 66-73 in regulator.java (in domain.agent) ???
         // public double getRelativeRenewableTarget() {
         // return RelativeRenewableTarget;
         // }
@@ -78,120 +78,55 @@ public class TenderClearingRole extends AbstractRole<Regulator> implements Role<
 
         for (TenderDispatchPlan currentTenderDispatchPlan : sortedListofTenderDispatchPlan) {
 
-            if (currentTenderDispatchPlan.getPrice() <= regulator.getCapacityMarketPriceCap()) {
-
-                demand = regulator.getRelativeRenewableTarget()
-                        * (1 - regulator.getReserveDemandLowerMargin())
-                        + ((regulator.getCapacityMarketPriceCap() - currentTenderDispatchPlan.getPrice())
-                                * (regulator.getReserveDemandUpperMargin() + regulator.getReserveDemandLowerMargin()) * regulator
-                                    .getRelativeRenewableTarget()) / regulator.getCapacityMarketPriceCap();
-
-                // logger.warn("Price of this cdp is " + currentCDP.getPrice());
-                // logger.warn("Demand at this cdp is " + demand);
-
-                if (isTheTenderCleared == false) {
-                    if (demand - (sumOfTenderBidQuantityAccepted + currentTenderDispatchPlan.getAmount()) >= -clearingEpsilon) {
-                        acceptedSubsidyPrice = currentTenderDispatchPlan.getPrice();
-                        currentTenderDispatchPlan.setStatus(Bid.ACCEPTED);
-                        currentTenderDispatchPlan.setAcceptedAmount(currentTenderDispatchPlan.getAmount());
-                        sumOfTenderBidQuantityAccepted = sumOfTenderBidQuantityAccepted
-                                + currentTenderDispatchPlan.getAmount();
-                        // logger.warn("Price of this cdp is " +
-                        // currentCDP.getPrice());
-                        // logger.warn("accepted price" + acceptedPrice);
-                    }
-
-                    else if (demand - (sumOfTenderBidQuantityAccepted + currentTenderDispatchPlan.getAmount()) < clearingEpsilon) {
-
-                        currentTenderDispatchPlan.setStatus(Bid.PARTLY_ACCEPTED);
-                        currentTenderDispatchPlan.setAcceptedAmount((sumOfTenderBidQuantityAccepted - demand));
-                        acceptedSubsidyPrice = currentTenderDispatchPlan.getPrice();
-                        sumOfTenderBidQuantityAccepted = sumOfTenderBidQuantityAccepted
-                                + currentTenderDispatchPlan.getAcceptedAmount();
-                        isTheTenderCleared = true;
-
-                        // logger.warn("accepted price" + acceptedPrice);
-
-                    }
-
-                    // else if (demand - sumofSupplyBidsAccepted <
-                    // clearingEpsilon) {
-                    // isTheMarketCleared = true;
-                    // }
-                } else {
-                    currentTenderDispatchPlan.setStatus(Bid.FAILED);
-                    currentTenderDispatchPlan.setAcceptedAmount(0);
+            if (isTheTenderCleared == false) {
+                if (relativeRenewableTarget - (sumOfTenderBidQuantityAccepted + currentTenderDispatchPlan.getAmount()) >= -clearingEpsilon) {
+                    acceptedSubsidyPrice = currentTenderDispatchPlan.getPrice();
+                    currentTenderDispatchPlan.setStatus(Bid.ACCEPTED);
+                    currentTenderDispatchPlan.setAcceptedAmount(currentTenderDispatchPlan.getAmount());
+                    sumOfTenderBidQuantityAccepted = sumOfTenderBidQuantityAccepted
+                            + currentTenderDispatchPlan.getAmount();
                 }
 
-                // logger.warn("Cumulatively Accepted Supply " +
-                // sumofSupplyBidsAccepted);
-                currentTenderDispatchPlan.persist();
+                else if (relativeRenewableTarget
+                        - (sumOfTenderBidQuantityAccepted + currentTenderDispatchPlan.getAmount()) < clearingEpsilon) {
+                    currentTenderDispatchPlan.setStatus(Bid.PARTLY_ACCEPTED);
+                    currentTenderDispatchPlan
+                            .setAcceptedAmount((sumOfTenderBidQuantityAccepted - relativeRenewableTarget));
+                    acceptedSubsidyPrice = currentTenderDispatchPlan.getPrice();
+                    sumOfTenderBidQuantityAccepted = sumOfTenderBidQuantityAccepted
+                            + currentTenderDispatchPlan.getAcceptedAmount();
+                    isTheTenderCleared = true;
+                }
 
+            } else {
+                currentTenderDispatchPlan.setStatus(Bid.FAILED);
+                currentTenderDispatchPlan.setAcceptedAmount(0);
             }
 
-            // logger.warn("Current CDP Price " + currentCDP.getPrice());
-            // logger.warn("Cumulatively accepted volume " +
-            // sumofSupplyBidsAccepted);
-        }
-        // logger.warn("Demand for the capacity market at tick {} is " + demand,
-        // getCurrentTick());
+            if (relativeRenewableTarget - sumOfTenderBidQuantityAccepted < clearingEpsilon)
+                isTheTenderCleared = true;
 
-        CapacityClearingPoint clearingPoint = new CapacityClearingPoint();
+        }
+
+    }
+
+    // TenderClearingPoint clearingPoint = new TenderClearingPoint();
+    {
         if (isTheTenderCleared == true) {
-            // sumofSupplyBidsAccepted = demand;
-            logger.warn("MARKET CLEARED at price" + acceptedSubsidyPrice);
+            sumOfTenderBidQuantityAccepted = relativeRenewableTarget;
+            ClearingPoint clearingPoint = new ClearingPoint();
             clearingPoint.setPrice(acceptedSubsidyPrice);
             clearingPoint.setVolume(sumOfTenderBidQuantityAccepted);
             clearingPoint.setTime(getCurrentTick());
-            clearingPoint.setCapacityMarket(market);
             clearingPoint.persist();
 
-            logger.warn("Clearing point Price {} and volume " + clearingPoint.getVolume(), clearingPoint.getPrice());
-
         } else {
-            acceptedSubsidyPrice = regulator.getCapacityMarketPriceCap()
-                    * (1 + ((regulator.getRelativeRenewableTarget() * (1 - regulator.getReserveDemandLowerMargin()) - sumOfTenderBidQuantityAccepted) / ((regulator
-                            .getReserveDemandUpperMargin() + regulator.getReserveDemandLowerMargin()) * regulator
-                            .getRelativeRenewableTarget())));
-            clearingPoint.setPrice(max(regulator.getCapacityMarketPriceCap(), acceptedSubsidyPrice));
-            clearingPoint.setVolume(sumOfTenderBidQuantityAccepted);
+            ClearingPoint clearingPoint = new ClearingPoint();
+            clearingPoint.setPrice(lastAcceptedBid.getBidPrice);
+            clearingPoint.setVolume(sumofSupplyBidsAccepted);
             clearingPoint.setTime(getCurrentTick());
-            clearingPoint.setCapacityMarket(market);
             clearingPoint.persist();
-            logger.warn("MARKET UNCLEARED at price" + clearingPoint.getPrice());
-            logger.warn("Clearing point Price {} and volume " + clearingPoint.getVolume(), clearingPoint.getPrice());
 
         }
-        // clearingPoint.persist();
-        // logger.warn("is the market cleared? " + isTheMarketCleared);
-        // logger.warn("Clearing point Price" + clearingPoint.getPrice());
-        // logger.warn("Clearing Point Volume" + clearingPoint.getVolume());
-
-        // VERIFICATION
-        double q2 = clearingPoint.getVolume();
-        double q1 = regulator.getRelativeRenewableTarget()
-                * (1 - regulator.getReserveDemandLowerMargin())
-                + ((regulator.getCapacityMarketPriceCap() - clearingPoint.getPrice())
-                        * (regulator.getReserveDemandUpperMargin() + regulator.getReserveDemandLowerMargin()) * regulator
-                            .getRelativeRenewableTarget()) / regulator.getCapacityMarketPriceCap();
-        if (q1 == q2) {
-            logger.warn("matches");
-        } else {
-            logger.warn("does not match");
-        }
-
     }
-
-    /**
-     * @param capacityMarketPriceCap
-     * @param acceptedPrice
-     * @return
-     */
-    private double max(double capacityMarketPriceCap, double acceptedPrice) {
-        if (acceptedPrice >= capacityMarketPriceCap)
-            return capacityMarketPriceCap;
-        else
-            return acceptedPrice;
-    }
-
 }
