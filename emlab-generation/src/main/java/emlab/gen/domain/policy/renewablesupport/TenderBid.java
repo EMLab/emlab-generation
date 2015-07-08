@@ -15,12 +15,12 @@
  ******************************************************************************/
 package emlab.gen.domain.policy.renewablesupport;
 
-import emlab.gen.domain.market.electricity.PowerPlantDispatchPlan;
+import emlab.gen.domain.market.Bid;
 
 /**
  * @author rjjdejeu
  *
  */
-public class TenderDispatchPlan extends PowerPlantDispatchPlan {
+public class TenderBid extends Bid {
 
 }

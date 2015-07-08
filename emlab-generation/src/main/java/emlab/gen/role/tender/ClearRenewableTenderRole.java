@@ -24,14 +24,14 @@ import agentspring.role.Role;
 import emlab.gen.domain.agent.Regulator;
 import emlab.gen.domain.market.Bid;
 import emlab.gen.domain.market.ClearingPoint;
-import emlab.gen.domain.policy.renewablesupport.TenderDispatchPlan;
+import emlab.gen.domain.policy.renewablesupport.TenderBid;
 import emlab.gen.repository.Reps;
 
 /**
  * @author rjjdejeu
  *
  */
-public class TenderClearingRole extends AbstractRole<Regulator> implements Role<Regulator> {
+public class ClearRenewableTenderRole extends AbstractRole<Regulator> implements Role<Regulator> {
 
     @Autowired
     Reps reps;
@@ -43,7 +43,7 @@ public class TenderClearingRole extends AbstractRole<Regulator> implements Role<
     @Transactional
     public void act(Regulator regulator) {
 
-        Iterable<TenderDispatchPlan> sortedListofTenderDispatchPlan = null;
+        Iterable<TenderBid> sortedListofTenderDispatchPlan = null;
 
         // Query needs to be made for sortedTenderBidsByPrice in a
         // tenderReposity so I can put that in a list
@@ -73,7 +73,7 @@ public class TenderClearingRole extends AbstractRole<Regulator> implements Role<
 
         // Goes through the list of the bids that are sorted on ascending order
         // by price
-        for (TenderDispatchPlan currentTenderDispatchPlan : sortedListofTenderDispatchPlan) {
+        for (TenderBid currentTenderDispatchPlan : sortedListofTenderDispatchPlan) {
 
             // if the tender is not cleared yet, it collects complete bids (line
             // 79), and otherwise it collects a bid partially (line 87)

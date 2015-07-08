@@ -67,7 +67,7 @@ import emlab.gen.util.GeometricTrendRegression;
 // extends EnergyProducer since I need the properties/behavior of the Energy
 // Producer
 
-public class CalculateBidForRenewableRole extends EnergyProducer implements PowerGeneratingTechnologyNodeLimit {
+public class CalculateRenewableTenderBidRole extends EnergyProducer implements PowerGeneratingTechnologyNodeLimit {
 
     @Transient
     @Autowired

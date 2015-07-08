@@ -38,7 +38,7 @@ import emlab.gen.repository.Reps;
  * @author rjjdejeu
  *
  */
-public class OrganizingPaymentsFromTenderRole extends RenewableSupportScheme {
+public class OrganizeRenewableTenderPaymentsRole extends RenewableSupportScheme {
     
     @Transient
     @Autowired
