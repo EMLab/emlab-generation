@@ -39,6 +39,7 @@ public class ClearRenewableTenderRole extends AbstractRole<Regulator> implements
     @Autowired
     Neo4jTemplate template;
 
+    // /vv
     @Override
     @Transactional
     public void act(Regulator regulator) {
