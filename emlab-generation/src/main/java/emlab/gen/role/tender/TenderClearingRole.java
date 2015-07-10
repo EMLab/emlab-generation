@@ -24,7 +24,7 @@ import agentspring.role.Role;
 import emlab.gen.domain.agent.Regulator;
 import emlab.gen.domain.market.Bid;
 import emlab.gen.domain.market.capacity.CapacityClearingPoint;
-import emlab.gen.domain.policy.renewablesupport.TenderDispatchPlan;
+import emlab.gen.domain.policy.renewablesupport.TenderBid;
 import emlab.gen.repository.Reps;
 
 /**
@@ -43,7 +43,7 @@ public class TenderClearingRole extends AbstractRole<Regulator> implements Role<
     @Transactional
     public void act(Regulator regulator) {
 
-        Iterable<TenderDispatchPlan> sortedListofTenderDispatchPlan = null;
+        Iterable<TenderBid> sortedListofTenderDispatchPlan = null;
 
         // Query needs to be made for sortedTenderBidsByPrice in a
         // tenderReposity so I can put that in a list
@@ -76,7 +76,7 @@ public class TenderClearingRole extends AbstractRole<Regulator> implements Role<
             acceptedSubsidyPrice = 0;
         }
 
-        for (TenderDispatchPlan currentTenderDispatchPlan : sortedListofTenderDispatchPlan) {
+        for (TenderBid currentTenderDispatchPlan : sortedListofTenderDispatchPlan) {
 
             if (currentTenderDispatchPlan.getPrice() <= regulator.getCapacityMarketPriceCap()) {
 

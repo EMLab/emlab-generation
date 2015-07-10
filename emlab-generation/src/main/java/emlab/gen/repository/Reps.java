@@ -114,7 +114,7 @@ public class Reps {
     public CapacityDispatchPlanRepository capacityDispatchPlanRepository;
 
     @Autowired
-    public RenewableSupportSchemeRepository renewableSupportSchemeRepository;
+    public RenewableSupportSchemeTenderRepository renewableSupportSchemeTenderRepository;
 
     @Autowired
     public FinancialPowerPlantReportRepository financialPowerPlantReportRepository;

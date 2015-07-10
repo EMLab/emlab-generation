@@ -25,7 +25,8 @@ import emlab.gen.domain.gis.Zone;
 import emlab.gen.domain.market.electricity.ElectricitySpotMarket;
 import emlab.gen.domain.market.electricity.SegmentLoad;
 import emlab.gen.domain.policy.renewablesupport.RelativeRenewableTarget;
-import emlab.gen.domain.policy.renewablesupport.RenewableSupportScheme;
+import emlab.gen.domain.policy.renewablesupport.RenewableSupportSchemeTender;
+import emlab.gen.domain.technology.PowerGeneratingTechnology;
 import emlab.gen.repository.Reps;
 import emlab.gen.util.GeometricTrendRegression;
 
@@ -35,14 +36,14 @@ import emlab.gen.util.GeometricTrendRegression;
  */
 
 @RoleComponent
-public class CalculateRenewableTargetForTenderRole extends AbstractRole<RenewableSupportScheme> implements
-        Role<RenewableSupportScheme> {
+public class CalculateRenewableTargetForTenderRole extends AbstractRole<RenewableSupportSchemeTender>
+        implements Role<RenewableSupportSchemeTender> {
 
     @Autowired
     Reps reps;
 
     @Transactional
-    public void act(RenewableSupportScheme scheme) {
+    public void act(RenewableSupportSchemeTender scheme) {
 
         double demandFactor;
         double targetFactor;
@@ -50,8 +51,9 @@ public class CalculateRenewableTargetForTenderRole extends AbstractRole<Renewabl
         ElectricitySpotMarket market = reps.marketRepository.findElectricitySpotMarketForZone(zone);
 
         // get demand factor
-        demandFactor = predictDemandForElectricitySpotMarket(market, scheme.getRegulator()
-                .getNumberOfYearsLookingBackToForecastDemand(), scheme.getFutureTenderOperationStartTime());
+        demandFactor = predictDemandForElectricitySpotMarket(market,
+                scheme.getRegulator().getNumberOfYearsLookingBackToForecastDemand(),
+                scheme.getFutureTenderOperationStartTime());
 
         // get renewable energy target in factor (percent)
         RelativeRenewableTarget target = reps.relativeRenewableTargetRepository
@@ -66,6 +68,17 @@ public class CalculateRenewableTargetForTenderRole extends AbstractRole<Renewabl
 
         // renewable target for tender operation start year in MWh is
         double renewableTargetInMwh = demandFactor * targetFactor * totalConsumption;
+
+        double totalExpectedCapacity = 0d;
+        for (PowerGeneratingTechnology technology : scheme.getPowerGeneratingTechnologiesEligible()) {
+            double expectedTechnologyCapacity = reps.powerPlantRepository
+                    .calculateCapacityOfExpectedOperationalPowerPlantsInMarketAndTechnology(market, technology,
+                            scheme.getFutureTenderOperationStartTime());
+            totalExpectedCapacity += expectedTechnologyCapacity;
+
+        }
+        // calculate expected generation, and subtract that from annual target.
+        // will be ActualTarget
         scheme.getRegulator().setAnnualRenewableTargetInMwh(renewableTargetInMwh);
 
     }

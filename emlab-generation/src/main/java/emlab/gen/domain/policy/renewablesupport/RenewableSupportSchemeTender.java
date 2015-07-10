@@ -32,7 +32,7 @@ import emlab.gen.domain.technology.PowerGeneratingTechnology;
  *         to model both price based and quantity based schemes.
  */
 @NodeEntity
-public class RenewableSupportScheme extends DecarbonizationAgent implements Agent {
+public class RenewableSupportSchemeTender extends DecarbonizationAgent implements Agent {
 
     @RelatedTo(type = "WITH_REGULATOR", elementClass = Regulator.class, direction = Direction.OUTGOING)
     private Regulator regulator;
@@ -121,7 +121,7 @@ public class RenewableSupportScheme extends DecarbonizationAgent implements Agen
     /**
      * @param scheme
      */
-    public void act(RenewableSupportScheme scheme) {
+    public void act(RenewableSupportSchemeTender scheme) {
         // TODO Auto-generated method stub
 
     }
