@@ -28,8 +28,7 @@ import emlab.gen.domain.policy.renewablesupport.TenderBid;
 import emlab.gen.repository.Reps;
 
 /**
- * @author rjjdejeu
- *
+ * @author rjjdejeu adapted from emlab.gen.role.capacitymarket
  */
 public class ClearRenewableTenderRole extends AbstractRole<Regulator> implements Role<Regulator> {
 
@@ -44,95 +43,91 @@ public class ClearRenewableTenderRole extends AbstractRole<Regulator> implements
     @Transactional
     public void act(Regulator regulator) {
 
-        Iterable<TenderBid> sortedListofTenderDispatchPlan = null;
+        // Initialize a sorted list for tender bids
+        Iterable<TenderBid> sortedListofTenderBids = null;
 
-        // Query needs to be made for sortedTenderBidsByPrice in a
-        // tenderReposity so I can put that in a list
+        // Query needs to be made for sortedTenderBidsByPrice in
+        // tenderBid so I can put that in a list
         // something like this;
-        // @Query(value="g.idx('__types__')[[className:'emlab.gen.domain.market.Bid']].filter{it.time == tick}.sort{it.price}._()",
+        // @Query(value="g.idx('__types__')[[className:'emlab.gen.domain.policy.renewablesupport.TenderBid']].filter{it.time == tick}.sort{it.price}._()",
         // type=QueryType.Gremlin)
         // Iterable<Bid> findAllSortedBidsByPrice(@Param("tick") long time);
 
-        sortedListofTenderDispatchPlan = reps.tenderRepository.sortedTenderBidsByPrice(getCurrentTick());
-        double relativeRenewableTarget = 0d;
+        // Should get tenderBidByPrice and tenderQuota from
+        // emlab.gen.domain.policy.renewablesupport
+        sortedListofTenderBids = reps.tenderBid.sortedTenderBidsByPrice(getCurrentTick());
+        double tenderQuoata = reps.RenewableSupportScheme.getTenderQuota;
         double sumOfTenderBidQuantityAccepted = 0d;
         double acceptedSubsidyPrice = 0d;
         boolean isTheTenderCleared = false;
+
+        if (TenderQuota() == 0) {
+            isTheMarketCleared = true;
+            acceptedSubsidyPrice = 0;
+        }
 
         // This epsilon is to account for rounding errors for java (only
         // relevant for exact clearing)
         double clearingEpsilon = 0.001d;
 
-        // Should I add line 66-73 in regulator.java (in domain.agent) ???
-        // public double getRelativeRenewableTarget() {
-        // return RelativeRenewableTarget;
-        // }
-        //
-        // public void setRelativeRenewableTarget(double
-        // RelativeRenewableTarget) {
-        // this.RelativeRenewableTarget = RelativeRenewableTarget;
-
         // Goes through the list of the bids that are sorted on ascending order
         // by price
-        for (TenderBid currentTenderDispatchPlan : sortedListofTenderDispatchPlan) {
+        for (TenderBid currentTenderBids : sortedListofTenderBids) {
 
             // if the tender is not cleared yet, it collects complete bids (line
-            // 79), and otherwise it collects a bid partially (line 87)
-            // then after this every bid has been checked, and tender is full,
-            // the tender will be cleared and next bids fail
+            // 79),
             if (isTheTenderCleared == false) {
-                // I need some explanation on this clearingEpsilon here
-                if (relativeRenewableTarget - (sumOfTenderBidQuantityAccepted + currentTenderDispatchPlan.getAmount()) >= -clearingEpsilon) {
-                    acceptedSubsidyPrice = currentTenderDispatchPlan.getPrice();
-                    currentTenderDispatchPlan.setStatus(Bid.ACCEPTED);
-                    currentTenderDispatchPlan.setAcceptedAmount(currentTenderDispatchPlan.getAmount());
-                    sumOfTenderBidQuantityAccepted = sumOfTenderBidQuantityAccepted
-                            + currentTenderDispatchPlan.getAmount();
+                if (tenderQuota - (sumOfTenderBidQuantityAccepted + currentTenderBids.getAmount()) >= -clearingEpsilon) {
+                    acceptedSubsidyPrice = currentTenderBids.getPrice();
+                    currentTenderBids.setStatus(Bid.ACCEPTED);
+                    currentTenderBids.setAcceptedAmount(currentTenderBids.getAmount());
+                    sumOfTenderBidQuantityAccepted = sumOfTenderBidQuantityAccepted + currentTenderBids.getAmount();
                 }
 
-                else if (relativeRenewableTarget
-                        - (sumOfTenderBidQuantityAccepted + currentTenderDispatchPlan.getAmount()) < clearingEpsilon) {
-                    currentTenderDispatchPlan.setStatus(Bid.PARTLY_ACCEPTED);
-                    currentTenderDispatchPlan
-                            .setAcceptedAmount((sumOfTenderBidQuantityAccepted - relativeRenewableTarget));
-                    acceptedSubsidyPrice = currentTenderDispatchPlan.getPrice();
+                // it collects a bid partially if that bid fulfills the quota
+                // partially(line 87)
+                else if (tenderQuota - (sumOfTenderBidQuantityAccepted + currentTenderBids.getAmount()) < clearingEpsilon) {
+                    currentTenderBids.setStatus(Bid.PARTLY_ACCEPTED);
+                    currentTenderBids.setAcceptedAmount((sumOfTenderBidQuantityAccepted - tenderQuota));
+                    acceptedSubsidyPrice = currentTenderBids.getPrice();
                     sumOfTenderBidQuantityAccepted = sumOfTenderBidQuantityAccepted
-                            + currentTenderDispatchPlan.getAcceptedAmount();
+                            + currentTenderBids.getAcceptedAmount();
                     isTheTenderCleared = true;
                 }
-
+                // the tenderQuota is reached and the bids after that are not
+                // accepted
             } else {
-                currentTenderDispatchPlan.setStatus(Bid.FAILED);
-                currentTenderDispatchPlan.setAcceptedAmount(0);
+                currentTenderBids.setStatus(Bid.FAILED);
+                currentTenderBids.setAcceptedAmount(0);
             }
 
-            if (relativeRenewableTarget - sumOfTenderBidQuantityAccepted < clearingEpsilon)
+            if (tenderQuota - sumOfTenderBidQuantityAccepted < clearingEpsilon)
                 isTheTenderCleared = true;
 
         }
 
     }
 
-    // TenderClearingPoint clearingPoint = new TenderClearingPoint();
+    // This information needs to go into a query too for payments organization
     {
         if (isTheTenderCleared == true) {
-            sumOfTenderBidQuantityAccepted = relativeRenewableTarget;
-            ClearingPoint clearingPoint = new ClearingPoint();
-            clearingPoint.setPrice(acceptedSubsidyPrice);
-            clearingPoint.setVolume(sumOfTenderBidQuantityAccepted);
-            clearingPoint.setTime(getCurrentTick());
-            clearingPoint.persist();
+            sumOfTenderBidQuantityAccepted = tenderQuota;
+            ClearingPoint tenderClearingPoint = new ClearingPoint();
+            tenderClearingPoint.setPrice(acceptedSubsidyPrice);
+            tenderClearingPoint.setVolume(sumOfTenderBidQuantityAccepted);
+            tenderClearingPoint.setTime(getCurrentTick());
+            tenderClearingPoint.persist();
 
         } else {
-            ClearingPoint clearingPoint = new ClearingPoint();
+            ClearingPoint tenderClearingPoint = new ClearingPoint();
             // lastAcceptedBid is a dummy here, needs to be defined better
             // The situation here is that the target is not reached, and the
             // last bid submitted bidPrice will
             // determine the subsidyPrice
-            clearingPoint.setPrice(lastAcceptedBid.getBidPrice);
-            clearingPoint.setVolume(sumOfTenderBidQuantityAccepted());
-            clearingPoint.setTime(getCurrentTick());
-            clearingPoint.persist();
+            tenderClearingPoint.setPrice(lastAcceptedBid.getBidPrice);
+            tenderClearingPoint.setVolume(sumOfTenderBidQuantityAccepted());
+            tenderClearingPoint.setTime(getCurrentTick());
+            tenderClearingPoint.persist();
 
         }
     }
