@@ -38,13 +38,13 @@ public class ClearRenewableTenderRole extends AbstractRole<Regulator> implements
     @Autowired
     Neo4jTemplate template;
 
-    // /vv
+    //
     @Override
     @Transactional
     public void act(Regulator regulator) {
 
         // Initialize a sorted list for tender bids
-        Iterable<TenderBid> sortedListofTenderBids = null;
+        Iterable<TenderBid> sortedTenderBidPairsByPrice = null;
 
         // Query needs to be made for sortedTenderBidsByPrice in
         // tenderBid so I can put that in a list
@@ -55,14 +55,15 @@ public class ClearRenewableTenderRole extends AbstractRole<Regulator> implements
 
         // Should get tenderBidByPrice and tenderQuota from
         // emlab.gen.domain.policy.renewablesupport
-        sortedListofTenderBids = reps.tenderBid.sortedTenderBidsByPrice(getCurrentTick());
-        double tenderQuoata = reps.RenewableSupportScheme.getTenderQuota;
+
+        sortedTenderBidPairsByPrice = getSortedTenderBidsByPrice(getCurrentTick());
+        double tenderQuota = getYearlyTenderDemandTarget(getCurrentTick());
         double sumOfTenderBidQuantityAccepted = 0d;
         double acceptedSubsidyPrice = 0d;
         boolean isTheTenderCleared = false;
 
-        if (TenderQuota() == 0) {
-            isTheMarketCleared = true;
+        if (tenderQuota == 0) {
+            isTheTenderCleared = true;
             acceptedSubsidyPrice = 0;
         }
 
@@ -72,46 +73,45 @@ public class ClearRenewableTenderRole extends AbstractRole<Regulator> implements
 
         // Goes through the list of the bids that are sorted on ascending order
         // by price
-        for (TenderBid currentTenderBids : sortedListofTenderBids) {
+        for (TenderBid currentTenderBid : sortedTenderBidPairsByPrice) {
 
-            // if the tender is not cleared yet, it collects complete bids (line
-            // 79),
+            // if the tender is not cleared yet, it collects complete bids
             if (isTheTenderCleared == false) {
-                if (tenderQuota - (sumOfTenderBidQuantityAccepted + currentTenderBids.getAmount()) >= -clearingEpsilon) {
-                    acceptedSubsidyPrice = currentTenderBids.getPrice();
-                    currentTenderBids.setStatus(Bid.ACCEPTED);
-                    currentTenderBids.setAcceptedAmount(currentTenderBids.getAmount());
-                    sumOfTenderBidQuantityAccepted = sumOfTenderBidQuantityAccepted + currentTenderBids.getAmount();
+                if (tenderQuota - (sumOfTenderBidQuantityAccepted + currentTenderBid.getAmount()) >= -clearingEpsilon) {
+                    acceptedSubsidyPrice = currentTenderBid.getPrice();
+                    currentTenderBid.setStatus(Bid.ACCEPTED);
+                    currentTenderBid.setAcceptedAmount(currentTenderBid.getAmount());
+                    sumOfTenderBidQuantityAccepted = sumOfTenderBidQuantityAccepted + currentTenderBid.getAmount();
                 }
 
                 // it collects a bid partially if that bid fulfills the quota
-                // partially(line 87)
-                else if (tenderQuota - (sumOfTenderBidQuantityAccepted + currentTenderBids.getAmount()) < clearingEpsilon) {
-                    currentTenderBids.setStatus(Bid.PARTLY_ACCEPTED);
-                    currentTenderBids.setAcceptedAmount((sumOfTenderBidQuantityAccepted - tenderQuota));
-                    acceptedSubsidyPrice = currentTenderBids.getPrice();
+                // partially
+                else if (tenderQuota - (sumOfTenderBidQuantityAccepted + currentTenderBid.getAmount()) < clearingEpsilon) {
+                    acceptedSubsidyPrice = currentTenderBid.getPrice();
+                    currentTenderBid.setStatus(Bid.PARTLY_ACCEPTED);
+
+                    // When I adapted this from ClearCapacityMarket, this line
+                    // was
+                    // reversed: sumOfTenderBidQuantityAccepted - tenderQuota
+                    currentTenderBid.setAcceptedAmount((tenderQuota - sumOfTenderBidQuantityAccepted));
                     sumOfTenderBidQuantityAccepted = sumOfTenderBidQuantityAccepted
-                            + currentTenderBids.getAcceptedAmount();
+                            + currentTenderBid.getAcceptedAmount();
                     isTheTenderCleared = true;
                 }
                 // the tenderQuota is reached and the bids after that are not
                 // accepted
             } else {
-                currentTenderBids.setStatus(Bid.FAILED);
-                currentTenderBids.setAcceptedAmount(0);
+                currentTenderBid.setStatus(Bid.FAILED);
+                currentTenderBid.setAcceptedAmount(0);
             }
 
-            if (tenderQuota - sumOfTenderBidQuantityAccepted < clearingEpsilon)
-                isTheTenderCleared = true;
-
+            currentTenderBid.persist();
         }
 
-    }
+        // This information needs to go into a query too for payments
+        // organization
 
-    // This information needs to go into a query too for payments organization
-    {
         if (isTheTenderCleared == true) {
-            sumOfTenderBidQuantityAccepted = tenderQuota;
             ClearingPoint tenderClearingPoint = new ClearingPoint();
             tenderClearingPoint.setPrice(acceptedSubsidyPrice);
             tenderClearingPoint.setVolume(sumOfTenderBidQuantityAccepted);
@@ -120,12 +120,8 @@ public class ClearRenewableTenderRole extends AbstractRole<Regulator> implements
 
         } else {
             ClearingPoint tenderClearingPoint = new ClearingPoint();
-            // lastAcceptedBid is a dummy here, needs to be defined better
-            // The situation here is that the target is not reached, and the
-            // last bid submitted bidPrice will
-            // determine the subsidyPrice
-            tenderClearingPoint.setPrice(lastAcceptedBid.getBidPrice);
-            tenderClearingPoint.setVolume(sumOfTenderBidQuantityAccepted());
+            tenderClearingPoint.setPrice(acceptedSubsidyPrice);
+            tenderClearingPoint.setVolume(sumOfTenderBidQuantityAccepted);
             tenderClearingPoint.setTime(getCurrentTick());
             tenderClearingPoint.persist();
 

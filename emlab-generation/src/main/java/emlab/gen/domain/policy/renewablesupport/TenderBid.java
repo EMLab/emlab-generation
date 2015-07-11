@@ -15,12 +15,16 @@
  ******************************************************************************/
 package emlab.gen.domain.policy.renewablesupport;
 
+import org.springframework.data.neo4j.annotation.NodeEntity;
+
 import emlab.gen.domain.market.Bid;
 
 /**
- * @author rjjdejeu
- *
+ * @author rjjdejeu adapted from CapacityDispatchPlan in
+ *         emlab.gen.domain.market.capacity
  */
+
+@NodeEntity
 public class TenderBid extends Bid {
 
 }

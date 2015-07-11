@@ -21,7 +21,6 @@ import emlab.gen.domain.market.ClearingPoint;
 
 /**
  * @author rjjdejeu
- * 
  */
 @NodeEntity
 public class TenderClearingPoint extends ClearingPoint {
