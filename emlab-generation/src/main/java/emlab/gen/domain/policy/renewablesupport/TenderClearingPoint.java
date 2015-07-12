@@ -15,14 +15,28 @@
  ******************************************************************************/
 package emlab.gen.domain.policy.renewablesupport;
 
+import org.neo4j.graphdb.Direction;
 import org.springframework.data.neo4j.annotation.NodeEntity;
+import org.springframework.data.neo4j.annotation.RelatedTo;
 
 import emlab.gen.domain.market.ClearingPoint;
+import emlab.gen.domain.market.capacity.CapacityMarket;
 
 /**
- * @author rjjdejeu
+ * @author rjjdejeu adapted from capacityClearingPoint.java
  */
 @NodeEntity
 public class TenderClearingPoint extends ClearingPoint {
+
+    @RelatedTo(type = "CAPACITY_MARKET", elementClass = CapacityMarket.class, direction = Direction.OUTGOING)
+    private CapacityMarket capacityMarket;
+
+    public CapacityMarket getCapacityMarket() {
+        return capacityMarket;
+    }
+
+    public void setCapacityMarket(CapacityMarket capacityMarket) {
+        this.capacityMarket = capacityMarket;
+    }
 
 }

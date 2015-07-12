@@ -56,6 +56,7 @@ public class ClearRenewableTenderRole extends AbstractRole<Regulator> implements
         // Should get tenderBidByPrice and tenderQuota from
         // emlab.gen.domain.policy.renewablesupport
 
+        // I am not sure how to improve line 60 and 61: I want to retreieve the tenderQuota and sorted Bids
         sortedTenderBidPairsByPrice = getSortedTenderBidsByPrice(getCurrentTick());
         double tenderQuota = getYearlyTenderDemandTarget(getCurrentTick());
         double sumOfTenderBidQuantityAccepted = 0d;
@@ -109,7 +110,7 @@ public class ClearRenewableTenderRole extends AbstractRole<Regulator> implements
         }
 
         // This information needs to go into a query too for payments
-        // organization
+        
 
         if (isTheTenderCleared == true) {
             ClearingPoint tenderClearingPoint = new ClearingPoint();
@@ -126,5 +127,36 @@ public class ClearRenewableTenderRole extends AbstractRole<Regulator> implements
             tenderClearingPoint.persist();
 
         }
+        
+     // Accepted and partly accepted BIDs are updated and new parameters are defined;
+    
+        // defines the lag in starting time of payments, zero for now
+        int paymentDelayTime = 0;  
+        // defines the lag in starting time for building & permitting, zero for now
+        int buildAndPermitDelayTime = 0;   
+        // contractLength will be initiated from a scenario file
+        int contractLength = 15;
+        int delayTime =  paymentDelayTime +  buildAndPermitDelayTime;
+        int startingTimePayments = (int) (getCurrentTick() + delayTime);
+        int endTimePayments = startingTimePayments + contractLength;
+
+        // I am not sure what the right syntax is for selecting accepted bids
+        if (TenderBid = Bid.ACCEPTED || currentTenderBid = Bid.PARTLY_ACCEPTED ) {
+            
+            contractPrice = tenderClearingPoint.getTenderClearingPrice;
+            amount = tenderClearingPoint.getAcceptedAmount;
+            startingTimePayments = (int) getCurrentTick() + delayTime;
+            endTimePayments = startingTimePayments + ContractLength;
+            cashflow = amount * contractPrice;
+
+            // This should give the order to start building once the delayTime counted down
+            if (delayTime = tick() - getCurrentTick()) {
+             // I am not sure how to update node number with technology and capacity from here
+            }
+        }
+     
+    
+        
+        
     }
 }
