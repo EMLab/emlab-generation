@@ -20,8 +20,7 @@ import org.springframework.data.neo4j.annotation.QueryType;
 import org.springframework.data.neo4j.repository.GraphRepository;
 import org.springframework.data.repository.query.Param;
 
-import emlab.gen.domain.market.capacity.CapacityDispatchPlan;
-import emlab.gen.domain.market.capacity.CapacityMarket;
+import emlab.gen.domain.policy.renewablesupport.RenewableSupportSchemeTender;
 import emlab.gen.domain.policy.renewablesupport.TenderBid;
 
 /**
@@ -31,11 +30,11 @@ import emlab.gen.domain.policy.renewablesupport.TenderBid;
 public interface TenderBidRepository extends GraphRepository<TenderBid> {
 
     // This sorts the submitted tender bids by price
-    @Query(value = "g.idx('__types__')[[className:'emlab.gen.domain.policy.renewablesupport.TenderBid']].filter{it.time == tick}.sort{it.a.price}._()", type = QueryType.Gremlin)
+    @Query(value = "g.idx('__types__')[[className:'emlab.gen.domain.policy.renewablesupport.TenderBid.java']].filter{it.time == tick}.sort{it.a.price}._()", type = QueryType.Gremlin)
     public Iterable<TenderBid> findAllSortedTenderBidsbyTime(@Param("tick") long time);
 
-    @Query(value = "g.v(market).in('BIDDINGMARKET').propertyFilter('time', FilterPipe.Filter.EQUAL, time).propertyFilter('status', FilterPipe.Filter.GREATER_THAN, 2)", type = QueryType.Gremlin)
-    public Iterable<CapacityDispatchPlan> findAllAcceptedCapacityDispatchPlansForTime(
-            @Param("market") CapacityMarket capacityMarket, @Param("time") long time);
+    @Query(value = "g.v(market).in('BIDDINGMARKET').propertyFilter('time', FilterPipe.Filter.EQUAL, time).propertyFilter('status', FilterPipe.Filter.GREATER_THAN_EQUAL, 2)", type = QueryType.Gremlin)
+    public Iterable<TenderBid> findAllAcceptedTenderBidsForTime(
+            @Param("market") RenewableSupportSchemeTender renewableSupportSchemeTender, @Param("time") long time);
 
 }
