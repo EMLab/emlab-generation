@@ -20,16 +20,22 @@ import org.springframework.data.neo4j.annotation.QueryType;
 import org.springframework.data.neo4j.repository.GraphRepository;
 import org.springframework.data.repository.query.Param;
 
-import emlab.gen.domain.agent.Regulator;
-import emlab.gen.domain.policy.renewablesupport.RelativeRenewableTarget;
+import emlab.gen.domain.market.capacity.CapacityDispatchPlan;
+import emlab.gen.domain.market.capacity.CapacityMarket;
+import emlab.gen.domain.policy.renewablesupport.TenderBid;
 
 /**
- * @author Kaveri3012
+ * @author rjjdejeu
  *
  */
-public interface RelativeRenewableTargetRepository extends GraphRepository<RelativeRenewableTarget> {
+public interface TenderBidRepository extends GraphRepository<TenderBid> {
 
-    @Query(value = "g.v(regulator).out('SET_BY_REGULATOR')", type = QueryType.Gremlin)
-    public RelativeRenewableTarget findRelativeRenewableTargetByRegulator(@Param("regulator") Regulator regulator);
+    // This sorts the submitted tender bids by price
+    @Query(value = "g.idx('__types__')[[className:'emlab.gen.domain.policy.renewablesupport.TenderBid']].filter{it.time == tick}.sort{it.a.price}._()", type = QueryType.Gremlin)
+    public Iterable<TenderBid> findAllSortedTenderBidsbyTime(@Param("tick") long time);
+
+    @Query(value = "g.v(market).in('BIDDINGMARKET').propertyFilter('time', FilterPipe.Filter.EQUAL, time).propertyFilter('status', FilterPipe.Filter.GREATER_THAN, 2)", type = QueryType.Gremlin)
+    public Iterable<CapacityDispatchPlan> findAllAcceptedCapacityDispatchPlansForTime(
+            @Param("market") CapacityMarket capacityMarket, @Param("time") long time);
 
 }

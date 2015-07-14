@@ -120,5 +120,11 @@ public class Reps {
     public FinancialPowerPlantReportRepository financialPowerPlantReportRepository;
 
     @Autowired
-    public RelativeRenewableTargetRepository relativeRenewableTargetRepository;
+    public RenewableTargetForTenderRepository renewableTargetForTenderRepository;
+
+    @Autowired
+    public TenderClearingPointRepository tenderClearingPointRepository;
+
+    @Autowired
+    public TenderBidRepository tenderBidRepository;
 }

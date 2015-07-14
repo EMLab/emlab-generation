@@ -20,7 +20,7 @@ import org.springframework.data.neo4j.repository.GraphRepository;
 import emlab.gen.domain.policy.renewablesupport.RenewableSupportSchemeTender;
 
 /**
- * @author Kaveri3012
+ * @author Kaveri3012 rjjdejeu
  *
  */
 public interface RenewableSupportSchemeTenderRepository extends GraphRepository<RenewableSupportSchemeTender> {

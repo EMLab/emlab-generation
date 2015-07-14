@@ -13,16 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package emlab.gen.repository;
-
-import org.springframework.data.neo4j.repository.GraphRepository;
-
-import emlab.gen.domain.policy.renewablesupport.TenderClearingPoint;
+package emlab.gen.domain.policy.renewablesupport;
 
 /**
  * @author rjjdejeu
  *
  */
-public interface TenderClearingPointRepository extends GraphRepository<TenderClearingPoint> {
+public class TenderClearingPoint {
 
 }
