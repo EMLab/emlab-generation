@@ -122,34 +122,9 @@ public class SubmitTenderBidRole extends AbstractEnergyProducerRole<EnergyProduc
             expectedDemand.put(elm, gtr.predict(futureTimePoint));
         }
 
-        // Investment decision
-        // for (ElectricitySpotMarket market :
-        // reps.genericRepository.findAllAtRandom(ElectricitySpotMarket.class))
-        // {
         ElectricitySpotMarket market = agent.getInvestorMarket();
         MarketInformation marketInformation = new MarketInformation(market, expectedDemand, expectedFuelPrices,
                 expectedCO2Price.get(market).doubleValue(), futureTimePoint);
-                /*
-                 * if (marketInfoMap.containsKey(market) &&
-                 * marketInfoMap.get(market).time == futureTimePoint) {
-                 * marketInformation = marketInfoMap.get(market); } else {
-                 * marketInformation = new MarketInformation(market,
-                 * expectedFuelPrices, expectedCO2Price, futureTimePoint);
-                 * marketInfoMap.put(market, marketInformation); }
-                 */
-
-        // logger.warn(agent + " is expecting a CO2 price of " +
-        // expectedCO2Price.get(market) + " Euro/MWh at timepoint "
-        // + futureTimePoint + " in Market " + market);
-
-        // logger.warn("Agent {} found the expected prices to be {}", agent,
-        // marketInformation.expectedElectricityPricesPerSegment);
-
-        // logger.warn("Agent {} found that the installed capacity in the market
-        // {} in future to be "
-        // + marketInformation.capacitySum +
-        // "and expectde maximum demand to be "
-        // + marketInformation.maxExpectedLoad, agent, market);
 
         for (PowerGeneratingTechnology technology : reps.genericRepository.findAll(PowerGeneratingTechnology.class)) {
 
@@ -335,6 +310,7 @@ public class SubmitTenderBidRole extends AbstractEnergyProducerRole<EnergyProduc
                         bid.setTechnology(technology);
                         bid.setStart(getCurrentTick() + plant.getActualLeadtime());
                         bid.setFinish(getCurrentTick() + plant.getActualLeadtime() + tenderSchemeDuration);
+                        bid.persist();
 
                     }
 
@@ -491,6 +467,7 @@ public class SubmitTenderBidRole extends AbstractEnergyProducerRole<EnergyProduc
                             capacitySum += targetDifference;
                         }
                     }
+
                 } else {
                     for (PowerGeneratingTechnologyTarget pggt : targetInvestor.getPowerGenerationTechnologyTargets()) {
                         double expectedTechnologyCapacity = reps.powerPlantRepository

@@ -30,7 +30,7 @@ import emlab.gen.domain.contract.CashFlow;
 import emlab.gen.domain.market.electricity.ElectricitySpotMarket;
 import emlab.gen.domain.market.electricity.PowerPlantDispatchPlan;
 import emlab.gen.domain.market.electricity.SegmentLoad;
-import emlab.gen.domain.policy.renewablesupport.RenewableSupportScheme;
+import emlab.gen.domain.policy.renewablesupport.RenewableSupportSchemeTender;
 import emlab.gen.domain.policy.renewablesupport.SupportPriceContract;
 import emlab.gen.domain.technology.PowerGeneratingTechnology;
 import emlab.gen.domain.technology.PowerPlant;
@@ -49,7 +49,7 @@ import emlab.gen.repository.Reps;
  * 
  */
 @RoleComponent
-public class FeedInPremiumRole extends AbstractRole<RenewableSupportScheme> {
+public class FeedInPremiumRole extends AbstractRole<RenewableSupportSchemeTender> {
 
     @Transient
     @Autowired
@@ -60,7 +60,7 @@ public class FeedInPremiumRole extends AbstractRole<RenewableSupportScheme> {
     Neo4jTemplate template;
 
     @Transactional
-    public void act(RenewableSupportScheme renewableSupportScheme) {
+    public void act(RenewableSupportSchemeTender renewableSupportScheme) {
 
         Regulator regulator = new Regulator();
         regulator = renewableSupportScheme.getRegulator();
