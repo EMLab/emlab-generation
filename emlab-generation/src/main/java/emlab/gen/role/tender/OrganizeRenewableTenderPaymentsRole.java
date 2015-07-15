@@ -43,16 +43,17 @@ public class OrganizeRenewableTenderPaymentsRole extends AbstractRole<RenewableS
     @Transactional
     public void act(RenewableSupportSchemeTender renewableSupportSchemeTender) {
 
-        for (TenderBid bid : reps.tenderBidRepository.findAllAcceptedTenderBidsForTime(renewableSupportSchemeTender,
-                getCurrentTick())) {
+        for (TenderBid currentTenderBid : reps.tenderBidRepository.findAllAcceptedTenderBidsForTime(
+                renewableSupportSchemeTender, getCurrentTick())) {
 
             ClearingPoint tenderClearingPoint = reps.tenderClearingPointRepository
                     .findOneClearingPointForTimeAndRenewableSupportSchemeTender(getCurrentTick(),
                             renewableSupportSchemeTender);
 
-            reps.nonTransactionalCreateRepository.createCashFlow(esm, plan.getBidder(), plan.getAcceptedAmount()
-                    * capacityClearingPoint.getPrice(), CashFlow.SIMPLE_CAPACITY_MARKET, getCurrentTick(),
-                    plan.getPlant());
+            reps.nonTransactionalCreateRepository.createCashFlow(renewableSupportSchemeTender,
+                    currentTenderBid.getBidder(),
+                    currentTenderBid.getAcceptedAmount() * tenderClearingPoint.getPrice(), CashFlow.TENDER_SUBSIDY,
+                    getCurrentTick(), currentTenderBid.getPowerPlant());
 
         }
 
