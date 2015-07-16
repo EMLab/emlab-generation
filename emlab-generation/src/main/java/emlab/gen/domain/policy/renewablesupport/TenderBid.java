@@ -24,7 +24,7 @@ import emlab.gen.domain.technology.PowerGridNode;
 import emlab.gen.domain.technology.PowerPlant;
 
 /**
- * @author rjjdejeu and Kaveri
+ * @author Kaveri for tender
  *
  */
 public class TenderBid extends Bid {

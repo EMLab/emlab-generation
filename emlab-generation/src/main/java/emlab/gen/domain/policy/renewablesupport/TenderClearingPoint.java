@@ -13,19 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package emlab.gen.repository;
+package emlab.gen.domain.policy.renewablesupport;
 
-import org.springframework.data.neo4j.repository.GraphRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.neo4j.annotation.NodeEntity;
 
-import emlab.gen.domain.policy.renewablesupport.SupportPriceContract;
+import emlab.gen.domain.market.ClearingPoint;
 
 /**
- * @author Kaveri3012
- *
+ * @author rjjdejeu adapted from ClearingPoint.java
  */
-
-@Repository
-public interface SupportPriceContractRepository extends GraphRepository<SupportPriceContract> {
+@NodeEntity
+public class TenderClearingPoint extends ClearingPoint {
 
 }
