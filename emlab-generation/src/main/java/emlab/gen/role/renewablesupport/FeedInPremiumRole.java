@@ -112,7 +112,8 @@ public class FeedInPremiumRole extends AbstractRole<RenewableSupportScheme> {
                             } else if (ppdp.getStatus() >= 2) {
                                 electricityPrice = reps.segmentClearingPointRepository
                                         .findOneSegmentClearingPointForMarketSegmentAndTime(getCurrentTick(),
-                                                segmentLoad.getSegment(), eMarket).getPrice();
+                                                segmentLoad.getSegment(), eMarket)
+                                        .getPrice();
 
                                 double hours = segmentLoad.getSegment().getLengthInHours();
                                 sumEMR = sumEMR + electricityPrice * hours * ppdp.getAcceptedAmount();
