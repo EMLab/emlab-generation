@@ -22,8 +22,10 @@ import org.springframework.transaction.annotation.Transactional;
 import agentspring.role.AbstractRole;
 import agentspring.role.Role;
 import emlab.gen.domain.agent.BigBank;
+import emlab.gen.domain.agent.EnergyProducer;
 import emlab.gen.domain.agent.PowerPlantManufacturer;
 import emlab.gen.domain.agent.Regulator;
+import emlab.gen.domain.contract.CashFlow;
 import emlab.gen.domain.contract.Loan;
 import emlab.gen.domain.market.Bid;
 import emlab.gen.domain.market.ClearingPoint;
@@ -34,7 +36,7 @@ import emlab.gen.repository.Reps;
 /**
  * @author rjjdejeu
  */
-public class ClearRenewableTenderRole extends AbstractRole<Regulator> implements Role<Regulator> {
+public class ClearRenewableTenderRole extends AbstractRole<Regulator>implements Role<Regulator> {
 
     @Autowired
     Reps reps;
@@ -63,7 +65,7 @@ public class ClearRenewableTenderRole extends AbstractRole<Regulator> implements
 
         // This epsilon is to account for rounding errors for java (only
         // relevant for exact clearing)
-        double clearingEpsilon = 0.001d;
+        double clearingEpsilon = 0.0001d;
 
         // Goes through the list of the bids that are sorted on ascending order
         // by price
@@ -80,7 +82,8 @@ public class ClearRenewableTenderRole extends AbstractRole<Regulator> implements
 
                 // it collects a bid partially if that bid fulfills the quota
                 // partially
-                else if (tenderQuota - (sumOfTenderBidQuantityAccepted + currentTenderBid.getAmount()) < clearingEpsilon) {
+                else if (tenderQuota
+                        - (sumOfTenderBidQuantityAccepted + currentTenderBid.getAmount()) < clearingEpsilon) {
                     acceptedSubsidyPrice = currentTenderBid.getPrice();
                     currentTenderBid.setStatus(Bid.PARTLY_ACCEPTED);
 
@@ -107,23 +110,25 @@ public class ClearRenewableTenderRole extends AbstractRole<Regulator> implements
             if (currentTenderBid.getStatus() == Bid.ACCEPTED || currentTenderBid.getStatus() == Bid.PARTLY_ACCEPTED) {
 
                 PowerPlant plant = new PowerPlant();
-                plant.specifyAndPersist(currentTenderBid.getStart(), currentTenderBid.getBidder(),
-                        currentTenderBid.getPowerGridNode(), currentTenderBid.getTechnology());
+                EnergyProducer bidder = (EnergyProducer) currentTenderBid.getBidder();
+
+                plant.specifyAndPersist(currentTenderBid.getStart(), bidder, currentTenderBid.getPowerGridNode(),
+                        currentTenderBid.getTechnology());
                 PowerPlantManufacturer manufacturer = reps.genericRepository.findFirst(PowerPlantManufacturer.class);
                 BigBank bigbank = reps.genericRepository.findFirst(BigBank.class);
 
                 double investmentCostPayedByEquity = plant.getActualInvestedCapital()
-                        * (1 - currentTenderBid.getBidder().getDebtRatioOfInvestments());
+                        * (1 - bidder.getDebtRatioOfInvestments());
                 double investmentCostPayedByDebt = plant.getActualInvestedCapital()
-                        * currentTenderBid.getBidder().getDebtRatioOfInvestments();
+                        * bidder.getDebtRatioOfInvestments();
                 double downPayment = investmentCostPayedByEquity;
-                createSpreadOutDownPayments(currentTenderBid.getBidder(), manufacturer, downPayment, plant);
+                createSpreadOutDownPayments(bidder, manufacturer, downPayment, plant);
 
-                double amount = determineLoanAnnuities(investmentCostPayedByDebt, plant.getTechnology()
-                        .getDepreciationTime(), currentTenderBid.getBidder().getLoanInterestRate());
+                double amount = determineLoanAnnuities(investmentCostPayedByDebt,
+                        plant.getTechnology().getDepreciationTime(), bidder.getLoanInterestRate());
                 // logger.warn("Loan amount is: " + amount);
-                Loan loan = reps.loanRepository.createLoan(currentTenderBid.getBidder(), bigbank, amount, plant
-                        .getTechnology().getDepreciationTime(), getCurrentTick(), plant);
+                Loan loan = reps.loanRepository.createLoan(currentTenderBid.getBidder(), bigbank, amount,
+                        plant.getTechnology().getDepreciationTime(), getCurrentTick(), plant);
                 // Create the loan
                 plant.createOrUpdateLoan(loan);
 
@@ -152,4 +157,23 @@ public class ClearRenewableTenderRole extends AbstractRole<Regulator> implements
         }
 
     }
+
+    private void createSpreadOutDownPayments(EnergyProducer agent, PowerPlantManufacturer manufacturer,
+            double totalDownPayment, PowerPlant plant) {
+        int buildingTime = (int) plant.getActualLeadtime();
+        reps.nonTransactionalCreateRepository.createCashFlow(agent, manufacturer, totalDownPayment / buildingTime,
+                CashFlow.DOWNPAYMENT, getCurrentTick(), plant);
+        Loan downpayment = reps.loanRepository.createLoan(agent, manufacturer, totalDownPayment / buildingTime,
+                buildingTime - 1, getCurrentTick(), plant);
+        plant.createOrUpdateDownPayment(downpayment);
+    }
+
+    public double determineLoanAnnuities(double totalLoan, double payBackTime, double interestRate) {
+
+        double q = 1 + interestRate;
+        double annuity = totalLoan * (Math.pow(q, payBackTime) * (q - 1)) / (Math.pow(q, payBackTime) - 1);
+
+        return annuity;
+    }
+
 }

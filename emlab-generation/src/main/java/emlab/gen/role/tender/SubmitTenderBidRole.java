@@ -310,6 +310,7 @@ public class SubmitTenderBidRole extends AbstractEnergyProducerRole<EnergyProduc
                         bid.setTechnology(technology);
                         bid.setStart(getCurrentTick() + plant.getActualLeadtime());
                         bid.setFinish(getCurrentTick() + plant.getActualLeadtime() + tenderSchemeDuration);
+                        bid.setTime(getCurrentTick());
                         bid.persist();
 
                     }

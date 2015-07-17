@@ -60,7 +60,6 @@ import emlab.gen.role.operating.PayCO2AuctionRole;
 import emlab.gen.role.operating.PayCO2TaxRole;
 import emlab.gen.role.operating.PayForLoansRole;
 import emlab.gen.role.operating.PayOperatingAndMaintainanceCostsRole;
-import emlab.gen.role.renewablesupport.FeedInPremiumRole;
 
 /**
  * Main model role.
@@ -123,9 +122,6 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
     private SimpleCapacityMarketMainRole simpleCapacityMarketMainRole;
     @Autowired
     private CreatingFinancialReports creatingFinancialReports;
-
-    @Autowired
-    private FeedInPremiumRole feedInPremiumRole;
 
     @Autowired
     Reps reps;

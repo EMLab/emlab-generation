@@ -33,27 +33,33 @@ import emlab.gen.repository.Reps;
  */
 
 @RoleComponent
-public class OrganizeRenewableTenderPaymentsRole extends AbstractRole<RenewableSupportSchemeTender> implements
-        Role<RenewableSupportSchemeTender> {
+public class OrganizeRenewableTenderPaymentsRole extends AbstractRole<RenewableSupportSchemeTender>
+        implements Role<RenewableSupportSchemeTender> {
 
     @Autowired
     Reps reps;
 
     @Override
     @Transactional
-    public void act(RenewableSupportSchemeTender renewableSupportSchemeTender) {
+    public void act(RenewableSupportSchemeTender scheme) {
 
-        for (TenderBid currentTenderBid : reps.tenderBidRepository.findAllAcceptedTenderBidsForTime(
-                renewableSupportSchemeTender, getCurrentTick())) {
+        // what about the other (earlier or later) bids that need to be paid
+        // out? - i have included them as well with my if statement.
 
-            ClearingPoint tenderClearingPoint = reps.tenderClearingPointRepository
-                    .findOneClearingPointForTimeAndRenewableSupportSchemeTender(getCurrentTick(),
-                            renewableSupportSchemeTender);
+        // the following query should return only all accepted or partially
+        // accepted bids - write a query that only returns accepted bids. Look
+        // up powerPlantDispatchPlanRepository for examples - there are two.
+        for (TenderBid currentTenderBid : reps.tenderBidRepository.findAll()) {
 
-            reps.nonTransactionalCreateRepository.createCashFlow(renewableSupportSchemeTender,
-                    currentTenderBid.getBidder(),
-                    currentTenderBid.getAcceptedAmount() * tenderClearingPoint.getPrice(), CashFlow.TENDER_SUBSIDY,
-                    getCurrentTick(), currentTenderBid.getPowerPlant());
+            if (getCurrentTick() >= currentTenderBid.getStart() && getCurrentTick() <= currentTenderBid.getFinish()) {
+
+                ClearingPoint tenderClearingPoint = reps.tenderClearingPointRepository
+                        .findOneClearingPointForTimeAndRenewableSupportSchemeTender(getCurrentTick(), scheme);
+                reps.nonTransactionalCreateRepository.createCashFlow(scheme, currentTenderBid.getBidder(),
+                        currentTenderBid.getAcceptedAmount() * tenderClearingPoint.getPrice(), CashFlow.TENDER_SUBSIDY,
+                        getCurrentTick(), currentTenderBid.getPowerPlant());
+
+            }
 
         }
 
