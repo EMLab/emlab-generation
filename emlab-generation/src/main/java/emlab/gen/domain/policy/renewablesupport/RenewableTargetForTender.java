@@ -27,7 +27,7 @@ import emlab.gen.trend.TimeSeriesImpl;
  * @author Kaveri3012
  *
  */
-public class RelativeRenewableTarget {
+public class RenewableTargetForTender {
 
     @RelatedTo(type = "SET_BY_REGULATOR", elementClass = Regulator.class, direction = Direction.INCOMING)
     Regulator regulator;

@@ -15,14 +15,23 @@
  ******************************************************************************/
 package emlab.gen.repository;
 
+import org.springframework.data.neo4j.annotation.Query;
+import org.springframework.data.neo4j.annotation.QueryType;
 import org.springframework.data.neo4j.repository.GraphRepository;
+import org.springframework.data.repository.query.Param;
 
+import emlab.gen.domain.market.ClearingPoint;
 import emlab.gen.domain.policy.renewablesupport.RenewableSupportSchemeTender;
+import emlab.gen.domain.policy.renewablesupport.TenderClearingPoint;
 
 /**
- * @author Kaveri3012 rjjdejeu
+ * @author rjjdejeu
  *
  */
-public interface RenewableSupportSchemeTenderRepository extends GraphRepository<RenewableSupportSchemeTender> {
+public interface TenderClearingPointRepository extends GraphRepository<TenderClearingPoint> {
+
+    @Query(value = "g.v(market).in('RENEWABLE_SUPPORT_SCHEME_TENDER').propertyFilter('time', FilterPipe.Filter.EQUAL, time)", type = QueryType.Gremlin)
+    public ClearingPoint findOneClearingPointForTimeAndRenewableSupportSchemeTender(@Param("time") long time,
+            @Param("market") RenewableSupportSchemeTender renewableSupportSchemeTender);
 
 }

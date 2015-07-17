@@ -21,16 +21,20 @@ import org.springframework.transaction.annotation.Transactional;
 
 import agentspring.role.AbstractRole;
 import agentspring.role.Role;
+import emlab.gen.domain.agent.BigBank;
+import emlab.gen.domain.agent.PowerPlantManufacturer;
 import emlab.gen.domain.agent.Regulator;
+import emlab.gen.domain.contract.Loan;
 import emlab.gen.domain.market.Bid;
 import emlab.gen.domain.market.ClearingPoint;
 import emlab.gen.domain.policy.renewablesupport.TenderBid;
+import emlab.gen.domain.technology.PowerPlant;
 import emlab.gen.repository.Reps;
 
 /**
- * @author rjjdejeu adapted from emlab.gen.role.capacitymarket
+ * @author rjjdejeu
  */
-public class ClearRenewableTenderRole extends AbstractRole<Regulator>implements Role<Regulator> {
+public class ClearRenewableTenderRole extends AbstractRole<Regulator> implements Role<Regulator> {
 
     @Autowired
     Reps reps;
@@ -38,26 +42,15 @@ public class ClearRenewableTenderRole extends AbstractRole<Regulator>implements 
     @Autowired
     Neo4jTemplate template;
 
-    //
     @Override
     @Transactional
     public void act(Regulator regulator) {
 
         // Initialize a sorted list for tender bids
-        Iterable<TenderBid> sortedTenderBidPairsByPrice = null;
+        Iterable<TenderBid> sortedTenderBidsbyPrice = null;
+        sortedTenderBidsbyPrice = reps.tenderBidRepository.findAllSortedTenderBidsbyTime(getCurrentTick());
 
-        // Query needs to be made for sortedTenderBidsByPrice in
-        // tenderBid so I can put that in a list
-        // something like this;
-        // @Query(value="g.idx('__types__')[[className:'emlab.gen.domain.policy.renewablesupport.TenderBid']].filter{it.time == tick}.sort{it.price}._()",
-        // type=QueryType.Gremlin)
-        // Iterable<Bid> findAllSortedBidsByPrice(@Param("tick") long time);
-
-        // Should get tenderBidByPrice and tenderQuota from
-        // emlab.gen.domain.policy.renewablesupport
-
-        // I am not sure how to improve line 60 and 61: I want to retreieve the tenderQuota and sorted Bids
-        sortedTenderBidPairsByPrice = getSortedTenderBidsByPrice(getCurrentTick());
+        // for a certain year?
         double tenderQuota = regulator.getAnnualRenewableTargetInMwh();
         double sumOfTenderBidQuantityAccepted = 0d;
         double acceptedSubsidyPrice = 0d;
@@ -74,7 +67,7 @@ public class ClearRenewableTenderRole extends AbstractRole<Regulator>implements 
 
         // Goes through the list of the bids that are sorted on ascending order
         // by price
-        for (TenderBid currentTenderBid : sortedTenderBidPairsByPrice) {
+        for (TenderBid currentTenderBid : sortedTenderBidsbyPrice) {
 
             // if the tender is not cleared yet, it collects complete bids
             if (isTheTenderCleared == false) {
@@ -107,10 +100,40 @@ public class ClearRenewableTenderRole extends AbstractRole<Regulator>implements 
             }
 
             currentTenderBid.persist();
-        }
 
-        // This information needs to go into a query too for payments
-        
+            // A power plant can be created if the bid is (partly) accepted
+
+            // there is a mistake in EnergyProdcer and DecarbonizationAgent.....
+            if (currentTenderBid.getStatus() == Bid.ACCEPTED || currentTenderBid.getStatus() == Bid.PARTLY_ACCEPTED) {
+
+                PowerPlant plant = new PowerPlant();
+                plant.specifyAndPersist(currentTenderBid.getStart(), currentTenderBid.getBidder(),
+                        currentTenderBid.getPowerGridNode(), currentTenderBid.getTechnology());
+                PowerPlantManufacturer manufacturer = reps.genericRepository.findFirst(PowerPlantManufacturer.class);
+                BigBank bigbank = reps.genericRepository.findFirst(BigBank.class);
+
+                double investmentCostPayedByEquity = plant.getActualInvestedCapital()
+                        * (1 - currentTenderBid.getBidder().getDebtRatioOfInvestments());
+                double investmentCostPayedByDebt = plant.getActualInvestedCapital()
+                        * currentTenderBid.getBidder().getDebtRatioOfInvestments();
+                double downPayment = investmentCostPayedByEquity;
+                createSpreadOutDownPayments(currentTenderBid.getBidder(), manufacturer, downPayment, plant);
+
+                double amount = determineLoanAnnuities(investmentCostPayedByDebt, plant.getTechnology()
+                        .getDepreciationTime(), currentTenderBid.getBidder().getLoanInterestRate());
+                // logger.warn("Loan amount is: " + amount);
+                Loan loan = reps.loanRepository.createLoan(currentTenderBid.getBidder(), bigbank, amount, plant
+                        .getTechnology().getDepreciationTime(), getCurrentTick(), plant);
+                // Create the loan
+                plant.createOrUpdateLoan(loan);
+
+            }
+        } // FOR Loop ends here
+
+        // This creates a clearing point that contains general information about
+        // the cleared tender
+        // volume, subsidy price, current tick, and stores it in the graph
+        // database
 
         if (isTheTenderCleared == true) {
             ClearingPoint tenderClearingPoint = new ClearingPoint();
@@ -127,45 +150,6 @@ public class ClearRenewableTenderRole extends AbstractRole<Regulator>implements 
             tenderClearingPoint.persist();
 
         }
-        
-     // Accepted and partly accepted BIDs are updated and new parameters are defined;
-    
-        // defines the lag in starting time of payments, zero for now
-        int paymentDelayTime = 0;  
-        // defines the lag in starting time for building & permitting, zero for now
-        int buildAndPermitDelayTime = 0;   
-        // contractLength will be initiated from a scenario file
-        int contractLength = 15;
-        
-        //KAVERI all of these properties are either defined in the regulator or the renewable support scheme. that;s where you have to get it from. 
-        //KAVERI explain the idea of a role as a person, who only gets basically information from the object that he extends from, 
-        // or the classes the higher class is related to, or the objects that it directly gets from the repository. 
-        
-        
-        int delayTime =  paymentDelayTime +  buildAndPermitDelayTime;
-        int startingTimePayments = (int) (getCurrentTick() + delayTime);
-        int endTimePayments = startingTimePayments + contractLength;
 
-        // I am not sure what the right syntax is for selecting accepted bids
-        
-        // Kaveri- should be done as an iterable, like everything else in EMLAb. 
-        // for instance, first /get/ all the exisiting bids and then apply this if statement. Or you could use filter in the query itself. #
-        //However, what is more worrying is that you are using undefined variables again.
-        if (TenderBid = Bid.ACCEPTED || currentTenderBid = Bid.PARTLY_ACCEPTED ) {
-            
-            // KAVERI where is the plant being built
-            contractPrice = tenderClearingPoint.getTenderClearingPrice;
-            amount = tenderClearingPoint.getAcceptedAmount;
-            startingTimePayments = (int) getCurrentTick() + delayTime;
-            endTimePayments = startingTimePayments + ContractLength;
-            cashflow = amount * contractPrice;
-
-            // This should give the order to start building once the delayTime counted down
-            if (delayTime = tick() - getCurrentTick()) {
-             // I am not sure how to update node number with technology and capacity from here
-            }
-        }
-        
-        
     }
 }

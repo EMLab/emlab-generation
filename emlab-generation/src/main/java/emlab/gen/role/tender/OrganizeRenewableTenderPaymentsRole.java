@@ -16,42 +16,47 @@
 package emlab.gen.role.tender;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.annotation.Transient;
-import org.springframework.data.neo4j.support.Neo4jTemplate;
 import org.springframework.transaction.annotation.Transactional;
 
-import emlab.gen.domain.agent.Regulator;
-import emlab.gen.domain.contract.Contract;
+import agentspring.role.AbstractRole;
+import agentspring.role.Role;
+import agentspring.role.RoleComponent;
+import emlab.gen.domain.contract.CashFlow;
+import emlab.gen.domain.market.ClearingPoint;
+import emlab.gen.domain.policy.renewablesupport.RenewableSupportSchemeTender;
+import emlab.gen.domain.policy.renewablesupport.TenderBid;
 import emlab.gen.repository.Reps;
-import emlab.gen.domain.policy.renewablesupport.TenderClearingPoint;
 
 /**
  * @author rjjdejeu
  *
  */
-public class OrganizeRenewableTenderPaymentsRole extends Contract {
 
-    @Transient
+@RoleComponent
+public class OrganizeRenewableTenderPaymentsRole extends AbstractRole<RenewableSupportSchemeTender> implements
+        Role<RenewableSupportSchemeTender> {
+
     @Autowired
     Reps reps;
 
-    @Transient
-    @Autowired
-    Neo4jTemplate template;
-
+    @Override
     @Transactional
-    public void act(Regulator regulator) {
-        
-        
-        // Retrieve accepted BIDS that are active and update them: 
-        if  (startingTimePayments =< endTimePayments) {
-        cashflow to investor = cashflow;
-        endTimePayments = endTimePayments – 1;
+    public void act(RenewableSupportSchemeTender renewableSupportSchemeTender) {
+
+        for (TenderBid currentTenderBid : reps.tenderBidRepository.findAllAcceptedTenderBidsForTime(
+                renewableSupportSchemeTender, getCurrentTick())) {
+
+            ClearingPoint tenderClearingPoint = reps.tenderClearingPointRepository
+                    .findOneClearingPointForTimeAndRenewableSupportSchemeTender(getCurrentTick(),
+                            renewableSupportSchemeTender);
+
+            reps.nonTransactionalCreateRepository.createCashFlow(renewableSupportSchemeTender,
+                    currentTenderBid.getBidder(),
+                    currentTenderBid.getAcceptedAmount() * tenderClearingPoint.getPrice(), CashFlow.TENDER_SUBSIDY,
+                    getCurrentTick(), currentTenderBid.getPowerPlant());
+
         }
 
-        // keep track of total subsidy spent per year
-        double sumOfSubsidy = sum of all cashflow to investor for currentTick()
-        
-
     }
+
 }

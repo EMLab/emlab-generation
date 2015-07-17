@@ -63,9 +63,9 @@ public class Bid {
     }
 
     /**
-     * IMPORTANT this returns the capacity that was bid into the spot market,
-     * so for the depending class PPDP this means without the capacity reserved
-     * for long-term markets.
+     * IMPORTANT this returns the capacity that was bid into the spot market, so
+     * for the depending class PPDP this means without the capacity reserved for
+     * long-term markets.
      * 
      * @return
      */

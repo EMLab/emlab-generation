@@ -102,7 +102,6 @@ public class Reps {
     public IntermittentTechnologyNodeLoadFactorRepository intermittentTechnologyNodeLoadFactorRepository;
 
     @Autowired
-<<<<<<< HEAD
     public CapacityMarketRepository capacityMarketRepository;
 
     @Autowired
@@ -115,9 +114,20 @@ public class Reps {
     public CapacityDispatchPlanRepository capacityDispatchPlanRepository;
 
     @Autowired
-    public RenewableSupportSchemeRepository renewableSupportSchemeRepository;
+    public RenewableSupportSchemeTenderRepository renewableSupportSchemeTenderRepository;
 
-=======
+    @Autowired
     public FinancialPowerPlantReportRepository financialPowerPlantReportRepository;
->>>>>>> Jorn/feature/historicalCVar
+
+<<<<<<< HEAD
+=======
+    @Autowired
+    public RenewableTargetForTenderRepository renewableTargetForTenderRepository;
+
+    @Autowired
+    public TenderClearingPointRepository tenderClearingPointRepository;
+
+    @Autowired
+    public TenderBidRepository tenderBidRepository;
+>>>>>>> Rob/feature/TenderRob
 }
