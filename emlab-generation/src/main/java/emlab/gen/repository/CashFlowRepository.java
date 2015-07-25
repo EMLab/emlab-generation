@@ -16,13 +16,18 @@
 package emlab.gen.repository;
 
 import org.springframework.data.neo4j.annotation.Query;
+import org.springframework.data.neo4j.annotation.QueryType;
 import org.springframework.data.neo4j.repository.GraphRepository;
 import org.springframework.data.repository.query.Param;
 
 import emlab.gen.domain.contract.CashFlow;
+import emlab.gen.domain.technology.PowerPlant;
 
 public interface CashFlowRepository extends GraphRepository<CashFlow> {
     @Query("START cf=node:__types__(\"className:emlab.gen.domain.contract.CashFlow\") WHERE (cf.time={time}) RETURN cf")
     Iterable<CashFlow> findAllCashFlowsForForTime(@Param("time") long time);
+
+    @Query(value = "g.v(plant).in.filter{it.__type__=='emlab.gen.domain.contract.CashFlow' && it.time==tick}", type = QueryType.Gremlin)
+    Iterable<CashFlow> findAllCashFlowsForPowerPlantForTime(@Param("plant") PowerPlant plant, @Param("tick") long tick);
 
 }

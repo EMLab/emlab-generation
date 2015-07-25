@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 the original author or authors.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,9 +16,9 @@
 package emlab.gen.domain.contract;
 
 
+import org.neo4j.graphdb.Direction;
 import org.springframework.data.neo4j.annotation.NodeEntity;
 import org.springframework.data.neo4j.annotation.RelatedTo;
-import org.neo4j.graphdb.Direction;
 
 import emlab.gen.domain.agent.DecarbonizationAgent;
 import emlab.gen.domain.technology.PowerPlant;
@@ -32,7 +32,7 @@ public class Loan {
     @RelatedTo(type = "LEND_BY_AGENT", elementClass = DecarbonizationAgent.class, direction = Direction.OUTGOING)
     private DecarbonizationAgent to;
 
-    @RelatedTo(type = "REGARDING_POWERPLANT", elementClass = PowerPlant.class, direction = Direction.OUTGOING)
+    @RelatedTo(type = "LOAN_POWERPLANT", elementClass = PowerPlant.class, direction = Direction.OUTGOING)
     private PowerPlant regardingPowerPlant;
 
     private double amountPerPayment;
@@ -49,30 +49,30 @@ public class Loan {
     }
 
     public long getTotalNumberOfPayments() {
-		return totalNumberOfPayments;
-	}
+        return totalNumberOfPayments;
+    }
 
-	public double getAmountPerPayment() {
-		return amountPerPayment;
-	}
+    public double getAmountPerPayment() {
+        return amountPerPayment;
+    }
 
-	public void setAmountPerPayment(double amountPerPayment) {
-		this.amountPerPayment = amountPerPayment;
-	}
+    public void setAmountPerPayment(double amountPerPayment) {
+        this.amountPerPayment = amountPerPayment;
+    }
 
-	public void setTotalNumberOfPayments(long totalNumberOfPayments) {
-		this.totalNumberOfPayments = totalNumberOfPayments;
-	}
+    public void setTotalNumberOfPayments(long totalNumberOfPayments) {
+        this.totalNumberOfPayments = totalNumberOfPayments;
+    }
 
-	public long getNumberOfPaymentsDone() {
-		return numberOfPaymentsDone;
-	}
+    public long getNumberOfPaymentsDone() {
+        return numberOfPaymentsDone;
+    }
 
-	public void setNumberOfPaymentsDone(long numberOfPaymentsDone) {
-		this.numberOfPaymentsDone = numberOfPaymentsDone;
-	}
+    public void setNumberOfPaymentsDone(long numberOfPaymentsDone) {
+        this.numberOfPaymentsDone = numberOfPaymentsDone;
+    }
 
-	public DecarbonizationAgent getFrom() {
+    public DecarbonizationAgent getFrom() {
         return from;
     }
 
