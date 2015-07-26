@@ -28,17 +28,17 @@ import emlab.gen.domain.technology.PowerPlant;
  */
 public class SupportPriceContract extends Contract {
 
-    @RelatedTo(type = "FOR_SUPPORT_SCHEME", elementClass = RenewableSupportScheme.class, direction = Direction.OUTGOING)
-    private RenewableSupportScheme renewableSupportScheme;
+    @RelatedTo(type = "FOR_SUPPORT_SCHEME", elementClass = RenewableSupportFipScheme.class, direction = Direction.OUTGOING)
+    private RenewableSupportFipScheme renewableSupportScheme;
 
     @RelatedTo(type = "FOR_POWER_PLANT", elementClass = PowerPlant.class, direction = Direction.OUTGOING)
     private PowerPlant plant;
 
-    public RenewableSupportScheme getRenewableSupportScheme() {
+    public RenewableSupportFipScheme getRenewableSupportScheme() {
         return renewableSupportScheme;
     }
 
-    public void setRenewableSupportScheme(RenewableSupportScheme renewableSupportScheme) {
+    public void setRenewableSupportScheme(RenewableSupportFipScheme renewableSupportScheme) {
         this.renewableSupportScheme = renewableSupportScheme;
     }
 

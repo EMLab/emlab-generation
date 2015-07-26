@@ -30,7 +30,7 @@ import emlab.gen.domain.technology.PowerGeneratingTechnology;
  *         to model both price based and quantity based schemes.
  */
 @NodeEntity
-public class RenewableSupportScheme {
+public class RenewableSupportFipScheme {
 
     @RelatedTo(type = "WITH_REGULATOR", elementClass = Regulator.class, direction = Direction.OUTGOING)
     private Regulator regulator;

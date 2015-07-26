@@ -74,7 +74,9 @@ public interface PowerPlantRepository extends GraphRepository<PowerPlant> {
     Iterable<PowerPlant> findOperationalPowerPlantsWithFuelsGreaterZero(@Param("tick") long tick);
 
     // @Query(value =
-    // "g.V.filter{it.__type__=='emlab.gen.domain.technology.PowerPlant' && ((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick) && (it.dismantleTime > tick)}",
+    // "g.V.filter{it.__type__=='emlab.gen.domain.technology.PowerPlant' &&
+    // ((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <=
+    // tick) && (it.dismantleTime > tick)}",
     // type = QueryType.Gremlin)
     // Iterable<PowerPlant> findOperationalPowerPlants(@Param("tick") long
     // tick);
@@ -153,6 +155,11 @@ public interface PowerPlantRepository extends GraphRepository<PowerPlant> {
 
     @Query(value = "g.v(gridnode).in('LOCATION').filter{(it.dismantleTime > tick) && ((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick)}", type = QueryType.Gremlin)
     public Iterable<PowerPlant> findOperationalPowerPlantsByPowerGridNode(@Param("gridnode") PowerGridNode node,
+            @Param("tick") long tick);
+
+    @Query(value = "g.v(gridnode).in('LOCATION').as('x').out('TECHNOLOGY').filter{it==g.v(tech)}.back('x').filter{(it.dismantleTime > tick) && ((tick - (it.constructionStartTime + it.actualPermittime + it.actualLeadtime)) <= 2)}", type = QueryType.Gremlin)
+    public Iterable<PowerPlant> findPowerPlantsOperationalSinceTwoYearsByPowerGridNodeAndTechnology(
+            @Param("gridnode") PowerGridNode node, @Param("tech") PowerGeneratingTechnology technology,
             @Param("tick") long tick);
 
     @Query("START owner=node({owner}), market=node({market}) "
@@ -340,8 +347,7 @@ public interface PowerPlantRepository extends GraphRepository<PowerPlant> {
     double calculateFixedCostsOfPowerPlant(@Param("plant") PowerPlant plant, @Param("tick") long tick);
 
     @Query(value = "ppdps=g.v(plant).in('POWERPLANT_DISPATCHPLAN').filter{it.time==tick}.propertyFilter('forecast', FilterPipe.Filter.EQUAL, false); sum=0;"
-            + "fullLoadHours=0;"
-            + "for(ppdp in ppdps){"
+            + "fullLoadHours=0;" + "for(ppdp in ppdps){"
             + "totalAmount = ppdp.getProperty('acceptedAmount') + ppdp.getProperty('capacityLongTermContract');"
             + "if(totalAmount==null) totalAmount=0;"
             + "hoursInSegment = ppdp.out('SEGMENT_DISPATCHPLAN').next().getProperty('lengthInHours');"

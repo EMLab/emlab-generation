@@ -44,7 +44,7 @@ import emlab.gen.domain.market.electricity.ElectricitySpotMarket;
 import emlab.gen.domain.market.electricity.Segment;
 import emlab.gen.domain.market.electricity.SegmentLoad;
 import emlab.gen.domain.policy.PowerGeneratingTechnologyTarget;
-import emlab.gen.domain.policy.renewablesupport.RenewableSupportScheme;
+import emlab.gen.domain.policy.renewablesupport.RenewableSupportFipScheme;
 import emlab.gen.domain.technology.PowerGeneratingTechnology;
 import emlab.gen.domain.technology.PowerGeneratingTechnologyNodeLimit;
 import emlab.gen.domain.technology.PowerGridNode;
@@ -321,7 +321,7 @@ public class InvestInPowerGenerationTechnologiesRole<T extends EnergyProducer> e
                                                                                  // tariff
 
                     {
-                        for (RenewableSupportScheme scheme : reps.renewableSupportSchemeRepository.findAll()) {
+                        for (RenewableSupportFipScheme scheme : reps.renewableSupportSchemeRepository.findAll()) {
 
                             if (scheme.getPowerGeneratingTechnologiesEligible().contains(technology))
                                 operatingProfit = operatingProfit * (1 + scheme.getFeedInPremiumFactor());

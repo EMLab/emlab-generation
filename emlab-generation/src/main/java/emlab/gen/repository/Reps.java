@@ -118,4 +118,7 @@ public class Reps {
 
     @Autowired
     public FinancialPowerPlantReportRepository financialPowerPlantReportRepository;
+
+    @Autowired
+    public BaseCostFipRespository baseCostFipRepository;
 }

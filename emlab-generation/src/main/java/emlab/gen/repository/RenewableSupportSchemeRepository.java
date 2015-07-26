@@ -17,12 +17,12 @@ package emlab.gen.repository;
 
 import org.springframework.data.neo4j.repository.GraphRepository;
 
-import emlab.gen.domain.policy.renewablesupport.RenewableSupportScheme;
+import emlab.gen.domain.policy.renewablesupport.RenewableSupportFipScheme;
 
 /**
  * @author Kaveri3012
  *
  */
-public interface RenewableSupportSchemeRepository extends GraphRepository<RenewableSupportScheme> {
+public interface RenewableSupportSchemeRepository extends GraphRepository<RenewableSupportFipScheme> {
 
 }

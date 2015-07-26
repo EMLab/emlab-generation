@@ -33,29 +33,30 @@ public class Regulator extends DecarbonizationAgent implements Agent {
     @RelatedTo(type = "OF_ZONE", elementClass = Zone.class, direction = Direction.OUTGOING)
     private Zone zone;
 
+    // Investment related parameters
     private int numberOfYearsLookingBackToForecastDemand;
+    @SimulationParameter(label = "Equity Interest Rate", from = 0, to = 1)
+    private double equityInterestRate;
+    @SimulationParameter(label = "Debt ratio in investments", from = 0, to = 1)
+    private double debtRatioOfInvestments;
+    // Loan
+    @SimulationParameter(label = "Loan Interest Rate", from = 0, to = 1)
+    private double loanInterestRate;
 
     // Capacity Market Related Parameters
-
     @SimulationParameter(label = "Capacity Market Price Cap", from = 1000, to = 150000)
     private double capacityMarketPriceCap;
-
     @SimulationParameter(label = "Reserve Margin", from = 0, to = 1)
     private double reserveMargin;
-
     @SimulationParameter(label = "Reserve Demand Lower Margin", from = 0, to = 1)
     private double reserveDemandLowerMargin;
-
     @SimulationParameter(label = "Reserve Demand Upper Margin", from = 0, to = 1)
     private double reserveDemandUpperMargin;
-
     private double demandTarget;
-
     @SimulationParameter(label = "Capacity Market Target Period", from = 0, to = 10)
     private int targetPeriod; // number of years in the future that the capacity
 
     // is being planned for - set to zero
-
     public double getDemandTarget() {
         return demandTarget;
     }
@@ -118,6 +119,30 @@ public class Regulator extends DecarbonizationAgent implements Agent {
 
     public void setZone(Zone zone) {
         this.zone = zone;
+    }
+
+    public double getEquityInterestRate() {
+        return equityInterestRate;
+    }
+
+    public void setEquityInterestRate(double equityInterestRate) {
+        this.equityInterestRate = equityInterestRate;
+    }
+
+    public double getDebtRatioOfInvestments() {
+        return debtRatioOfInvestments;
+    }
+
+    public void setDebtRatioOfInvestments(double debtRatioOfInvestments) {
+        this.debtRatioOfInvestments = debtRatioOfInvestments;
+    }
+
+    public double getLoanInterestRate() {
+        return loanInterestRate;
+    }
+
+    public void setLoanInterestRate(double loanInterestRate) {
+        this.loanInterestRate = loanInterestRate;
     }
 
 }

@@ -33,7 +33,7 @@ import emlab.gen.domain.agent.TargetInvestor;
 import emlab.gen.domain.market.CommodityMarket;
 import emlab.gen.domain.market.capacity.CapacityMarket;
 import emlab.gen.domain.market.electricity.ElectricitySpotMarket;
-import emlab.gen.domain.policy.renewablesupport.RenewableSupportScheme;
+import emlab.gen.domain.policy.renewablesupport.RenewableSupportFipScheme;
 import emlab.gen.repository.Reps;
 import emlab.gen.role.capacitymarket.ExportLimiterRole;
 import emlab.gen.role.capacitymarket.SimpleCapacityMarketMainRole;
@@ -384,7 +384,7 @@ logger.warn("  6.b) Creating power plant financial reports.");
 
         if (model.isFeedInPremiumImplemented()) {
             logger.warn(" 6a. Run Feed In Premium Scheme");
-            for (RenewableSupportScheme scheme : reps.renewableSupportSchemeRepository.findAll()) {
+            for (RenewableSupportFipScheme scheme : reps.renewableSupportSchemeRepository.findAll()) {
                 feedInPremiumRole.act(scheme);
             }
             timerMarket.stop();
