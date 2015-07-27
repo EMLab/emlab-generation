@@ -29,10 +29,10 @@ public class BaseCostFip {
 
     private double costPerMWh;
 
-    @RelatedTo(type = "FOR_TECHNOLOGY", elementClass = PowerGeneratingTechnology.class, direction = Direction.OUTGOING)
+    @RelatedTo(type = "BASECOST_FOR_TECHNOLOGY", elementClass = PowerGeneratingTechnology.class, direction = Direction.OUTGOING)
     private PowerGeneratingTechnology technology;
 
-    @RelatedTo(type = "FOR_LOCATION", elementClass = PowerGridNode.class, direction = Direction.OUTGOING)
+    @RelatedTo(type = "BASECOST_FOR_LOCATION", elementClass = PowerGridNode.class, direction = Direction.OUTGOING)
     private PowerGridNode node;
 
     private long startTime;

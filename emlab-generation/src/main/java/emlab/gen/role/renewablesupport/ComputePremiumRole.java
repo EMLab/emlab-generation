@@ -39,9 +39,16 @@ import emlab.gen.repository.Reps;
 import emlab.gen.role.AbstractEnergyProducerRole;
 
 /**
- * @author Kaveri3012 This role computes LCOE per technology per node (where
- *         applicable)
- *
+ * @author Kaveri3012 This role loops through eligible technologies, eligible
+ *         nodes,
+ * 
+ *         computes LCOE per technology per node and creates an object,
+ *         BaseCost, to store it.
+ * 
+ *         In technology neutral mode, after computing LCOE per technology, it
+ *         should store LCOE per technology and create a merit order upto which
+ *         a cetrain target is filled.
+ * 
  */
 public class ComputePremiumRole extends AbstractEnergyProducerRole<EnergyProducer>implements Role<EnergyProducer> {
 

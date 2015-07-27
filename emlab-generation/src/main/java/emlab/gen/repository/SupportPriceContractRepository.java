@@ -15,10 +15,14 @@
  ******************************************************************************/
 package emlab.gen.repository;
 
+import org.springframework.data.neo4j.annotation.Query;
+import org.springframework.data.neo4j.annotation.QueryType;
 import org.springframework.data.neo4j.repository.GraphRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import emlab.gen.domain.policy.renewablesupport.SupportPriceContract;
+import emlab.gen.domain.technology.PowerPlant;
 
 /**
  * @author Kaveri3012
@@ -27,5 +31,8 @@ import emlab.gen.domain.policy.renewablesupport.SupportPriceContract;
 
 @Repository
 public interface SupportPriceContractRepository extends GraphRepository<SupportPriceContract> {
+
+    @Query(value = "g.v(plant).in('CONTRACT_FOR_SUPPORTSCHEME')", type = QueryType.Gremlin)
+    SupportPriceContract findOneContractByPowerPlant(@Param("plant") PowerPlant plant);
 
 }

@@ -16,6 +16,7 @@
 package emlab.gen.role.renewablesupport;
 
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,9 +31,11 @@ import emlab.gen.domain.contract.CashFlow;
 import emlab.gen.domain.market.electricity.ElectricitySpotMarket;
 import emlab.gen.domain.market.electricity.PowerPlantDispatchPlan;
 import emlab.gen.domain.market.electricity.SegmentLoad;
+import emlab.gen.domain.policy.renewablesupport.BaseCostFip;
 import emlab.gen.domain.policy.renewablesupport.RenewableSupportFipScheme;
 import emlab.gen.domain.policy.renewablesupport.SupportPriceContract;
 import emlab.gen.domain.technology.PowerGeneratingTechnology;
+import emlab.gen.domain.technology.PowerGridNode;
 import emlab.gen.domain.technology.PowerPlant;
 import emlab.gen.repository.Reps;
 
@@ -73,69 +76,97 @@ public class FeedInPremiumRole extends AbstractRole<RenewableSupportFipScheme> {
 
         for (PowerGeneratingTechnology technology : technologySet) {
 
-            for (PowerPlant plant : reps.powerPlantRepository.findOperationalPowerPlantsByMarketAndTechnology(eMarket,
-                    technology, getCurrentTick())) {
+            Iterable<PowerGridNode> possibleInstallationNodes;
 
-                double finishedConstruction = plant.getConstructionStartTime() + plant.calculateActualPermittime()
-                        + plant.calculateActualLeadtime();
+            if (technology.isIntermittent())
+                possibleInstallationNodes = reps.powerGridNodeRepository
+                        .findAllPowerGridNodesByZone(regulator.getZone());
+            else {
+                possibleInstallationNodes = new LinkedList<PowerGridNode>();
+                ((LinkedList<PowerGridNode>) possibleInstallationNodes).add(reps.powerGridNodeRepository
+                        .findAllPowerGridNodesByZone(regulator.getZone()).iterator().next());
+            }
+            // logger.warn("Calculating for " + technology.getName() +
+            // ", for Nodes: "
+            // + possibleInstallationNodes.toString());
 
-                // existing eligible plants at the start of the simulation (tick
-                // 0) do not get contracts.
+            for (PowerGridNode node : possibleInstallationNodes) {
 
-                // if statement below is for newly constructed plants at any
-                // tick
-                if (finishedConstruction == getCurrentTick()) {
-                    contract = new SupportPriceContract();
-                    contract.setStart(getCurrentTick());
-                }
+                for (PowerPlant plant : reps.powerPlantRepository
+                        .findOperationalPowerPlantsByMarketAndTechnology(eMarket, technology, getCurrentTick())) {
 
-                // for all eligible plants, the support price is calculated, and
-                // payment is made.
-                if (contract != null) {
+                    double sumEMR = 0d;
+                    double electricityPrice = 0d;
+                    double totalGenerationInMwh = 0d;
 
-                    if (getCurrentTick() <= (contract.getStart() + renewableSupportScheme.getSupportSchemeDuration())) {
+                    // the for loop below calculates the electricity
+                    // market
+                    // price the plant earned
+                    // throughout the year, for its total production
+                    for (SegmentLoad segmentLoad : eMarket.getLoadDurationCurve()) {
 
-                        double sumEMR = 0d;
-                        double electricityPrice = 0d;
+                        PowerPlantDispatchPlan ppdp = reps.powerPlantDispatchPlanRepository
+                                .findOnePowerPlantDispatchPlanForPowerPlantForSegmentForTime(plant,
+                                        segmentLoad.getSegment(), getCurrentTick(), false);
+                        if (ppdp.getStatus() < 0) {
+                            sumEMR = 0d;
+                        } else if (ppdp.getStatus() >= 2) {
+                            electricityPrice = reps.segmentClearingPointRepository
+                                    .findOneSegmentClearingPointForMarketSegmentAndTime(getCurrentTick(),
+                                            segmentLoad.getSegment(), eMarket)
+                                    .getPrice();
 
-                        // the for loop below calculates the electricity market
-                        // price the plant earned
-                        // throughout the year, for its total production
-                        for (SegmentLoad segmentLoad : eMarket.getLoadDurationCurve()) {
-
-                            PowerPlantDispatchPlan ppdp = reps.powerPlantDispatchPlanRepository
-                                    .findOnePowerPlantDispatchPlanForPowerPlantForSegmentForTime(plant,
-                                            segmentLoad.getSegment(), getCurrentTick(), false);
-                            if (ppdp.getStatus() < 0) {
-                                sumEMR = 0d;
-                            } else if (ppdp.getStatus() >= 2) {
-                                electricityPrice = reps.segmentClearingPointRepository
-                                        .findOneSegmentClearingPointForMarketSegmentAndTime(getCurrentTick(),
-                                                segmentLoad.getSegment(), eMarket)
-                                        .getPrice();
-
-                                double hours = segmentLoad.getSegment().getLengthInHours();
-                                sumEMR = sumEMR + electricityPrice * hours * ppdp.getAcceptedAmount();
-
-                            }
+                            double hours = segmentLoad.getSegment().getLengthInHours();
+                            sumEMR = sumEMR + electricityPrice * hours * ppdp.getAcceptedAmount();
+                            totalGenerationInMwh += hours * ppdp.getAcceptedAmount();
 
                         }
 
-                        // support price calculation for this year (NOT per UNIT
-                        // as the contract property states
-                        double supportPrice = sumEMR * renewableSupportScheme.getFeedInPremiumFactor();
-                        contract.setPricePerUnit(supportPrice);
+                    }
+                    // existing eligible plants at the start of the simulation
+                    // (tick
+                    // 0) do not get contracts.
 
-                        // payment
-                        reps.nonTransactionalCreateRepository.createCashFlow(eMarket, plant.getOwner(),
-                                contract.getPricePerUnit(), CashFlow.FEED_IN_PREMIUM, getCurrentTick(), plant);
+                    // if plant is new (begins operation this year), get
+                    // corresponding base cost, and create supportPriceContract
+                    // for it, with base cost, start tick and end tick.
 
+                    double finishedConstruction = plant.getConstructionStartTime() + plant.calculateActualPermittime()
+                            + plant.calculateActualLeadtime();
+
+                    if (finishedConstruction == getCurrentTick()) {
+
+                        // create a query to get base cost.
+                        BaseCostFip baseCost = reps.baseCostFipRepository
+                                .findOneBaseCostForTechnologyAndNodeAndTime(node, technology, getCurrentTick());
+                        contract = new SupportPriceContract();
+                        contract.setStart(getCurrentTick());
+                        contract.setPricePerUnit(baseCost.getCostPerMWh());
+                        contract.setFinish(getCurrentTick() + renewableSupportScheme.getSupportSchemeDuration());
                     }
 
-                    // delete contract. not sure if necessary. contract has been
-                    // mainly used to control period of payment
-                    if (getCurrentTick() > (contract.getStart() + renewableSupportScheme.getSupportSchemeDuration())) {
-                        contract = null;
+                    // for all eligible plants, the support price is calculated,
+                    // and
+                    // payment is made.
+                    contract = reps.supportPriceContractRepository.findOneContractByPowerPlant(plant);
+                    if (contract != null) {
+
+                        if (getCurrentTick() <= (contract.getStart()
+                                + renewableSupportScheme.getSupportSchemeDuration())) {
+
+                            double supportPrice = contract.getPricePerUnit() * totalGenerationInMwh - sumEMR;
+                            // payment
+                            reps.nonTransactionalCreateRepository.createCashFlow(eMarket, plant.getOwner(),
+                                    supportPrice, CashFlow.FEED_IN_PREMIUM, getCurrentTick(), plant);
+
+                        }
+                        // delete contract. not sure if necessary. contract has
+                        // been mainly used to control period of payment
+                        if (getCurrentTick() > (contract.getStart()
+                                + renewableSupportScheme.getSupportSchemeDuration())) {
+                            contract = null;
+                        }
+
                     }
 
                 }

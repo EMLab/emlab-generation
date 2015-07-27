@@ -121,4 +121,8 @@ public class Reps {
 
     @Autowired
     public BaseCostFipRespository baseCostFipRepository;
+
+    @Autowired
+    public SupportPriceContractRepository supportPriceContractRepository;
+
 }

@@ -15,14 +15,23 @@
  ******************************************************************************/
 package emlab.gen.repository;
 
+import org.springframework.data.neo4j.annotation.Query;
+import org.springframework.data.neo4j.annotation.QueryType;
 import org.springframework.data.neo4j.repository.GraphRepository;
+import org.springframework.data.repository.query.Param;
 
 import emlab.gen.domain.policy.renewablesupport.BaseCostFip;
+import emlab.gen.domain.technology.PowerGeneratingTechnology;
+import emlab.gen.domain.technology.PowerGridNode;
 
 /**
  * @author Kaveri3012
  *
  */
 public interface BaseCostFipRespository extends GraphRepository<BaseCostFip> {
+
+    @Query(value = "g.v(tech).in('BASECOST_FOR_TECHNOLOGY').as('x').out('BASECOST_FOR_LOCATION').filter{it==g.v(gridnode)}.back('x').filter{it.startTime==tick)}", type = QueryType.Gremlin)
+    public BaseCostFip findOneBaseCostForTechnologyAndNodeAndTime(@Param("gridnode") PowerGridNode node,
+            @Param("tech") PowerGeneratingTechnology technology, @Param("tick") long tick);
 
 }
