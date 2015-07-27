@@ -125,7 +125,8 @@ public class EnergyProducer extends DecarbonizationAgent implements Agent {
         return dismantlingProlongingYearsAfterTechnicalLifetime;
     }
 
-    public void setDismantlingProlongingYearsAfterTechnicalLifetime(int dismantlingProlongingYearsAfterTechnicalLifetime) {
+    public void setDismantlingProlongingYearsAfterTechnicalLifetime(
+            int dismantlingProlongingYearsAfterTechnicalLifetime) {
         this.dismantlingProlongingYearsAfterTechnicalLifetime = dismantlingProlongingYearsAfterTechnicalLifetime;
     }
 
@@ -233,4 +234,5 @@ public class EnergyProducer extends DecarbonizationAgent implements Agent {
             double historicalCVarInterestRateIncreaseForNewTechnologies) {
         this.historicalCVarInterestRateIncreaseForNewTechnologies = historicalCVarInterestRateIncreaseForNewTechnologies;
     }
+
 }
