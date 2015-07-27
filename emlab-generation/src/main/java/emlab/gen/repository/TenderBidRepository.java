@@ -20,6 +20,7 @@ import org.springframework.data.neo4j.annotation.QueryType;
 import org.springframework.data.neo4j.repository.GraphRepository;
 import org.springframework.data.repository.query.Param;
 
+import emlab.gen.domain.gis.Zone;
 import emlab.gen.domain.policy.renewablesupport.RenewableSupportSchemeTender;
 import emlab.gen.domain.policy.renewablesupport.TenderBid;
 
@@ -33,8 +34,11 @@ public interface TenderBidRepository extends GraphRepository<TenderBid> {
     @Query(value = "g.idx('__types__')[[className:'emlab.gen.domain.policy.renewablesupport.TenderBid.java']].filter{it.time == tick}.sort{it.a.price}._()", type = QueryType.Gremlin)
     public Iterable<TenderBid> findAllSortedTenderBidsbyTime(@Param("tick") long time);
 
-    @Query(value = "g.v(market).in('BIDDINGMARKET').propertyFilter('time', FilterPipe.Filter.EQUAL, time).propertyFilter('status', FilterPipe.Filter.GREATER_THAN_EQUAL, 2)", type = QueryType.Gremlin)
-    public Iterable<TenderBid> findAllAcceptedTenderBidsForTime(
-            @Param("market") RenewableSupportSchemeTender renewableSupportSchemeTender, @Param("time") long time);
+    // this returns the accepted tender bids Scheme --with regulator-->
+    // Regulator --of zone--> Zone
+    @Query(value = "g.v(scheme).out(´WITH_REGULATOR').out('OF_ZONE').propertyFilter('time', FilterPipe.Filter.EQUAL, time).propertyFilter('status', FilterPipe.Filter.GREATER_THAN_EQUAL, 2)", type = QueryType.Gremlin)
+    public Iterable<TenderBid> findAllAcceptedTenderBids(
+            @Param("scheme") RenewableSupportSchemeTender renewableSupportSchemeTender, @Param("zone") Zone zone,
+            @Param("time") long time);
 
 }

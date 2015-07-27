@@ -33,8 +33,8 @@ import emlab.gen.repository.Reps;
  */
 
 @RoleComponent
-public class OrganizeRenewableTenderPaymentsRole extends AbstractRole<RenewableSupportSchemeTender>
-        implements Role<RenewableSupportSchemeTender> {
+public class OrganizeRenewableTenderPaymentsRole extends AbstractRole<RenewableSupportSchemeTender> implements
+        Role<RenewableSupportSchemeTender> {
 
     @Autowired
     Reps reps;
@@ -49,7 +49,7 @@ public class OrganizeRenewableTenderPaymentsRole extends AbstractRole<RenewableS
         // the following query should return only all accepted or partially
         // accepted bids - write a query that only returns accepted bids. Look
         // up powerPlantDispatchPlanRepository for examples - there are two.
-        for (TenderBid currentTenderBid : reps.tenderBidRepository.findAll()) {
+        for (TenderBid currentTenderBid : reps.tenderBidRepository.findAllAcceptedTenderBids(scheme, null, 0)) {
 
             if (getCurrentTick() >= currentTenderBid.getStart() && getCurrentTick() <= currentTenderBid.getFinish()) {
 
