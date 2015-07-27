@@ -69,13 +69,12 @@ public class FeedInPremiumRole extends AbstractRole<RenewableSupportFipScheme> {
         technologySet = renewableSupportScheme.getPowerGeneratingTechnologiesEligible();
 
         ElectricitySpotMarket eMarket = reps.marketRepository.findElectricitySpotMarketForZone(regulator.getZone());
+        SupportPriceContract contract = null;
 
         for (PowerGeneratingTechnology technology : technologySet) {
 
             for (PowerPlant plant : reps.powerPlantRepository.findOperationalPowerPlantsByMarketAndTechnology(eMarket,
                     technology, getCurrentTick())) {
-
-                SupportPriceContract contract = null;
 
                 double finishedConstruction = plant.getConstructionStartTime() + plant.calculateActualPermittime()
                         + plant.calculateActualLeadtime();
@@ -123,8 +122,7 @@ public class FeedInPremiumRole extends AbstractRole<RenewableSupportFipScheme> {
                         }
 
                         // support price calculation for this year (NOT per UNIT
-                        // as
-                        // the contract property states
+                        // as the contract property states
                         double supportPrice = sumEMR * renewableSupportScheme.getFeedInPremiumFactor();
                         contract.setPricePerUnit(supportPrice);
 
