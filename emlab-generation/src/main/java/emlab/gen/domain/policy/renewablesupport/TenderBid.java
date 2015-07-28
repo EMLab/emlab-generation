@@ -35,8 +35,12 @@ public class TenderBid extends Bid {
     @RelatedTo(type = "FOR_TECHNOLOGY", elementClass = PowerGeneratingTechnology.class, direction = Direction.OUTGOING)
     private PowerGeneratingTechnology technology;
 
+    // why connected to powerplant dispatchplan?
     @RelatedTo(type = "POWERPLANT_DISPATCHPLAN", elementClass = PowerPlant.class, direction = Direction.OUTGOING)
     private PowerPlant powerPlant;
+
+    @RelatedTo(type = "TENDERBID_SUPPORTSCHEME", elementClass = RenewableSupportSchemeTender.class, direction = Direction.OUTGOING)
+    private RenewableSupportSchemeTender renewableSupportSchemeTender;
 
     private long start;
 

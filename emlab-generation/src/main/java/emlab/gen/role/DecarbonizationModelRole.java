@@ -386,6 +386,8 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
          * "        took: {} seconds.", timerMarket.seconds()); }
          */
 
+        // tender
+
         logger.warn("  7. Investing");
         Timer timerInvest = new Timer();
         timerInvest.start();

@@ -49,17 +49,14 @@ public class OrganizeRenewableTenderPaymentsRole extends AbstractRole<RenewableS
         // the following query should return only all accepted or partially
         // accepted bids - write a query that only returns accepted bids. Look
         // up powerPlantDispatchPlanRepository for examples - there are two.
-        for (TenderBid currentTenderBid : reps.tenderBidRepository.findAllAcceptedTenderBids(scheme, null, 0)) {
+        for (TenderBid currentTenderBid : reps.tenderBidRepository.findAllTenderBidsThatShouldBePaidInTimeStep(scheme,
+                getCurrentTick())) {
 
-            if (getCurrentTick() >= currentTenderBid.getStart() && getCurrentTick() <= currentTenderBid.getFinish()) {
-
-                ClearingPoint tenderClearingPoint = reps.tenderClearingPointRepository
-                        .findOneClearingPointForTimeAndRenewableSupportSchemeTender(getCurrentTick(), scheme);
-                reps.nonTransactionalCreateRepository.createCashFlow(scheme, currentTenderBid.getBidder(),
-                        currentTenderBid.getAcceptedAmount() * tenderClearingPoint.getPrice(), CashFlow.TENDER_SUBSIDY,
-                        getCurrentTick(), currentTenderBid.getPowerPlant());
-
-            }
+            ClearingPoint tenderClearingPoint = reps.tenderClearingPointRepository
+                    .findOneClearingPointForTimeAndRenewableSupportSchemeTender(getCurrentTick(), scheme);
+            reps.nonTransactionalCreateRepository.createCashFlow(scheme, currentTenderBid.getBidder(),
+                    currentTenderBid.getAcceptedAmount() * tenderClearingPoint.getPrice(), CashFlow.TENDER_SUBSIDY,
+                    getCurrentTick(), currentTenderBid.getPowerPlant());
 
         }
 

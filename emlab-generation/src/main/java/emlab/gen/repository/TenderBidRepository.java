@@ -20,7 +20,6 @@ import org.springframework.data.neo4j.annotation.QueryType;
 import org.springframework.data.neo4j.repository.GraphRepository;
 import org.springframework.data.repository.query.Param;
 
-import emlab.gen.domain.gis.Zone;
 import emlab.gen.domain.policy.renewablesupport.RenewableSupportSchemeTender;
 import emlab.gen.domain.policy.renewablesupport.TenderBid;
 
@@ -31,14 +30,13 @@ import emlab.gen.domain.policy.renewablesupport.TenderBid;
 public interface TenderBidRepository extends GraphRepository<TenderBid> {
 
     // This sorts the submitted tender bids by price
-    @Query(value = "g.idx('__types__')[[className:'emlab.gen.domain.policy.renewablesupport.TenderBid.java']].filter{it.time == tick}.sort{it.a.price}._()", type = QueryType.Gremlin)
+    @Query(value = "g.idx('__types__')[[className:'emlab.gen.domain.policy.renewablesupport.TenderBid']].filter{it.time == tick}.sort{it.a.price}._()", type = QueryType.Gremlin)
     public Iterable<TenderBid> findAllSortedTenderBidsbyTime(@Param("tick") long time);
 
     // this returns the accepted tender bids Scheme --with regulator-->
     // Regulator --of zone--> Zone
-    @Query(value = "g.v(scheme).out(´WITH_REGULATOR').out('OF_ZONE').propertyFilter('time', FilterPipe.Filter.EQUAL, time).propertyFilter('status', FilterPipe.Filter.GREATER_THAN_EQUAL, 2)", type = QueryType.Gremlin)
-    public Iterable<TenderBid> findAllAcceptedTenderBids(
-            @Param("scheme") RenewableSupportSchemeTender renewableSupportSchemeTender, @Param("zone") Zone zone,
-            @Param("time") long time);
+    @Query(value = "g.v(renewableSupportSchemeTender).in('TENDERBID_SUPPORTSCHEME').propertyFilter('start', FilterPipe.Filter.LESS_THAN_EQUAL,time ).propertyFilter('finish', FilterPipe.Filter.GREATER_THAN_EQUAL, time).propertyFilter('status', FilterPipe.Filter.GREATER_THAN_EQUAL, 2)", type = QueryType.Gremlin)
+    public Iterable<TenderBid> findAllTenderBidsThatShouldBePaidInTimeStep(
+            @Param("scheme") RenewableSupportSchemeTender renewableSupportSchemeTender, @Param("time") long time);
 
 }
