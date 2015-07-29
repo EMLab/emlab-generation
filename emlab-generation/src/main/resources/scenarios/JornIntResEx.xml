@@ -1607,7 +1607,7 @@ p:numberOfYearsLookingBackToForecastDemand="4">
 <property name="zone" ref="cwe"/>
 </bean>
 
-<bean id="renewableSupportSchemeA" class="emlab.gen.domain.policy.renewablesupport.RenewableSupportScheme" p:name="FeedInPremium"
+<bean id="renewableSupportSchemeB" class="emlab.gen.domain.policy.renewablesupport.RenewableSupportScheme" p:name="FeedInPremium"
 p:supportSchemeDuration="15">
 <property name="regulator" ref="regulatorB"/>
 <property name="powerGeneratingTechnologiesEligible">

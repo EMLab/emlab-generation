@@ -28,10 +28,15 @@ import emlab.gen.domain.technology.PowerGridNode;
  * @author Kaveri3012
  *
  */
-public interface BaseCostFipRespository extends GraphRepository<BaseCostFip> {
+public interface BaseCostFipRepository extends GraphRepository<BaseCostFip> {
 
     @Query(value = "g.v(tech).in('BASECOST_FOR_TECHNOLOGY').as('x').out('BASECOST_FOR_LOCATION').filter{it==g.v(gridnode)}.back('x').filter{it.startTime==tick)}", type = QueryType.Gremlin)
     public BaseCostFip findOneBaseCostForTechnologyAndNodeAndTime(@Param("gridnode") PowerGridNode node,
             @Param("tech") PowerGeneratingTechnology technology, @Param("tick") long tick);
+
+    @Query(value = "g.v(tech).in('BASECOST_FOR_TECHNOLOGY').as('x').out('BASECOST_FOR_LOCATION').filter{it==g.v(gridnode)}.back('x').propertyFilter('time', FilterPipe.Filter.GREATER_THAN_EQUAL, timeFrom).propertyFilter('time', FilterPipe.Filter.LESS_THAN_EQUAL, timeTo))", type = QueryType.Gremlin)
+    Iterable<BaseCostFip> findAllBaseCostFipsForTechnologyLocationAndTimeRange(@Param("gridnode") PowerGridNode node,
+            @Param("tech") PowerGeneratingTechnology technology, @Param("timeFrom") long timeFrom,
+            @Param("timeTo") long timeTo);
 
 }
