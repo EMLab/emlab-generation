@@ -459,5 +459,28 @@
 	<bean id="ocgtFixedOperatingCostTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0" p:start="67110" />
 	<bean id="ocgtEfficiencyTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0.00" p:start="0.38" />
 	
+	
+	
+	<bean id="regulator" class="emlab.gen.domain.agent.Regulator" p:name="Regulator" 
+	p:feedInPremiumBiasFactor="1"
+	p:numberOfYearsLookingBackToForecastDemand="4">
+	<property name="zone" ref="nl"/>
+	</bean>
+	
+	<bean id="renewableSupportScheme" class="emlab.gen.domain.policy.renewablesupport.RenewableSupportFipScheme" p:name="FeedInPremium"
+	p:supportSchemeDuration="15">
+	<property name="regulator" ref="regulator"/>
+	<property name="powerGeneratingTechnologiesEligible">
+				<set>
+					<ref bean="photovoltaicPGT" />
+					<ref bean="windOffshorePGT" />
+					<ref bean="windPGT" />
+					<ref bean="biogasPGT" />
+					<ref bean="biomassPGT" />
+				</set>
+	</property>
+	</bean>
+	
+	
 	<!-- Parameter file -->
 </beans>

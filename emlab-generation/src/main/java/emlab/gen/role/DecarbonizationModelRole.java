@@ -35,7 +35,6 @@ import emlab.gen.domain.market.capacity.CapacityMarket;
 import emlab.gen.domain.market.electricity.ElectricitySpotMarket;
 import emlab.gen.domain.policy.renewablesupport.RenewableSupportFipScheme;
 import emlab.gen.repository.Reps;
-import emlab.gen.role.capacitymarket.ExportLimiterRole;
 import emlab.gen.role.capacitymarket.SimpleCapacityMarketMainRole;
 import emlab.gen.role.capacitymechanisms.ProcessAcceptedPowerPlantDispatchRoleinSR;
 import emlab.gen.role.capacitymechanisms.StrategicReserveOperatorRole;
@@ -62,6 +61,7 @@ import emlab.gen.role.operating.PayCO2AuctionRole;
 import emlab.gen.role.operating.PayCO2TaxRole;
 import emlab.gen.role.operating.PayForLoansRole;
 import emlab.gen.role.operating.PayOperatingAndMaintainanceCostsRole;
+import emlab.gen.role.renewablesupport.ComputePremiumRole;
 import emlab.gen.role.renewablesupport.FeedInPremiumRole;
 
 /**
@@ -71,7 +71,7 @@ import emlab.gen.role.renewablesupport.FeedInPremiumRole;
  *
  */
 @ScriptComponent
-public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel> implements Role<DecarbonizationModel> {
+public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>implements Role<DecarbonizationModel> {
 
     @Autowired
     private PayCO2TaxRole payCO2TaxRole;
@@ -126,8 +126,10 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
     @Autowired
     private CreatingFinancialReports creatingFinancialReports;
 
-	@Autowired
+    @Autowired
     private FeedInPremiumRole feedInPremiumRole;
+    @Autowired
+    private ComputePremiumRole computePremiumRole;
 
     @Autowired
     Reps reps;
@@ -159,7 +161,7 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
         if (model.isRealRenewableDataImplemented())
             determineResidualLoadCurve.act(model);
 
-        // logger.warn("  0. Dismantling & paying loans");
+        // logger.warn(" 0. Dismantling & paying loans");
         // for (EnergyProducer producer :
         // reps.genericRepository.findAllAtRandom(EnergyProducer.class)) {
         // dismantlePowerPlantRole.act(producer);
@@ -245,13 +247,13 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
 
         // timerMarket.reset();
         // timerMarket.start();
-        // logger.warn("  2b. Creating market forecast");
+        // logger.warn(" 2b. Creating market forecast");
         //
         // clearIterativeCO2AndElectricitySpotMarketTwoCountryRole
         // .makeCentralElectricityMarketForecastForTimeStep(getCurrentTick() +
         // model.getCentralForecastingYear());
         //
-        // logger.warn("        took: {} seconds.", timerMarket.seconds());
+        // logger.warn(" took: {} seconds.", timerMarket.seconds());
         //
         // timerMarket.reset();
 
@@ -372,7 +374,7 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
         timerMarket.stop();
         logger.warn("        took: {} seconds.", timerMarket.seconds());
 
-logger.warn("  6.b) Creating power plant financial reports.");
+        logger.warn("  6.b) Creating power plant financial reports.");
         Timer financialReports = new Timer();
         financialReports.start();
 
@@ -381,10 +383,10 @@ logger.warn("  6.b) Creating power plant financial reports.");
         financialReports.stop();
         logger.warn("        took: {} seconds.", financialReports.seconds());
 
-
         if (model.isFeedInPremiumImplemented()) {
             logger.warn(" 6a. Run Feed In Premium Scheme");
             for (RenewableSupportFipScheme scheme : reps.renewableSupportSchemeRepository.findAll()) {
+                computePremiumRole.act(scheme);
                 feedInPremiumRole.act(scheme);
             }
             timerMarket.stop();
@@ -444,15 +446,15 @@ logger.warn("  6.b) Creating power plant financial reports.");
             timerMarket.reset();
             timerMarket.start();
             logger.warn("  8. Delete old nodes in year {}.", (getCurrentTick() - model.getDeletionAge()));
-            reps.bidRepository.delete(reps.bidRepository.findAllBidsForForTime(getCurrentTick()
-                    - model.getDeletionAge()));
-            reps.cashFlowRepository.delete(reps.cashFlowRepository.findAllCashFlowsForForTime(getCurrentTick()
-                    - model.getDeletionAge()));
+            reps.bidRepository
+                    .delete(reps.bidRepository.findAllBidsForForTime(getCurrentTick() - model.getDeletionAge()));
+            reps.cashFlowRepository.delete(
+                    reps.cashFlowRepository.findAllCashFlowsForForTime(getCurrentTick() - model.getDeletionAge()));
             reps.powerPlantRepository.delete(reps.powerPlantRepository
                     .findAllPowerPlantsDismantledBeforeTick(getCurrentTick() - model.getDeletionAge()));
-            reps.powerPlantDispatchPlanRepository.delete(reps.powerPlantDispatchPlanRepository
-                    .findAllPowerPlantDispatchPlansForTime(getCurrentTick() + model.getCentralForecastingYear() - 1,
-                            true));
+            reps.powerPlantDispatchPlanRepository
+                    .delete(reps.powerPlantDispatchPlanRepository.findAllPowerPlantDispatchPlansForTime(
+                            getCurrentTick() + model.getCentralForecastingYear() - 1, true));
             reps.financialPowerPlantReportRepository.delete(reps.financialPowerPlantReportRepository
                     .findAllFinancialPowerPlantReportsForTime(getCurrentTick() - 5 - model.getDeletionAge()));
             timerMarket.stop();
