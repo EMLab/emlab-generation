@@ -24,6 +24,7 @@ import org.springframework.data.neo4j.support.Neo4jTemplate;
 import org.springframework.transaction.annotation.Transactional;
 
 import agentspring.role.Role;
+import agentspring.role.RoleComponent;
 import emlab.gen.domain.agent.DecarbonizationModel;
 import emlab.gen.domain.agent.EnergyProducer;
 import emlab.gen.domain.agent.Regulator;
@@ -50,6 +51,8 @@ import emlab.gen.role.AbstractEnergyProducerRole;
  *         a cetrain target is filled.
  * 
  */
+
+@RoleComponent
 public class ComputePremiumRole extends AbstractEnergyProducerRole<EnergyProducer>implements Role<EnergyProducer> {
 
     @Transient
@@ -95,10 +98,20 @@ public class ComputePremiumRole extends AbstractEnergyProducerRole<EnergyProduce
             for (PowerGridNode node : possibleInstallationNodes) {
 
                 // find one random power plant built recently
-                PowerPlant plant = reps.powerPlantRepository
+                Iterable<PowerPlant> plantSet = reps.powerPlantRepository
                         .findPowerPlantsOperationalSinceTwoYearsByPowerGridNodeAndTechnology(node, technology,
-                                getCurrentTick())
-                        .iterator().next();
+                                getCurrentTick());
+
+                PowerPlant plant = new PowerPlant();
+                // or create a new power plant if above statement returns null,
+                // and assign it to a random energy producer.
+                if (plantSet == null) {
+
+                    EnergyProducer producer = reps.energyProducerRepository.findAll().iterator().next();
+                    plant.specifyNotPersist(getCurrentTick(), producer, node, technology);
+                } else {
+                    plant = plantSet.iterator().next();
+                }
 
                 double mc = 0d;
                 double annualMarginalCost = 0d;
@@ -140,7 +153,7 @@ public class ComputePremiumRole extends AbstractEnergyProducerRole<EnergyProduce
 
                 double discountedCapitalCosts = npv(discountedProjectCapitalOutflow, wacc);
                 double discountedOpCost = npv(discountedProjectCashOutflow, wacc);
-                lcoe = (discountedCapitalCosts + discountedOpCost)
+                lcoe = (discountedCapitalCosts + discountedOpCost) * scheme.getFeedInPremiumBiasFactor()
                         / (totalGenerationinMWh * scheme.getSupportSchemeDuration());
 
                 BaseCostFip baseCostFip = new BaseCostFip();

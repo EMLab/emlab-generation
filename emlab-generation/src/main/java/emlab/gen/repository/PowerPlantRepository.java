@@ -157,7 +157,7 @@ public interface PowerPlantRepository extends GraphRepository<PowerPlant> {
     public Iterable<PowerPlant> findOperationalPowerPlantsByPowerGridNode(@Param("gridnode") PowerGridNode node,
             @Param("tick") long tick);
 
-    @Query(value = "g.v(gridnode).in('LOCATION').as('x').out('TECHNOLOGY').filter{it==g.v(tech)}.back('x').filter{(it.dismantleTime > tick) && ((tick - (it.constructionStartTime + it.actualPermittime + it.actualLeadtime)) <= 2)}", type = QueryType.Gremlin)
+    @Query(value = "g.v(gridnode).in('LOCATION').as('x').out('TECHNOLOGY').filter{it.name==g.v(tech).name}.back('x').filter{(it.dismantleTime > tick) && ((tick - (it.constructionStartTime + it.actualPermittime + it.actualLeadtime)) <= 2)}", type = QueryType.Gremlin)
     public Iterable<PowerPlant> findPowerPlantsOperationalSinceTwoYearsByPowerGridNodeAndTechnology(
             @Param("gridnode") PowerGridNode node, @Param("tech") PowerGeneratingTechnology technology,
             @Param("tick") long tick);

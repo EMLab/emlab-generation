@@ -44,7 +44,6 @@ import emlab.gen.domain.market.electricity.ElectricitySpotMarket;
 import emlab.gen.domain.market.electricity.Segment;
 import emlab.gen.domain.market.electricity.SegmentLoad;
 import emlab.gen.domain.policy.PowerGeneratingTechnologyTarget;
-import emlab.gen.domain.policy.renewablesupport.RenewableSupportFipScheme;
 import emlab.gen.domain.technology.PowerGeneratingTechnology;
 import emlab.gen.domain.technology.PowerGeneratingTechnologyNodeLimit;
 import emlab.gen.domain.technology.PowerGridNode;
@@ -312,28 +311,6 @@ public class InvestInPowerGenerationTechnologiesRole<T extends EnergyProducer> e
                     // feedInPremiumFactor and then
                     // if technology is eligible,
                     //
-
-                    if (reps.renewableSupportSchemeRepository.findAll() != null) // change
-                                                                                 // this
-                                                                                 // later
-                                                                                 // to
-                                                                                 // make
-                                                                                 // it
-                                                                                 // specific
-                                                                                 // to
-                                                                                 // feed
-                                                                                 // in
-                                                                                 // tariff
-
-                    {
-                        for (RenewableSupportFipScheme scheme : reps.renewableSupportSchemeRepository.findAll()) {
-
-                            if (scheme.getPowerGeneratingTechnologiesEligible().contains(technology))
-                                operatingProfit = operatingProfit * (1 + scheme.getFeedInPremiumFactor());
-
-                        }
-
-                    }
 
                     // TODO Alter discount rate on the basis of the amount
                     // in long-term contracts?

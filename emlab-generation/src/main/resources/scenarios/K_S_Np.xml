@@ -24,16 +24,16 @@
 	<!-- Decarbonization Model -->
 	<bean id="decarbonizationModel" class="emlab.gen.domain.agent.DecarbonizationModel"
 		p:name="Decarbonization Model" p:simulationLength="${simulationLength}"
-		p:co2TradingImplemented="true"
+		p:co2TradingImplemented="false"
 		p:realRenewableDataImplemented="false"
 		p:iterationSpeedFactor="3" p:iterationSpeedCriterion="0.005"
-		p:capDeviationCriterion="0.03" p:deletionOldPPDPBidsAndCashFlowsEnabled="true"
-		p:deletionAge="2">
+		p:capDeviationCriterion="0.03" p:deletionOldPPDPBidsAndCashFlowsEnabled="true" p:deletionAge="4">
 	</bean>
 
 	<bean class="emlab.gen.trend.TriangularTrend" id="demandGrowthTrendNL"
 		p:start="${demandGrowthNLStart}" p:min="${demandGrowthNLMin}" p:max="${demandGrowthNLMax}"
 		p:top="${demandGrowthNLTop}" />
+		
 
 	<!-- Substances -->
 	<bean id="coal" class="emlab.gen.domain.technology.Substance" p:name="Coal"
@@ -61,6 +61,13 @@
 	p:capacityMultiplicationFactor="1.0">
 		<property name="zone" ref="nl" />
 	</bean>
+	
+			<bean id="regulator" class="emlab.gen.domain.agent.Regulator" p:name="Regulator NL" 
+p:numberOfYearsLookingBackToForecastDemand="4"
+p:equityInterestRate="0.12" p:loanInterestRate="0.09"
+		p:debtRatioOfInvestments="0.7">
+<property name="zone" ref="nl"/>
+</bean>
 
 	<bean id="interconnectorBeneluxGermany" class="emlab.gen.domain.technology.Interconnector"
 		p:capacity="${interconnectorCapacity}">
@@ -804,6 +811,8 @@
 	<bean id="nuclearInvestmentCostTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0" p:start="2874800" />
 	<bean id="nuclearFixedOperatingCostTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0" p:start="71870" />
 	<bean id="nuclearEfficiencyTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0.00001" p:start=".33" />
+	
+	
 
 	<!-- Parameter file -->
 	<bean id="projectPropertyConfigurer"

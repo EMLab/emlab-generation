@@ -51,12 +51,12 @@ public class RenewableSupportFipScheme {
     @SimulationParameter(label = "FeedInPremiumFactor", from = 0, to = 1)
     private double feedInPremiumBiasFactor;
 
-    public double getFeedInPremiumFactor() {
+    public double getFeedInPremiumBiasFactor() {
         return feedInPremiumBiasFactor;
     }
 
-    public void setFeedInPremiumFactor(double feedInPremiumFactor) {
-        this.feedInPremiumBiasFactor = feedInPremiumFactor;
+    public void setFeedInPremiumBiasFactor(double feedInPremiumBiasFactor) {
+        this.feedInPremiumBiasFactor = feedInPremiumBiasFactor;
     }
 
     public String getName() {

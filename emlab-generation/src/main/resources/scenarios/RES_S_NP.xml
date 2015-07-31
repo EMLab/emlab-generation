@@ -60,6 +60,11 @@
 	p:capacityMultiplicationFactor="1.0">
 		<property name="zone" ref="de" />
 	</bean>
+	
+		<!-- CO2 Auction -->
+	<bean id="co2Auction" class="emlab.gen.domain.market.CO2Auction"
+		p:auction="false" p:referencePrice="0" p:name="CO2 auction"
+		p:substance-ref="co2" />
 
 	<!-- Segments of load duration curves -->
 	<bean id="segment1" class="emlab.gen.domain.market.electricity.Segment"
@@ -439,6 +444,28 @@
 			</list>
 		</property>
 	</bean>
+
+	<!-- CO2 Tax -->
+	<bean id="co2TaxTrend" class="emlab.gen.trend.StepTrend" p:start="${co2TaxStart}"
+		p:duration="${co2TaxDuration}" p:increment="${co2TaxIncrement}"
+		p:minValue="0" />
+
+	<!-- CO2 Cap -->
+	<bean id="co2CapTrend" class="emlab.gen.trend.StepTrend" p:start="${co2CapStart}"
+		p:duration="${co2CapDuration}" p:increment="${co2CapIncrement}"
+		p:minValue="0" />
+
+	<!-- Minimum CO2 Price Trends -->
+	<bean id="minCo2PriceTrend" class="emlab.gen.trend.StepTrend" p:start="${minCo2EUPriceStart}"
+		p:duration="${minCo2PriceDuration}" p:increment="${minCo2EUPriceIncrement}"
+		p:minValue="0" />
+
+	<bean id="minCo2PriceTrendNL" class="emlab.gen.trend.StepTrend"
+		p:start="${minCo2NLPriceStart}" p:duration="${minCo2NLPriceDuration}"
+		p:increment="${minCo2NLPriceIncrement}" p:minValue="0" />
+	<bean id="minCo2PriceTrendDE" class="emlab.gen.trend.StepTrend"
+		p:start="${minCo2DEPriceStart}" p:duration="${minCo2DEPriceDuration}"
+		p:increment="${minCo2DEPriceIncrement}" p:minValue="0" />
 
 	<!-- Power Generation Technologies -->
         <bean id="coalPulverizedSuperCritical" class="emlab.gen.domain.technology.PowerGeneratingTechnology"

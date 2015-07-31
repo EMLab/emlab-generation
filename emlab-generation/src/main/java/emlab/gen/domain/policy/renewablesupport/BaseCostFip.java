@@ -26,6 +26,7 @@ import emlab.gen.domain.technology.PowerGridNode;
  * @author Kaveri3012
  *
  */
+
 @NodeEntity
 public class BaseCostFip {
 
