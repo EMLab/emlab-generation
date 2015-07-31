@@ -33,6 +33,7 @@ import emlab.gen.domain.agent.TargetInvestor;
 import emlab.gen.domain.market.CommodityMarket;
 import emlab.gen.domain.market.capacity.CapacityMarket;
 import emlab.gen.domain.market.electricity.ElectricitySpotMarket;
+import emlab.gen.domain.policy.renewablesupport.RenewableSupportSchemeTender;
 import emlab.gen.repository.Reps;
 import emlab.gen.role.capacitymarket.SimpleCapacityMarketMainRole;
 import emlab.gen.role.capacitymechanisms.ProcessAcceptedPowerPlantDispatchRoleinSR;
@@ -76,7 +77,7 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
     @Autowired
     private PayCO2AuctionRole payCO2AuctionRole;
     @Autowired
-    private TenderMainRole tenderMainrole;
+    private TenderMainRole tenderMainRole;
     @Autowired
     private GenericInvestmentRole<EnergyProducer> genericInvestmentRole;
     @Autowired
@@ -379,14 +380,41 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
         logger.warn("        took: {} seconds.", financialReports.seconds());
 
         /*
-         * if (model.isFeedInPremiumImplemented()) { logger.warn(
-         * " 6a. Run Feed In Premium Scheme"); for (RenewableSupportSchemeTender
-         * scheme : reps.renewableSupportSchemeRepository.findAll()) {
-         * feedInPremiumRole.act(scheme); } timerMarket.stop(); logger.warn(
-         * "        took: {} seconds.", timerMarket.seconds()); }
+         * RENEWABLE TENDER
          */
 
-        // tender
+        if (model.isRenewableTenderSchemeImplemented()) {
+            logger.warn(" 6b. Run Renewable Tender Scheme");
+            for (RenewableSupportSchemeTender scheme : reps.renewableSupportSchemeTenderRepository.findAll()) {
+                tenderMainRole.act(scheme);
+            }
+            timerMarket.stop();
+            logger.warn("        took: {} seconds.", timerMarket.seconds());
+        }
+
+        // /*
+        // * Run Simple Capacity Market (start from tick 1, due to
+        // initialization
+        // * requirements- it needs values (revenues from electricity spot
+        // market)
+        // * from previous tick
+        // */
+        //
+        // if ((getCurrentTick() > 0) &&
+        // (model.isSimpleCapacityMarketEnabled())) {
+        // timerMarket.reset();
+        // timerMarket.start();
+        // logger.warn(" 2a. Run Simple Capacity Market");
+        // for (CapacityMarket market : reps.capacityMarketRepository.findAll())
+        // {
+        // simpleCapacityMarketMainRole.act(market);
+        // }
+        //
+        // // exportLimiterRole.act(model);
+        //
+        // timerMarket.stop();
+        // logger.warn("        took: {} seconds.", timerMarket.seconds());
+        // }
 
         logger.warn("  7. Investing");
         Timer timerInvest = new Timer();

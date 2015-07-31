@@ -44,7 +44,8 @@ public class OrganizeRenewableTenderPaymentsRole extends AbstractRole<RenewableS
     public void act(RenewableSupportSchemeTender scheme) {
 
         // what about the other (earlier or later) bids that need to be paid
-        // out? - i have included them as well with my if statement.
+        // out? - i have included them as well with my if statement. - and I put
+        // that later in the query
 
         // the following query should return only all accepted or partially
         // accepted bids - write a query that only returns accepted bids. Look
@@ -54,6 +55,7 @@ public class OrganizeRenewableTenderPaymentsRole extends AbstractRole<RenewableS
 
             ClearingPoint tenderClearingPoint = reps.tenderClearingPointRepository
                     .findOneClearingPointForTimeAndRenewableSupportSchemeTender(getCurrentTick(), scheme);
+
             reps.nonTransactionalCreateRepository.createCashFlow(scheme, currentTenderBid.getBidder(),
                     currentTenderBid.getAcceptedAmount() * tenderClearingPoint.getPrice(), CashFlow.TENDER_SUBSIDY,
                     getCurrentTick(), currentTenderBid.getPowerPlant());

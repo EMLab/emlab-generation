@@ -81,7 +81,18 @@ public class DecarbonizationModel extends AbstractAgent implements Agent {
     @SimulationParameter(label = "Deletion age")
     private long deletionAge;
 
+    @SimulationParameter(label = "Renewable Tender Scheme")
+    private boolean renewableTenderSchemeImplemented;
+
     private boolean noPrivateIntermittentRESInvestment;
+
+    public boolean isRenewableTenderSchemeImplemented() {
+        return renewableTenderSchemeImplemented;
+    }
+
+    public void setRenewableTenderSchemeImplemented(boolean renewableTenderSchemeImplemented) {
+        this.renewableTenderSchemeImplemented = renewableTenderSchemeImplemented;
+    }
 
     public boolean isFeedInPremiumImplemented() {
         return feedInPremiumImplemented;

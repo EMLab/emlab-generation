@@ -69,7 +69,7 @@ public class CalculateRenewableTargetForTenderRole extends AbstractRole<Renewabl
         }
 
         // renewable target for tender operation start year in MWh is
-        double renewableTargetInMwh = demandFactor * targetFactor * totalConsumption;
+        double renewableTargetInMwh = targetFactor * totalConsumption;
 
         // calculate expected generation, and subtract that from annual target.
         // will be ActualTarget
