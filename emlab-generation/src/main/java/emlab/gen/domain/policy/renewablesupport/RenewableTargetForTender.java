@@ -16,6 +16,7 @@
 package emlab.gen.domain.policy.renewablesupport;
 
 import org.neo4j.graphdb.Direction;
+import org.springframework.data.neo4j.annotation.NodeEntity;
 import org.springframework.data.neo4j.annotation.RelatedTo;
 
 import emlab.gen.domain.agent.Regulator;
@@ -27,6 +28,7 @@ import emlab.gen.trend.TimeSeriesImpl;
  * @author Kaveri3012
  *
  */
+@NodeEntity
 public class RenewableTargetForTender {
 
     @RelatedTo(type = "SET_BY_REGULATOR", elementClass = Regulator.class, direction = Direction.INCOMING)
