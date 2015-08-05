@@ -36,7 +36,7 @@ public class GenericInvestmentRole<T extends EnergyProducer> extends AbstractEne
 	public void act(T agent) {
 		// logger.warn(agent.getName() + " does " +
 		// agent.getInvestmentRole().getClass().toString());
-			agent.getInvestmentRole().act(agent);
+			agent.getInvestmentRole().act( (EnergyProducer) agent);
 	}
 
 

@@ -44,6 +44,7 @@ public class CalculateRenewableTargetForTenderRole extends AbstractRole<Renewabl
     @Autowired
     Reps reps;
 
+    @Override
     @Transactional
     public void act(RenewableSupportSchemeTender scheme) {
 

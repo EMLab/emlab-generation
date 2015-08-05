@@ -16,6 +16,7 @@
 package emlab.gen.role.tender;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import agentspring.role.AbstractRole;
 import agentspring.role.Role;
@@ -54,6 +55,7 @@ public class TenderMainRole extends AbstractRole<RenewableSupportSchemeTender> i
     OrganizeRenewableTenderPaymentsRole organizeRenewableTenderPaymentsRole;
 
     @Override
+    @Transactional
     public void act(RenewableSupportSchemeTender scheme) {
 
         Regulator regulator = scheme.getRegulator();
