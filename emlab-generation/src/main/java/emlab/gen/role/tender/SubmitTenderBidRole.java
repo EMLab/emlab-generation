@@ -25,7 +25,6 @@ import java.util.TreeMap;
 import org.apache.commons.math.stat.regression.SimpleRegression;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.annotation.Transient;
-import org.springframework.data.neo4j.annotation.NodeEntity;
 import org.springframework.data.neo4j.support.Neo4jTemplate;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -66,7 +65,6 @@ import emlab.gen.util.MapValueComparator;
  */
 
 @RoleComponent
-@NodeEntity
 public class SubmitTenderBidRole extends AbstractEnergyProducerRole<EnergyProducer> implements Role<EnergyProducer> {
 
     @Transient
