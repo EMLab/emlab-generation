@@ -34,7 +34,9 @@ public interface SegmentClearingPointRepository extends GraphRepository<SegmentC
     Iterable<SegmentClearingPoint> findAllSegmentClearingPointsForSegmentAndTime(@Param("time") long time,
             @Param("segment") Segment segment, @Param("forecast") boolean forecast);
 
-    // @Query("START segment = node({segment}), market=node({market}) MATCH (segment)<-[:SEGMENT_POINT]-(scp)-[:MARKET_POINT]->(market) WHERE (scp.time = {time}) RETURN scp")
+    // @Query("START segment = node({segment}), market=node({market}) MATCH
+    // (segment)<-[:SEGMENT_POINT]-(scp)-[:MARKET_POINT]->(market) WHERE
+    // (scp.time = {time}) RETURN scp")
     // SegmentClearingPoint
     // findOneSegmentClearingPointForMarketSegmentAndTime(@Param("time") long
     // time, @Param("segment") Segment segment,
@@ -45,7 +47,4 @@ public interface SegmentClearingPointRepository extends GraphRepository<SegmentC
             @Param("segment") Segment segment, @Param("market") ElectricitySpotMarket electricitySpotMarket,
             @Param("forecast") boolean forecast);
 
-    @Query(value = "g.v(segment).in('SEGMENT_POINT').propertyFilter('time', FilterPipe.Filter.EQUAL, time).as('x').out('MARKET_POINT').idFilter(market, FilterPipe.Filter.EQUAL).back('x')", type = QueryType.Gremlin)
-    SegmentClearingPoint findOneSegmentClearingPointForMarketSegmentAndTime(@Param("time") long time,
-            @Param("segment") Segment segment, @Param("market") ElectricitySpotMarket electricitySpotMarket);
 }

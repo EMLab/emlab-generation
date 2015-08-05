@@ -41,8 +41,8 @@ import emlab.gen.role.AbstractEnergyProducerRole;
  */
 
 @RoleComponent
-public class SubmitCapacityBidToMarketRole extends AbstractEnergyProducerRole<EnergyProducer> implements
-        Role<EnergyProducer> {
+public class SubmitCapacityBidToMarketRole extends AbstractEnergyProducerRole<EnergyProducer>
+        implements Role<EnergyProducer> {
 
     Logger logger = Logger.getLogger(SubmitCapacityBidToMarketRole.class);
 
@@ -52,20 +52,22 @@ public class SubmitCapacityBidToMarketRole extends AbstractEnergyProducerRole<En
     @Override
     @Transactional
     public void act(EnergyProducer producer) {
-        // logger.warn("***********Submitting Bid Role for Energy Producer ********"
+        // logger.warn("***********Submitting Bid Role for Energy Producer
+        // ********"
         // + producer.getName());
 
-        for (PowerPlant plant : reps.powerPlantRepository.findOperationalPowerPlantsByOwner(producer, getCurrentTick())) {
+        for (PowerPlant plant : reps.powerPlantRepository.findOperationalPowerPlantsByOwner(producer,
+                getCurrentTick())) {
 
             // logger.warn("Bid calculation for PowerPlant " + plant.getName());
             // get market for the plant by zone
-            CapacityMarket market = reps.capacityMarketRepository.findCapacityMarketForZone(plant.getLocation()
-                    .getZone());
+            CapacityMarket market = reps.capacityMarketRepository
+                    .findCapacityMarketForZone(plant.getLocation().getZone());
             if (market != null) {
-                // logger.warn("CapacityMarket is  " + market.getName());
+                // logger.warn("CapacityMarket is " + market.getName());
 
-                ElectricitySpotMarket eMarket = reps.marketRepository.findElectricitySpotMarketForZone(plant
-                        .getLocation().getZone());
+                ElectricitySpotMarket eMarket = reps.marketRepository
+                        .findElectricitySpotMarketForZone(plant.getLocation().getZone());
 
                 // compute bid price as (fixedOMCost - elecricityMarketRevenue),
                 // if
@@ -74,7 +76,7 @@ public class SubmitCapacityBidToMarketRole extends AbstractEnergyProducerRole<En
 
                 // get FixedOMCost
                 double fixedOnMCost = plant.getTechnology().getFixedOperatingCost(getCurrentTick());
-                // logger.warn("FIxed OM cost is  " + fixedOnMCost);
+                // logger.warn("FIxed OM cost is " + fixedOnMCost);
 
                 // logger.warn("fixed operation and maintenance cost is " +
                 // fixedOnMCost);
@@ -122,10 +124,12 @@ public class SubmitCapacityBidToMarketRole extends AbstractEnergyProducerRole<En
 
                                 expectedElectricityPrice = reps.segmentClearingPointRepository
                                         .findOneSegmentClearingPointForMarketSegmentAndTime(getCurrentTick() - 1,
-                                                segmentLoad.getSegment(), eMarket).getPrice();
+                                                segmentLoad.getSegment(), eMarket, false)
+                                        .getPrice();
 
                                 double hours = segmentLoad.getSegment().getLengthInHours();
-                                // logger.warn("Number of hours per segment is"logger.warn("EL Market revenue is "
+                                // logger.warn("Number of hours per segment
+                                // is"logger.warn("EL Market revenue is "
                                 // + electricityMarketRevenue);
                                 // +
                                 // hours);
@@ -133,9 +137,10 @@ public class SubmitCapacityBidToMarketRole extends AbstractEnergyProducerRole<En
                                 // marginal cost of capacity, you subtract the
                                 // marg. cost of energy from the revenue
                                 if (mc <= expectedElectricityPrice) {
-                                    sumEMR = sumEMR + (expectedElectricityPrice - mc) * hours
-                                            * ppdp.getAcceptedAmount();
-                                    // logger.warn("EL Market revenue for this segment is "
+                                    sumEMR = sumEMR
+                                            + (expectedElectricityPrice - mc) * hours * ppdp.getAcceptedAmount();
+                                    // logger.warn("EL Market revenue for this
+                                    // segment is "
                                     // + sumEMR);
                                 }
 

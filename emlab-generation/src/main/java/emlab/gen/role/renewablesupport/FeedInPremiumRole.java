@@ -113,7 +113,7 @@ public class FeedInPremiumRole extends AbstractRole<RenewableSupportFipScheme> {
                         } else if (ppdp.getStatus() >= 2) {
                             electricityPrice = reps.segmentClearingPointRepository
                                     .findOneSegmentClearingPointForMarketSegmentAndTime(getCurrentTick(),
-                                            segmentLoad.getSegment(), eMarket)
+                                            segmentLoad.getSegment(), eMarket, false)
                                     .getPrice();
 
                             double hours = segmentLoad.getSegment().getLengthInHours();
@@ -143,6 +143,10 @@ public class FeedInPremiumRole extends AbstractRole<RenewableSupportFipScheme> {
                         contract.setStart(getCurrentTick());
                         contract.setPricePerUnit(baseCost.getCostPerMWh());
                         contract.setFinish(getCurrentTick() + renewableSupportScheme.getSupportSchemeDuration());
+
+                        logger.warn("Contract price for plant of technology " + plant.getTechnology().getName()
+                                + "for node " + node.getNodeId() + " is , " + contract.getPricePerUnit());
+
                     }
 
                     // for all eligible plants, the support price is calculated,
@@ -156,6 +160,8 @@ public class FeedInPremiumRole extends AbstractRole<RenewableSupportFipScheme> {
 
                             double supportPrice = contract.getPricePerUnit() * totalGenerationInMwh - sumEMR;
                             // payment
+                            logger.warn("Total subsidy for plant of technology " + plant.getTechnology().getName()
+                                    + "for node " + node.getNodeId() + " is , " + supportPrice);
                             reps.nonTransactionalCreateRepository.createCashFlow(eMarket, plant.getOwner(),
                                     supportPrice, CashFlow.FEED_IN_PREMIUM, getCurrentTick(), plant);
 

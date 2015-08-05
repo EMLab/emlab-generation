@@ -15,7 +15,10 @@
  ******************************************************************************/
 package emlab.gen.role.renewablesupport;
 
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,13 +32,15 @@ import emlab.gen.domain.agent.DecarbonizationModel;
 import emlab.gen.domain.agent.EnergyProducer;
 import emlab.gen.domain.agent.Regulator;
 import emlab.gen.domain.market.electricity.ElectricitySpotMarket;
-import emlab.gen.domain.market.electricity.PowerPlantDispatchPlan;
+import emlab.gen.domain.market.electricity.Segment;
 import emlab.gen.domain.market.electricity.SegmentLoad;
 import emlab.gen.domain.policy.renewablesupport.BaseCostFip;
 import emlab.gen.domain.policy.renewablesupport.RenewableSupportFipScheme;
 import emlab.gen.domain.technology.PowerGeneratingTechnology;
 import emlab.gen.domain.technology.PowerGridNode;
 import emlab.gen.domain.technology.PowerPlant;
+import emlab.gen.domain.technology.Substance;
+import emlab.gen.domain.technology.SubstanceShareInFuelMix;
 import emlab.gen.repository.Reps;
 import emlab.gen.role.AbstractEnergyProducerRole;
 
@@ -69,11 +74,13 @@ public class ComputePremiumRole extends AbstractEnergyProducerRole<EnergyProduce
 
         Regulator regulator = scheme.getRegulator();
 
-        long timePoint = getCurrentTick();
-
         ElectricitySpotMarket eMarket = reps.marketRepository.findElectricitySpotMarketForZone(regulator.getZone());
 
-        for (PowerGeneratingTechnology technology : reps.genericRepository.findAll(PowerGeneratingTechnology.class)) {
+        Iterable<PowerGeneratingTechnology> eligibleTechnologies = scheme.getPowerGeneratingTechnologiesEligible();
+
+        for (PowerGeneratingTechnology technology : eligibleTechnologies) {
+            // for (PowerGeneratingTechnology technology :
+            // reps.powerGeneratingTechnologyRepository.findAll()) {
             DecarbonizationModel model = reps.genericRepository.findAll(DecarbonizationModel.class).iterator().next();
             if (technology.isIntermittent() && model.isNoPrivateIntermittentRESInvestment())
                 continue;
@@ -91,52 +98,78 @@ public class ComputePremiumRole extends AbstractEnergyProducerRole<EnergyProduce
                 ((LinkedList<PowerGridNode>) possibleInstallationNodes).add(reps.powerGridNodeRepository
                         .findAllPowerGridNodesByZone(regulator.getZone()).iterator().next());
             }
-            // logger.warn("Calculating for " + technology.getName() +
-            // ", for Nodes: "
-            // + possibleInstallationNodes.toString());
+            logger.warn(
+                    "Calculating for " + technology.getName() + ", for Nodes: " + possibleInstallationNodes.toString());
 
             for (PowerGridNode node : possibleInstallationNodes) {
 
-                // find one random power plant built recently
-                Iterable<PowerPlant> plantSet = reps.powerPlantRepository
-                        .findPowerPlantsOperationalSinceTwoYearsByPowerGridNodeAndTechnology(node, technology,
-                                getCurrentTick());
-
-                PowerPlant plant = new PowerPlant();
                 // or create a new power plant if above statement returns null,
                 // and assign it to a random energy producer.
-                if (plantSet == null) {
+                PowerPlant plant = new PowerPlant();
 
-                    EnergyProducer producer = reps.energyProducerRepository.findAll().iterator().next();
-                    plant.specifyNotPersist(getCurrentTick(), producer, node, technology);
-                } else {
-                    plant = plantSet.iterator().next();
+                EnergyProducer producer = reps.energyProducerRepository.findAll().iterator().next();
+
+                plant.specifyNotPersist(getCurrentTick(), producer, node, technology);
+                logger.warn("creating a new power plant for " + producer.getName() + ", of technology "
+                        + plant.getTechnology().getName());
+
+                Map<Substance, Double> myFuelPrices = new HashMap<Substance, Double>();
+                for (Substance fuel : technology.getFuels()) {
+                    myFuelPrices.put(fuel, findLastKnownPriceForSubstance(fuel, getCurrentTick()));
                 }
+
+                Set<SubstanceShareInFuelMix> fuelMix = calculateFuelMix(plant, myFuelPrices,
+                        findLastKnownCO2Price(getCurrentTick()));
+                plant.setFuelMix(fuelMix);
 
                 double mc = 0d;
                 double annualMarginalCost = 0d;
                 double totalGenerationinMWh = 0d;
                 double lcoe = 0d;
+                long numberOfSegments = reps.segmentRepository.count();
+                double factor = 0d;
+                double fullLoadHours = 0d;
 
                 mc = calculateMarginalCostExclCO2MarketCost(plant, getCurrentTick());
-
                 for (SegmentLoad segmentLoad : eMarket.getLoadDurationCurve()) {
+                    double hours = segmentLoad.getSegment().getLengthInHours();
+                    Segment segment = segmentLoad.getSegment();
 
-                    PowerPlantDispatchPlan ppdp = reps.powerPlantDispatchPlanRepository
-                            .findOnePowerPlantDispatchPlanForPowerPlantForSegmentForTime(plant,
-                                    segmentLoad.getSegment(), getCurrentTick(), false);
-                    if (ppdp.getStatus() < 0) {
-                        annualMarginalCost = 0d;
-                    } else if (ppdp.getStatus() >= 2) {
-                        double hours = segmentLoad.getSegment().getLengthInHours();
-                        annualMarginalCost = annualMarginalCost + mc * hours * ppdp.getAcceptedAmount();
-                        totalGenerationinMWh = hours * ppdp.getAcceptedAmount();
+                    if (hours == 0) {
+
+                        if (technology.isIntermittent()) {
+                            factor = plant.getIntermittentTechnologyNodeLoadFactor().getLoadFactorForSegment(segment);
+                        } else {
+                            double segmentID = segment.getSegmentID();
+                            double min = technology.getPeakSegmentDependentAvailability();
+                            double max = technology.getBaseSegmentDependentAvailability();
+                            double segmentPortion = (numberOfSegments - segmentID) / (numberOfSegments - 1); // start
+                            // counting
+                            // at
+                            // 1.
+
+                            double range = max - min;
+                            factor = max - segmentPortion * range;
+
+                        }
+
+                        fullLoadHours += factor * segment.getLengthInHours();
+
                     }
 
                 }
 
+                totalGenerationinMWh = fullLoadHours * plant.getActualNominalCapacity();
+                annualMarginalCost = totalGenerationinMWh * mc;
+
+                logger.warn("Annual Marginal cost for technology " + plant.getTechnology().getName() + " is  "
+                        + annualMarginalCost + " and total generation is  " + totalGenerationinMWh);
+
                 double fixedOMCost = calculateFixedOperatingCost(plant, getCurrentTick());
                 double operatingCost = fixedOMCost + annualMarginalCost;
+
+                logger.warn("Fixed OM cost for technology " + plant.getTechnology().getName() + " is  " + fixedOMCost
+                        + " and operatingCost is  " + operatingCost);
 
                 TreeMap<Integer, Double> discountedProjectCapitalOutflow = calculateSimplePowerPlantInvestmentCashFlow(
                         technology.getDepreciationTime(), (int) plant.getActualLeadtime(),
@@ -152,7 +185,9 @@ public class ComputePremiumRole extends AbstractEnergyProducerRole<EnergyProduce
                         + regulator.getDebtRatioOfInvestments() * regulator.getLoanInterestRate();
 
                 double discountedCapitalCosts = npv(discountedProjectCapitalOutflow, wacc);
+                logger.warn("discountedCapitalCosts " + discountedCapitalCosts);
                 double discountedOpCost = npv(discountedProjectCashOutflow, wacc);
+                logger.warn("discountedOpCost " + discountedOpCost);
                 lcoe = (discountedCapitalCosts + discountedOpCost) * scheme.getFeedInPremiumBiasFactor()
                         / (totalGenerationinMWh * scheme.getSupportSchemeDuration());
 
@@ -164,19 +199,22 @@ public class ComputePremiumRole extends AbstractEnergyProducerRole<EnergyProduce
                 baseCostFip.setTechnology(technology);
                 baseCostFip.setEndTime(getCurrentTick() + scheme.getSupportSchemeDuration());
 
+                logger.warn("LCOE in per MWH for technology " + plant.getTechnology().getName() + "for node "
+                        + baseCostFip.getNode().getNodeId() + " is , " + baseCostFip.getCostPerMWh());
+
             }
         }
 
     }
 
-    private TreeMap<Integer, Double> calculateSimplePowerPlantInvestmentCashFlow(int depriacationTime, int buildingTime,
+    private TreeMap<Integer, Double> calculateSimplePowerPlantInvestmentCashFlow(int depreciationTime, int buildingTime,
             double totalInvestment, double operatingProfit) {
         TreeMap<Integer, Double> investmentCashFlow = new TreeMap<Integer, Double>();
         double equalTotalDownPaymentInstallement = totalInvestment / buildingTime;
         for (int i = 0; i < buildingTime; i++) {
-            investmentCashFlow.put(new Integer(i), -equalTotalDownPaymentInstallement);
+            investmentCashFlow.put(new Integer(i), equalTotalDownPaymentInstallement);
         }
-        for (int i = buildingTime; i < depriacationTime + buildingTime; i++) {
+        for (int i = buildingTime; i < depreciationTime + buildingTime; i++) {
             investmentCashFlow.put(new Integer(i), operatingProfit);
         }
         return investmentCashFlow;
