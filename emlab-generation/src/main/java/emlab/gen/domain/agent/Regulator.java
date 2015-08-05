@@ -59,7 +59,7 @@ public class Regulator extends DecarbonizationAgent implements Agent {
     @SimulationParameter(label = "FeedInPremiumFactor", from = 0, to = 1)
     private double feedInPremiumFactor;
 
-    // Tenderparameters
+    // Tender parameters
     private double annualRenewableTargetInMwh;
 
     public double getAnnualRenewableTargetInMwh() {
