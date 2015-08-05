@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import agentspring.role.AbstractRole;
 import agentspring.role.Role;
+import agentspring.role.RoleComponent;
 import emlab.gen.domain.agent.BigBank;
 import emlab.gen.domain.agent.EnergyProducer;
 import emlab.gen.domain.agent.PowerPlantManufacturer;
@@ -36,7 +37,8 @@ import emlab.gen.repository.Reps;
 /**
  * @author rjjdejeu
  */
-public class ClearRenewableTenderRole extends AbstractRole<Regulator>implements Role<Regulator> {
+@RoleComponent
+public class ClearRenewableTenderRole extends AbstractRole<Regulator> implements Role<Regulator> {
 
     @Autowired
     Reps reps;
@@ -82,8 +84,7 @@ public class ClearRenewableTenderRole extends AbstractRole<Regulator>implements 
 
                 // it collects a bid partially if that bid fulfills the quota
                 // partially
-                else if (tenderQuota
-                        - (sumOfTenderBidQuantityAccepted + currentTenderBid.getAmount()) < clearingEpsilon) {
+                else if (tenderQuota - (sumOfTenderBidQuantityAccepted + currentTenderBid.getAmount()) < clearingEpsilon) {
                     acceptedSubsidyPrice = currentTenderBid.getPrice();
                     currentTenderBid.setStatus(Bid.PARTLY_ACCEPTED);
 
@@ -124,11 +125,11 @@ public class ClearRenewableTenderRole extends AbstractRole<Regulator>implements 
                 double downPayment = investmentCostPayedByEquity;
                 createSpreadOutDownPayments(bidder, manufacturer, downPayment, plant);
 
-                double amount = determineLoanAnnuities(investmentCostPayedByDebt,
-                        plant.getTechnology().getDepreciationTime(), bidder.getLoanInterestRate());
+                double amount = determineLoanAnnuities(investmentCostPayedByDebt, plant.getTechnology()
+                        .getDepreciationTime(), bidder.getLoanInterestRate());
                 // logger.warn("Loan amount is: " + amount);
-                Loan loan = reps.loanRepository.createLoan(currentTenderBid.getBidder(), bigbank, amount,
-                        plant.getTechnology().getDepreciationTime(), getCurrentTick(), plant);
+                Loan loan = reps.loanRepository.createLoan(currentTenderBid.getBidder(), bigbank, amount, plant
+                        .getTechnology().getDepreciationTime(), getCurrentTick(), plant);
                 // Create the loan
                 plant.createOrUpdateLoan(loan);
 

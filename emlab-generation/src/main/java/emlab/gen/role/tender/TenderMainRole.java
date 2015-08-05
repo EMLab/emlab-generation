@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import agentspring.role.AbstractRole;
 import agentspring.role.Role;
+import agentspring.role.RoleComponent;
 import emlab.gen.domain.agent.EnergyProducer;
 import emlab.gen.domain.agent.Regulator;
 import emlab.gen.domain.policy.renewablesupport.RenewableSupportSchemeTender;
@@ -28,8 +29,9 @@ import emlab.gen.repository.Reps;
  * @author Kaveri3012
  *
  */
-public class TenderMainRole extends AbstractRole<RenewableSupportSchemeTender>
-        implements Role<RenewableSupportSchemeTender> {
+@RoleComponent
+public class TenderMainRole extends AbstractRole<RenewableSupportSchemeTender> implements
+        Role<RenewableSupportSchemeTender> {
 
     /*
      * (non-Javadoc)
