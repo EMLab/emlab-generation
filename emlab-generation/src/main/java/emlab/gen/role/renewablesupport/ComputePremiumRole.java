@@ -131,31 +131,28 @@ public class ComputePremiumRole extends AbstractEnergyProducerRole<EnergyProduce
                 double fullLoadHours = 0d;
 
                 mc = calculateMarginalCostExclCO2MarketCost(plant, getCurrentTick());
+
                 for (SegmentLoad segmentLoad : eMarket.getLoadDurationCurve()) {
                     double hours = segmentLoad.getSegment().getLengthInHours();
                     Segment segment = segmentLoad.getSegment();
 
-                    if (hours == 0) {
+                    if (technology.isIntermittent()) {
+                        factor = plant.getIntermittentTechnologyNodeLoadFactor().getLoadFactorForSegment(segment);
+                    } else {
+                        double segmentID = segment.getSegmentID();
+                        double min = technology.getPeakSegmentDependentAvailability();
+                        double max = technology.getBaseSegmentDependentAvailability();
+                        double segmentPortion = (numberOfSegments - segmentID) / (numberOfSegments - 1); // start
+                        // counting
+                        // at
+                        // 1.
 
-                        if (technology.isIntermittent()) {
-                            factor = plant.getIntermittentTechnologyNodeLoadFactor().getLoadFactorForSegment(segment);
-                        } else {
-                            double segmentID = segment.getSegmentID();
-                            double min = technology.getPeakSegmentDependentAvailability();
-                            double max = technology.getBaseSegmentDependentAvailability();
-                            double segmentPortion = (numberOfSegments - segmentID) / (numberOfSegments - 1); // start
-                            // counting
-                            // at
-                            // 1.
-
-                            double range = max - min;
-                            factor = max - segmentPortion * range;
-
-                        }
-
-                        fullLoadHours += factor * segment.getLengthInHours();
+                        double range = max - min;
+                        factor = max - segmentPortion * range;
 
                     }
+
+                    fullLoadHours += factor * segment.getLengthInHours();
 
                 }
 

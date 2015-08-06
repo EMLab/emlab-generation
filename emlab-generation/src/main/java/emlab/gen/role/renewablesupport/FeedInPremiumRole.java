@@ -16,7 +16,6 @@
 package emlab.gen.role.renewablesupport;
 
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,24 +75,20 @@ public class FeedInPremiumRole extends AbstractRole<RenewableSupportFipScheme> {
 
         for (PowerGeneratingTechnology technology : technologySet) {
 
-            Iterable<PowerGridNode> possibleInstallationNodes;
+            Iterable<PowerGridNode> possibleInstallationNodes = reps.powerGridNodeRepository
+                    .findAllPowerGridNodesByZone(regulator.getZone());
 
-            if (technology.isIntermittent())
-                possibleInstallationNodes = reps.powerGridNodeRepository
-                        .findAllPowerGridNodesByZone(regulator.getZone());
-            else {
-                possibleInstallationNodes = new LinkedList<PowerGridNode>();
-                ((LinkedList<PowerGridNode>) possibleInstallationNodes).add(reps.powerGridNodeRepository
-                        .findAllPowerGridNodesByZone(regulator.getZone()).iterator().next());
-            }
-            // logger.warn("Calculating for " + technology.getName() +
-            // ", for Nodes: "
-            // + possibleInstallationNodes.toString());
+            logger.warn("Calculating FEED IN PREMIUM for " + technology.getName() + ", for Nodes: "
+                    + possibleInstallationNodes.toString());
 
             for (PowerGridNode node : possibleInstallationNodes) {
 
+                logger.warn("Inside power grid node loop");
+
                 for (PowerPlant plant : reps.powerPlantRepository
                         .findOperationalPowerPlantsByMarketAndTechnology(eMarket, technology, getCurrentTick())) {
+
+                    logger.warn("Inside power plant loop for power plant" + plant.getName());
 
                     double sumEMR = 0d;
                     double electricityPrice = 0d;
@@ -104,7 +99,7 @@ public class FeedInPremiumRole extends AbstractRole<RenewableSupportFipScheme> {
                     // price the plant earned
                     // throughout the year, for its total production
                     for (SegmentLoad segmentLoad : eMarket.getLoadDurationCurve()) {
-
+                        logger.warn("Inside segment loop for calculating total production");
                         PowerPlantDispatchPlan ppdp = reps.powerPlantDispatchPlanRepository
                                 .findOnePowerPlantDispatchPlanForPowerPlantForSegmentForTime(plant,
                                         segmentLoad.getSegment(), getCurrentTick(), false);
@@ -134,8 +129,11 @@ public class FeedInPremiumRole extends AbstractRole<RenewableSupportFipScheme> {
                     double finishedConstruction = plant.getConstructionStartTime() + plant.calculateActualPermittime()
                             + plant.calculateActualLeadtime();
 
-                    if (finishedConstruction == getCurrentTick()) {
+                    logger.warn("Printing finshed construction" + finishedConstruction + "and current tick "
+                            + getCurrentTick());
 
+                    if (finishedConstruction == getCurrentTick()) {
+                        logger.warn("Inside contract creation loop");
                         // create a query to get base cost.
                         BaseCostFip baseCost = reps.baseCostFipRepository
                                 .findOneBaseCostForTechnologyAndNodeAndTime(node, technology, getCurrentTick());
@@ -154,10 +152,9 @@ public class FeedInPremiumRole extends AbstractRole<RenewableSupportFipScheme> {
                     // payment is made.
                     contract = reps.supportPriceContractRepository.findOneContractByPowerPlant(plant);
                     if (contract != null) {
-
                         if (getCurrentTick() <= (contract.getStart()
                                 + renewableSupportScheme.getSupportSchemeDuration())) {
-
+                            logger.warn("Inside contract payment loop");
                             double supportPrice = contract.getPricePerUnit() * totalGenerationInMwh - sumEMR;
                             // payment
                             logger.warn("Total subsidy for plant of technology " + plant.getTechnology().getName()
