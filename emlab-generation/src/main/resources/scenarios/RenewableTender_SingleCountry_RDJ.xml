@@ -90,16 +90,15 @@ p:isTechnologySpecificityEnabled="false"
  
 </bean>
 
-<!--
-	<bean id="interconnectorBeneluxGermany" class="emlab.gen.domain.technology.Interconnector"
-		p:capacity="${interconnectorCapacity}">
+<bean id="interconnectorBeneluxGermany" class="emlab.gen.domain.technology.Interconnector"
+		p:capacity=0>
 		<property name="connections">
 			<set>
 				<ref bean="beneluxNode" />
 			</set>
 		</property>
 	</bean>
--->
+
 
 	<!-- Segments of load duration curves -->
 			<bean id="segment1" class="emlab.gen.domain.market.electricity.Segment" p:lengthInHours="10"
