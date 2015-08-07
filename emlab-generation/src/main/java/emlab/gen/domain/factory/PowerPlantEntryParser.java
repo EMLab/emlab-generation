@@ -159,7 +159,7 @@ public class PowerPlantEntryParser implements CSVEntryParser<PowerPlant> {
         plant.setActualLeadtime(plant.getTechnology().getExpectedLeadtime());
         plant.setActualPermittime(plant.getTechnology().getExpectedPermittime());
         plant.setExpectedEndOfLife(plant.getConstructionStartTime() + plant.getActualPermittime()
-                + plant.getFinishedConstruction() + plant.getTechnology().getExpectedLifetime());
+                + plant.getActualLeadTime() + plant.getTechnology().getExpectedLifetime());
         if (capacity == 0) {
             plant.setActualNominalCapacity(technology.getCapacity() * location.getCapacityMultiplicationFactor());
         } else {

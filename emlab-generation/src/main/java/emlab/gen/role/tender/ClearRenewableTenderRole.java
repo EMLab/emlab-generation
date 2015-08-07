@@ -161,7 +161,7 @@ public class ClearRenewableTenderRole extends AbstractRole<Regulator> implements
 
     private void createSpreadOutDownPayments(EnergyProducer agent, PowerPlantManufacturer manufacturer,
             double totalDownPayment, PowerPlant plant) {
-        int buildingTime = (int) plant.getFinishedConstruction();
+        int buildingTime = (int) plant.getActualLeadTime();
         reps.nonTransactionalCreateRepository.createCashFlow(agent, manufacturer, totalDownPayment / buildingTime,
                 CashFlow.DOWNPAYMENT, getCurrentTick(), plant);
         Loan downpayment = reps.loanRepository.createLoan(agent, manufacturer, totalDownPayment / buildingTime,

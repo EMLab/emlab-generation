@@ -104,7 +104,7 @@ public class TargetInvestmentRole extends GenericInvestmentRole<TargetInvestor> 
 
     private void createSpreadOutDownPayments(EnergyProducer agent, PowerPlantManufacturer manufacturer, double totalDownPayment,
             PowerPlant plant) {
-        int buildingTime = (int) plant.getFinishedConstruction();
+        int buildingTime = (int) plant.getActualLeadTime();
         for (int i = 0; i < buildingTime; i++) {
             reps.nonTransactionalCreateRepository.createCashFlow(agent, manufacturer, totalDownPayment / buildingTime,
                     CashFlow.DOWNPAYMENT, getCurrentTick() + i, plant);

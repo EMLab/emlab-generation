@@ -151,14 +151,14 @@ public class PowerPlantCSVFactoryTest {
                     + plant.getTechnology().getName() + ", Location: " + plant.getLocation().getName()
                     + ", contructionStarted: "
  + plant.getConstructionStartTime() + ", Age: "
-                    + -(plant.getConstructionStartTime() + plant.getFinishedConstruction() + plant.getActualPermittime())
+                    + -(plant.getConstructionStartTime() + plant.getActualLeadTime() + plant.getActualPermittime())
                     + ", Cap: " + plant.getActualNominalCapacity() + ", Eff: " + plant.getActualEfficiency());
             String name = plant.getName();
             if (name.equals("Coal1")) {
                 assertEquals("Correct tech", "coalPGT", plant.getTechnology().getName());
                 assertEquals("Correct location", "de", plant.getLocation().getName());
                 assertEquals("Correct age", 10,
-                        -(plant.getConstructionStartTime() + plant.getFinishedConstruction() + plant.getActualPermittime()));
+                        -(plant.getConstructionStartTime() + plant.getActualLeadTime() + plant.getActualPermittime()));
                 assertEquals("Correct capacity: ", 650.0, plant.getActualNominalCapacity(), 0.01);
                 assertEquals("Correct efficiency: ", 0.3, plant.getActualEfficiency(), 0.01);
                 assertEquals("Correct owner", "aon", plant.getOwner().getName());
@@ -167,7 +167,7 @@ public class PowerPlantCSVFactoryTest {
                 assertEquals("Correct tech", "coalPGT", plant.getTechnology().getName());
                 assertEquals("Correct location", "nl", plant.getLocation().getName());
                 assertEquals("Correct age", 30,
-                        -(plant.getConstructionStartTime() + plant.getFinishedConstruction() + plant.getActualPermittime()));
+                        -(plant.getConstructionStartTime() + plant.getActualLeadTime() + plant.getActualPermittime()));
                 assertEquals("Correct capacity: ", 500, plant.getActualNominalCapacity(), 0.01);
                 assertEquals("Correct efficiency: ", 0.37, plant.getActualEfficiency(), 0.01);
                 assertEquals("Correct owner", "swe", plant.getOwner().getName());
@@ -176,7 +176,7 @@ public class PowerPlantCSVFactoryTest {
                 assertEquals("Correct tech", "gasPGT", plant.getTechnology().getName());
                 assertEquals("Correct location", "nl", plant.getLocation().getName());
                 assertEquals("Correct age", 15,
-                        -(plant.getConstructionStartTime() + plant.getFinishedConstruction() + plant.getActualPermittime()));
+                        -(plant.getConstructionStartTime() + plant.getActualLeadTime() + plant.getActualPermittime()));
                 assertEquals("Correct capacity: ", 300, plant.getActualNominalCapacity(), 0.01);
                 assertEquals("Correct efficiency: ", 0.3, plant.getActualEfficiency(), 0.01);
                 assertEquals("Correct owner", "aon", plant.getOwner().getName());
@@ -185,7 +185,7 @@ public class PowerPlantCSVFactoryTest {
                 assertEquals("Correct tech", "gasPGT", plant.getTechnology().getName());
                 assertEquals("Correct location", "de", plant.getLocation().getName());
                 assertEquals("Correct age", 3,
-                        -(plant.getConstructionStartTime() + plant.getFinishedConstruction() + plant.getActualPermittime()));
+                        -(plant.getConstructionStartTime() + plant.getActualLeadTime() + plant.getActualPermittime()));
                 assertEquals("Correct capacity: ", 300, plant.getActualNominalCapacity(), 0.01);
                 assertEquals("Correct efficiency: ", 0.3, plant.getActualEfficiency(), 0.01);
                 assertTrue("Correct owner", (plant.getOwner().getName().equals("aon") || plant.getOwner().getName()

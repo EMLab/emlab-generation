@@ -59,8 +59,6 @@
 
 	<bean id="regulator" class="emlab.gen.domain.agent.Regulator"
 		p:name="Regulator NL" p:numberOfYearsLookingBackToForecastDemand="4"
-		p:equityInterestRate="0.12" p:loanInterestRate="0.09"
-		p:debtRatioOfInvestments="0.7">
 		<property name="zone" ref="nl" />
 	</bean>
 

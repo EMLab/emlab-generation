@@ -334,14 +334,14 @@ NodeBacked {
                         // Creation of out cash-flow during power plant building
                         // phase (note that the cash-flow is negative!)
                         TreeMap<Integer, Double> projectCapitalOutflow = calculateSimplePowerPlantInvestmentCashFlow(
-                                technology.getDepreciationTime(), (int) plant.getFinishedConstruction(),
+                                technology.getDepreciationTime(), (int) plant.getActualLeadTime(),
                                 plant.getActualInvestedCapital(), 0);
                         // Creation of in cashflow during operation
                         TreeMap<Integer, Double> projectCashInflow = calculateSimplePowerPlantInvestmentCashFlow(
-                                technology.getDepreciationTime(), (int) plant.getFinishedConstruction(), 0, operatingProfit);
+                                technology.getDepreciationTime(), (int) plant.getActualLeadTime(), 0, operatingProfit);
 
                         TreeMap<Integer, Double> projectCashInflowHistoricalCVar = calculateSimplePowerPlantInvestmentCashFlow(
-                                technology.getDepreciationTime(), (int) plant.getFinishedConstruction(), 0,
+                                technology.getDepreciationTime(), (int) plant.getActualLeadTime(), 0,
                                 historicalCvarOperatingProfit);
 
                         double discountedCapitalCosts = npv(projectCapitalOutflow, wacc);// are
@@ -490,7 +490,7 @@ NodeBacked {
     @Transactional
     private void createSpreadOutDownPayments(EnergyProducer agent, PowerPlantManufacturer manufacturer, double totalDownPayment,
             PowerPlant plant) {
-        int buildingTime = (int) plant.getFinishedConstruction();
+        int buildingTime = (int) plant.getActualLeadTime();
         reps.nonTransactionalCreateRepository.createCashFlow(agent, manufacturer, totalDownPayment / buildingTime,
                 CashFlow.DOWNPAYMENT, getCurrentTick(), plant);
         Loan downpayment = reps.loanRepository.createLoan(agent, manufacturer, totalDownPayment / buildingTime,

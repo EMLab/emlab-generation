@@ -67,7 +67,7 @@ public class ElectricityProducerFactory implements InitializingBean {
                                                 // the pipeline at the start?
         plant.setActualLeadtime(plant.getTechnology().getExpectedLeadtime());
         plant.setActualPermittime(plant.getTechnology().getExpectedPermittime());
-        plant.setExpectedEndOfLife(plant.getConstructionStartTime() + plant.getActualPermittime() + plant.getFinishedConstruction()
+        plant.setExpectedEndOfLife(plant.getConstructionStartTime() + plant.getActualPermittime() + plant.getActualLeadTime()
                 + plant.getTechnology().getExpectedLifetime());
 		plant.setActualNominalCapacity(technology.getCapacity() * location.getCapacityMultiplicationFactor());
         plant.calculateAndSetActualInvestedCapital(plant.getConstructionStartTime());
