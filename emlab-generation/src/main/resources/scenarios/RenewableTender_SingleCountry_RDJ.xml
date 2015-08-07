@@ -75,7 +75,7 @@ p:equityInterestRate="0.12" p:loanInterestRate="0.09"
 p:futureTenderOperationStartTime="5"
 p:supportSchemeDuration="15" 
 p:yearlyTenderDemandTarget-ref="nreapPolicyGoals2050NL"
-p:isTechnologySpecificityEnabled="false"
+p:isTechnologySpecificityEnabled="false">
 <property name="regulator" ref="regulator"/>
 <property name="powerGeneratingTechnologiesEligible">
 			<set>
@@ -87,7 +87,6 @@ p:isTechnologySpecificityEnabled="false"
 			</set>
 </property>
  <bean id="nreapPolicyGoals2050NL" class="emlab.gen.trend.TimeSeriesCSVReader" p:filename="/data/policyGoalNREAP_NL_2050.csv" p:startingYear="0" p:delimiter="," p:variableName="NREAP_NL" />
- 
 </bean>
 
 <bean id="interconnectorBeneluxGermany" class="emlab.gen.domain.technology.Interconnector"

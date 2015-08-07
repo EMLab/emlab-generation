@@ -41,7 +41,17 @@
 
 
 	<!-- capacity market specifications -->
-	<bean id="regulatorB" class="emlab.gen.domain.agent.Regulator" p:name="Regulator B" p:capacityMarketPriceCap="${capacityMarketPriceCap}" p:reserveMargin="${reserveMargin}" p:targetPeriod="0" p:reserveDemandLowerMargin="${reserveDemandLowerMargin}" p:reserveDemandUpperMargin="${reserveDemandUpperMargin}" p:numberOfYearsLookingBackToForecastDemand="4"><property name="zone" ref="de"/>
+	<bean id="regulatorB" class="emlab.gen.domain.agent.Regulator" 
+	p:name="Regulator B" 
+	p:capacityMarketPriceCap="${capacityMarketPriceCap}" 
+	p:reserveMargin="${reserveMargin}" 
+	p:targetPeriod="0" 
+	p:reserveDemandLowerMargin="${reserveDemandLowerMargin}" 
+	p:reserveDemandUpperMargin="${reserveDemandUpperMargin}" 
+	p:numberOfYearsLookingBackToForecastDemand="4">
+	
+	<property name="zone" ref="de"/>
+	
 </bean>
 <bean id="capacityMarketB" class="emlab.gen.domain.market.capacity.CapacityMarket" p:name="Capacity Market B"><property name="regulator" ref="regulatorB"/><property name="consumer" ref="energyConsumer"/><property name="zone" ref="de"/></bean>
 
