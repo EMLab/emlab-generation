@@ -764,7 +764,7 @@
 		p:applicableForLongTermContract="true" p:intermittent="false">
 		<property name="fuels">
 			<set>
-				<ref bean="biogas" />
+				<ref bean="biogasPGT" />
 			</set>
 		</property>
 	</bean>
