@@ -435,6 +435,12 @@
 				</entry>
 				<entry>
 					<key>
+						<ref bean="biogasPGT" />
+					</key>
+					<value>0.02</value>
+				</entry>
+				<entry>
+					<key>
 						<ref bean="nuclearPGT" />
 					</key>
 					<value>0.03</value>
@@ -741,6 +747,38 @@
 		p:growthRate="-0.004438785" p:start="59620" />
 	<bean id="biomassEfficiencyTimeSeries" class="emlab.gen.trend.GeometricTrend"
 		p:growthRate="0.000001" p:start=".35" />
+
+
+	<bean id="biogasPGT" class="emlab.gen.domain.technology.PowerGeneratingTechnology"
+		p:name="Biogas" p:capacity="500" p:investmentCostTimeSeries-ref="biogasInvestmentCostTimeSeries"
+		p:fixedOperatingCostTimeSeries-ref="biogasFixedOperatingCostTimeSeries"
+		p:efficiencyTimeSeries-ref="biogasEfficiencyTimeSeries"
+		p:co2CaptureEffciency="0" p:depreciationTime="15"
+		p:minimumRunningHours="0" p:fixedOperatingCostModifierAfterLifetime=".05"
+		p:expectedLifetime="30" p:expectedLeadtime="3" p:expectedPermittime="1"
+		p:minimumFuelQuality="0.5"
+		p:maximumInstalledCapacityFractionInCountry="1"
+		p:maximumInstalledCapacityFractionPerAgent="1"
+		p:baseSegmentDependentAvailability="0.7"
+		p:peakSegmentDependentAvailability="0.7"
+		p:applicableForLongTermContract="true" p:intermittent="false">
+		<property name="fuels">
+			<set>
+				<ref bean="biogas" />
+			</set>
+		</property>
+	</bean>
+
+	<bean id="biogasInvestmentCostTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader"
+		p:filename="/data/learningCurves.csv" p:startingYear="-50"
+		p:delimiter="," p:variableName="Biogas_Inv" />
+	<bean id="biogasFixedOperatingCostTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader"
+		p:filename="/data/learningCurves.csv" p:startingYear="-50"
+		p:delimiter="," p:variableName="Biogas_OM" />
+	<bean id="biogasEfficiencyTimeSeries" class="emlab.gen.trend.TimeSeriesCSVReader"
+		p:filename="/data/learningCurves.csv" p:startingYear="-50"
+		p:delimiter="," p:variableName="Biogas_Eff" />
+
 
 	<bean id="windPGT" class="emlab.gen.domain.technology.PowerGeneratingTechnology"
 		p:name="Wind" p:capacity="600" p:investmentCostTimeSeries-ref="windInvestmentCostTimeSeries"
