@@ -72,7 +72,7 @@ p:equityInterestRate="0.12" p:loanInterestRate="0.09"
 
 <bean id="renewableSupportScheme" class="emlab.gen.domain.policy.renewablesupport.RenewableSupportFipScheme" p:name="FeedInPremium"
 p:supportSchemeDuration="15" 
-p:feedInPremiumBiasFactor="1">
+p:feedInPremiumBiasFactor="4">
 <property name="regulator" ref="regulator"/>
 <property name="powerGeneratingTechnologiesEligible">
 			<set>
@@ -381,7 +381,7 @@ p:feedInPremiumBiasFactor="1">
 		p:numberOfYearsBacklookingForForecasting="${numberOfYearsBacklookingForForecasting}"
 		p:investorMarket-ref="beneluxElectricitySpotMarket"/>
 
-	<bean id="standardInvestmentRole" class="emlab.gen.role.investment.InvestInPowerGenerationTechnologiesRole"/>
+	<bean id="standardInvestmentRole" class="emlab.gen.role.investment.InvestInPowerGenerationTechnologiesStandard"/>
 
 	<!-- PowerGenerationTechnology Node Limits -->
 	

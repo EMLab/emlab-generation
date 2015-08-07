@@ -32,7 +32,7 @@ import emlab.gen.domain.technology.PowerPlant;
 @Repository
 public interface SupportPriceContractRepository extends GraphRepository<SupportPriceContract> {
 
-    @Query(value = "g.v(plant).in('CONTRACT_FOR_SUPPORTSCHEME')", type = QueryType.Gremlin)
+    @Query(value = "g.v(plant).in('CONTRACT_FOR_POWERPLANT')", type = QueryType.Gremlin)
     SupportPriceContract findOneContractByPowerPlant(@Param("plant") PowerPlant plant);
 
 }

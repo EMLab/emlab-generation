@@ -98,8 +98,9 @@ public class ComputePremiumRole extends AbstractEnergyProducerRole<EnergyProduce
                 ((LinkedList<PowerGridNode>) possibleInstallationNodes).add(reps.powerGridNodeRepository
                         .findAllPowerGridNodesByZone(regulator.getZone()).iterator().next());
             }
-            logger.warn(
-                    "Calculating for " + technology.getName() + ", for Nodes: " + possibleInstallationNodes.toString());
+            // logger.warn(
+            // "Calculating for " + technology.getName() + ", for Nodes: " +
+            // possibleInstallationNodes.toString());
 
             for (PowerGridNode node : possibleInstallationNodes) {
 
@@ -110,8 +111,9 @@ public class ComputePremiumRole extends AbstractEnergyProducerRole<EnergyProduce
                 EnergyProducer producer = reps.energyProducerRepository.findAll().iterator().next();
 
                 plant.specifyNotPersist(getCurrentTick(), producer, node, technology);
-                logger.warn("creating a new power plant for " + producer.getName() + ", of technology "
-                        + plant.getTechnology().getName());
+                // logger.warn("creating a new power plant for " +
+                // producer.getName() + ", of technology "
+                // + plant.getTechnology().getName());
 
                 Map<Substance, Double> myFuelPrices = new HashMap<Substance, Double>();
                 for (Substance fuel : technology.getFuels()) {
@@ -159,14 +161,17 @@ public class ComputePremiumRole extends AbstractEnergyProducerRole<EnergyProduce
                 totalGenerationinMWh = fullLoadHours * plant.getActualNominalCapacity();
                 annualMarginalCost = totalGenerationinMWh * mc;
 
-                logger.warn("Annual Marginal cost for technology " + plant.getTechnology().getName() + " is  "
-                        + annualMarginalCost + " and total generation is  " + totalGenerationinMWh);
+                // logger.warn("Annual Marginal cost for technology " +
+                // plant.getTechnology().getName() + " is "
+                // + annualMarginalCost + " and total generation is " +
+                // totalGenerationinMWh);
 
                 double fixedOMCost = calculateFixedOperatingCost(plant, getCurrentTick());
                 double operatingCost = fixedOMCost + annualMarginalCost;
 
-                logger.warn("Fixed OM cost for technology " + plant.getTechnology().getName() + " is  " + fixedOMCost
-                        + " and operatingCost is  " + operatingCost);
+                // logger.warn("Fixed OM cost for technology " +
+                // plant.getTechnology().getName() + " is " + fixedOMCost
+                // + " and operatingCost is " + operatingCost);
 
                 TreeMap<Integer, Double> discountedProjectCapitalOutflow = calculateSimplePowerPlantInvestmentCashFlow(
                         technology.getDepreciationTime(), (int) plant.getActualLeadtime(),
@@ -195,9 +200,12 @@ public class ComputePremiumRole extends AbstractEnergyProducerRole<EnergyProduce
                 baseCostFip.setNode(node);
                 baseCostFip.setTechnology(technology);
                 baseCostFip.setEndTime(getCurrentTick() + scheme.getSupportSchemeDuration());
+                baseCostFip.persist();
 
-                logger.warn("LCOE in per MWH for technology " + plant.getTechnology().getName() + "for node "
-                        + baseCostFip.getNode().getNodeId() + " is , " + baseCostFip.getCostPerMWh());
+                // logger.warn("LCOE in per MWH for technology " +
+                // plant.getTechnology().getName() + "for node "
+                // + baseCostFip.getNode().getNodeId() + " is , " +
+                // baseCostFip.getCostPerMWh());
 
             }
         }
