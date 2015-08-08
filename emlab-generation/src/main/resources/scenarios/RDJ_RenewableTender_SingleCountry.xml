@@ -80,8 +80,11 @@
 	</bean>
 
 	<bean id="nreapPolicyGoals2050NL" class="emlab.gen.trend.TimeSeriesCSVReader"
-		p:filename="/data/policyGoalNREAP_NL_2050.csv" p:startingYear="0"
-		p:delimiter="," p:variableName="NREAP_NL" />
+		p:filename="/data/policyGoalNREAP_NL_2050_correct.csv" p:delimiter=","
+		p:variableName="NREAP_NL" />
+
+
+
 
 
 	<bean id="interconnectorBeneluxGermany" class="emlab.gen.domain.technology.Interconnector"
