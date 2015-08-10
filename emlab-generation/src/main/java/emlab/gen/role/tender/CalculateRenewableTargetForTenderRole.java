@@ -57,10 +57,17 @@ public class CalculateRenewableTargetForTenderRole extends AbstractRole<Renewabl
         demandFactor = predictDemandForElectricitySpotMarket(market, scheme.getRegulator()
                 .getNumberOfYearsLookingBackToForecastDemand(), scheme.getFutureTenderOperationStartTime());
 
+        logger.warn("demandFactor for this tick: " + demandFactor);
+
         // get renewable energy target in factor (percent)
         RenewableTargetForTender target = reps.renewableTargetForTenderRepository
                 .findRenewableTargetForTenderByRegulator(scheme.getRegulator());
         targetFactor = target.getTrend().getValue(scheme.getFutureTenderOperationStartTime());
+
+        logger.warn("targetFactor for this tick: " + targetFactor);
+        logger.warn("futureTenderOperationsStartTime for this tick is: "
+                + target.getTrend().getValue(scheme.getFutureTenderOperationStartTime()));
+        logger.warn("targetFactor for this tick: " + targetFactor);
 
         // get totalLoad in MWh
         double totalConsumption = 0;
@@ -71,6 +78,8 @@ public class CalculateRenewableTargetForTenderRole extends AbstractRole<Renewabl
 
         // renewable target for tender operation start year in MWh is
         double renewableTargetInMwh = targetFactor * totalConsumption;
+
+        logger.warn("renewableTargetInMwh for this tick: " + renewableTargetInMwh);
 
         // calculate expected generation, and subtract that from annual target.
         // will be ActualTarget
@@ -115,6 +124,8 @@ public class CalculateRenewableTargetForTenderRole extends AbstractRole<Renewabl
 
         renewableTargetInMwh = renewableTargetInMwh - totalExpectedGeneration;
         scheme.getRegulator().setAnnualRenewableTargetInMwh(renewableTargetInMwh);
+
+        logger.warn("actual renewableTargetInMwh for this tick: " + renewableTargetInMwh);
 
     }
 
