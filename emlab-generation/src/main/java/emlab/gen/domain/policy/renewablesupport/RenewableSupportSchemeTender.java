@@ -26,7 +26,6 @@ import agentspring.simulation.SimulationParameter;
 import emlab.gen.domain.agent.DecarbonizationAgent;
 import emlab.gen.domain.agent.Regulator;
 import emlab.gen.domain.technology.PowerGeneratingTechnology;
-import emlab.gen.trend.TimeSeriesImpl;
 
 /**
  * @author Kaveri3012 A generic renewable support scheme role, meant to be able
@@ -52,13 +51,13 @@ public class RenewableSupportSchemeTender extends DecarbonizationAgent implement
 
     private long futureTenderOperationStartTime;
 
-    private TimeSeriesImpl yearlyTenderDemandTarget;
+    private double yearlyTenderDemandTarget;
 
-    public TimeSeriesImpl getYearlyTenderDemandTarget() {
+    public double getYearlyTenderDemandTarget() {
         return yearlyTenderDemandTarget;
     }
 
-    public void setYearlyTenderDemandTarget(TimeSeriesImpl yearlyTenderDemandTarget) {
+    public void setYearlyTenderDemandTarget(double yearlyTenderDemandTarget) {
         this.yearlyTenderDemandTarget = yearlyTenderDemandTarget;
     }
 

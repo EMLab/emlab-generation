@@ -65,7 +65,7 @@
 	<bean id="renewableSupportScheme"
 		class="emlab.gen.domain.policy.renewablesupport.RenewableSupportSchemeTender"
 		p:name="RenewableTender" p:futureTenderOperationStartTime="5"
-		p:supportSchemeDuration="15" p:yearlyTenderDemandTarget-ref="nreapPolicyGoals2050NL">
+		p:supportSchemeDuration="15">
 
 		<property name="regulator" ref="regulator" />
 		<property name="powerGeneratingTechnologiesEligible">
@@ -78,10 +78,15 @@
 		</property>
 	</bean>
 
-	<bean id="nreapPolicyGoals2050NL" class="emlab.gen.trend.TimeSeriesCSVReader"
-		p:filename="/data/policyGoalNREAP_NL_2050_correct.csv" p:delimiter=","
-		p:variableName="yearlyTenderDemandTarget" />
 
+	<bean id="renewableTenderTarget"
+		class="emlab.gen.domain.policy.renewablesupport.RenewableTargetForTender"
+		p:yearlyTenderDemandTarget-ref="nl_nreap">
+	</bean>
+
+	<bean id="nl_nreap" class="emlab.gen.trend.TimeSeriesCSVReader"
+		p:filename="/data/policyGoalNREAP_NL_DE_2050.csv" p:delimiter=","
+		p:variableName="nl_target" />
 
 	<bean id="interconnectorBeneluxGermany" class="emlab.gen.domain.technology.Interconnector"
 		p:capacity="0">
