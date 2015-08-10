@@ -65,8 +65,7 @@
 	<bean id="renewableSupportScheme"
 		class="emlab.gen.domain.policy.renewablesupport.RenewableSupportSchemeTender"
 		p:name="RenewableTender" p:futureTenderOperationStartTime="5"
-		p:supportSchemeDuration="15" p:trend-ref="nreapPolicyGoals2050NL"
-		p:isTechnologySpecificityEnabled="false">
+		p:supportSchemeDuration="15" p:trend-ref="nreapPolicyGoals2050NL">
 
 		<property name="regulator" ref="regulator" />
 		<property name="powerGeneratingTechnologiesEligible">
