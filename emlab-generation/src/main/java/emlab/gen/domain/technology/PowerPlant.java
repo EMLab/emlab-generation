@@ -95,7 +95,7 @@ public class PowerPlant {
     private double finishedConstruction;
 
     public long getFinishedConstruction() {
-        return finishedConstruction;
+        return (long) finishedConstruction;
     }
 
     public void setFinishedConstruction(long finishedConstruction) {
