@@ -38,8 +38,8 @@ import emlab.gen.util.GeometricTrendRegression;
  */
 
 @RoleComponent
-public class CalculateRenewableTargetForTenderRole extends AbstractRole<RenewableSupportSchemeTender> implements
-        Role<RenewableSupportSchemeTender> {
+public class CalculateRenewableTargetForTenderRole extends AbstractRole<RenewableSupportSchemeTender>
+        implements Role<RenewableSupportSchemeTender> {
 
     @Autowired
     Reps reps;
@@ -54,19 +54,20 @@ public class CalculateRenewableTargetForTenderRole extends AbstractRole<Renewabl
         ElectricitySpotMarket market = reps.marketRepository.findElectricitySpotMarketForZone(zone);
 
         // get demand factor
-        demandFactor = predictDemandForElectricitySpotMarket(market, scheme.getRegulator()
-                .getNumberOfYearsLookingBackToForecastDemand(), scheme.getFutureTenderOperationStartTime());
+        demandFactor = predictDemandForElectricitySpotMarket(market,
+                scheme.getRegulator().getNumberOfYearsLookingBackToForecastDemand(),
+                scheme.getFutureTenderOperationStartTime());
 
         logger.warn("demandFactor for this tick: " + demandFactor);
 
         // get renewable energy target in factor (percent)
         RenewableTargetForTender target = reps.renewableTargetForTenderRepository
                 .findRenewableTargetForTenderByRegulator(scheme.getRegulator());
-        targetFactor = target.getTrend().getValue(scheme.getFutureTenderOperationStartTime());
+        targetFactor = target.getYearlyRenewableTargetTimeSeries().getValue(scheme.getFutureTenderOperationStartTime());
 
         logger.warn("targetFactor for this tick: " + targetFactor);
         logger.warn("futureTenderOperationsStartTime for this tick is: "
-                + target.getTrend().getValue(scheme.getFutureTenderOperationStartTime()));
+                + target.getYearlyRenewableTargetTimeSeries().getValue(scheme.getFutureTenderOperationStartTime()));
         logger.warn("targetFactor for this tick: " + targetFactor);
 
         // get totalLoad in MWh

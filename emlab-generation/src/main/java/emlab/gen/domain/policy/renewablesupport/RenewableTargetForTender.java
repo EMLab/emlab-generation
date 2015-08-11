@@ -22,6 +22,7 @@ import org.springframework.data.neo4j.annotation.RelatedTo;
 import emlab.gen.domain.agent.Regulator;
 import emlab.gen.domain.technology.PowerGeneratingTechnology;
 import emlab.gen.domain.technology.PowerGridNode;
+import emlab.gen.trend.TimeSeriesCSVReader;
 import emlab.gen.trend.TimeSeriesImpl;
 
 /**
@@ -41,7 +42,7 @@ public class RenewableTargetForTender {
     PowerGridNode powerGridNode;
 
     @RelatedTo(type = "TARGET_TREND", elementClass = TimeSeriesImpl.class, direction = Direction.OUTGOING)
-    TimeSeriesImpl trend;
+    TimeSeriesCSVReader yearlyRenewableTargetTimeSeries;
 
     public Regulator getRegulator() {
         return regulator;
@@ -67,12 +68,12 @@ public class RenewableTargetForTender {
         this.powerGridNode = powerGridNode;
     }
 
-    public TimeSeriesImpl getTrend() {
-        return trend;
+    public TimeSeriesCSVReader getYearlyRenewableTargetTimeSeries() {
+        return yearlyRenewableTargetTimeSeries;
     }
 
-    public void setTrend(TimeSeriesImpl trend) {
-        this.trend = trend;
+    public void setYearlyRenewableTargetTimeSeries(TimeSeriesCSVReader yearlyRenewableTargetTimeSeries) {
+        this.yearlyRenewableTargetTimeSeries = yearlyRenewableTargetTimeSeries;
     }
 
 }

@@ -81,7 +81,7 @@
 
 	<bean id="renewableTenderTarget"
 		class="emlab.gen.domain.policy.renewablesupport.RenewableTargetForTender"
-		p:yearlyTenderDemandTarget-ref="nl_nreap">
+		p:yearlyRenewableTargetTimeSeries="nl_nreap">
 	</bean>
 
 	<bean id="nl_nreap" class="emlab.gen.trend.TimeSeriesCSVReader"
