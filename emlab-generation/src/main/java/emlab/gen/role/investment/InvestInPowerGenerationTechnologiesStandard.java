@@ -310,7 +310,7 @@ public class InvestInPowerGenerationTechnologiesStandard<T extends EnergyProduce
                         // technology, runningHours);
                     } else {
 
-                        double fixedOMCost = calculateFixedOperatingCost(plant, getCurrentTick());// /
+                        double fixedOMCost = calculateFixedOperatingCost(plant, getCurrentTick());
                         // plant.getActualNominalCapacity();
 
                         double expectedBaseCost = predictSubsidyFip(agent, futureTimePoint, node, technology);
@@ -321,6 +321,9 @@ public class InvestInPowerGenerationTechnologiesStandard<T extends EnergyProduce
                         double supportFromFip = 0d;
                         if (expectedBaseCost > 0d)
                             supportFromFip = expectedBaseCost * runningHours - expectedRevenue;
+
+                        logger.warn(" Support from FIP in per MWH for technology " + plant.getTechnology().getName()
+                                + "for node " + node.getNodeId() + " is , " + supportFromFip);
 
                         double operatingProfit = expectedGrossProfit - fixedOMCost + supportFromFip;
                         // Calculation of weighted average cost of capital,

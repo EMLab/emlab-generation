@@ -85,11 +85,20 @@ public class FeedInPremiumRole extends AbstractRole<RenewableSupportFipScheme> {
 
                 logger.warn("Inside power grid node loop");
 
+                Iterable<PowerPlant> plantSet;
+
+                if (getCurrentTick() >= 1) {
+                    plantSet = reps.powerPlantRepository
+                            .findPowerPlantsStartingOperationThisTickByPowerGridNodeAndTechnology(node, technology,
+                                    getCurrentTick());
+                } else {
+                    plantSet = reps.powerPlantRepository.findOperationalPowerPlantsByPowerGridNodeAndTechnology(node,
+                            technology, getCurrentTick());
+                }
+
                 // query to find power plants by node and technology who have
                 // finished construction this tick
-                for (PowerPlant plant : reps.powerPlantRepository
-                        .findPowerPlantsStartingOperationThisTickByPowerGridNodeAndTechnology(node, technology,
-                                getCurrentTick())) {
+                for (PowerPlant plant : plantSet) {
 
                     long finishedConstruction = plant.getConstructionStartTime() + plant.calculateActualPermittime()
                             + plant.calculateActualLeadtime();

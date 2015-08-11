@@ -187,9 +187,10 @@ public class ComputePremiumRole extends AbstractEnergyProducerRole<EnergyProduce
                         + regulator.getDebtRatioOfInvestments() * regulator.getLoanInterestRate();
 
                 double discountedCapitalCosts = npv(discountedProjectCapitalOutflow, wacc);
-                logger.warn("discountedCapitalCosts " + discountedCapitalCosts);
+                // logger.warn("discountedCapitalCosts " +
+                // discountedCapitalCosts);
                 double discountedOpCost = npv(discountedProjectCashOutflow, wacc);
-                logger.warn("discountedOpCost " + discountedOpCost);
+                // logger.warn("discountedOpCost " + discountedOpCost);
                 lcoe = (discountedCapitalCosts + discountedOpCost) * scheme.getFeedInPremiumBiasFactor()
                         / (totalGenerationinMWh * scheme.getSupportSchemeDuration());
 
