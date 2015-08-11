@@ -87,8 +87,7 @@ public class SubmitTenderBidRole extends AbstractEnergyProducerRole<EnergyProduc
     public void act(EnergyProducer agent) {
 
         long futureTimePoint = getCurrentTick() + agent.getInvestmentFutureTimeHorizon();
-        // logger.warn(agent + " is double highestValue =
-        // Double.MIN_VALUE;looking at timepoint " + futureTimePoint);
+        logger.warn(agent + " looking at timepoint " + futureTimePoint);
 
         // ==== Expectations ===
 
@@ -146,9 +145,8 @@ public class SubmitTenderBidRole extends AbstractEnergyProducerRole<EnergyProduc
                         .findAllPowerGridNodesByZone(market.getZone()).iterator().next());
             }
 
-            // logger.warn("Calculating for " + technology.getName() +
-            // ", for Nodes: "
-            // + possibleInstallationNodes.toString());
+            logger.warn("Calculating for " + technology.getName() + ", for Nodes: "
+                    + possibleInstallationNodes.toString());
 
             for (PowerGridNode node : possibleInstallationNodes) {
 
@@ -275,11 +273,11 @@ public class SubmitTenderBidRole extends AbstractEnergyProducerRole<EnergyProduc
                     // Creation of out cash-flow during power plant building
                     // phase (note that the cash-flow is negative!)
                     TreeMap<Integer, Double> discountedProjectCapitalOutflow = calculateSimplePowerPlantInvestmentCashFlow(
-                            technology.getDepreciationTime(), (int) plant.getActualLeadTime(),
+                            technology.getDepreciationTime(), (int) plant.getFinishedConstruction(),
                             plant.getActualInvestedCapital(), 0);
                     // Creation of in cashflow during operation
                     TreeMap<Integer, Double> discountedProjectCashInflow = calculateSimplePowerPlantInvestmentCashFlow(
-                            technology.getDepreciationTime(), (int) plant.getActualLeadTime(), 0, operatingProfit);
+                            technology.getDepreciationTime(), (int) plant.getFinishedConstruction(), 0, operatingProfit);
 
                     double discountedCapitalCosts = npv(discountedProjectCapitalOutflow, wacc);
                     double discountedOpProfit = npv(discountedProjectCashInflow, wacc);
@@ -291,7 +289,7 @@ public class SubmitTenderBidRole extends AbstractEnergyProducerRole<EnergyProduc
                         // calculate discounted tender return factor term
 
                         TreeMap<Integer, Double> discountedTenderReturnFactorSummingTerm = calculateSimplePowerPlantInvestmentCashFlow(
-                                (int) tenderSchemeDuration, (int) plant.getActualLeadTime(), 0, 1);
+                                (int) tenderSchemeDuration, (int) plant.getFinishedConstruction(), 0, 1);
                         double discountedTenderReturnFactor = npv(discountedTenderReturnFactorSummingTerm, wacc);
                         // calculate generation in MWh per year
                         bidPricePerMWh = -projectValue
@@ -309,10 +307,19 @@ public class SubmitTenderBidRole extends AbstractEnergyProducerRole<EnergyProduc
                         bid.setPrice(bidPricePerMWh);
                         bid.setPowerGridNode(node);
                         bid.setTechnology(technology);
-                        bid.setStart(getCurrentTick() + plant.getActualLeadTime());
-                        bid.setFinish(getCurrentTick() + plant.getActualLeadTime() + tenderSchemeDuration);
+                        bid.setStart(getCurrentTick() + plant.getFinishedConstruction());
+                        bid.setFinish(getCurrentTick() + plant.getFinishedConstruction() + tenderSchemeDuration);
                         bid.setTime(getCurrentTick());
                         bid.persist();
+
+                        logger.warn(" bid amount of " + agent + " is " + totalAnnualExpectedGenerationOfPlant);
+                        logger.warn(" bid price of " + agent + " is " + bidPricePerMWh);
+                        logger.warn(" bid node of " + agent + " is " + node);
+                        logger.warn(" bid technology of " + agent + " is " + technology);
+                        logger.warn(" bid start time tender support of " + agent + " is " + getCurrentTick()
+                                + plant.getFinishedConstruction());
+                        logger.warn(" bid end time tender support of " + agent + " is " + getCurrentTick()
+                                + plant.getFinishedConstruction() + tenderSchemeDuration);
 
                     }
 
@@ -329,7 +336,7 @@ public class SubmitTenderBidRole extends AbstractEnergyProducerRole<EnergyProduc
     @Transactional
     private void createSpreadOutDownPayments(EnergyProducer agent, PowerPlantManufacturer manufacturer,
             double totalDownPayment, PowerPlant plant) {
-        int buildingTime = (int) plant.getActualLeadTime();
+        int buildingTime = (int) plant.getFinishedConstruction();
         reps.nonTransactionalCreateRepository.createCashFlow(agent, manufacturer, totalDownPayment / buildingTime,
                 CashFlow.DOWNPAYMENT, getCurrentTick(), plant);
         Loan downpayment = reps.loanRepository.createLoan(agent, manufacturer, totalDownPayment / buildingTime,
