@@ -92,10 +92,10 @@ public class PowerPlant {
     public double ageFraction;
     public double profitability;
 
-    private double finishedConstruction;
+    private long finishedConstruction;
 
     public long getFinishedConstruction() {
-        return (long) finishedConstruction;
+        return finishedConstruction;
     }
 
     public void setFinishedConstruction(long finishedConstruction) {
@@ -439,20 +439,20 @@ public class PowerPlant {
      * @param timeOfPermitorBuildingStart
      */
     public void calculateAndSetActualInvestedCapital(long timeOfPermitorBuildingStart) {
-        setActualInvestedCapital(this.getTechnology().getInvestmentCost(
-                timeOfPermitorBuildingStart + getActualLeadTime() + getActualPermittime())
+        setActualInvestedCapital(this.getTechnology()
+                .getInvestmentCost(timeOfPermitorBuildingStart + getActualLeadTime() + getActualPermittime())
                 * getActualNominalCapacity());
     }
 
     public void calculateAndSetActualFixedOperatingCosts(long timeOfPermitorBuildingStart) {
-        setActualFixedOperatingCost(this.getTechnology().getFixedOperatingCost(
-                timeOfPermitorBuildingStart + getActualLeadTime() + getActualPermittime())
+        setActualFixedOperatingCost(this.getTechnology()
+                .getFixedOperatingCost(timeOfPermitorBuildingStart + getActualLeadTime() + getActualPermittime())
                 * getActualNominalCapacity());
     }
 
     public void calculateAndSetActualEfficiency(long timeOfPermitorBuildingStart) {
-        this.setActualEfficiency(this.getTechnology().getEfficiency(
-                timeOfPermitorBuildingStart + getActualLeadTime() + getActualPermittime()));
+        this.setActualEfficiency(this.getTechnology()
+                .getEfficiency(timeOfPermitorBuildingStart + getActualLeadTime() + getActualPermittime()));
     }
 
     public double calculateEmissionIntensity() {
@@ -528,8 +528,8 @@ public class PowerPlant {
         this.setDismantleTime(1000);
         this.calculateAndSetActualInvestedCapital(time);
         this.calculateAndSetActualFixedOperatingCosts(time);
-        this.setExpectedEndOfLife(time + getActualPermittime() + getActualLeadTime()
-                + getTechnology().getExpectedLifetime());
+        this.setExpectedEndOfLife(
+                time + getActualPermittime() + getActualLeadTime() + getTechnology().getExpectedLifetime());
     }
 
     @Transactional
