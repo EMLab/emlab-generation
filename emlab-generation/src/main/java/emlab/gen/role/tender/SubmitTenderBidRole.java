@@ -87,8 +87,7 @@ public class SubmitTenderBidRole extends AbstractEnergyProducerRole<EnergyProduc
     public void act(EnergyProducer agent) {
 
         long futureTimePoint = getCurrentTick() + agent.getInvestmentFutureTimeHorizon();
-        // logger.warn(agent + " is double highestValue =
-        // Double.MIN_VALUE;looking at timepoint " + futureTimePoint);
+        logger.warn(agent + " looking at timepoint " + futureTimePoint);
 
         // ==== Expectations ===
 
@@ -146,9 +145,8 @@ public class SubmitTenderBidRole extends AbstractEnergyProducerRole<EnergyProduc
                         .findAllPowerGridNodesByZone(market.getZone()).iterator().next());
             }
 
-            // logger.warn("Calculating for " + technology.getName() +
-            // ", for Nodes: "
-            // + possibleInstallationNodes.toString());
+            logger.warn("Calculating for " + technology.getName() + ", for Nodes: "
+                    + possibleInstallationNodes.toString());
 
             for (PowerGridNode node : possibleInstallationNodes) {
 
