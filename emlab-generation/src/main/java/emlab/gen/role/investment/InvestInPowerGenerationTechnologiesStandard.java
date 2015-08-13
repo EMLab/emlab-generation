@@ -271,7 +271,7 @@ public class InvestInPowerGenerationTechnologiesStandard<T extends EnergyProduce
                     double runningHours = 0d;
                     double expectedGrossProfit = 0d;
                     double expectedRevenue = 0d;
-
+                    double expectedGeneration = 0d;
                     long numberOfSegments = reps.segmentRepository.count();
 
                     // TODO somehow the prices of long-term contracts could also
@@ -296,6 +296,8 @@ public class InvestInPowerGenerationTechnologiesStandard<T extends EnergyProduce
                                                 numberOfSegments);
                             expectedRevenue += expectedElectricityPrice * hours * plant
                                     .getAvailableCapacity(futureTimePoint, segmentLoad.getSegment(), numberOfSegments);
+                            expectedGeneration += hours * plant.getAvailableCapacity(futureTimePoint,
+                                    segmentLoad.getSegment(), numberOfSegments);
                         }
                     }
 
@@ -314,16 +316,24 @@ public class InvestInPowerGenerationTechnologiesStandard<T extends EnergyProduce
                         // plant.getActualNominalCapacity();
 
                         double expectedBaseCost = predictSubsidyFip(agent, futureTimePoint, node, technology);
+                        // logger.warn(" expected base cost " +
+                        // plant.getTechnology().getName() + "for node "
+                        // + node.getNodeId() + " is , " + supportFromFip);
 
                         // if condition to make sure support is zero if FiP
                         // scheme for a certain country is not on, based on the
                         // existence of BaseCost objects.
                         double supportFromFip = 0d;
                         if (expectedBaseCost > 0d)
-                            supportFromFip = expectedBaseCost * runningHours - expectedRevenue;
+                            supportFromFip = expectedBaseCost * expectedGeneration - expectedRevenue;
 
-                        logger.warn(" Support from FIP in per MWH for technology " + plant.getTechnology().getName()
-                                + "for node " + node.getNodeId() + " is , " + supportFromFip);
+                        logger.warn(" expected FIP details for technology " + plant.getTechnology().getName()
+                                + "for node " + node.getNodeId());
+
+                        logger.warn("Expected Base Cost " + expectedBaseCost);
+                        logger.warn("Expected Total Generation " + expectedGeneration);
+                        logger.warn("Expected Revenue from EM " + expectedRevenue);
+                        logger.warn("Expected Annual Subsidy " + supportFromFip);
 
                         double operatingProfit = expectedGrossProfit - fixedOMCost + supportFromFip;
                         // Calculation of weighted average cost of capital,
@@ -434,16 +444,13 @@ public class InvestInPowerGenerationTechnologiesStandard<T extends EnergyProduce
         SimpleRegression gtr = new SimpleRegression();
         if (BaseCostFipSet != null) {
             for (BaseCostFip baseCostFip : BaseCostFipSet) {
-                // logger.warn("CP {}: {} , in" + clearingPoint.getTime(),
-                // substance.getName(), clearingPoint.getPrice());
+                logger.warn("Base cost FIP {} , in" + baseCostFip.getCostPerMWh());
+
                 gtr.addData(baseCostFip.getStartTime(), baseCostFip.getCostPerMWh());
             }
-            // gtr.addData(getCurrentTick(),
-            // findLastKnownPriceForSubstance(substance, getCurrentTick()));
             expectedBaseCostFip = gtr.predict(futureTimePoint);
         }
-        // logger.warn("Forecast {}: {}, in Step " + futureTimePoint,
-        // substance, expectedFuelPrices.get(substance));
+        logger.warn("Forecast {}: in Step " + futureTimePoint, gtr.predict(futureTimePoint));
         return expectedBaseCostFip;
     }
 

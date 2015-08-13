@@ -16,7 +16,6 @@
 package emlab.gen.role.renewablesupport;
 
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -84,25 +83,11 @@ public class ComputePremiumRole extends AbstractEnergyProducerRole<EnergyProduce
             DecarbonizationModel model = reps.genericRepository.findAll(DecarbonizationModel.class).iterator().next();
             if (technology.isIntermittent() && model.isNoPrivateIntermittentRESInvestment())
                 continue;
-            Iterable<PowerGridNode> possibleInstallationNodes;
-
-            /*
-             * For dispatchable technologies just choose a random node. For
-             * intermittent evaluate all possibilities.
-             */
-            if (technology.isIntermittent())
-                possibleInstallationNodes = reps.powerGridNodeRepository
-                        .findAllPowerGridNodesByZone(regulator.getZone());
-            else {
-                possibleInstallationNodes = new LinkedList<PowerGridNode>();
-                ((LinkedList<PowerGridNode>) possibleInstallationNodes).add(reps.powerGridNodeRepository
-                        .findAllPowerGridNodesByZone(regulator.getZone()).iterator().next());
-            }
             // logger.warn(
             // "Calculating for " + technology.getName() + ", for Nodes: " +
             // possibleInstallationNodes.toString());
 
-            for (PowerGridNode node : possibleInstallationNodes) {
+            for (PowerGridNode node : reps.powerGridNodeRepository.findAllPowerGridNodesByZone(regulator.getZone())) {
 
                 // or create a new power plant if above statement returns null,
                 // and assign it to a random energy producer.
@@ -161,10 +146,8 @@ public class ComputePremiumRole extends AbstractEnergyProducerRole<EnergyProduce
                 totalGenerationinMWh = fullLoadHours * plant.getActualNominalCapacity();
                 annualMarginalCost = totalGenerationinMWh * mc;
 
-                // logger.warn("Annual Marginal cost for technology " +
-                // plant.getTechnology().getName() + " is "
-                // + annualMarginalCost + " and total generation is " +
-                // totalGenerationinMWh);
+                logger.warn("for technology " + plant.getTechnology().getName() + " total generation is "
+                        + totalGenerationinMWh);
 
                 double fixedOMCost = calculateFixedOperatingCost(plant, getCurrentTick());
                 double operatingCost = fixedOMCost + annualMarginalCost;
@@ -187,10 +170,9 @@ public class ComputePremiumRole extends AbstractEnergyProducerRole<EnergyProduce
                         + regulator.getDebtRatioOfInvestments() * regulator.getLoanInterestRate();
 
                 double discountedCapitalCosts = npv(discountedProjectCapitalOutflow, wacc);
-                // logger.warn("discountedCapitalCosts " +
-                // discountedCapitalCosts);
+                logger.warn("discountedCapitalCosts " + discountedCapitalCosts);
                 double discountedOpCost = npv(discountedProjectCashOutflow, wacc);
-                // logger.warn("discountedOpCost " + discountedOpCost);
+                logger.warn("discountedOpCost " + discountedOpCost);
                 lcoe = (discountedCapitalCosts + discountedOpCost) * scheme.getFeedInPremiumBiasFactor()
                         / (totalGenerationinMWh * scheme.getSupportSchemeDuration());
 
@@ -203,10 +185,8 @@ public class ComputePremiumRole extends AbstractEnergyProducerRole<EnergyProduce
                 baseCostFip.setEndTime(getCurrentTick() + scheme.getSupportSchemeDuration());
                 baseCostFip.persist();
 
-                // logger.warn("LCOE in per MWH for technology " +
-                // plant.getTechnology().getName() + "for node "
-                // + baseCostFip.getNode().getNodeId() + " is , " +
-                // baseCostFip.getCostPerMWh());
+                logger.warn("LCOE in per MWH for technology " + plant.getTechnology().getName() + "for node "
+                        + baseCostFip.getNode().getNodeId() + " is , " + baseCostFip.getCostPerMWh());
 
             }
         }

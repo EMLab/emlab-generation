@@ -40,8 +40,9 @@ import emlab.gen.repository.Reps;
 
 /**
  * @author Kaveri3012 for loop through eligible, operational power plants,
- *         create support price contract for each technology SupportPrice =
- *         electricityMarketPrice*(1+premiumFactor) for 15 years?
+ *         create support price contract for each technology, using
+ * 
+ *         supportPrice = baseCost*TotalGeneration - ElectricityMarketRevenue
  * 
  *         Assumption: when the policy is implemented for a certain country, all
  *         operational, eligible plants in that zone receive the premium by
@@ -78,12 +79,13 @@ public class FeedInPremiumRole extends AbstractRole<RenewableSupportFipScheme> {
             Iterable<PowerGridNode> possibleInstallationNodes = reps.powerGridNodeRepository
                     .findAllPowerGridNodesByZone(regulator.getZone());
 
-            logger.warn("Calculating FEED IN PREMIUM for " + technology.getName() + ", for Nodes: "
-                    + possibleInstallationNodes.toString());
+            // logger.warn("Calculating FEED IN PREMIUM for " +
+            // technology.getName() + ", for Nodes: "
+            // + possibleInstallationNodes.toString());
 
             for (PowerGridNode node : possibleInstallationNodes) {
 
-                logger.warn("Inside power grid node loop");
+                // logger.warn("Inside power grid node loop");
 
                 Iterable<PowerPlant> plantSet;
 
@@ -103,11 +105,11 @@ public class FeedInPremiumRole extends AbstractRole<RenewableSupportFipScheme> {
                     long finishedConstruction = plant.getConstructionStartTime() + plant.calculateActualPermittime()
                             + plant.calculateActualLeadtime();
 
-                    logger.warn("Found power plants starting operation this year, Printing finished construction"
-                            + finishedConstruction + "and current tick " + getCurrentTick());
-                    // long timeNow = getCurrentTick();
+                    logger.warn("Printing finished construction" + finishedConstruction + "and current tick "
+                            + getCurrentTick());
+                            // long timeNow = getCurrentTick();
 
-                    logger.warn("Inside contract creation loop");
+                    // logger.warn("Inside contract creation loop");
                     // create a query to get base cost.
                     BaseCostFip baseCost = reps.baseCostFipRepository.findOneBaseCostForTechnologyAndNodeAndTime(node,
                             technology, getCurrentTick());
@@ -118,8 +120,10 @@ public class FeedInPremiumRole extends AbstractRole<RenewableSupportFipScheme> {
                     contract.setPlant(plant);
                     contract.persist();
 
-                    logger.warn("Contract price for plant of technology " + plant.getTechnology().getName()
-                            + "for node " + node.getNodeId() + " is , " + contract.getPricePerUnit());
+                    // logger.warn("Contract price for plant of technology " +
+                    // plant.getTechnology().getName()
+                    // + "for node " + node.getNodeId() + " is , " +
+                    // contract.getPricePerUnit());
 
                 }
 
@@ -129,7 +133,7 @@ public class FeedInPremiumRole extends AbstractRole<RenewableSupportFipScheme> {
                     // //findOperationalPowerPlantsByMarketAndTechnology(eMarket,
                     // technology, getCurrentTick())) {
 
-                    logger.warn("Inside power plant loop for power plant" + plant.getName());
+                    logger.warn("Compute FiP for power plant" + plant.getName());
 
                     // existing eligible plants at the start of the simulation
                     // (tick
@@ -180,8 +184,10 @@ public class FeedInPremiumRole extends AbstractRole<RenewableSupportFipScheme> {
 
                             double supportPrice = contract.getPricePerUnit() * totalGenerationInMwh - sumEMR;
                             // payment
-                            logger.warn("Total subsidy for plant of technology " + plant.getTechnology().getName()
-                                    + "for node " + node.getNodeId() + " is , " + supportPrice);
+                            logger.warn("Base Cost " + contract.getPricePerUnit());
+                            logger.warn("Total Generation " + totalGenerationInMwh);
+                            logger.warn("Revenue from EM " + sumEMR);
+                            logger.warn("Annual Subsidy " + supportPrice);
                             reps.nonTransactionalCreateRepository.createCashFlow(eMarket, plant.getOwner(),
                                     supportPrice, CashFlow.FEED_IN_PREMIUM, getCurrentTick(), plant);
 
