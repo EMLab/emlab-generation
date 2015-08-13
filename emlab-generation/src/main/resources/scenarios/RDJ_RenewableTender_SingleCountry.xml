@@ -81,11 +81,11 @@
 
 	<bean id="renewableTenderTarget"
 		class="emlab.gen.domain.policy.renewablesupport.RenewableTargetForTender"
-		p:yearlyRenewableTargetTimeSeries="nl_nreap">
+		p:yearlyRenewableTargetTimeSeries-ref="nl_nreap">
 	</bean>
 
 	<bean id="nl_nreap" class="emlab.gen.trend.TimeSeriesCSVReader"
-		p:filename="/data/policyGoalNREAP_NL_DE_2050.csv" p:delimiter=","
+		p:filename="/data/policyGoalNREAP_NL_DE_2050.csv" p:startingYear="0" p:delimiter=","
 		p:variableName="nl_target" />
 
 	<bean id="interconnectorBeneluxGermany" class="emlab.gen.domain.technology.Interconnector"

@@ -59,14 +59,20 @@ public class CalculateRenewableTargetForTenderRole extends AbstractRole<Renewabl
                 scheme.getFutureTenderOperationStartTime());
 
         logger.warn("demandFactor for this tick: " + demandFactor);
+        logger.warn("future tender operations start time is: " + scheme.getFutureTenderOperationStartTime());
 
         // get renewable energy target in factor (percent)
         RenewableTargetForTender target = reps.renewableTargetForTenderRepository
                 .findRenewableTargetForTenderByRegulator(scheme.getRegulator());
         targetFactor = target.getYearlyRenewableTargetTimeSeries().getValue(scheme.getFutureTenderOperationStartTime());
 
-        logger.warn("futureTenderOperationsStartTime for this tick is: "
-                + target.getYearlyRenewableTargetTimeSeries().getValue(scheme.getFutureTenderOperationStartTime()));
+        logger.warn("zone is " + zone);
+        logger.warn("market is" + market);
+        logger.warn("scheme is " + scheme);
+        logger.warn("target is " + target);
+
+        targetFactor = target.getYearlyRenewableTargetTimeSeries().getValue(scheme.getFutureTenderOperationStartTime());
+
         logger.warn("targetFactor for this tick: " + targetFactor);
 
         // get totalLoad in MWh

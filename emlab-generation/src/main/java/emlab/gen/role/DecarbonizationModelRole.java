@@ -384,7 +384,7 @@ public class DecarbonizationModelRole extends AbstractRole<DecarbonizationModel>
          */
 
         if (model.isRenewableTenderSchemeImplemented()) {
-            logger.warn(" 6b. Run Renewable Tender Scheme");
+            logger.warn(" 6c Running Renewable Tender Scheme");
             for (RenewableSupportSchemeTender scheme : reps.renewableSupportSchemeTenderRepository.findAll()) {
                 tenderMainRole.act(scheme);
             }
