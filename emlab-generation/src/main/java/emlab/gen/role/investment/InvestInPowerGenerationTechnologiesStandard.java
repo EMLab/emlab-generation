@@ -324,7 +324,8 @@ public class InvestInPowerGenerationTechnologiesStandard<T extends EnergyProduce
                         // scheme for a certain country is not on, based on the
                         // existence of BaseCost objects.
                         double supportFromFip = 0d;
-                        if (expectedBaseCost > 0d)
+                        if ((expectedBaseCost > 0d) && (expectedBaseCost * expectedGeneration >= expectedRevenue))
+                            // if (expectedBaseCost > 0d)
                             supportFromFip = expectedBaseCost * expectedGeneration - expectedRevenue;
 
                         logger.warn(" expected FIP details for technology " + plant.getTechnology().getName()

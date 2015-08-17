@@ -152,17 +152,22 @@ public class ComputePremiumRole extends AbstractEnergyProducerRole<EnergyProduce
                 double fixedOMCost = calculateFixedOperatingCost(plant, getCurrentTick());
                 double operatingCost = fixedOMCost + annualMarginalCost;
 
+                long durationOfSupportScheme = scheme.getSupportSchemeDuration();
+
                 // logger.warn("Fixed OM cost for technology " +
                 // plant.getTechnology().getName() + " is " + fixedOMCost
                 // + " and operatingCost is " + operatingCost);
 
                 TreeMap<Integer, Double> discountedProjectCapitalOutflow = calculateSimplePowerPlantInvestmentCashFlow(
-                        technology.getDepreciationTime(), (int) plant.getActualLeadtime(),
+                        (int) durationOfSupportScheme, (int) plant.getActualLeadtime(),
                         plant.getActualInvestedCapital(), 0);
 
                 // Creation of in cashflow during operation
                 TreeMap<Integer, Double> discountedProjectCashOutflow = calculateSimplePowerPlantInvestmentCashFlow(
-                        technology.getDepreciationTime(), (int) plant.getActualLeadtime(), 0, operatingCost);
+                        (int) durationOfSupportScheme, (int) plant.getActualLeadtime(), 0, operatingCost);
+
+                TreeMap<Integer, Double> factorDiscountedGenerationSeries = calculateSimplePowerPlantInvestmentCashFlow(
+                        (int) durationOfSupportScheme, (int) plant.getActualLeadtime(), 0, 1);
 
                 // Calculation of weighted average cost of capital,
                 // based on regulator's assumption of companies debt-ratio
@@ -172,9 +177,10 @@ public class ComputePremiumRole extends AbstractEnergyProducerRole<EnergyProduce
                 double discountedCapitalCosts = npv(discountedProjectCapitalOutflow, wacc);
                 logger.warn("discountedCapitalCosts " + discountedCapitalCosts);
                 double discountedOpCost = npv(discountedProjectCashOutflow, wacc);
+                double factorDiscountedGeneration = npv(factorDiscountedGenerationSeries, wacc);
                 logger.warn("discountedOpCost " + discountedOpCost);
                 lcoe = (discountedCapitalCosts + discountedOpCost) * scheme.getFeedInPremiumBiasFactor()
-                        / (totalGenerationinMWh * scheme.getSupportSchemeDuration());
+                        / (totalGenerationinMWh * factorDiscountedGeneration);
 
                 BaseCostFip baseCostFip = new BaseCostFip();
 
