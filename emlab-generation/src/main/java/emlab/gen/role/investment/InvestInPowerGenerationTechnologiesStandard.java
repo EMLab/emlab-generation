@@ -269,9 +269,11 @@ public class InvestInPowerGenerationTechnologiesStandard<T extends EnergyProduce
                     double expectedMarginalCost = determineExpectedMarginalCost(plant, expectedFuelPrices,
                             expectedCO2Price.get(market));
                     double runningHours = 0d;
+                    double totalFlh = 0d;
                     double expectedGrossProfit = 0d;
                     double expectedRevenue = 0d;
                     double expectedGeneration = 0d;
+                    double loadFactor = 0d;
                     long numberOfSegments = reps.segmentRepository.count();
 
                     // TODO somehow the prices of long-term contracts could also
@@ -283,22 +285,30 @@ public class InvestInPowerGenerationTechnologiesStandard<T extends EnergyProduce
                         double hours = segmentLoad.getSegment().getLengthInHours();
                         if (expectedMarginalCost <= expectedElectricityPrice) {
                             runningHours += hours;
-                            if (technology.isIntermittent())
+                            if (technology.isIntermittent()) {
+                                loadFactor = reps.intermittentTechnologyNodeLoadFactorRepository
+                                        .findIntermittentTechnologyNodeLoadFactorForNodeAndTechnology(node, technology)
+                                        .getLoadFactorForSegment(segmentLoad.getSegment());
                                 expectedGrossProfit += (expectedElectricityPrice - expectedMarginalCost) * hours
-                                        * plant.getActualNominalCapacity()
-                                        * reps.intermittentTechnologyNodeLoadFactorRepository
-                                                .findIntermittentTechnologyNodeLoadFactorForNodeAndTechnology(node,
-                                                        technology)
-                                                .getLoadFactorForSegment(segmentLoad.getSegment());
-                            else
+                                        * plant.getActualNominalCapacity() * loadFactor;
+                            } else {
                                 expectedGrossProfit += (expectedElectricityPrice - expectedMarginalCost) * hours
                                         * plant.getAvailableCapacity(futureTimePoint, segmentLoad.getSegment(),
                                                 numberOfSegments);
-                            expectedRevenue += expectedElectricityPrice * hours * plant
-                                    .getAvailableCapacity(futureTimePoint, segmentLoad.getSegment(), numberOfSegments);
-                            expectedGeneration += hours * plant.getAvailableCapacity(futureTimePoint,
-                                    segmentLoad.getSegment(), numberOfSegments);
+                                double flh = hours * plant.getAvailableCapacity(futureTimePoint,
+                                        segmentLoad.getSegment(), numberOfSegments);
+                                expectedRevenue += expectedElectricityPrice * flh;
+                                double generationInSegment = hours * plant.getAvailableCapacity(futureTimePoint,
+                                        segmentLoad.getSegment(), numberOfSegments);
+                                expectedGeneration += generationInSegment;
+                                totalFlh += flh;
+                                logger.warn("Expected generation in segment" + segmentLoad.getSegment()
+                                        + " is, in MWh, " + generationInSegment);
+
+                            }
+
                         }
+
                     }
 
                     // logger.warn(agent +
@@ -326,12 +336,13 @@ public class InvestInPowerGenerationTechnologiesStandard<T extends EnergyProduce
                         double supportFromFip = 0d;
                         if ((expectedBaseCost > 0d) && (expectedBaseCost * expectedGeneration >= expectedRevenue))
                             // if (expectedBaseCost > 0d)
-                            supportFromFip = expectedBaseCost * expectedGeneration - expectedRevenue;
+                            supportFromFip = (expectedBaseCost * expectedGeneration) - expectedRevenue;
 
                         logger.warn(" expected FIP details for technology " + plant.getTechnology().getName()
                                 + "for node " + node.getNodeId());
 
                         logger.warn("Expected Base Cost " + expectedBaseCost);
+                        logger.warn("Expected flh " + totalFlh);
                         logger.warn("Expected Total Generation " + expectedGeneration);
                         logger.warn("Expected Revenue from EM " + expectedRevenue);
                         logger.warn("Expected Annual Subsidy " + supportFromFip);
@@ -357,6 +368,7 @@ public class InvestInPowerGenerationTechnologiesStandard<T extends EnergyProduce
 
                         double projectValue = discountedOpProfit + discountedCapitalCosts;
 
+                        logger.warn("Expected Project Value " + projectValue);
                         if (projectValue > 0 && projectValue / plant.getActualNominalCapacity() > highestValue) {
                             highestValue = projectValue / plant.getActualNominalCapacity();
                             bestTechnology = plant.getTechnology();

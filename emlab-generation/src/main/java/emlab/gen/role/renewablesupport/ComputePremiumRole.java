@@ -147,7 +147,7 @@ public class ComputePremiumRole extends AbstractEnergyProducerRole<EnergyProduce
                 annualMarginalCost = totalGenerationinMWh * mc;
 
                 logger.warn("for technology " + plant.getTechnology().getName() + " total generation is "
-                        + totalGenerationinMWh);
+                        + totalGenerationinMWh + " and running hours is " + fullLoadHours);
 
                 double fixedOMCost = calculateFixedOperatingCost(plant, getCurrentTick());
                 double operatingCost = fixedOMCost + annualMarginalCost;
