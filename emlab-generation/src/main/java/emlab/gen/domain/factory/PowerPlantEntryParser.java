@@ -155,6 +155,7 @@ public class PowerPlantEntryParser implements CSVEntryParser<PowerPlant> {
         plant.setTechnology(technology);
         plant.setOwner(energyProducer);
         plant.setLocation(location);
+        plant.setHistoricalCvarDummyPlant(false);
         plant.setConstructionStartTime(-(technology.getExpectedLeadtime() + technology.getExpectedPermittime() + age));
         plant.setActualLeadtime(plant.getTechnology().getExpectedLeadtime());
         plant.setActualPermittime(plant.getTechnology().getExpectedPermittime());
@@ -174,6 +175,8 @@ public class PowerPlantEntryParser implements CSVEntryParser<PowerPlant> {
         }
         plant.calculateAndSetActualFixedOperatingCosts(plant.getConstructionStartTime());
         plant.setDismantleTime(1000);
+        // BigBank bigbank = reps.genericRepository.findFirst(BigBank.class);
+
         Loan loan = new Loan().persist();
         loan.setFrom(energyProducer);
         loan.setTo(null);
@@ -189,6 +192,7 @@ public class PowerPlantEntryParser implements CSVEntryParser<PowerPlant> {
         // already
         // made
         plant.setLoan(loan);
+        loan.setRegardingPowerPlant(plant);
         return plant;
     }
 

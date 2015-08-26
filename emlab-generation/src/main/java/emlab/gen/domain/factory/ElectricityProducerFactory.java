@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 the original author or authors.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -62,18 +62,19 @@ public class ElectricityProducerFactory implements InitializingBean {
         plant.setLocation(location);
         plant.setConstructionStartTime(-(technology.getExpectedLeadtime() + technology.getExpectedPermittime() + Math.round((Math.random() * technology
                 .getExpectedLifetime()))) + 2); // TODO: Why include expected lead
-                                                // time and permit time? Wouldn't it
-                                                // be realistic to have some PP in
-                                                // the pipeline at the start?
+        // time and permit time? Wouldn't it
+        // be realistic to have some PP in
+        // the pipeline at the start?
         plant.setActualLeadtime(plant.getTechnology().getExpectedLeadtime());
         plant.setActualPermittime(plant.getTechnology().getExpectedPermittime());
         plant.setExpectedEndOfLife(plant.getConstructionStartTime() + plant.getActualPermittime() + plant.getActualLeadtime()
                 + plant.getTechnology().getExpectedLifetime());
-		plant.setActualNominalCapacity(technology.getCapacity() * location.getCapacityMultiplicationFactor());
+        plant.setActualNominalCapacity(technology.getCapacity() * location.getCapacityMultiplicationFactor());
         plant.calculateAndSetActualInvestedCapital(plant.getConstructionStartTime());
         plant.calculateAndSetActualEfficiency(plant.getConstructionStartTime());
-		plant.calculateAndSetActualFixedOperatingCosts(plant.getConstructionStartTime());
-		plant.setDismantleTime(1000);
+        plant.calculateAndSetActualFixedOperatingCosts(plant.getConstructionStartTime());
+        plant.setDismantleTime(1000);
+        plant.setHistoricalCvarDummyPlant(false);
         Loan loan = new Loan().persist();
         loan.setFrom(energyProducer);
         loan.setTo(null);
@@ -83,10 +84,10 @@ public class ElectricityProducerFactory implements InitializingBean {
         loan.setTotalNumberOfPayments(plant.getTechnology().getDepreciationTime());
         loan.setLoanStartTime(plant.getConstructionStartTime());
         loan.setNumberOfPaymentsDone(-plant.getConstructionStartTime());// Some
-                                                                        // payments
-                                                                        // are
-                                                                        // already
-                                                                        // made
+        // payments
+        // are
+        // already
+        // made
         plant.setLoan(loan);
         return plant;
     }

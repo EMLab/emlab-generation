@@ -87,6 +87,7 @@ public class PowerPlant {
     private double actualEfficiency;
     private double expectedEndOfLife;
     private double actualNominalCapacity;
+    private boolean historicalCvarDummyPlant;
 
     public boolean isOperational(long currentTick) {
 
@@ -498,6 +499,7 @@ public class PowerPlant {
         this.setActualLeadtime(this.technology.getExpectedLeadtime());
         this.setActualPermittime(this.technology.getExpectedPermittime());
         this.calculateAndSetActualEfficiency(time);
+        this.setHistoricalCvarDummyPlant(false);
         this.setActualNominalCapacity(this.getTechnology().getCapacity() * location.getCapacityMultiplicationFactor());
         assert this.getActualEfficiency() <= 1 : this.getActualEfficiency();
         this.setDismantleTime(1000);
@@ -566,6 +568,14 @@ public class PowerPlant {
         return intermittentTechnologyNodeLoadFactorRepository
                 .findIntermittentTechnologyNodeLoadFactorForNodeAndTechnology(this.getLocation(),
                         this.getTechnology());
+    }
+
+    public boolean isHistoricalCvarDummyPlant() {
+        return historicalCvarDummyPlant;
+    }
+
+    public void setHistoricalCvarDummyPlant(boolean historicalCvarDummyPlant) {
+        this.historicalCvarDummyPlant = historicalCvarDummyPlant;
     }
 
 }

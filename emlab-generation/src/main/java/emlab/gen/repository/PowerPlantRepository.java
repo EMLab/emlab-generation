@@ -79,9 +79,14 @@ public interface PowerPlantRepository extends GraphRepository<PowerPlant> {
     // Iterable<PowerPlant> findOperationalPowerPlants(@Param("tick") long
     // tick);
 
+    @Query(value = "g.idx('__types__')[[className:'emlab.gen.domain.technology.PowerPlant']] .propertyFilter('dismantleTime', FilterPipe.Filter.GREATER_THAN, tick)", type = QueryType.Gremlin)
+    Iterable<PowerPlant> findAllPowerPlantsWhichAreNotDismantledBeforeTick(@Param("tick") long tick);
+
     @Query(value = "g.idx('__types__')[[className:'emlab.gen.domain.technology.PowerPlant']] .propertyFilter('dismantleTime', FilterPipe.Filter.LESS_THAN, tick)", type = QueryType.Gremlin)
     Iterable<PowerPlant> findAllPowerPlantsDismantledBeforeTick(@Param("tick") long tick);
 
+    @Query(value = "g.idx('__types__')[[className:'emlab.gen.domain.technology.PowerPlant']].filter{it.constructionStartTime==tick}", type = QueryType.Gremlin)
+    Iterable<PowerPlant> findAllPowerPlantsWithConstructionStartTimeInTick(@Param("tick") long tick);
     /**
      * Finds operational plants and gives them back as a list (only use for
      * current tick, since only officially dismantled powerplants and plants in
@@ -138,6 +143,18 @@ public interface PowerPlantRepository extends GraphRepository<PowerPlant> {
             + "if(result == null){return 0;} else{return result;}", type = QueryType.Gremlin)
     double calculateCapacityOfOperationalPowerPlantsByTechnology(@Param("tech") PowerGeneratingTechnology technology,
             @Param("tick") long tick);
+
+    @Query(value = "result = g.v(owner).in('POWERPLANT_OWNER').filter{it.historicalCvarDummyPlant == true}.filter{((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick) && (it.dismantleTime > tick)}.as('x').out('TECHNOLOGY').filter{it.name==g.v(tech).name}.back('x');"
+            + "if(!result.hasNext()){return null;} else{return result.next();}", type = QueryType.Gremlin)
+    PowerPlant findOneOperationalHistoricalCvarDummyPowerPlantsByOwnerAndTechnology(
+            @Param("tech") PowerGeneratingTechnology technology,
+            @Param("tick") long tick, @Param("owner") EnergyProducer owner);
+
+    @Query(value = "result = g.v(owner).in('POWERPLANT_OWNER').filter{it.historicalCvarDummyPlant == false}.filter{((it.constructionStartTime + it.actualPermittime + it.actualLeadtime) <= tick) && (it.dismantleTime > tick)}.as('x').out('TECHNOLOGY').filter{it.name==g.v(tech).name}.back('x').sum{it.actualNominalCapacity};"
+            + "if(result == null){return 0} else{return result}", type = QueryType.Gremlin)
+    public double calculateCapacityOfOperationalPowerPlantsByOwnerAndTechnology(
+            @Param("tech") PowerGeneratingTechnology technology,
+            @Param("tick") long tick, @Param("owner") EnergyProducer owner);
 
     @Query("start tech=node({tech}) match (tech)<-[:TECHNOLOGY]-(plant) return plant")
     public Iterable<PowerPlant> findPowerPlantsByTechnology(@Param("tech") PowerGeneratingTechnology technology);
@@ -282,5 +299,37 @@ public interface PowerPlantRepository extends GraphRepository<PowerPlant> {
     double calculateCapacityOfOperationalIntermittentPowerPlantsByPowerGridNodeAndTechnology(
             @Param("gridnode") PowerGridNode node,
             @Param("technology") PowerGeneratingTechnology powerGeneratingTechnology, @Param("tick") long tick);
+
+    @Query(value = "result=g.v(plant).in('REGARDING_POWERPLANT').propertyFilter('type', FilterPipe.Filter.EQUAL, 1).propertyFilter('time', FilterPipe.Filter.EQUAL, tick).money.sum(); if(result==null){result=0}; return result", type = QueryType.Gremlin)
+    double calculateSpotMarketRevenueOfPowerPlant(@Param("plant") PowerPlant plant, @Param("tick") long tick);
+
+    @Query(value = "result=g.v(plant).in('REGARDING_POWERPLANT').propertyFilter('type', FilterPipe.Filter.EQUAL, 2).propertyFilter('time', FilterPipe.Filter.EQUAL, tick).money.sum(); if(result==null){result=0}; return result", type = QueryType.Gremlin)
+    double calculateLongTermContractRevenueOfPowerPlant(@Param("plant") PowerPlant plant, @Param("tick") long tick);
+
+    @Query(value = "result=g.v(plant).in('REGARDING_POWERPLANT').propertyFilter('type', FilterPipe.Filter.EQUAL, 10).propertyFilter('time', FilterPipe.Filter.EQUAL, tick).money.sum(); if(result==null){result=0}; return result", type = QueryType.Gremlin)
+    double calculateStrategicReserveRevenueOfPowerPlant(@Param("plant") PowerPlant plant, @Param("tick") long tick);
+
+    @Query(value = "result=g.v(plant).in('REGARDING_POWERPLANT').propertyFilter('type', FilterPipe.Filter.EQUAL, 11).propertyFilter('time', FilterPipe.Filter.EQUAL, tick).money.sum(); if(result==null){result=0}; return result", type = QueryType.Gremlin)
+    double calculateCapacityMarketRevenueOfPowerPlant(@Param("plant") PowerPlant plant, @Param("tick") long tick);
+
+    @Query(value = "result=g.v(plant).in('REGARDING_POWERPLANT').propertyFilter('type', FilterPipe.Filter.EQUAL, 12).propertyFilter('time', FilterPipe.Filter.EQUAL, tick).money.sum(); if(result==null){result=0}; return result", type = QueryType.Gremlin)
+    double calculateCO2HedgingRevenueOfPowerPlant(@Param("plant") PowerPlant plant, @Param("tick") long tick);
+
+    @Query(value = "result=g.v(plant).in('REGARDING_POWERPLANT').filter{it.type==5 || it.type==6 || it.type==9}.propertyFilter('time', FilterPipe.Filter.EQUAL, tick).money.sum(); if(result==null){result=0}; return result", type = QueryType.Gremlin)
+    double calculateCO2CostsOfPowerPlant(@Param("plant") PowerPlant plant, @Param("tick") long tick);
+
+    @Query(value = "result=g.v(plant).in('REGARDING_POWERPLANT').filter{it.type==3 || it.type==7 || it.type==8}.propertyFilter('time', FilterPipe.Filter.EQUAL, tick).money.sum(); if(result==null){result=0}; return result", type = QueryType.Gremlin)
+    double calculateFixedCostsOfPowerPlant(@Param("plant") PowerPlant plant, @Param("tick") long tick);
+
+    @Query(value = "ppdps=g.v(plant).in('POWERPLANT_DISPATCHPLAN').filter{it.time==tick}.propertyFilter('forecast', FilterPipe.Filter.EQUAL, false); sum=0;"
+            + "fullLoadHours=0;"
+            + "for(ppdp in ppdps){"
+            + "totalAmount = ppdp.getProperty('acceptedAmount') + ppdp.getProperty('capacityLongTermContract');"
+            + "if(totalAmount==null) totalAmount=0;"
+            + "hoursInSegment = ppdp.out('SEGMENT_DISPATCHPLAN').next().getProperty('lengthInHours');"
+            + "production = totalAmount * hoursInSegment;"
+            + "fullLoadHours = fullLoadHours + hoursInSegment * totalAmount  / (ppdp.out('POWERPLANT_DISPATCHPLAN').next().actualNominalCapacity *1.0d);"
+            + "}; return fullLoadHours;", type = QueryType.Gremlin)
+    double calculateFullLoadHoursOfPowerPlant(@Param("plant") PowerPlant plant, @Param("tick") long tick);
 
 }
