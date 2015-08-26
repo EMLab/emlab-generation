@@ -30,7 +30,7 @@ else
     QUERYCOMMAND=""
 fi
 
-java -d64 -server -Xmx3072m -Drun.id=$JOBNAME -DSCENARIO_FOLDER=$SCENARIOPATH -Dresults.path=$LOCALRESULTFOLDER/$JOBNAME -Dscenario.file=$SCENARIO".xml" $QUERYCOMMAND -jar $LOCALJARFILE
+java -Xmx2072m -Drun.id=$JOBNAME -DSCENARIO_FOLDER=$SCENARIOPATH -Dresults.path=$LOCALRESULTFOLDER/$JOBNAME -Dscenario.file=$SCENARIO".xml" $QUERYCOMMAND -jar $LOCALJARFILE
 rm -rf /tmp/ramdisk/emlab.gen-db/$JOBNAME
 
 mv simulation.log $JOBNAME.log

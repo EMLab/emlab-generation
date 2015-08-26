@@ -76,7 +76,7 @@ public abstract class AbstractEnergyProducerRole<T extends EnergyProducer> exten
         double mc = 0d;
         mc += calculateExpectedMarginalFuelCost(powerPlant, forecastedFuelPrices);
         mc += calculateCO2TaxMarginalCost(powerPlant, tick);
-        logger.info("Margincal cost excluding CO2 auction/market cost for plant {} is {}", powerPlant.getName(), mc);
+        logger.info("Marginal cost excluding CO2 auction/market cost for plant {} is {}", powerPlant.getName(), mc);
         return mc;
     }
 
@@ -95,7 +95,8 @@ public abstract class AbstractEnergyProducerRole<T extends EnergyProducer> exten
         return fc;
     }
 
-    public double calculateExpectedMarginalFuelCost(PowerPlant powerPlant, Map<Substance, Double> forecastedFuelPrices) {
+    public double calculateExpectedMarginalFuelCost(PowerPlant powerPlant,
+            Map<Substance, Double> forecastedFuelPrices) {
         double fc = 0d;
         // fuel cost for each fuel
         for (SubstanceShareInFuelMix mix : powerPlant.getFuelMix()) {
@@ -111,16 +112,18 @@ public abstract class AbstractEnergyProducerRole<T extends EnergyProducer> exten
     }
 
     /**
-     * Finds the last known price on a specific market. We try to get it for this tick, previous tick, or from a possible supplier directly. If multiple prices are found, the average is returned. This
-     * is the case for electricity spot markets, as they may have segments.
+     * Finds the last known price on a specific market. We try to get it for
+     * this tick, previous tick, or from a possible supplier directly. If
+     * multiple prices are found, the average is returned. This is the case for
+     * electricity spot markets, as they may have segments.
      * 
      * @param substance
      *            the price we want for
      * @return the (average) price found
      */
     public double findLastKnownPriceOnMarket(DecarbonizationMarket market, long clearingTick) {
-        Double average = calculateAverageMarketPriceBasedOnClearingPoints(reps.clearingPointRepositoryOld
-                .findClearingPointsForMarketAndTime(market, clearingTick, false));
+        Double average = calculateAverageMarketPriceBasedOnClearingPoints(
+                reps.clearingPointRepositoryOld.findClearingPointsForMarketAndTime(market, clearingTick, false));
         Substance substance = market.getSubstance();
 
         if (average != null) {
@@ -128,9 +131,8 @@ public abstract class AbstractEnergyProducerRole<T extends EnergyProducer> exten
             return average;
         }
 
-        average = calculateAverageMarketPriceBasedOnClearingPoints(reps.clearingPointRepositoryOld
-                .findClearingPointsForMarketAndTime(
-                        market, clearingTick - 1, false));
+        average = calculateAverageMarketPriceBasedOnClearingPoints(
+                reps.clearingPointRepositoryOld.findClearingPointsForMarketAndTime(market, clearingTick - 1, false));
         if (average != null) {
             logger.info("Average price found on market for previous tick for {}", substance.getName());
             return average;
@@ -153,8 +155,11 @@ public abstract class AbstractEnergyProducerRole<T extends EnergyProducer> exten
     }
 
     /**
-     * Finds the last known price for a substance. We try to find the market for it and get it get the price on that market for this tick, previous tick, or from a possible supplier directly. If
-     * multiple prices are found, the average is returned. This is the case for electricity spot markets, as they may have segments.
+     * Finds the last known price for a substance. We try to find the market for
+     * it and get it get the price on that market for this tick, previous tick,
+     * or from a possible supplier directly. If multiple prices are found, the
+     * average is returned. This is the case for electricity spot markets, as
+     * they may have segments.
      * 
      * @param substance
      *            the price we want for
@@ -172,7 +177,8 @@ public abstract class AbstractEnergyProducerRole<T extends EnergyProducer> exten
     }
 
     /**
-     * Calculates the volume-weighted average price on a market based on a set of clearingPoints.
+     * Calculates the volume-weighted average price on a market based on a set
+     * of clearingPoints.
      * 
      * @param clearingPoints
      *            the clearingPoints with the volumes and prices
@@ -196,14 +202,13 @@ public abstract class AbstractEnergyProducerRole<T extends EnergyProducer> exten
         double co2Intensity = powerPlant.calculateEmissionIntensity();
         CO2Auction auction = reps.genericRepository.findFirst(CO2Auction.class);
         double co2Price;
-        try{
+        try {
             co2Price = reps.clearingPointRepository.findClearingPointForMarketAndTime(auction, clearingTick, forecast)
                     .getPrice();
         } catch (Exception e) {
             logger.warn("Couldn't find clearing point for tick {} and market {}", clearingTick, auction);
             co2Price = findLastKnownCO2Price(clearingTick);
         }
-
 
         return co2Intensity * co2Price;
     }
@@ -217,7 +222,9 @@ public abstract class AbstractEnergyProducerRole<T extends EnergyProducer> exten
     }
 
     /**
-     * Calculates the payment effective part of the national CO2 price. In this case you only pay the excess over the EU carbon market price to your own government.
+     * Calculates the payment effective part of the national CO2 price. In this
+     * case you only pay the excess over the EU carbon market price to your own
+     * government.
      * 
      * @param powerPlant
      * @return
@@ -297,9 +304,9 @@ public abstract class AbstractEnergyProducerRole<T extends EnergyProducer> exten
         return pastOP;
     }
 
-
     /**
-     * The fuel mix is calculated with a linear optimization model of the possible fuels and the requirements.
+     * The fuel mix is calculated with a linear optimization model of the
+     * possible fuels and the requirements.
      * 
      * @param substancePriceMap
      *            contains the possible fuels and their market prices
@@ -313,11 +320,13 @@ public abstract class AbstractEnergyProducerRole<T extends EnergyProducer> exten
      *            is part of the cost for CO2
      * @return the fuel mix
      */
-    public Set<SubstanceShareInFuelMix> calculateFuelMix(PowerPlant plant, Map<Substance, Double> substancePriceMap, double co2Price) {
+    public Set<SubstanceShareInFuelMix> calculateFuelMix(PowerPlant plant, Map<Substance, Double> substancePriceMap,
+            double co2Price) {
 
         double efficiency = plant.getActualEfficiency();
 
-        Set<SubstanceShareInFuelMix> fuelMix = (plant.getFuelMix() == null) ? new HashSet<SubstanceShareInFuelMix>() : plant.getFuelMix();
+        Set<SubstanceShareInFuelMix> fuelMix = (plant.getFuelMix() == null) ? new HashSet<SubstanceShareInFuelMix>()
+                : plant.getFuelMix();
 
         int numberOfFuels = substancePriceMap.size();
         if (numberOfFuels == 0) {
@@ -372,8 +381,10 @@ public abstract class AbstractEnergyProducerRole<T extends EnergyProducer> exten
 
             // Constraint 2&3: minimum fuel quality (times fuel consumption)
             // required
-            // The equation is derived from (example for 2 fuels): q1 * x1 / (x1+x2) + q2 * x2 / (x1+x2) >= qmin
-            // so that the fuelquality weighted by the mass percentages is greater than the minimum fuel quality.
+            // The equation is derived from (example for 2 fuels): q1 * x1 /
+            // (x1+x2) + q2 * x2 / (x1+x2) >= qmin
+            // so that the fuelquality weighted by the mass percentages is
+            // greater than the minimum fuel quality.
             constraints.add(new LinearConstraint(fuelQuality, Relationship.GEQ, 0));
 
             try {
@@ -396,14 +407,15 @@ public abstract class AbstractEnergyProducerRole<T extends EnergyProducer> exten
                     }
 
                     double fuelConsumptionPerMWhElectricityProduced = convertFuelShareToMassVolume(share);
-                    logger.info("Setting fuel consumption for {} to {}", substance.getName(), fuelConsumptionPerMWhElectricityProduced);
+                    logger.info("Setting fuel consumption for {} to {}", substance.getName(),
+                            fuelConsumptionPerMWhElectricityProduced);
                     ssifm.setShare(fuelConsumptionPerMWhElectricityProduced);
                     ssifm.setSubstance(substance);
                     f++;
                 }
 
-                logger.info("If single fired, it would have been: {}",
-                        calculateFuelConsumptionWhenOnlyOneFuelIsUsed(substancePriceMap.keySet().iterator().next(), efficiency));
+                logger.info("If single fired, it would have been: {}", calculateFuelConsumptionWhenOnlyOneFuelIsUsed(
+                        substancePriceMap.keySet().iterator().next(), efficiency));
                 return fuelMix;
             } catch (OptimizationException e) {
                 logger.warn(
@@ -431,25 +443,32 @@ public abstract class AbstractEnergyProducerRole<T extends EnergyProducer> exten
 
     public double calculateFuelConsumptionWhenOnlyOneFuelIsUsed(Substance substance, double efficiency) {
 
-        double fuelConsumptionPerMWhElectricityProduced = convertFuelShareToMassVolume(1 / (efficiency * substance.getEnergyDensity()));
+        double fuelConsumptionPerMWhElectricityProduced = convertFuelShareToMassVolume(
+                1 / (efficiency * substance.getEnergyDensity()));
 
         return fuelConsumptionPerMWhElectricityProduced;
 
     }
 
     /**
-     * Calculates the actual investment cost of a power plant per year, by using the exogenous modifier.
+     * Calculates the actual investment cost of a power plant per year, by using
+     * the exogenous modifier.
      * 
      * @param powerPlant
      * @return the actual efficiency
      */
     /*
-     * public double determineAnnuitizedInvestmentCost(PowerPlant powerPlant, long time) {
+     * public double determineAnnuitizedInvestmentCost(PowerPlant powerPlant,
+     * long time) {
      * 
-     * double invNorm = powerPlant.getTechnology().getAnnuitizedInvestmentCost(); double modifierExo = calculateExogenousModifier(powerPlant.getTechnology(). getInvestmentCostModifierExogenous(),
-     * time);
+     * double invNorm =
+     * powerPlant.getTechnology().getAnnuitizedInvestmentCost(); double
+     * modifierExo = calculateExogenousModifier(powerPlant.getTechnology().
+     * getInvestmentCostModifierExogenous(), time);
      * 
-     * double annuitizedInvestmentCost = invNorm * modifierExo; logger.info("Investment cost of plant{} is {}", powerPlant, annuitizedInvestmentCost); return annuitizedInvestmentCost; }
+     * double annuitizedInvestmentCost = invNorm * modifierExo; logger.info(
+     * "Investment cost of plant{} is {}", powerPlant,
+     * annuitizedInvestmentCost); return annuitizedInvestmentCost; }
      */
 
     public double determineLoanAnnuities(double totalLoan, double payBackTime, double interestRate) {
@@ -460,9 +479,10 @@ public abstract class AbstractEnergyProducerRole<T extends EnergyProducer> exten
         return annuity;
     }
 
-
     /**
-     * Calculates expected CO2 price based on a geometric trend estimation, of the past years
+     * Calculates expected CO2 price based on a geometric trend estimation, of
+     * the past years
+     * 
      * @param futureTimePoint
      * @param yearsLookingBackForRegression
      * @return
@@ -473,18 +493,23 @@ public abstract class AbstractEnergyProducerRole<T extends EnergyProducer> exten
     }
 
     /**
-     * Calculates expected CO2 price based on a geometric trend estimation, of the past years. The adjustmentForDetermineFuelMix needs to be set to 1, if this is used in the determine
-     * fuel mix role.
+     * Calculates expected CO2 price based on a geometric trend estimation, of
+     * the past years. The adjustmentForDetermineFuelMix needs to be set to 1,
+     * if this is used in the determine fuel mix role.
      * 
-     * @param futureTimePoint Year the prediction is made for
-     * @param yearsLookingBackForRegression How many years are used as input for the regression, incl. the current tick.
+     * @param futureTimePoint
+     *            Year the prediction is made for
+     * @param yearsLookingBackForRegression
+     *            How many years are used as input for the regression, incl. the
+     *            current tick.
      * @return
      */
     protected HashMap<ElectricitySpotMarket, Double> determineExpectedCO2PriceInclTax(long futureTimePoint,
             long yearsLookingBackForRegression, int adjustmentForDetermineFuelMix, long clearingTick) {
         HashMap<ElectricitySpotMarket, Double> co2Prices = new HashMap<ElectricitySpotMarket, Double>();
         CO2Auction co2Auction = reps.marketRepository.findCO2Auction();
-        //Find Clearing Points for the last 5 years (counting current year as one of the last 5 years).
+        // Find Clearing Points for the last 5 years (counting current year as
+        // one of the last 5 years).
         Iterable<ClearingPoint> cps = reps.clearingPointRepository.findAllClearingPointsForMarketAndTimeRange(
                 co2Auction, clearingTick - yearsLookingBackForRegression + 1 - adjustmentForDetermineFuelMix,
                 clearingTick - adjustmentForDetermineFuelMix, false);
@@ -502,18 +527,19 @@ public abstract class AbstractEnergyProducerRole<T extends EnergyProducer> exten
         }
         averagePrice = averagePrice / i;
         double expectedCO2Price;
-        if(i>1){
+        if (i > 1) {
             expectedCO2Price = sr.predict(futureTimePoint);
             expectedCO2Price = Math.max(0, expectedCO2Price);
             expectedCO2Price = Math.min(expectedCO2Price, government.getCo2Penalty(futureTimePoint));
-        }else{
+        } else {
             expectedCO2Price = lastPrice;
         }
         // Calculate average of regression and past average:
         expectedCO2Price = (expectedCO2Price + averagePrice) / 2;
         for (ElectricitySpotMarket esm : reps.marketRepository.findAllElectricitySpotMarkets()) {
-            double nationalCo2MinPriceinFutureTick = reps.nationalGovernmentRepository.findNationalGovernmentByElectricitySpotMarket(esm)
-                    .getMinNationalCo2PriceTrend().getValue(futureTimePoint);
+            double nationalCo2MinPriceinFutureTick = reps.nationalGovernmentRepository
+                    .findNationalGovernmentByElectricitySpotMarket(esm).getMinNationalCo2PriceTrend()
+                    .getValue(futureTimePoint);
             double co2PriceInCountry = 0d;
             if (expectedCO2Price > nationalCo2MinPriceinFutureTick) {
                 co2PriceInCountry = expectedCO2Price;
@@ -543,8 +569,8 @@ public abstract class AbstractEnergyProducerRole<T extends EnergyProducer> exten
             // Find Clearing Points for the last 5 years (counting current year
             // as one of the last 5 years).
             Iterable<ClearingPoint> cps = reps.clearingPointRepository
-                    .findAllClearingPointsForSubstanceTradedOnCommodityMarkesAndTimeRange(substance, getCurrentTick()
-                            - (numberOfYearsBacklookingForForecasting - 1), getCurrentTick(), false);
+                    .findAllClearingPointsForSubstanceTradedOnCommodityMarkesAndTimeRange(substance,
+                            getCurrentTick() - (numberOfYearsBacklookingForForecasting - 1), getCurrentTick(), false);
             // logger.warn("{}, {}",
             // getCurrentTick()-(agent.getNumberOfYearsBacklookingForForecasting()-1),
             // getCurrentTick());
@@ -557,11 +583,10 @@ public abstract class AbstractEnergyProducerRole<T extends EnergyProducer> exten
             }
             double forecast = gtr.predict(futureTimePoint);
             if (Double.isNaN(forecast)) {
-                expectedFuelPrices.put(
-                        substance,
+                expectedFuelPrices.put(substance,
                         reps.clearingPointRepositoryOld.findClearingPointForMarketAndTime(
                                 reps.marketRepository.findFirstMarketBySubstance(substance), getCurrentTick(), false)
-                                .getPrice());
+                        .getPrice());
             } else {
                 expectedFuelPrices.put(substance, forecast);
             }

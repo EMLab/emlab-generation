@@ -18,17 +18,24 @@ package emlab.gen.repository;
 import org.springframework.data.neo4j.annotation.Query;
 import org.springframework.data.neo4j.annotation.QueryType;
 import org.springframework.data.neo4j.repository.GraphRepository;
-import org.springframework.data.repository.query.Param;
-
 
 import emlab.gen.domain.technology.Interconnector;
 
 public interface InterconnectorRepository extends GraphRepository<Interconnector> {
 
-//    @Query(value = "g.v(plant).out('LOCATION').out('REGION').in('GOVERNED_ZONE').next()", type = QueryType.Gremlin)
-//    NationalGovernment findNationalGovernmentByPowerPlant(@Param("plant") PowerPlant plant);
+    // @Query(value =
+    // "g.v(plant).out('LOCATION').out('REGION').in('GOVERNED_ZONE').next()",
+    // type = QueryType.Gremlin)
+    // NationalGovernment findNationalGovernmentByPowerPlant(@Param("plant")
+    // PowerPlant plant);
 
-//    @Query(value = "g.v(market).out('ZONE').in('GOVERNED_ZONE').next()", type = QueryType.Gremlin)
-//    NationalGovernment findNationalGovernmentByElectricitySpotMarket(@Param("market") ElectricitySpotMarket market);
+    // @Query(value = "g.v(market).out('ZONE').in('GOVERNED_ZONE').next()", type
+    // = QueryType.Gremlin)
+    // NationalGovernment
+    // findNationalGovernmentByElectricitySpotMarket(@Param("market")
+    // ElectricitySpotMarket market);
+
+    @Query(value = "g.idx('__types__')[[className:'emlab.gen.domain.technology.Interconnector']].capacity", type = QueryType.Gremlin)
+    public double findInterconnectorCapacity();
 
 }

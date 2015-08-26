@@ -1,0 +1,11 @@
+Name,Technology,Location,Age,Owner,Capacity,Efficiency
+ppCoalA1,CoalPulverizedSuperCritical,BeneluxNode,11,Energy Producer A,,
+ppCoalA2,CoalPulverizedSuperCritical,BeneluxNode,6,Energy Producer A,,
+ppCoalB1,CoalPulverizedSuperCritical,BeneluxNode,16,Energy Producer B,,
+ppCoalB2,CoalPulverizedSuperCritical,BeneluxNode,3,Energy Producer B,,
+ppCCGTA1,CCGT,BeneluxNode,10,Energy Producer A,,
+ppCCGTB1,CCGT,BeneluxNode,3,Energy Producer B,,
+ppOCGTA1,OCGT,BeneluxNode,3,Energy Producer A,,
+ppOCGTA2,OCGT,BeneluxNode,5,Energy Producer A,,
+ppOCGTB1,OCGT,BeneluxNode,20,Energy Producer B,,
+ppOCGTB2,OCGT,BeneluxNode,1,Energy Producer B,,

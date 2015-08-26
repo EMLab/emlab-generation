@@ -90,6 +90,9 @@ public class Reps {
     public PowerGeneratingTechnologyNodeLimitRepository powerGeneratingTechnologyNodeLimitRepository;
 
     @Autowired
+    public InterconnectorRepository interconnectorRepository;
+
+    @Autowired
     public StrategicReserveOperatorRepository strategicReserveOperatorRepository;
 
     @Autowired
@@ -97,5 +100,29 @@ public class Reps {
 
     @Autowired
     public IntermittentTechnologyNodeLoadFactorRepository intermittentTechnologyNodeLoadFactorRepository;
+
+    @Autowired
+    public CapacityMarketRepository capacityMarketRepository;
+
+    @Autowired
+    public CapacityClearingPointRepository capacityClearingPointRepository;
+
+    @Autowired
+    public RegulatorRepository regulatorRepository;
+
+    @Autowired
+    public CapacityDispatchPlanRepository capacityDispatchPlanRepository;
+
+    @Autowired
+    public RenewableSupportSchemeRepository renewableSupportSchemeRepository;
+
+    @Autowired
+    public FinancialPowerPlantReportRepository financialPowerPlantReportRepository;
+
+    @Autowired
+    public BaseCostFipRepository baseCostFipRepository;
+
+    @Autowired
+    public SupportPriceContractRepository supportPriceContractRepository;
 
 }

@@ -24,7 +24,7 @@
 	<!-- Decarbonization Model -->
 	<bean id="decarbonizationModel" class="emlab.gen.domain.agent.DecarbonizationModel"
 		p:name="Decarbonization Model" p:simulationLength="100"
-		p:co2TradingImplemented="true"
+		p:co2TradingImplemented="false"
 		p:realRenewableDataImplemented="false"
 		p:iterationSpeedFactor="3" p:iterationSpeedCriterion="0.005"
 		p:capDeviationCriterion="0.03" p:deletionOldPPDPBidsAndCashFlowsEnabled="true"
@@ -380,7 +380,7 @@
 	</bean>
 	
 
-	<!-- Power Genration Technologies -->
+	<!-- Power Generation Technologies -->
 	<bean id="coalPulverizedSuperCritical" class="emlab.gen.domain.technology.PowerGeneratingTechnology"
 		p:name="CoalPulverizedSuperCritical" p:capacity="500"
 		p:investmentCostTimeSeries-ref="coalPulverizedInvestmentCostTimeSeries"
@@ -458,6 +458,29 @@
 	<bean id="occgtInvestmentCostTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0.0" p:start="251666.66" />
 	<bean id="ocgtFixedOperatingCostTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0" p:start="67110" />
 	<bean id="ocgtEfficiencyTimeSeries" class="emlab.gen.trend.GeometricTrend" p:growthRate="0.00" p:start="0.38" />
+	
+	
+	
+	<bean id="regulator" class="emlab.gen.domain.agent.Regulator" p:name="Regulator" 
+	p:feedInPremiumBiasFactor="1"
+	p:numberOfYearsLookingBackToForecastDemand="4">
+	<property name="zone" ref="nl"/>
+	</bean>
+	
+	<bean id="renewableSupportScheme" class="emlab.gen.domain.policy.renewablesupport.RenewableSupportFipScheme" p:name="FeedInPremium"
+	p:supportSchemeDuration="15">
+	<property name="regulator" ref="regulator"/>
+	<property name="powerGeneratingTechnologiesEligible">
+				<set>
+					<ref bean="photovoltaicPGT" />
+					<ref bean="windOffshorePGT" />
+					<ref bean="windPGT" />
+					<ref bean="biogasPGT" />
+					<ref bean="biomassPGT" />
+				</set>
+	</property>
+	</bean>
+	
 	
 	<!-- Parameter file -->
 </beans>

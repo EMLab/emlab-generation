@@ -54,9 +54,6 @@ public class DecarbonizationModel extends AbstractAgent implements Agent {
 
     private double stabilityReserveBankingThirdYear;
 
-    private boolean noPrivateIntermittentRESInvestment;
-
-
     @SimulationParameter(label = "Simulation Length", from = 0, to = 75)
     private double simulationLength;
 
@@ -75,8 +72,32 @@ public class DecarbonizationModel extends AbstractAgent implements Agent {
     @SimulationParameter(label = "Exit simulation after simulation length")
     private boolean exitSimulationAfterSimulationLength;
 
+    @SimulationParameter(label = "Simple Capacity Market")
+    private boolean simpleCapacityMarketEnabled;
+
+    @SimulationParameter(label = "Feed in Premium")
+    private boolean feedInPremiumImplemented;
+
     @SimulationParameter(label = "Deletion age")
     private long deletionAge;
+
+    private boolean noPrivateIntermittentRESInvestment;
+
+    public boolean isFeedInPremiumImplemented() {
+        return feedInPremiumImplemented;
+    }
+
+    public void setFeedInPremiumImplemented(boolean feedInPremiumImplemented) {
+        this.feedInPremiumImplemented = feedInPremiumImplemented;
+    }
+
+    public boolean isSimpleCapacityMarketEnabled() {
+        return simpleCapacityMarketEnabled;
+    }
+
+    public void setSimpleCapacityMarketEnabled(boolean simpleCapacityMarketEnabled) {
+        this.simpleCapacityMarketEnabled = simpleCapacityMarketEnabled;
+    }
 
     public boolean isRealRenewableDataImplemented() {
         return realRenewableDataImplemented;

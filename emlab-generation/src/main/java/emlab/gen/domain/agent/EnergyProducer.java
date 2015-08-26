@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 the original author or authors.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -42,7 +42,7 @@ public class EnergyProducer extends DecarbonizationAgent implements Agent {
     @SimulationParameter(label = "Long-term contract horizon", from = 0, to = 10)
     private double longTermContractPastTimeHorizon;
 
-    //Investment
+    // Investment
     @SimulationParameter(label = "Investment horizon", from = 0, to = 15)
     private int investmentFutureTimeHorizon;
     @SimulationParameter(label = "Equity Interest Rate", from = 0, to = 1)
@@ -52,17 +52,34 @@ public class EnergyProducer extends DecarbonizationAgent implements Agent {
     private double debtRatioOfInvestments;
     private boolean willingToInvest;
 
+    @SimulationParameter(label = "Simple Capacity Market")
+    private boolean simpleCapacityMarketEnabled;
+
+    public boolean isSimpleCapacityMarketEnabled() {
+        return simpleCapacityMarketEnabled;
+    }
+
+    public void setSimpleCapacityMarketEnabled(boolean isSimpleCapacityMarketEnabled) {
+        this.simpleCapacityMarketEnabled = isSimpleCapacityMarketEnabled;
+    }
+
     // Loan
     @SimulationParameter(label = "Loan Interest Rate", from = 0, to = 1)
     private double loanInterestRate;
 
-    //Forecasting
+    // Forecasting
     private int numberOfYearsBacklookingForForecasting;
 
     // Dismantling
     private int dismantlingProlongingYearsAfterTechnicalLifetime;
     private double dismantlingRequiredOperatingProfit;
     private long pastTimeHorizon;
+
+    // Historical CVar Parameters
+    private double historicalCVarAlpha;
+    private double historicalCVarBeta;
+    private double historicalCVarPropensityForNewTechnologies;
+    private double historicalCVarInterestRateIncreaseForNewTechnologies;
 
     public boolean isWillingToInvest() {
         return willingToInvest;
@@ -182,5 +199,38 @@ public class EnergyProducer extends DecarbonizationAgent implements Agent {
 
     public void setInvestorMarket(ElectricitySpotMarket investorMarket) {
         this.investorMarket = investorMarket;
+    }
+
+    public double getHistoricalCVarAlpha() {
+        return historicalCVarAlpha;
+    }
+
+    public void setHistoricalCVarAlpha(double historicalCVarAlpha) {
+        this.historicalCVarAlpha = historicalCVarAlpha;
+    }
+
+    public double getHistoricalCVarBeta() {
+        return historicalCVarBeta;
+    }
+
+    public void setHistoricalCVarBeta(double historicalCVarBeta) {
+        this.historicalCVarBeta = historicalCVarBeta;
+    }
+
+    public double getHistoricalCVarPropensityForNewTechnologies() {
+        return historicalCVarPropensityForNewTechnologies;
+    }
+
+    public void setHistoricalCVarPropensityForNewTechnologies(double historicalCVarPropensityForNewTechnologies) {
+        this.historicalCVarPropensityForNewTechnologies = historicalCVarPropensityForNewTechnologies;
+    }
+
+    public double getHistoricalCVarInterestRateIncreaseForNewTechnologies() {
+        return historicalCVarInterestRateIncreaseForNewTechnologies;
+    }
+
+    public void setHistoricalCVarInterestRateIncreaseForNewTechnologies(
+            double historicalCVarInterestRateIncreaseForNewTechnologies) {
+        this.historicalCVarInterestRateIncreaseForNewTechnologies = historicalCVarInterestRateIncreaseForNewTechnologies;
     }
 }
