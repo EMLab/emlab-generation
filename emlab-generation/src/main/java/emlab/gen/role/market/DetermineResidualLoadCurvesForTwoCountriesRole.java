@@ -25,6 +25,7 @@ import emlab.gen.domain.technology.IntermittentResourceProfile;
 import emlab.gen.domain.technology.PowerGeneratingTechnology;
 import emlab.gen.domain.technology.PowerGridNode;
 import emlab.gen.repository.Reps;
+import emlab.gen.trend.HourlyCSVTimeSeries;
 import emlab.gen.util.Utils;
 import hep.aida.bin.DynamicBin1D;
 
@@ -157,23 +158,26 @@ public class DetermineResidualLoadCurvesForTwoCountriesRole extends AbstractRole
         for (Zone zone : zoneList) {
 
             for (PowerGridNode node : zoneToNodeList.get(zone)) {
-                DoubleMatrix1D hourlyArray = new DenseDoubleMatrix1D(
-                        node.getHourlyDemand().getHourlyArray(getCurrentTick()));
-                double growthRate = reps.marketRepository.findElectricitySpotMarketForZone(zone).getDemandGrowthTrend()
-                        .getValue(clearingTick);
-                DoubleMatrix1D growthFactors = hourlyArray.copy();
-                growthFactors.assign(growthRate);
-                hourlyArray.assign(growthFactors, Functions.mult);
-                m.viewColumn(LOADINZONE.get(zone)).assign(hourlyArray, Functions.plus);
-                m.viewColumn(RLOADINZONE.get(zone)).assign(hourlyArray, Functions.plus);
-
+                HourlyCSVTimeSeries hourlyTimeSeriesInNode = node.getHourlyDemand();
+                if (hourlyTimeSeriesInNode != null) {
+                    DoubleMatrix1D hourlyArray = new DenseDoubleMatrix1D(
+                            hourlyTimeSeriesInNode.getHourlyArray(getCurrentTick()));
+                    double growthRate = reps.marketRepository.findElectricitySpotMarketForZone(zone)
+                            .getDemandGrowthTrend().getValue(clearingTick);
+                    DoubleMatrix1D growthFactors = hourlyArray.copy();
+                    growthFactors.assign(growthRate);
+                    hourlyArray.assign(growthFactors, Functions.mult);
+                    m.viewColumn(LOADINZONE.get(zone)).assign(hourlyArray, Functions.plus);
+                    m.viewColumn(RLOADINZONE.get(zone)).assign(hourlyArray, Functions.plus);
+                }
             }
-
+            // logger.warn("Zone: " + zone);
+            // logger.warn("" + m.viewColumn(LOADINZONE.get(zone)));
         }
 
         // 3. For each power grid node multiply the time series of each
         // intermittent technology type with
-        // the installed capacity of that technology type. Subtract
+        // the installed capacity of that technology type. Substract
         // intermittent production from the
         // the residual load column (one column per zone). Calculate the total
         // residual load (assuming
@@ -197,22 +201,28 @@ public class DetermineResidualLoadCurvesForTwoCountriesRole extends AbstractRole
 
                     IntermittentResourceProfile intermittentResourceProfile = reps.intermittentResourceProfileRepository
                             .findIntermittentResourceProfileByTechnologyAndNode(technology, node);
-
                     // Calculates hourly production of intermittent renewable
                     // technology per node
-                    DoubleMatrix1D hourlyProductionPerNode = new DenseDoubleMatrix1D(
-                            intermittentResourceProfile.getHourlyArray(getCurrentTick()));
-                    m.viewColumn(TECHNOLOGYLOADFACTORSFORZONEANDNODE.get(zone).get(node).get(technology))
-                            .assign(hourlyProductionPerNode, Functions.plus);
-                    hourlyProductionPerNode.assign(Functions.mult(intermittentCapacityOfTechnologyInNode));
-                    m.viewColumn(IPROD.get(zone)).assign(hourlyProductionPerNode, Functions.plus);
-                    // Add to zonal-technological RES column
+                    if (intermittentResourceProfile != null) {
+                        DoubleMatrix1D hourlyProductionPerNode = new DenseDoubleMatrix1D(
+                                intermittentResourceProfile.getHourlyArray(getCurrentTick()));
 
-                    // Substracts the above from the residual load curve
-                    m.viewColumn(RLOADINZONE.get(zone)).assign(hourlyProductionPerNode, Functions.minus);
+                        // WARNING!!!!!!! This is a very memory consuming
+                        // logger.warn....!!!!!!!
+                        // logger.warn("production profiles hourly data is " +
+                        // hourlyProductionPerNode);
 
+                        m.viewColumn(TECHNOLOGYLOADFACTORSFORZONEANDNODE.get(zone).get(node).get(technology))
+                                .assign(hourlyProductionPerNode, Functions.plus);
+                        hourlyProductionPerNode.assign(Functions.mult(intermittentCapacityOfTechnologyInNode));
+                        m.viewColumn(IPROD.get(zone)).assign(hourlyProductionPerNode, Functions.plus);
+                        // Add to zonal-technological RES column
+
+                        // Substracts the above from the residual load curve
+                        m.viewColumn(RLOADINZONE.get(zone)).assign(hourlyProductionPerNode, Functions.minus);
+
+                    }
                 }
-
             }
 
             m.viewColumn(RLOADTOTAL).assign(m.viewColumn(RLOADINZONE.get(zone)), Functions.plus);
@@ -283,8 +293,8 @@ public class DetermineResidualLoadCurvesForTwoCountriesRole extends AbstractRole
             // In case both countries have negative residual load (more IPROD
             // than load), set RLOAD to zero, and reduce IPROD to LOAD in
             // countries. Calculate the spill factor of the two zones, and
-            // multiply it to the load factors of the technologies in the
-            // respective nodes.
+            // multiply it
+            // to the load factors of the technologies in the respective nodes.
             if ((smallerResidual <= 0) && biggerResidual <= 0) {
                 numberOfHoursWereBothCountriesHaveNegativeResidualLoad++;
                 m.set(row, RLOADINZONE.get(zoneSmallerResidual), 0);

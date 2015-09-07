@@ -105,6 +105,8 @@ public class FeedInPremiumRole extends AbstractRole<RenewableSupportFipScheme> {
                     long finishedConstruction = plant.getConstructionStartTime() + plant.calculateActualPermittime()
                             + plant.calculateActualLeadtime();
 
+                    long contractFinishTime = finishedConstruction + renewableSupportScheme.getSupportSchemeDuration();
+
                     logger.warn("Printing finished construction" + finishedConstruction + "and current tick "
                             + getCurrentTick());
                             // long timeNow = getCurrentTick();
@@ -116,7 +118,7 @@ public class FeedInPremiumRole extends AbstractRole<RenewableSupportFipScheme> {
                     contract = new SupportPriceContract();
                     contract.setStart(getCurrentTick());
                     contract.setPricePerUnit(baseCost.getCostPerMWh());
-                    contract.setFinish(getCurrentTick() + renewableSupportScheme.getSupportSchemeDuration());
+                    contract.setFinish(contractFinishTime);
                     contract.setPlant(plant);
                     contract.persist();
 
@@ -183,6 +185,8 @@ public class FeedInPremiumRole extends AbstractRole<RenewableSupportFipScheme> {
                             }
 
                             double supportPrice = contract.getPricePerUnit() * totalGenerationInMwh - sumEMR;
+                            if (supportPrice < 0)
+                                supportPrice = 0;
                             // payment
                             logger.warn("Base Cost " + contract.getPricePerUnit());
                             logger.warn("Total Generation " + totalGenerationInMwh);

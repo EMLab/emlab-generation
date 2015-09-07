@@ -302,8 +302,9 @@ public class InvestInPowerGenerationTechnologiesStandard<T extends EnergyProduce
                                         segmentLoad.getSegment(), numberOfSegments);
                                 expectedGeneration += generationInSegment;
                                 totalFlh += flh;
-                                logger.warn("Expected generation in segment" + segmentLoad.getSegment()
-                                        + " is, in MWh, " + generationInSegment);
+                                // logger.warn("Expected generation in segment"
+                                // + segmentLoad.getSegment()
+                                // + " is, in MWh, " + generationInSegment);
 
                             }
 
@@ -342,9 +343,11 @@ public class InvestInPowerGenerationTechnologiesStandard<T extends EnergyProduce
                                 + "for node " + node.getNodeId());
 
                         logger.warn("Expected Base Cost " + expectedBaseCost);
-                        logger.warn("Expected flh " + totalFlh);
-                        logger.warn("Expected Total Generation " + expectedGeneration);
-                        logger.warn("Expected Revenue from EM " + expectedRevenue);
+                        // logger.warn("Expected flh " + totalFlh);
+                        // logger.warn("Expected Total Generation " +
+                        // expectedGeneration);
+                        // logger.warn("Expected Revenue from EM " +
+                        // expectedRevenue);
                         logger.warn("Expected Annual Subsidy " + supportFromFip);
 
                         double operatingProfit = expectedGrossProfit - fixedOMCost + supportFromFip;
