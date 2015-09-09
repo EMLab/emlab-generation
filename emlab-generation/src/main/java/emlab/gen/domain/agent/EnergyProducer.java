@@ -70,6 +70,37 @@ public class EnergyProducer extends DecarbonizationAgent implements Agent {
     private double historicalCVarPropensityForNewTechnologies;
     private double historicalCVarInterestRateIncreaseForNewTechnologies;
 
+    // Arrow-Pratt risk aversion parameters
+
+    private String riskAversionType; // neutral, CARA or CRRA
+    private double riskAversionCoefficientCARA;
+    private double riskAversionCoefficientCRRA;
+
+    public String getRiskAversionType() {
+        return riskAversionType;
+    }
+
+    public void setRiskAversionType(String riskAversionType) {
+        this.riskAversionType = riskAversionType;
+    }
+
+    public double getRiskAversionCoefficientCARA() {
+        return riskAversionCoefficientCARA;
+    }
+
+    public void setRiskAversionCoefficientCARA(double riskAversionCoefficientCARA) {
+        this.riskAversionCoefficientCARA = riskAversionCoefficientCARA;
+    }
+
+
+    public double getRiskAversionCoefficientCRRA() {
+        return riskAversionCoefficientCRRA;
+    }
+
+    public void setRiskAversionCoefficientCRRA(double riskAversionCoefficientCRRA) {
+        this.riskAversionCoefficientCRRA = riskAversionCoefficientCRRA;
+    }
+
     public boolean isWillingToInvest() {
         return willingToInvest;
     }
@@ -222,4 +253,5 @@ public class EnergyProducer extends DecarbonizationAgent implements Agent {
             double historicalCVarInterestRateIncreaseForNewTechnologies) {
         this.historicalCVarInterestRateIncreaseForNewTechnologies = historicalCVarInterestRateIncreaseForNewTechnologies;
     }
+
 }
