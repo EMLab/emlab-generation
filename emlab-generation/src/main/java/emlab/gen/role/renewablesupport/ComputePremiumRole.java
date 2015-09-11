@@ -178,8 +178,10 @@ public class ComputePremiumRole extends AbstractEnergyProducerRole<EnergyProduce
                 logger.warn("discountedCapitalCosts " + discountedCapitalCosts);
                 double discountedOpCost = npv(discountedProjectCashOutflow, wacc);
                 double factorDiscountedGeneration = npv(factorDiscountedGenerationSeries, wacc);
-                logger.warn("discountedOpCost " + discountedOpCost);
-                lcoe = (discountedCapitalCosts + discountedOpCost) * scheme.getBiasFactors().get(technology)
+
+                double biasFactor = scheme.getBiasFactors().get(technology);
+                logger.warn("biasFactor " + biasFactor);
+                lcoe = (discountedCapitalCosts + discountedOpCost) * biasFactor
                         / (totalGenerationinMWh * factorDiscountedGeneration);
 
                 BaseCostFip baseCostFip = new BaseCostFip();

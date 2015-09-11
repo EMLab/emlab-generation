@@ -15,7 +15,7 @@
  ******************************************************************************/
 package emlab.gen.domain.policy.renewablesupport;
 
-import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import org.neo4j.graphdb.Direction;
@@ -50,14 +50,13 @@ public class RenewableSupportFipScheme {
 
     // Feed-in-Premium Related Pàrameters
 
-    private HashMap<PowerGeneratingTechnology, Double> biasFactors;
+    private Map<PowerGeneratingTechnology, Double> biasFactors;
 
-    public 
-<PowerGeneratingTechnology, Double> getBiasFactors() {
+    public Map<PowerGeneratingTechnology, Double> getBiasFactors() {
         return biasFactors;
     }
 
-    public void setBiasFactors(HashMap<PowerGeneratingTechnology, Double> biasFactors) {
+    public void setBiasFactors(Map<PowerGeneratingTechnology, Double> biasFactors) {
         this.biasFactors = biasFactors;
     }
 
