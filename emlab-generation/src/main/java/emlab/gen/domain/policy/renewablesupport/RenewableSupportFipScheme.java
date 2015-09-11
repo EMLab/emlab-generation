@@ -52,7 +52,8 @@ public class RenewableSupportFipScheme {
 
     private HashMap<PowerGeneratingTechnology, Double> biasFactors;
 
-    public HashMap<PowerGeneratingTechnology, Double> getBiasFactors() {
+    public 
+<PowerGeneratingTechnology, Double> getBiasFactors() {
         return biasFactors;
     }
 

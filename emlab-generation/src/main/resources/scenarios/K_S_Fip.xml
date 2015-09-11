@@ -73,6 +73,14 @@ p:equityInterestRate="0.12" p:loanInterestRate="0.09"
 <bean id="renewableSupportScheme" class="emlab.gen.domain.policy.renewablesupport.RenewableSupportFipScheme" p:name="FeedInPremium"
 p:supportSchemeDuration="15" 
 p:feedInPremiumBiasFactor="1">
+<property name="biasFactors">
+			<map>
+				<entry value="1" > <key> <ref bean="photovoltaicPGT" /> </key> </entry>
+				<entry value="1" > <key> <ref bean="windOffshorePGT" /> </key> </entry>
+				<entry value="1" > <key> <ref bean="windPGT" /> </key> </entry>	
+				<entry value="1" > <key> <ref bean="biomassPGT" /> </key> </entry>			
+			</map>
+</property>
 <property name="regulator" ref="regulator"/>
 <property name="powerGeneratingTechnologiesEligible">
 			<set>
@@ -82,6 +90,8 @@ p:feedInPremiumBiasFactor="1">
 				<ref bean="biomassPGT" />
 			</set>
 </property>
+
+
 </bean>
 
 	<bean id="interconnectorBeneluxGermany" class="emlab.gen.domain.technology.Interconnector"
