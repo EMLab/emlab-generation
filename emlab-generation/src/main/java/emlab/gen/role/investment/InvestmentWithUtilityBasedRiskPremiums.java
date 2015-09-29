@@ -405,86 +405,179 @@ implements Role<T>, NodeBacked {
                         // TODO: Make agent create cVar value of best performing
                         // power plants
 
-                        Double lowerBoundaryConventionalTech = reps.financialPowerPlantReportRepository
-                                .calculateLowerBoundaryConventionalTech(getCurrentTick() - 5, getCurrentTick(), agent,
-                                        technology, agent.getHistoricalCVarAlpha());
+                        // ===== risk aversion part =====
 
-                        Double higherBoundaryConventionalTech = reps.financialPowerPlantReportRepository
-                                .calculateHigherBoundaryConventionalTech(
-                                        getCurrentTick() - 5, getCurrentTick(), agent, technology,
-                                        agent.getHistoricalCVarAlpha());
+                        Double lowerBoundaryConventionalTech = null;
+                        Double higherBoundaryConventionalTech = null;
+                        double worstCaseGrossProfit = 0;
+                        double bestCaseGrossProfit = 0;
+                        double worstCaseOperatingProfit = 0;
+                        double bestCaseOperatingProfit = 0;
+                        TreeMap<Integer, Double> projectCashInflowBestCase = null;
+                        TreeMap<Integer, Double> projectCashInflowWorstCase = null;
 
-                        double lowerUncertaintyBoundary = 0;
-                        if (lowerBoundaryConventionalTech != null) {
-                            lowerUncertaintyBoundary = lowerBoundaryConventionalTech.doubleValue()
-                                    * plant.getActualNominalCapacity();
-                        } else {
-                            lowerUncertaintyBoundary = (1 - agent.getHistoricalCVarPropensityForNewTechnologies())
-                                    * expectedGrossProfit;
+                        if (getCurrentTick() > 5) {
+                            lowerBoundaryConventionalTech = reps.financialPowerPlantReportRepository
+                                    .calculateLowerBoundaryConventionalTech(getCurrentTick() - 5, getCurrentTick(),
+                                            agent, technology, agent.getHistoricalCVarAlpha());
+
+                            higherBoundaryConventionalTech = reps.financialPowerPlantReportRepository
+                                    .calculateHigherBoundaryConventionalTech(getCurrentTick() - 5, getCurrentTick(),
+                                            agent, technology, agent.getHistoricalCVarAlpha());
+
+                            if (lowerBoundaryConventionalTech != null) {
+                                worstCaseGrossProfit = lowerBoundaryConventionalTech.doubleValue()
+                                        * plant.getActualNominalCapacity();
+                            } else {
+                                worstCaseGrossProfit = expectedGrossProfit
+                                        - Math.abs(agent.getHistoricalCVarPropensityForNewTechnologies()
+                                                * expectedGrossProfit);
+                            }
+
+                            if (higherBoundaryConventionalTech != null) {
+                                bestCaseGrossProfit = higherBoundaryConventionalTech.doubleValue()
+                                        * plant.getActualNominalCapacity();
+                            } else {
+                                if (expectedGrossProfit >= 0) {
+                                    bestCaseGrossProfit = Math.abs(agent
+                                            .getHistoricalCVarPropensityForNewTechnologies() * expectedGrossProfit)
+                                            + expectedGrossProfit;
+                                }
+                            }
+
+                            bestCaseOperatingProfit = bestCaseGrossProfit - fixedOMCost;
+
+                            worstCaseOperatingProfit = worstCaseGrossProfit - fixedOMCost;
+
+                            projectCashInflowBestCase = calculateSimplePowerPlantInvestmentCashFlow(
+                                    technology.getDepreciationTime(), (int) plant.getActualLeadtime(), 0,
+                                    bestCaseOperatingProfit);
+
+                            projectCashInflowWorstCase = calculateSimplePowerPlantInvestmentCashFlow(
+                                    technology.getDepreciationTime(), (int) plant.getActualLeadtime(), 0,
+                                    worstCaseOperatingProfit);
+
                         }
 
-                        double higherUncertaintyBoundary = 0;
-                        if (higherBoundaryConventionalTech != null) {
-                            higherUncertaintyBoundary = higherBoundaryConventionalTech.doubleValue()
-                                    * plant.getActualNominalCapacity();
-                        } else {
-                            higherUncertaintyBoundary = (1 + agent.getHistoricalCVarPropensityForNewTechnologies())
-                                    * expectedGrossProfit;
-                        }
-
-
-                        double operatingProfit = expectedGrossProfit - fixedOMCost;
-
-                        double higherBoundaryOperatingProfit = higherUncertaintyBoundary - fixedOMCost;
-
-                        double lowerBoundaryOperatingProfit = lowerUncertaintyBoundary - fixedOMCost;
-
-                        // TODO Alter discount rate on the basis of the amount
-                        // in long-term contracts?
-                        // TODO Alter discount rate on the basis of other stuff,
-                        // such as amount of money, market share, portfolio
-                        // size.
-
-                        // Calculation of weighted average cost of capital,
-                        // based on the companies debt-ratio and interest rates
-                        // on
-                        // debt and equity
+                        // ===== end risk aversion part =====
 
                         double wacc = (1 - agent.getDebtRatioOfInvestments()) * agent.getEquityInterestRate()
                                 + agent.getDebtRatioOfInvestments() * agent.getLoanInterestRate();
 
-                        // For new technologies, increase the wacc with an
-                        // historical cvar rate increase
                         if (lowerBoundaryConventionalTech == null)
                             wacc += agent.getHistoricalCVarInterestRateIncreaseForNewTechnologies();
 
-                        // Creation of out cash-flow during power plant building
-                        // phase (note that the cash-flow is negative!)
+                        double operatingProfit = expectedGrossProfit - fixedOMCost;
 
                         TreeMap<Integer, Double> projectCapitalOutflow = calculateSimplePowerPlantInvestmentCashFlow(
                                 technology.getDepreciationTime(), (int) plant.getActualLeadtime(),
                                 plant.getActualInvestedCapital(), 0);
 
+                        TreeMap<Integer, Double> projectCashInflow = calculateSimplePowerPlantInvestmentCashFlow(
+                                technology.getDepreciationTime(), (int) plant.getActualLeadtime(), 0, operatingProfit);
+
+                        // ===== Risk aversion part =====
+
+                        double discountedWorstCaseOpProfit = 0;
+                        double discountedBestCaseOpProfit = 0;
+
+                        if (getCurrentTick() > 5) {
+
+                            discountedWorstCaseOpProfit = npv(projectCashInflowWorstCase, wacc);
+
+                            discountedBestCaseOpProfit = npv(projectCashInflowBestCase, wacc);
+
+                        }
+
+                        // ===== end risk aversion part ====
+
+                        double discountedCapitalCosts = npv(projectCapitalOutflow, wacc);
+
+                        double discountedOpProfit = npv(projectCashInflow, wacc);
+
+                        double projectValue = discountedOpProfit + discountedCapitalCosts;
+                        double oldProjectValue = projectValue;
+
+                        // ====== start Risk Aversion Part ====
+
+                        double worstCaseProjectValue = 0;
+                        double bestCaseProjectValue = 0;
+
+                        if (getCurrentTick() > 5) {
+
+                            worstCaseProjectValue = discountedWorstCaseOpProfit + discountedCapitalCosts;
+                            bestCaseProjectValue = discountedBestCaseOpProfit + discountedCapitalCosts;
+
+                        }
+
+                        double currentCashBalanceForRiskAversion = agent.getCash();
+                        double impactOnCashBalanceExpectedProjectValue = currentCashBalanceForRiskAversion
+                                + oldProjectValue;
+                        double impactOnCashBalanceWorstCase = currentCashBalanceForRiskAversion + worstCaseProjectValue;
+                        double impactOnCashBalanceBestCase = currentCashBalanceForRiskAversion + bestCaseProjectValue;
+                        double riskPremium = 0;
+
+                        if (getCurrentTick() > 5) {
+
+                            if (agent.getRiskAversionType() == 1) {
+
+                                double riskAversionCoefficient = agent.getRiskAversionCoefficientCARA();
+                                riskPremium = calculateRiskPremiumCARA(riskAversionCoefficient,
+                                        currentCashBalanceForRiskAversion, impactOnCashBalanceExpectedProjectValue,
+                                        impactOnCashBalanceWorstCase, impactOnCashBalanceBestCase);
+
+                                projectValue += riskPremium;
+                            }
+
+                            if (agent.getRiskAversionType() == 2) {
+
+                                double riskAversionCoefficient = agent.getRiskAversionCoefficientCRRA();
+                                riskPremium = calculateRiskPremiumCRRA(riskAversionCoefficient,
+                                        currentCashBalanceForRiskAversion, impactOnCashBalanceExpectedProjectValue,
+                                        impactOnCashBalanceWorstCase, impactOnCashBalanceBestCase);
+
+                                projectValue += riskPremium;
+                            }
+
+                            if (agent.getRiskAversionType() == 0) {
+
+                                projectValue = oldProjectValue;
+
+                            }
+
+                        }
+
+                        // ====== End Risk Aversion Part ====
+
+                        // TODO Alter discount rate on the basis of the
+                        // amount
+                        // in long-term contracts?
+                        // TODO Alter discount rate on the basis of other
+                        // stuff,
+                        // such as amount of money, market share, portfolio
+                        // size.
+
+                        // Calculation of weighted average cost of capital,
+                        // based on the companies debt-ratio and interest
+                        // rates
+                        // on
+                        // debt and equity
+
+                        // For new technologies, increase the wacc with an
+                        // historical cvar rate increase
+
+                        // Creation of out cash-flow during power plant
+                        // building
+                        // phase (note that the cash-flow is negative!)
+
                         // Creation of in cashflow during operation
                         // for operating profits without cvar and put in a
                         // treemap
-                        TreeMap<Integer, Double> projectCashInflow = calculateSimplePowerPlantInvestmentCashFlow(
-                                technology.getDepreciationTime(), (int) plant.getActualLeadtime(), 0, operatingProfit);
 
                         // for operating profits with cvar
                         // and put in a treemap
 
-                        TreeMap<Integer, Double> projectCashInflowHigherBoundary = calculateSimplePowerPlantInvestmentCashFlow(
-                                technology.getDepreciationTime(), (int) plant.getActualLeadtime(), 0,
-                                higherBoundaryOperatingProfit);
-
-                        TreeMap<Integer, Double> projectCashInflowLowerBoundary = calculateSimplePowerPlantInvestmentCashFlow(
-                                technology.getDepreciationTime(), (int) plant.getActualLeadtime(), 0,
-                                lowerBoundaryOperatingProfit);
-
                         // calculate npv of capital costs
-
-                        double discountedCapitalCosts = npv(projectCapitalOutflow, wacc);
 
                         // are
                         // defined
@@ -497,58 +590,14 @@ implements Role<T>, NodeBacked {
 
                         // calculate npv of operational profits
 
-                        double discountedOpProfit = npv(projectCashInflow, wacc);
-
-                        double discountedHigherBoundaryOpProfit = npv(projectCashInflowHigherBoundary, wacc);
-
-                        double discountedLowerBoundaryOpProfit = npv(projectCashInflowLowerBoundary, wacc);
-
                         // logger.warn("Agent {}  found that the projected discounted inflows for technology {} to be "
                         // + discountedOpProfit,
                         // agent, technology);
-
-                        double projectValue = discountedOpProfit + discountedCapitalCosts;
-                        double oldProjectValue = projectValue;
-
-                        double higherBoundaryProjectValue = discountedHigherBoundaryOpProfit + discountedCapitalCosts;
-                        double lowerBoundaryProjectValue = discountedLowerBoundaryOpProfit + discountedCapitalCosts;
 
                         // ------------------ Risk premium calculation
                         // -----------------
                         //
                         //
-
-
-                        double currentCashBalance = agent.getCash();
-                        double impactOnCashBalanceExpectedProjectValue = currentCashBalance + oldProjectValue;
-                        double impactOnCashBalanceLowerBoundary = currentCashBalance + lowerBoundaryProjectValue;
-                        double impactOnCashBalanceHigherBoundary = currentCashBalance + higherBoundaryProjectValue;
-
-                        if (agent.getRiskAversionType() == "CARA") {
-
-                            double riskAversionCoefficient = agent.getRiskAversionCoefficientCARA();
-                            double riskPremium = calculateRiskPremiumCARA(riskAversionCoefficient, currentCashBalance,
-                                    impactOnCashBalanceExpectedProjectValue, impactOnCashBalanceLowerBoundary,
-                                    impactOnCashBalanceHigherBoundary);
-
-                            projectValue += riskPremium;
-                        }
-
-                        if (agent.getRiskAversionType() == "CRRA") {
-
-                            double riskAversionCoefficient = agent.getRiskAversionCoefficientCRRA();
-                            double riskPremium = calculateRiskPremiumCRRA(riskAversionCoefficient, currentCashBalance,
-                                    impactOnCashBalanceExpectedProjectValue, impactOnCashBalanceLowerBoundary,
-                                    impactOnCashBalanceHigherBoundary);
-
-                            projectValue += riskPremium;
-                        }
-
-                        if (agent.getRiskAversionType() == "neutral") {
-
-                            projectValue += 0;
-
-                        }
 
                         // if (historicalCvarProjectValue < 0) {
                         // logger.warn("Adjusting NPV!");
@@ -588,24 +637,25 @@ implements Role<T>, NodeBacked {
                          */
                         if (projectValue < 0 && oldProjectValue > 0) {
                             logger.warn(
-                                    "Not profitable w risk premium. NPV-RP: {}, NPV: {}, Lower boundary gross profit: "
-                                            + lowerUncertaintyBoundary / plant.getActualNominalCapacity()
-                                            + ", Higher boundary gross profit: "
-                                            + higherUncertaintyBoundary
-                                            / plant.getActualNominalCapacity() + " Tech:"
-                                            + technology + " in " + node.getName(),
-                                            projectValue / plant.getActualNominalCapacity(),
+                                    " Tech:"
+                                            + technology
+                                            + "Not profitable w risk premium. NPV-RP: {}, NPV: {}, Lower boundary gross profit: "
+                                            + worstCaseGrossProfit / plant.getActualNominalCapacity()
+                                            + ", Higher boundary gross profit: " + bestCaseGrossProfit
+                                            / plant.getActualNominalCapacity() + " in " + node.getName() + ", RP: "
+                                            + riskPremium, projectValue / plant.getActualNominalCapacity(),
                                             oldProjectValue / plant.getActualNominalCapacity());
                         }
 
                         if (projectValue > 0) {
                             logger.warn(
-                                    "Is profitable w risk premium. NPV-RP: {}, NPV: {}, lower boundary gross profit: "
-                                            + lowerUncertaintyBoundary / plant.getActualNominalCapacity()
-                                            + ", higher boundary gross profit: " + higherUncertaintyBoundary
-                                            / plant.getActualNominalCapacity() + " Tech:"
-                                            + technology + " in " + node.getName(),
-                                            projectValue / plant.getActualNominalCapacity(),
+                                    " Tech:"
+                                            + technology
+                                            + "Is profitable w risk premium. NPV-RP: {}, NPV: {}, lower boundary gross profit: "
+                                            + worstCaseGrossProfit / plant.getActualNominalCapacity()
+                                            + ", higher boundary gross profit: " + bestCaseGrossProfit
+                                            / plant.getActualNominalCapacity() + " in " + node.getName() + ", RP: "
+                                            + riskPremium, projectValue / plant.getActualNominalCapacity(),
                                             oldProjectValue / plant.getActualNominalCapacity());
                         }
 
@@ -755,19 +805,56 @@ implements Role<T>, NodeBacked {
 
     private double calculateRiskPremiumCARA(double riskAversionCoefficient, double cashBalance, double expectedROI,
             double lowerROI, double higherROI) {
-        double riskPremium = 0;
 
-        double utilityLowerROI = 1 - Math.exp(-riskAversionCoefficient * lowerROI);
-        double utilityHigherROI = 1 - Math.exp(-riskAversionCoefficient * higherROI);
-        double slopeRiskNeutralCurve = (utilityLowerROI - utilityHigherROI) / (lowerROI - higherROI);
-        double utilityCertaintyEquivalent = slopeRiskNeutralCurve * expectedROI + utilityLowerROI
-                - slopeRiskNeutralCurve * lowerROI;
-        double certaintyEquivalentROI = Math.log(1 - utilityCertaintyEquivalent) / (-riskAversionCoefficient);
+        double riskPremium = 0;
+        double correctionFactor = cashBalance;
+
+        double utilityLowerROI = (1 / -riskAversionCoefficient)
+                * Math.exp(-riskAversionCoefficient * (lowerROI - correctionFactor));
+        double utilityHigherROI = (1 / -riskAversionCoefficient)
+                * Math.exp(-riskAversionCoefficient * (higherROI - correctionFactor));
+
+        double utilityCertaintyEquivalent = 0.5 * utilityLowerROI + 0.5 * utilityHigherROI;
+        double certaintyEquivalentROI = Math.log(-riskAversionCoefficient * utilityCertaintyEquivalent)
+                / (-riskAversionCoefficient) + correctionFactor;
 
         riskPremium += (certaintyEquivalentROI - expectedROI);
 
-        return riskPremium;
+        double count = 0;
+        double newRiskAversionFactor = riskAversionCoefficient;
+        boolean whileLoopInitiated = false;
 
+        while (riskPremium == Double.POSITIVE_INFINITY) {
+
+            logger.warn("Risk Premium is infinite!!");
+
+            whileLoopInitiated = true;
+
+            riskPremium = 0;
+            newRiskAversionFactor = newRiskAversionFactor / 10;
+
+            utilityLowerROI = (1 / -newRiskAversionFactor)
+                    * Math.exp(-newRiskAversionFactor * (lowerROI - correctionFactor));
+            utilityHigherROI = (1 / -newRiskAversionFactor)
+                    * Math.exp(-newRiskAversionFactor * (higherROI - correctionFactor));
+
+            utilityCertaintyEquivalent = 0.5 * utilityLowerROI + 0.5 * utilityHigherROI;
+            certaintyEquivalentROI = Math.log(-newRiskAversionFactor * utilityCertaintyEquivalent)
+                    / (-newRiskAversionFactor) + correctionFactor;
+
+            riskPremium += (certaintyEquivalentROI - expectedROI);
+
+            count++;
+
+            logger.warn("Count: " + count + ", New Risk Aversion Factor: " + newRiskAversionFactor);
+
+        }
+
+
+        logger.warn("risk premium: " + riskPremium + "Cash: " + cashBalance + ", worstCase: " + lowerROI
+                + ", bestcase: " + higherROI + ", expected: " + expectedROI);
+
+        return riskPremium;
 
     }
 
@@ -780,7 +867,6 @@ implements Role<T>, NodeBacked {
         double utilityCertaintyEquivalent = 0;
         double certaintyEquivalentROI = 0;
 
-
         if (riskAversionCoefficient == 1) {
             utilityLowerROI = Math.log(lowerROI);
             utilityHigherROI = Math.log(higherROI);
@@ -789,10 +875,9 @@ implements Role<T>, NodeBacked {
             utilityHigherROI = Math.pow(higherROI, 1 - riskAversionCoefficient) / (1 - riskAversionCoefficient);
         }
 
-        double slopeRiskNeutralCurve = (utilityLowerROI - utilityHigherROI) / (lowerROI - higherROI);
 
-        utilityCertaintyEquivalent = slopeRiskNeutralCurve * expectedROI + utilityLowerROI - slopeRiskNeutralCurve
-                * lowerROI;
+
+        utilityCertaintyEquivalent = 0.5 * utilityLowerROI + 0.5 * utilityHigherROI;
 
         if (riskAversionCoefficient == 1) {
             certaintyEquivalentROI = Math.exp(utilityCertaintyEquivalent);
@@ -803,6 +888,9 @@ implements Role<T>, NodeBacked {
         }
 
         riskPremium += (certaintyEquivalentROI - expectedROI);
+
+        logger.warn("risk premium: " + riskPremium + "Cash: " + cashBalance + ", worstCase: " + lowerROI
+                + ", bestcase: " + higherROI + ", expected: " + expectedROI);
 
         return riskPremium;
 
@@ -1043,6 +1131,5 @@ implements Role<T>, NodeBacked {
         }
         return co2Prices;
     }
-
 
 }

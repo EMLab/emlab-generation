@@ -72,15 +72,15 @@ public class EnergyProducer extends DecarbonizationAgent implements Agent {
 
     // Arrow-Pratt risk aversion parameters
 
-    private String riskAversionType; // neutral, CARA or CRRA
+    private int riskAversionType; // neutral: 0, CARA: 1, CRRA: 2
     private double riskAversionCoefficientCARA;
     private double riskAversionCoefficientCRRA;
 
-    public String getRiskAversionType() {
+    public int getRiskAversionType() {
         return riskAversionType;
     }
 
-    public void setRiskAversionType(String riskAversionType) {
+    public void setRiskAversionType(int riskAversionType) {
         this.riskAversionType = riskAversionType;
     }
 

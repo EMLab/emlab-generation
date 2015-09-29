@@ -325,8 +325,8 @@
 		p:historicalCVarPropensityForNewTechnologies="${cvarPropNewTech}"
 		p:historicalCVarInterestRateIncreaseForNewTechnologies="${cvarIntRateIncrNewTech}"
 		p:riskAversionType="${riskAversionType}"
-		p:riskAversionCoefficientCARA="${RiskAversionCoefficientCARA}"
-		p:riskAversionCoefficientCRRA="${RiskAversionCoefficientCRRA}"/>
+		p:riskAversionCoefficientCARA="${riskAversionCoefficientCARA}"
+		p:riskAversionCoefficientCRRA="${riskAversionCoefficientCRRA}"/>
 	<bean id="energyProducerB" class="emlab.gen.domain.agent.EnergyProducer"
 		p:name="Energy Producer B" p:cash="${startCash}"
 		p:investmentRole-ref="standardInvestmentRole"
@@ -343,8 +343,8 @@
 		p:historicalCVarPropensityForNewTechnologies="${cvarPropNewTech}"
 		p:historicalCVarInterestRateIncreaseForNewTechnologies="${cvarIntRateIncrNewTech}"
 		p:riskAversionType="${riskAversionType}"
-		p:riskAversionCoefficientCARA="${RiskAversionCoefficientCARA}"
-		p:riskAversionCoefficientCRRA="${RiskAversionCoefficientCRRA}"/>
+		p:riskAversionCoefficientCARA="${riskAversionCoefficientCARA}"
+		p:riskAversionCoefficientCRRA="${riskAversionCoefficientCRRA}"/>
 	<bean id="energyProducerC" class="emlab.gen.domain.agent.EnergyProducer"
 		p:name="Energy Producer C" p:cash="${startCash}"
 		p:investmentRole-ref="standardInvestmentRole"
@@ -361,8 +361,8 @@
 		p:historicalCVarPropensityForNewTechnologies="${cvarPropNewTech}"
 		p:historicalCVarInterestRateIncreaseForNewTechnologies="${cvarIntRateIncrNewTech}"
 		p:riskAversionType="${riskAversionType}"
-		p:riskAversionCoefficientCARA="${RiskAversionCoefficientCARA}"
-		p:riskAversionCoefficientCRRA="${RiskAversionCoefficientCRRA}"/>
+		p:riskAversionCoefficientCARA="${riskAversionCoefficientCARA}"
+		p:riskAversionCoefficientCRRA="${riskAversionCoefficientCRRA}"/>
 	<bean id="energyProducerD" class="emlab.gen.domain.agent.EnergyProducer"
 		p:name="Energy Producer D" p:cash="${startCash}"
 		p:investmentRole-ref="standardInvestmentRole"
@@ -379,8 +379,8 @@
 		p:historicalCVarPropensityForNewTechnologies="${cvarPropNewTech}"
 		p:historicalCVarInterestRateIncreaseForNewTechnologies="${cvarIntRateIncrNewTech}"
 		p:riskAversionType="${riskAversionType}"
-		p:riskAversionCoefficientCARA="${RiskAversionCoefficientCARA}"
-		p:riskAversionCoefficientCRRA="${RiskAversionCoefficientCRRA}"/>
+		p:riskAversionCoefficientCARA="${riskAversionCoefficientCARA}"
+		p:riskAversionCoefficientCRRA="${riskAversionCoefficientCRRA}"/>
 	<bean id="energyProducerE" class="emlab.gen.domain.agent.EnergyProducer"
 		p:name="Energy Producer E" p:cash="${startCash}"
 		p:investmentRole-ref="standardInvestmentRole"
@@ -396,8 +396,8 @@
 		p:historicalCVarPropensityForNewTechnologies="${cvarPropNewTech}"
 		p:historicalCVarInterestRateIncreaseForNewTechnologies="${cvarIntRateIncrNewTech}"
 		p:riskAversionType="${riskAversionType}"
-		p:riskAversionCoefficientCARA="${RiskAversionCoefficientCARA}"
-		p:riskAversionCoefficientCRRA="${RiskAversionCoefficientCRRA}"/>
+		p:riskAversionCoefficientCARA="${riskAversionCoefficientCARA}"
+		p:riskAversionCoefficientCRRA="${riskAversionCoefficientCRRA}"/>
 
 	<bean id="standardInvestmentRole" class="emlab.gen.role.investment.InvestmentWithUtilityBasedRiskPremiums"/>
 	

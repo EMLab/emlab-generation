@@ -28,38 +28,31 @@ import emlab.gen.domain.technology.PowerGeneratingTechnology;
  * @author jrichstein
  *
  */
-public interface FinancialPowerPlantReportRepository extends
-GraphRepository<FinancialPowerPlantReport> {
+public interface FinancialPowerPlantReportRepository extends GraphRepository<FinancialPowerPlantReport> {
 
     @Query(value = "techName=g.v(tech).name;"
             + "fr = g.v(producer).in('POWERPLANT_OWNER').as('x').out('TECHNOLOGY').propertyFilter('name',FilterPipe.Filter.EQUAL, techName).back('x').in('FINANCIALREPORT_POWERPLANT').propertyFilter('time', FilterPipe.Filter.GREATER_THAN_EQUAL, from).propertyFilter('time', FilterPipe.Filter.LESS_THAN_EQUAL, to).propertyFilter('powerPlantStatus', FilterPipe.Filter.EQUAL, 1);", type = QueryType.Gremlin)
     public Iterable<FinancialPowerPlantReport> findAllFinancialPowerPlantReportsOfOperationaPlantsFromToForEnergyProducerAndTechnology(
-            @Param("from") long from,
-            @Param("to") long to, @Param("producer") EnergyProducer producer,
+            @Param("from") long from, @Param("to") long to, @Param("producer") EnergyProducer producer,
             @Param("tech") PowerGeneratingTechnology tech);
 
     @Query(value = "techName=g.v(tech).name; fr = g.v(producer).in('POWERPLANT_OWNER').as('x').out('TECHNOLOGY').propertyFilter('name',FilterPipe.Filter.EQUAL, techName).back('x').in('FINANCIALREPORT_POWERPLANT').propertyFilter('time', FilterPipe.Filter.GREATER_THAN_EQUAL, from).propertyFilter('time', FilterPipe.Filter.LESS_THAN_EQUAL, to).propertyFilter('powerPlantStatus', FilterPipe.Filter.EQUAL, 1);"
             + "if(!fr.hasNext()){return null} else{fr=fr.sort{it.overallRevenue-it.variableCosts}._().toList()};"
-            +
-            "length=fr.size(); fiveQuantile=(int)length*0.95;cvar=(long) 0;"
-            + "for(int i=fiveQuantile; i<=length; i++){cvar=cvar+(fr[i].overallRevenue-fr[i].variableCosts)/fr[i].out('FINANCIALREPORT_POWERPLANT').actualNominalCapacity.next()};"
-            + "cvar=cvar/((double)((length - fiveQuantile)+1));" + "return cvar;", type = QueryType.Gremlin)
+            + "length=fr.size(); ninetyfiveQuantile=(int)length*(1-alpha);cvar=(long) 0;"
+            + "for(int i=ninetyfiveQuantile; i<=(length-1); i++){cvar=cvar+(fr[i].overallRevenue-fr[i].variableCosts)/fr[i].out('FINANCIALREPORT_POWERPLANT').actualNominalCapacity.next()};"
+            + "cvar=cvar/((double)(length - ninetyfiveQuantile+1));" + "return cvar;", type = QueryType.Gremlin)
     public Double calculateHigherBoundaryConventionalTech(@Param("from") long from, @Param("to") long to,
             @Param("producer") EnergyProducer producer, @Param("tech") PowerGeneratingTechnology tech,
             @Param("alpha") double alpha);
 
     @Query(value = "techName=g.v(tech).name; fr = g.v(producer).in('POWERPLANT_OWNER').as('x').out('TECHNOLOGY').propertyFilter('name',FilterPipe.Filter.EQUAL, techName).back('x').in('FINANCIALREPORT_POWERPLANT').propertyFilter('time', FilterPipe.Filter.GREATER_THAN_EQUAL, from).propertyFilter('time', FilterPipe.Filter.LESS_THAN_EQUAL, to).propertyFilter('powerPlantStatus', FilterPipe.Filter.EQUAL, 1);"
             + "if(!fr.hasNext()){return null} else{fr=fr.sort{it.overallRevenue-it.variableCosts}._().toList()};"
-            +
-            "length=fr.size(); fiveQuantile=(int)length*0.05;cvar=(long) 0;"+
-            "for(int i=0; i<=fiveQuantile; i++){cvar=cvar+(fr[i].overallRevenue-fr[i].variableCosts)/fr[i].out('FINANCIALREPORT_POWERPLANT').actualNominalCapacity.next()};"
-            +
-            "cvar=cvar/((double)(fiveQuantile+1));" +
-            "return cvar;", type = QueryType.Gremlin)
-    public Double calculateLowerBoundaryConventionalTech(
-            @Param("from") long from, @Param("to") long to, @Param("producer") EnergyProducer producer,
-            @Param("tech") PowerGeneratingTechnology tech, @Param("alpha") double alpha);
-
+            + "length=fr.size(); fiveQuantile=(int)length*alpha;cvar=(long) 0;"
+            + "for(int i=0; i<=fiveQuantile; i++){cvar=cvar+(fr[i].overallRevenue-fr[i].variableCosts)/fr[i].out('FINANCIALREPORT_POWERPLANT').actualNominalCapacity.next()};"
+            + "cvar=cvar/((double)(fiveQuantile+1));" + "return cvar;", type = QueryType.Gremlin)
+    public Double calculateLowerBoundaryConventionalTech(@Param("from") long from, @Param("to") long to,
+            @Param("producer") EnergyProducer producer, @Param("tech") PowerGeneratingTechnology tech,
+            @Param("alpha") double alpha);
 
     @Query("START fr=node:__types__(\"className:emlab.gen.domain.market.electricity.FinancialPowerPlantReport\") WHERE (fr.time={time}) RETURN fr")
     public Iterable<FinancialPowerPlantReport> findAllFinancialPowerPlantReportsForTime(@Param("time") long time);
