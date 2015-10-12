@@ -23,11 +23,20 @@
 
 	<!-- Decarbonization Model -->
 	<bean id="decarbonizationModel" class="emlab.gen.domain.agent.DecarbonizationModel"
-		p:name="Decarbonization Model" p:simulationLength="${simulationLength}"
-		p:co2TradingImplemented="false" p:realRenewableDataImplemented="false"
+		p:name="Decarbonization Model" p:simulationLength="40"
+		p:co2TradingImplemented="false"
+		p:realRenewableDataImplemented="false"
 		p:iterationSpeedFactor="3" p:iterationSpeedCriterion="0.005"
-		p:capDeviationCriterion="0.03"
-		p:deletionOldPPDPBidsAndCashFlowsEnabled="true" p:deletionAge="4">		
+		p:capDeviationCriterion="0.03" p:deletionOldPPDPBidsAndCashFlowsEnabled="true"
+		p:deletionAge="2" p:centralForecastBacklookingYears="5"
+		p:centralForecastingYear="3" p:centralCO2TargetReversionSpeedFactor="3"
+		p:centralPrivateDiscountingRate="0.05" p:centralCO2BackSmoothingFactor="0"
+		p:co2BankingIsImplemented="false"
+		p:stabilityReserveIsActive="true"
+		p:stabilityReserveFirstYearOfOperation="8"
+		p:stabilityReserveBankingFirstYear="0.8"
+		p:stabilityReserveBankingSecondYear="0.5"
+		p:stabilityReserveBankingThirdYear="0.2">
 	</bean>
 
 		<bean class="emlab.gen.trend.TriangularTrend" id="demandGrowthTrendDE"

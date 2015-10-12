@@ -445,6 +445,14 @@ implements Role<T>, NodeBacked {
                                 }
                             }
 
+                            /*
+                             * logger.warn("BOUND," + getCurrentTick() + "," +
+                             * technology + "," + lowerBoundaryConventionalTech
+                             * + "," + worstCaseGrossProfit + "," +
+                             * higherBoundaryConventionalTech + "," +
+                             * bestCaseGrossProfit + "," + expectedGrossProfit);
+                             */
+
                             bestCaseOperatingProfit = bestCaseGrossProfit - fixedOMCost;
 
                             worstCaseOperatingProfit = worstCaseGrossProfit - fixedOMCost;
@@ -635,29 +643,33 @@ implements Role<T>, NodeBacked {
                          * Divide by capacity, in order not to favour large
                          * power plants (which have the single largest NPV
                          */
-                        if (projectValue < 0 && oldProjectValue > 0) {
-                            logger.warn(
-                                    " Tech:"
-                                            + technology
-                                            + "Not profitable w risk premium. NPV-RP: {}, NPV: {}, Lower boundary gross profit: "
-                                            + worstCaseGrossProfit / plant.getActualNominalCapacity()
-                                            + ", Higher boundary gross profit: " + bestCaseGrossProfit
-                                            / plant.getActualNominalCapacity() + " in " + node.getName() + ", RP: "
-                                            + riskPremium, projectValue / plant.getActualNominalCapacity(),
-                                            oldProjectValue / plant.getActualNominalCapacity());
-                        }
-
-                        if (projectValue > 0) {
-                            logger.warn(
-                                    " Tech:"
-                                            + technology
-                                            + "Is profitable w risk premium. NPV-RP: {}, NPV: {}, lower boundary gross profit: "
-                                            + worstCaseGrossProfit / plant.getActualNominalCapacity()
-                                            + ", higher boundary gross profit: " + bestCaseGrossProfit
-                                            / plant.getActualNominalCapacity() + " in " + node.getName() + ", RP: "
-                                            + riskPremium, projectValue / plant.getActualNominalCapacity(),
-                                            oldProjectValue / plant.getActualNominalCapacity());
-                        }
+                        /*
+                         * if (projectValue < 0 && oldProjectValue > 0) {
+                         * logger.warn( " Tech:" + technology +
+                         * "Not profitable w risk premium. NPV-RP: {}, NPV: {}, Lower boundary gross profit: "
+                         * + worstCaseGrossProfit /
+                         * plant.getActualNominalCapacity() +
+                         * ", Higher boundary gross profit: " +
+                         * bestCaseGrossProfit /
+                         * plant.getActualNominalCapacity() + " in " +
+                         * node.getName() + ", RP: " + riskPremium, projectValue
+                         * / plant.getActualNominalCapacity(), oldProjectValue /
+                         * plant.getActualNominalCapacity());
+                         *
+                         * }
+                         *
+                         * if (projectValue > 0) { logger.warn( " Tech:" +
+                         * technology +
+                         * "Is profitable w risk premium. NPV-RP: {}, NPV: {}, lower boundary gross profit: "
+                         * + worstCaseGrossProfit /
+                         * plant.getActualNominalCapacity() +
+                         * ", higher boundary gross profit: " +
+                         * bestCaseGrossProfit /
+                         * plant.getActualNominalCapacity() + " in " +
+                         * node.getName() + ", RP: " + riskPremium, projectValue
+                         * / plant.getActualNominalCapacity(), oldProjectValue /
+                         * plant.getActualNominalCapacity()); }
+                         */
 
                         if (projectValue > 0 && projectValue / plant.getActualNominalCapacity() > highestValue) {
                             highestValue = projectValue / plant.getActualNominalCapacity();
@@ -810,12 +822,12 @@ implements Role<T>, NodeBacked {
         double correctionFactor = cashBalance;
 
         double utilityLowerROI = (1 / -riskAversionCoefficient)
-                * Math.exp(-riskAversionCoefficient * (lowerROI - correctionFactor));
+                * Math.exp(-riskAversionCoefficient * (lowerROI - correctionFactor)) + (1 / riskAversionCoefficient);
         double utilityHigherROI = (1 / -riskAversionCoefficient)
-                * Math.exp(-riskAversionCoefficient * (higherROI - correctionFactor));
+                * Math.exp(-riskAversionCoefficient * (higherROI - correctionFactor)) + (1 / riskAversionCoefficient);
 
         double utilityCertaintyEquivalent = 0.5 * utilityLowerROI + 0.5 * utilityHigherROI;
-        double certaintyEquivalentROI = Math.log(-riskAversionCoefficient * utilityCertaintyEquivalent)
+        double certaintyEquivalentROI = Math.log(-riskAversionCoefficient * utilityCertaintyEquivalent + 1)
                 / (-riskAversionCoefficient) + correctionFactor;
 
         riskPremium += (certaintyEquivalentROI - expectedROI);
@@ -846,13 +858,16 @@ implements Role<T>, NodeBacked {
 
             count++;
 
-            logger.warn("Count: " + count + ", New Risk Aversion Factor: " + newRiskAversionFactor);
+            // logger.warn("Count: " + count + ", New Risk Aversion Factor: " +
+            // newRiskAversionFactor);
 
         }
 
-
-        logger.warn("risk premium: " + riskPremium + "Cash: " + cashBalance + ", worstCase: " + lowerROI
-                + ", bestcase: " + higherROI + ", expected: " + expectedROI);
+        /*
+         * logger.warn("risk premium: " + riskPremium + "Cash: " + cashBalance +
+         * ", worstCase: " + lowerROI + ", bestcase: " + higherROI +
+         * ", expected: " + expectedROI);
+         */
 
         return riskPremium;
 
@@ -875,8 +890,6 @@ implements Role<T>, NodeBacked {
             utilityHigherROI = Math.pow(higherROI, 1 - riskAversionCoefficient) / (1 - riskAversionCoefficient);
         }
 
-
-
         utilityCertaintyEquivalent = 0.5 * utilityLowerROI + 0.5 * utilityHigherROI;
 
         if (riskAversionCoefficient == 1) {
@@ -889,8 +902,9 @@ implements Role<T>, NodeBacked {
 
         riskPremium += (certaintyEquivalentROI - expectedROI);
 
-        logger.warn("risk premium: " + riskPremium + "Cash: " + cashBalance + ", worstCase: " + lowerROI
-                + ", bestcase: " + higherROI + ", expected: " + expectedROI);
+        // logger.warn("risk premium: " + riskPremium + "Cash: " + cashBalance +
+        // ", worstCase: " + lowerROI
+        // + ", bestcase: " + higherROI + ", expected: " + expectedROI);
 
         return riskPremium;
 

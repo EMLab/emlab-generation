@@ -22,7 +22,7 @@ import org.springframework.data.neo4j.annotation.RelatedTo;
 import emlab.gen.domain.technology.PowerPlant;
 
 /**
- * This class reresents a financial report per power plant per year. It is
+ * This class represents a financial report per power plant per year. It is
  * mainly used to condense information (from CashFlows and
  * PowerPlantDispatchPlans, which are regularly deleted for performance reasons)
  * and make it accessible to agents within the information, but also to the
